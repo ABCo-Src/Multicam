@@ -1,0 +1,15 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:controls="using:ABCo.Multicam.UI.Avalonia.Controls"
+		xmlns:viewmodels="using:ABCo.Multicam.UI.ViewModels"
+        xmlns:templates="using:ABCo.Multicam.UI.Avalonia.Templates">
+
+	<Style Selector="Window.BorderlessWindowWithDefaultTitlebarHeight" x:DataType="viewmodels:MainWindowViewModel">
+
+		<Setter Property="ExtendClientAreaToDecorationsHint" Value="True" />
+		<Setter Property="ExtendClientAreaChromeHints" Value="NoChrome" />
+		<Setter Property="ExtendClientAreaTitleBarHeightHint" Value="{Binding TitleBarHeight}" />
+
+	</Style>
+	
+</Styles>

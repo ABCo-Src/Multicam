@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <RuntimeIdentifier>browser-wasm</RuntimeIdentifier>
+    <WasmMainJSPath>AppBundle\main.js</WasmMainJSPath>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <WasmExtraFilesToDeploy Include="AppBundle\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Browser" Version="$(AvaloniaVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ABCo.Multicam.Core\ABCo.Multicam.Core.csproj" />
+    <ProjectReference Include="..\ABCo.Multicam.UI.Avalonia\ABCo.Multicam.UI.Avalonia.csproj" />
+    <ProjectReference Include="..\ABCo.Multicam.UI\ABCo.Multicam.UI.csproj" />
+  </ItemGroup>
+</Project>

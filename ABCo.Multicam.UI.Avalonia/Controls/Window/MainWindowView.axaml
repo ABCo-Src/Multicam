@@ -1,0 +1,69 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:viewmodels="using:ABCo.Multicam.UI.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="ABCo.Multicam.UI.Avalonia.Controls.Window.MainWindowView">
+	
+	<Grid x:DataType="viewmodels:MainWindowViewModel">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="Auto" />
+		</Grid.ColumnDefinitions>
+
+		<!-- Titlebar -->
+		<!-- (Very messily implemented so the hitting works right) -->
+		<Grid Grid.Column="1">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+
+			<!-- Title -->
+			<Border Background="{DynamicResource AccentColor}" Height="{Binding TitleBarHeight}" IsHitTestVisible="False" VerticalAlignment="Stretch">
+				<TextBlock VerticalAlignment="Center">ABCo Multicamera Platform</TextBlock>
+			</Border>
+
+			<Border Background="{DynamicResource AccentColor}" Grid.Column="1" IsHitTestVisible="False" />
+
+			<!-- Center -->
+			<Border Background="{DynamicResource AccentColor}" Grid.Column="2" IsHitTestVisible="False" VerticalAlignment="Stretch">
+				<TextBlock VerticalAlignment="Center">Loaded</TextBlock>
+			</Border>
+
+			<Border Background="{DynamicResource AccentColor}" Grid.Column="3" IsHitTestVisible="False" />
+
+			<Border Background="{DynamicResource AccentColor}" Grid.Column="4" IsHitTestVisible="True" VerticalAlignment="Stretch">
+				<StackPanel Orientation="Horizontal">
+					<Button Name="Minimize" Classes="Borderless">Min</Button>
+					<Button Name="Maximize" Classes="Borderless">Max</Button>
+					<Button Name="Close" Classes="Borderless">Close</Button>
+				</StackPanel>
+			</Border>
+		</Grid>
+
+		<!-- Left Border -->
+		<Panel Background="{DynamicResource AccentColor}" Width="{Binding BorderWidth}" Grid.RowSpan="3" />
+
+		<!-- Right Border -->
+		<Panel Background="{DynamicResource AccentColor}" Width="{Binding BorderWidth}" Grid.Column="2" Grid.RowSpan="3" />
+
+		<!-- Bottom Border -->
+		<Panel Background="{DynamicResource AccentColor}" Height="{Binding BorderWidth}" Grid.Row="2" Grid.Column="1" />
+
+		<Border Grid.Row="1" Grid.Column="1" Background="{Binding $self.Background}">
+			<ContentPresenter />
+		</Border>
+	</Grid>
+</UserControl>
