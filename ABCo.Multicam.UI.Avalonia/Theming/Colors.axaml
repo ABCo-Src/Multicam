@@ -1,9 +1,21 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:window="using:ABCo.Multicam.UI.Avalonia.Controls.Window">
 
-	<SolidColorBrush x:Key="AppBack">Black</SolidColorBrush>
+	<Design.PreviewWith>
+		<window:MainWindowView />
+	</Design.PreviewWith>
+
+	<SolidColorBrush x:Key="AppBack">#111</SolidColorBrush>
+	<SolidColorBrush x:Key="PanelBack">#222</SolidColorBrush>
+	<SolidColorBrush x:Key="PanelInnerBack">#333</SolidColorBrush>
+
+	<SolidColorBrush x:Key="ForegroundColor">White</SolidColorBrush>
 	
-	<SolidColorBrush x:Key="AccentColor">Green</SolidColorBrush>
+	<SolidColorBrush x:Key="AccentColor">#006900</SolidColorBrush>
+	<SolidColorBrush x:Key="AccentColor_PanelBack">DarkGreen</SolidColorBrush>
 	<SolidColorBrush x:Key="AccentColor_Inactive">DarkGreen</SolidColorBrush>
 	<SolidColorBrush x:Key="AccentColor_Highlight">LightGreen</SolidColorBrush>
+	
+	<SolidColorBrush x:Key="HighlightColor">#aaa</SolidColorBrush>
 </ResourceDictionary>

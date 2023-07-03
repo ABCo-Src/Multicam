@@ -18,6 +18,7 @@
 			<ResourceDictionary.MergedDictionaries>
 				
 				<!-- Resources -->
+				<ResourceInclude Source="/Theming/Icons.axaml" />
 				<ResourceInclude Source="/Theming/Colors.axaml" />
 				
 			</ResourceDictionary.MergedDictionaries>	

@@ -1,0 +1,136 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:viewmodels="using:ABCo.Multicam.UI.ViewModels"
+			 xmlns:sviewmodels="using:ABCo.Multicam.UI.ViewModels.Strips"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="ABCo.Multicam.UI.Avalonia.Pages.StripView"
+			 x:DataType="viewmodels:ProjectViewModel">
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="Auto" />
+		</Grid.ColumnDefinitions>
+		
+		<!-- Strips List -->
+		<ScrollViewer>
+			<StackPanel Name="StripsList" Margin="10 0" DataContext="{Binding Strips}" x:DataType="sviewmodels:ProjectStripsViewModel">
+				<!-- Strips -->
+				<ItemsControl Margin="0 5" ItemsSource="{Binding Items}">
+					<ItemsControl.ItemTemplate>
+						<DataTemplate x:DataType="sviewmodels:StripViewModel">
+							<Grid Margin="0 5">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="45" />
+									<ColumnDefinition Width="Auto" />
+									<ColumnDefinition Width="*" />
+								</Grid.ColumnDefinitions>
+
+								<!-- Left of Strip -->
+								<StackPanel Margin="10 25" Orientation="Horizontal">
+
+									<!-- Edit Button -->
+									<LayoutTransformControl VerticalAlignment="Center" Margin="5 0">
+										<LayoutTransformControl.LayoutTransform>
+											<RotateTransform Angle="-90" />
+										</LayoutTransformControl.LayoutTransform>
+
+										<Button Classes="Hyperlink" FontWeight="Bold" RenderTransform="rotate(-90deg)" Command="{Binding ToggleEdit}" Content="{Binding EditBtnText}" />
+									</LayoutTransformControl>
+
+									<!-- Strip Title -->
+									<LayoutTransformControl VerticalAlignment="Center">
+										<LayoutTransformControl.LayoutTransform>
+											<RotateTransform Angle="-90" />
+										</LayoutTransformControl.LayoutTransform>
+
+										<TextBlock FontWeight="Bold" RenderTransform="rotate(-90deg)" Text="{Binding StripTitle}" />
+									</LayoutTransformControl>
+								</StackPanel>
+
+								<!-- Title Separator -->
+								<Rectangle Grid.Column="1" Grid.RowSpan="2" Width="5" Fill="{DynamicResource AccentColor}"></Rectangle>
+
+								<!-- Content -->
+								<TextBlock Grid.Column="2" Margin="10 0" VerticalAlignment="Center">Content</TextBlock>
+							</Grid>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+
+				<!-- Create New Strip -->
+				<Grid Margin="10 5">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="54" />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+
+					<!-- Separator -->
+					<Rectangle Grid.Column="1" Grid.RowSpan="2" Width="5" Fill="{DynamicResource AccentColor}"></Rectangle>
+
+					<!-- New Button -->
+					<Button Classes="Dashed" Command="{Binding AddStrip}" Grid.Column="2" Margin="10 0" Width="{Binding $parent[Grid].Width}">New Strip</Button>
+				</Grid>
+			</StackPanel>
+		</ScrollViewer>
+		
+		<!-- Edit Panel -->
+		<Border Width="300" Grid.Column="1" Background="{DynamicResource PanelBack}" IsVisible="{Binding ShowEditingPanel}" DataContext="{Binding Strips}" x:DataType="sviewmodels:ProjectStripsViewModel">
+			<Grid DataContext="{Binding CurrentlyEditing}" x:DataType="sviewmodels:StripViewModel">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="*" />
+				</Grid.RowDefinitions>
+
+				<!-- Panel Titlebar -->
+				<Grid Background="{DynamicResource PanelInnerBack}">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
+					
+					<TextBlock Margin="5 10" VerticalAlignment="Center">Editing</TextBlock>
+					<Button Grid.Column="1" Classes="Borderless" Command="{Binding ToggleEdit}">
+						<Image Source="{DynamicResource CloseIcon}" Width="16" Height="16" />
+					</Button>
+				</Grid>
+
+				<!-- Panel Content -->
+				<StackPanel Grid.Row="1" Margin="10">
+
+					<!-- Shared panel controls -->
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="5" />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="5" />
+							<RowDefinition Height="Auto" />
+						</Grid.RowDefinitions>
+
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="*" />
+						</Grid.ColumnDefinitions>
+
+						<TextBlock Margin="0 0 5 0" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Title</TextBlock>
+						<TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding StripTitle}" />
+
+						<TextBlock Margin="0 0 5 0" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Position</TextBlock>
+						<Button Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" Command="{Binding MoveUp}">Move Up</Button>
+						<Button Grid.Row="2" Grid.Column="2" HorizontalAlignment="Stretch" Command="{Binding MoveDown}">Move Down</Button>
+						
+						<Button Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" Command="{Binding Delete}">Delete</Button>
+					</Grid>
+
+					<!-- Panel-specific items -->
+				</StackPanel>
+			</Grid>
+
+
+		</Border>
+	</Grid>
+</UserControl>

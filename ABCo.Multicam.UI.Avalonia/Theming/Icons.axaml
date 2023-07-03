@@ -1,0 +1,15 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+	<Pen x:Key="IconPen" Brush="{DynamicResource ForegroundColor}" Thickness="2" />
+	
+    <!-- Close Icon -->
+	<DrawingImage x:Key="CloseIcon">
+		<GeometryDrawing Pen="{DynamicResource IconPen}">
+			<GeometryGroup>
+				<LineGeometry StartPoint="14,2" EndPoint="2,14" />
+				<LineGeometry StartPoint="2,2" EndPoint="14,14" />
+			</GeometryGroup>
+		</GeometryDrawing>
+	</DrawingImage>
+</ResourceDictionary>

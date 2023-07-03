@@ -24,15 +24,13 @@ public partial class App : Application
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var container = UIAvaloniaStatics.InitializeContainer(desktop);
-            desktop.MainWindow = new MainWindow()
-            {
-                DataContext = container.GetInstance(typeof(MainWindowViewModel))
-            };
+            desktop.MainWindow = new MainWindow();
+            var container = UIAvaloniaStatics.InitializeContainer(desktop, desktop.MainWindow);
+            desktop.MainWindow.DataContext = container.GetInstance(typeof(MainWindowViewModel));
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
-            var container = UIAvaloniaStatics.InitializeContainer(singleViewPlatform);
+            var container = UIAvaloniaStatics.InitializeContainer(singleViewPlatform, null);
             singleViewPlatform.MainView = new MainWindowView()
             {
                 DataContext = container.GetInstance(typeof(MainWindowViewModel))

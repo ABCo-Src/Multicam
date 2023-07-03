@@ -1,4 +1,7 @@
-﻿using ABCo.Multicam.UI.ViewModels;
+﻿using ABCo.Multicam.Core;
+using ABCo.Multicam.Tests.UI;
+using ABCo.Multicam.UI.ViewModels;
+using ABCo.Multicam.UI.ViewModels.Strips;
 using LightInject;
 using System;
 using System.Collections.Generic;
@@ -14,8 +17,12 @@ namespace ABCo.Multicam.UI
         {
             // Register view-models
             container.RegisterSingleton<MainWindowViewModel>();
-            container.RegisterSingleton<IApplicationViewModel, ApplicationViewModel>();
-            container.RegisterSingleton<IProjectViewModel, ProjectViewModel>();
+            //container.RegisterSingleton<IApplicationViewModel, ApplicationViewModel>();
+            //container.RegisterSingleton<IProjectViewModel, ProjectViewModel>();
+            //container.RegisterSingleton<IProjectStripsViewModel, ProjectStripsViewModel>();
+            //container.RegisterSingleton<IStripViewModel, StripViewModel>();
+
+            CoreStatics.Initialize(container);
         }
     }
 }
