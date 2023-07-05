@@ -11,19 +11,22 @@ using System.Threading.Tasks;
 namespace ABCo.Multicam.UI.ViewModels.Strips
 {
     public interface IStripViewModel { }
-    public partial class StripViewModel : ViewModelBase, IStripViewModel
+    public abstract partial class StripViewModel : ViewModelBase, IStripViewModel
     {
+        protected IServiceSource _serviceSource;
         public readonly IProjectStripsViewModel Parent;
+
         [ObservableProperty] string _stripTitle;
         [ObservableProperty][NotifyPropertyChangedFor(nameof(EditBtnText))] bool _isEditing;
 
         public string EditBtnText => IsEditing ? "Finish" : "Edit";
 
-        public StripViewModel(IServiceSource manager, IProjectStripsViewModel parent)
+        public StripViewModel(IServiceSource serviceSource, IProjectStripsViewModel parent)
         {
-            if (manager == null) throw new ServiceSourceNotGivenException();
+            if (serviceSource == null) throw new ServiceSourceNotGivenException();
 
             StripTitle = "New Strip";
+            _serviceSource = serviceSource;
             Parent = parent;
         }
 

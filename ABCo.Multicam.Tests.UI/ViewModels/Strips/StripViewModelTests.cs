@@ -10,20 +10,28 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
 {
+    public class DummyStripViewModel : StripViewModel
+    {
+        public IServiceSource Source => _serviceSource;
+        public DummyStripViewModel(IServiceSource serviceSource, IProjectStripsViewModel parent) : base(serviceSource, parent) { }
+    }
+
     [TestClass]
     public class StripViewModelTests
     {
         [TestMethod]
-        public void Ctor_ThrowsWithNoServiceSource() => Assert.ThrowsException<ServiceSourceNotGivenException>(() => new StripViewModel(null!, Mock.Of<IProjectStripsViewModel>()));
+        public void Ctor_ThrowsWithNoServiceSource() => Assert.ThrowsException<ServiceSourceNotGivenException>(() => new DummyStripViewModel(null!, Mock.Of<IProjectStripsViewModel>()));
 
         [TestMethod]
         public void Ctor()
         {
             var parent = Mock.Of<IProjectStripsViewModel>();
-            var vm = new StripViewModel(Mock.Of<IServiceSource>(), parent);
+            var serviceSource = Mock.Of<IServiceSource>();
+            var vm = new DummyStripViewModel(serviceSource, parent);
 
             Assert.AreEqual("New Strip", vm.StripTitle);
             Assert.AreEqual(parent, vm.Parent);
+            Assert.AreEqual(serviceSource, vm.Source);
             Assert.AreEqual(false, vm.IsEditing);
         }
 
@@ -31,7 +39,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
         public void ToggleEdit_NotEditing()
         {
             var parent = new Mock<IProjectStripsViewModel>();
-            var vm = new StripViewModel(Mock.Of<IServiceSource>(), parent.Object);
+            var vm = new DummyStripViewModel(Mock.Of<IServiceSource>(), parent.Object);
 
             vm.ToggleEdit();
 
@@ -42,7 +50,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
         public void ToggleEdit_Editing()
         {
             var parent = new Mock<IProjectStripsViewModel>();
-            var vm = new StripViewModel(Mock.Of<IServiceSource>(), parent.Object);
+            var vm = new DummyStripViewModel(Mock.Of<IServiceSource>(), parent.Object);
 
             vm.IsEditing = true;
             vm.ToggleEdit();
@@ -53,7 +61,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
         [TestMethod]
         public void EditBtnText_NotEditing()
         {
-            var vm = new StripViewModel(Mock.Of<IServiceSource>(), Mock.Of<IProjectStripsViewModel>());
+            var vm = new DummyStripViewModel(Mock.Of<IServiceSource>(), Mock.Of<IProjectStripsViewModel>());
             vm.IsEditing = false;
             Assert.AreEqual("Edit", vm.EditBtnText);
         }
@@ -61,7 +69,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
         [TestMethod]
         public void EditBtnText_Editing()
         {
-            var vm = new StripViewModel(Mock.Of<IServiceSource>(), Mock.Of<IProjectStripsViewModel>());
+            var vm = new DummyStripViewModel(Mock.Of<IServiceSource>(), Mock.Of<IProjectStripsViewModel>());
             vm.IsEditing = true;
             Assert.AreEqual("Finish", vm.EditBtnText);
         }
@@ -70,7 +78,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
         public void MoveDown()
         {
             var parent = new Mock<IProjectStripsViewModel>();
-            var vm = new StripViewModel(Mock.Of<IServiceSource>(), parent.Object);
+            var vm = new DummyStripViewModel(Mock.Of<IServiceSource>(), parent.Object);
             vm.MoveDown();
             parent.Verify(i => i.MoveDown(vm));
         }
@@ -79,7 +87,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
         public void MoveUp()
         {
             var parent = new Mock<IProjectStripsViewModel>();
-            var vm = new StripViewModel(Mock.Of<IServiceSource>(), parent.Object);
+            var vm = new DummyStripViewModel(Mock.Of<IServiceSource>(), parent.Object);
             vm.MoveUp();
             parent.Verify(i => i.MoveUp(vm));
         }
@@ -88,7 +96,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
         public void Delete()
         {
             var parent = new Mock<IProjectStripsViewModel>();
-            var vm = new StripViewModel(Mock.Of<IServiceSource>(), parent.Object);
+            var vm = new DummyStripViewModel(Mock.Of<IServiceSource>(), parent.Object);
             vm.Delete();
             parent.Verify(i => i.Delete(vm));
         }

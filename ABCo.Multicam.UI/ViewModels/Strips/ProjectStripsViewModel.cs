@@ -51,7 +51,7 @@ namespace ABCo.Multicam.UI.ViewModels.Strips
 
         public void AddStrip()
         {
-            Items.Add(new StripViewModel(_manager, this));
+            Items.Add(new BusGroupStripViewModel(_manager, this));
         }
 
         public void EditStrip(StripViewModel vm)
