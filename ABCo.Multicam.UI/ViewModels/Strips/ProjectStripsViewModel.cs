@@ -1,6 +1,7 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Tests.UI;
 using ABCo.Multicam.UI.Helpers;
+using ABCo.Multicam.UI.ViewModels.Strips.BusGroup;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
@@ -51,7 +52,7 @@ namespace ABCo.Multicam.UI.ViewModels.Strips
 
         public void AddStrip()
         {
-            Items.Add(new BusGroupStripViewModel(_manager, this));
+            Items.Add(new SwitcherStripViewModel(_manager, this));
         }
 
         public void EditStrip(StripViewModel vm)

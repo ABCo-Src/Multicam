@@ -1,5 +1,6 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.UI.ViewModels.Strips;
+using ABCo.Multicam.UI.ViewModels.Strips.BusGroup;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -7,14 +8,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
+namespace ABCo.Multicam.Tests.UI.ViewModels.Strips.BusGroup
 {
     [TestClass]
-    public class BusGroupStripViewModelTests
+    public class SwitcherStripViewModelTests
     {
-        class Dummy : BusGroupStripViewModel
+        class Dummy : SwitcherStripViewModel
         {
-            protected IServiceSource Source => _serviceSource;
+            public IServiceSource Source => _serviceSource;
             public Dummy(IServiceSource serviceSource, IProjectStripsViewModel parent) : base(serviceSource, parent) { }
         }
 
@@ -23,10 +24,11 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
         {
             var parent = Mock.Of<IProjectStripsViewModel>();
             var serviceSource = Mock.Of<IServiceSource>();
-            var vm = new DummyStripViewModel(serviceSource, parent);
+            var vm = new Dummy(serviceSource, parent);
 
             Assert.AreEqual(parent, vm.Parent);
             Assert.AreEqual(serviceSource, vm.Source);
+            Assert.IsNotNull(vm.ButtonColumns);
         }
     }
 }
