@@ -14,8 +14,7 @@ namespace ABCo.Multicam.Core.Structures
     public enum StripTypes
     {
         // v1 features
-        BusGroup,
-        SwitcherLink,
+        Switcher,
         Tally,
         Logger,
         Generator

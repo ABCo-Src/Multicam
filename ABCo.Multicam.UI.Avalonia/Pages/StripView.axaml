@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:viewmodels="using:ABCo.Multicam.UI.ViewModels"
+			 xmlns:locators="using:ABCo.Multicam.UI.Avalonia.Locators"
 			 xmlns:sviewmodels="using:ABCo.Multicam.UI.ViewModels.Strips"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="ABCo.Multicam.UI.Avalonia.Pages.StripView"
@@ -66,7 +67,8 @@
 									<Rectangle Grid.Column="1" Grid.RowSpan="2" Width="5" Fill="{DynamicResource AccentColor}"></Rectangle>
 
 									<!-- Content -->
-									<TextBlock Grid.Column="2" Margin="10 0" VerticalAlignment="Center">Content</TextBlock>
+									<ContentControl Grid.Column="2" Margin="10 0" Content="{Binding ContentView, Converter={x:Static locators:StripViewLocator.Instance}}" />
+									<!--<TextBlock Grid.Column="2" Margin="10 0" VerticalAlignment="Center">Content</TextBlock>-->
 								</Grid>
 							</DataTemplate>
 						</ItemsControl.ItemTemplate>

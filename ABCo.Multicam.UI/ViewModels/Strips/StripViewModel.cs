@@ -1,4 +1,5 @@
 ﻿using ABCo.Multicam.Core;
+using ABCo.Multicam.UI.Enumerations;
 using ABCo.Multicam.UI.Helpers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
@@ -20,6 +21,8 @@ namespace ABCo.Multicam.UI.ViewModels.Strips
         [ObservableProperty][NotifyPropertyChangedFor(nameof(EditBtnText))] bool _isEditing;
 
         public string EditBtnText => IsEditing ? "Finish" : "Edit";
+
+        public abstract StripViewType ContentView { get; }
 
         public StripViewModel(IServiceSource serviceSource, IProjectStripsViewModel parent)
         {

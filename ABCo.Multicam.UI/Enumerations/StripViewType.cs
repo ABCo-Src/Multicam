@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ABCo.Multicam.UI.ViewModels.Strips.BusGroup
+namespace ABCo.Multicam.UI.Enumerations
 {
-    public class SwitcherButtonSetViewModel : ViewModelBase
+    public enum StripViewType
     {
-        
+        Switcher,
+        Unsupported
     }
 }

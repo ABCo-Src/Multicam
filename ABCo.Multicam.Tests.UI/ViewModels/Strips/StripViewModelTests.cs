@@ -1,4 +1,5 @@
 ﻿using ABCo.Multicam.Core;
+using ABCo.Multicam.UI.Enumerations;
 using ABCo.Multicam.UI.Helpers;
 using ABCo.Multicam.UI.ViewModels.Strips;
 using Moq;
@@ -13,6 +14,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
     public class DummyStripViewModel : StripViewModel
     {
         public IServiceSource Source => _serviceSource;
+        public override StripViewType ContentView => StripViewType.Unsupported;
         public DummyStripViewModel(IServiceSource serviceSource, IProjectStripsViewModel parent) : base(serviceSource, parent) { }
     }
 
