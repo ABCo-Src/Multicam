@@ -1,4 +1,5 @@
 ﻿using ABCo.Multicam.Core;
+using ABCo.Multicam.UI.Enumerations;
 using ABCo.Multicam.UI.Helpers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
@@ -10,29 +11,40 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.ViewModels.Strips.Switcher
 {
-    public partial class SwitcherBusViewModel : ViewModelBase
+    public interface ISwitcherBusViewModel { }
+    public partial class SwitcherBusViewModel : ViewModelBase, ISwitcherBusViewModel
     {
         public readonly ISwitcherStripViewModel Parent;
 
-        [ObservableProperty] ObservableCollection<SwitcherInputButtonViewModel> _programInputs;
-        [ObservableProperty] ObservableCollection<SwitcherInputButtonViewModel> _previewInputs;
+        [ObservableProperty] ObservableCollection<SwitcherButtonViewModel> _programInputs;
+        [ObservableProperty] ObservableCollection<SwitcherButtonViewModel> _previewInputs;
+
+        [ObservableProperty] SwitcherButtonViewModel _cutButton;
+        [ObservableProperty] SwitcherButtonViewModel _autoButton;
 
         public SwitcherBusViewModel(IServiceSource source, ISwitcherStripViewModel parent)
         {
             if (source == null) throw new ServiceSourceNotGivenException();
 
             Parent = parent;
-            ProgramInputs = new ObservableCollection<SwitcherInputButtonViewModel>()
+            ProgramInputs = new ObservableCollection<SwitcherButtonViewModel>()
             {
-                new SwitcherInputButtonViewModel(),
-                new SwitcherInputButtonViewModel(),
-                new SwitcherInputButtonViewModel()
+                new SwitcherButtonViewModel(source, this, "Cam1") { Status = SwitcherButtonStatus.ProgramActive },
+                new SwitcherButtonViewModel(source, this, "Cam2"),
+                new SwitcherButtonViewModel(source, this, "Cam3"),
+                new SwitcherButtonViewModel(source, this, "Cam4")
             };
-            PreviewInputs = new ObservableCollection<SwitcherInputButtonViewModel>()
+
+            PreviewInputs = new ObservableCollection<SwitcherButtonViewModel>()
             {
-                new SwitcherInputButtonViewModel(),
-                new SwitcherInputButtonViewModel()
+                new SwitcherButtonViewModel(source, this, "Cam1"),
+                new SwitcherButtonViewModel(source, this, "Cam2") { Status = SwitcherButtonStatus.PreviewActive },
+                new SwitcherButtonViewModel(source, this, "Cam3"),
+                new SwitcherButtonViewModel(source, this, "Cam4")
             };
+
+            _cutButton = new SwitcherButtonViewModel(source, this, "Cut");
+            _autoButton = new SwitcherButtonViewModel(source, this, "Auto");
         }
     }
 }

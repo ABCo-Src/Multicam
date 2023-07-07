@@ -14,7 +14,7 @@
 		</Grid.RowDefinitions>
 
 		<!-- Switcher Name -->
-		<TextBlock>Currently unlinked</TextBlock>
+		<TextBlock Margin="0 5" FontSize="16">Currently unlinked</TextBlock>
 
 		<!-- Buses -->
 		<Grid Grid.Row="1">
@@ -24,14 +24,29 @@
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
 			
-			<!-- Inputs -->
+			<!-- Buses -->
 			<ItemsControl Grid.Column="1" ItemsSource="{Binding Buses}">
 				<ItemsControl.ItemTemplate>
 					<DataTemplate x:DataType="viewmodels:SwitcherBusViewModel">
-						<StackPanel>
+						<Grid Margin="0 0 0 10">
+
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+							</Grid.RowDefinitions>
+
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="Auto" />
+							</Grid.ColumnDefinitions>
+							
+							<!-- Labels -->
+							<TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0 0 10 10">Program</TextBlock>
+							<TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0 0 10 10">Preview</TextBlock>
 
 							<!-- Program -->
-							<ItemsControl ItemsSource="{Binding ProgramInputs}">
+							<ItemsControl ItemsSource="{Binding ProgramInputs}" Grid.Row="0" Grid.Column="1">
 								<ItemsControl.ItemsPanel>
 									<ItemsPanelTemplate>
 										<StackPanel Orientation="Horizontal" />
@@ -39,14 +54,14 @@
 								</ItemsControl.ItemsPanel>
 
 								<ItemsControl.ItemTemplate>
-									<DataTemplate x:DataType="viewmodels:SwitcherInputButtonViewModel">
+									<DataTemplate>
 										<controls:SwitcherButton />
 									</DataTemplate>
 								</ItemsControl.ItemTemplate>
 							</ItemsControl>
 
 							<!-- Preview -->
-							<ItemsControl ItemsSource="{Binding PreviewInputs}">
+							<ItemsControl ItemsSource="{Binding PreviewInputs}" Grid.Row="1" Grid.Column="1">
 								<ItemsControl.ItemsPanel>
 									<ItemsPanelTemplate>
 										<StackPanel Orientation="Horizontal" />
@@ -54,13 +69,25 @@
 								</ItemsControl.ItemsPanel>
 								
 								<ItemsControl.ItemTemplate>
-									<DataTemplate x:DataType="viewmodels:SwitcherInputButtonViewModel">
+									<DataTemplate>
 										<controls:SwitcherButton />
 									</DataTemplate>
 								</ItemsControl.ItemTemplate>
 							</ItemsControl>
 
-						</StackPanel>
+							<!-- Control -->
+							<StackPanel Orientation="Horizontal" Margin="60 0" Grid.Row="0" Grid.Column="2">
+								
+								<!-- Cut -->
+								<controls:SwitcherButton DataContext="{Binding CutButton}" />
+
+								<!-- Auto -->
+								<controls:SwitcherButton DataContext="{Binding AutoButton}" />
+								
+							</StackPanel>
+						</Grid>
+						
+						
 					</DataTemplate>
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>

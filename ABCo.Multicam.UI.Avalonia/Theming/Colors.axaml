@@ -11,10 +11,10 @@
 	<SolidColorBrush x:Key="PanelInnerBack">#333</SolidColorBrush>
 
 	<SolidColorBrush x:Key="StripButtonBack">#333</SolidColorBrush>
-	<SolidColorBrush x:Key="ButtonOutline">#aaa</SolidColorBrush>
+	<SolidColorBrush x:Key="StripButtonOutline">#aaa</SolidColorBrush>
 	<SolidColorBrush x:Key="ButtonActive">#999</SolidColorBrush>
-	<SolidColorBrush x:Key="ProgramButtonActive">Red</SolidColorBrush>
 	<SolidColorBrush x:Key="PreviewButtonActive">Green</SolidColorBrush>
+	<SolidColorBrush x:Key="ProgramButtonActive">Red</SolidColorBrush>
 
 	<SolidColorBrush x:Key="ForegroundColor">White</SolidColorBrush>
 	

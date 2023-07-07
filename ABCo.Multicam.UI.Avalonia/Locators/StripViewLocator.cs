@@ -21,15 +21,12 @@ namespace ABCo.Multicam.UI.Avalonia.Locators
             if (value is not StripViewType) return new BindingNotification(new InvalidCastException(), BindingErrorType.Error);
 
             StripViewType type = (StripViewType)value;
-            switch (type)
+            return type switch
             {
-                case StripViewType.Switcher:
-                    return new SwitcherStripView();
-                case StripViewType.Unsupported:
-                    return new TextBlock() { Text = "Unsupported " };
-                default:
-                    return new BindingNotification(new Exception("Unimplemented StripViewType value in the locator."), BindingErrorType.Error);
-            }
+                StripViewType.Switcher => new SwitcherStripView(),
+                StripViewType.Unsupported => new TextBlock() { Text = "Unsupported - updating to the latest version may help." },
+                _ => new BindingNotification(new Exception("Unimplemented StripViewType value in the locator."), BindingErrorType.Error),
+            };
         }
 
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

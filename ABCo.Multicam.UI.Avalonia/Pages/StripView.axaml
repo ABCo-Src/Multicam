@@ -22,10 +22,12 @@
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="*" />
 						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
 					</Grid.ColumnDefinitions>
 
-					<TextBlock>System loading...</TextBlock>
-					<Button Grid.Column="1">Configure</Button>
+					<TextBlock VerticalAlignment="Center" Margin="5 0">System loading...</TextBlock>
+					<Rectangle Grid.Column="1" Width="2" VerticalAlignment="Stretch" Fill="White" />
+					<Button Grid.Column="2" Classes="Borderless">Configure</Button>
 				</Grid>
 
 				<!-- Strips -->

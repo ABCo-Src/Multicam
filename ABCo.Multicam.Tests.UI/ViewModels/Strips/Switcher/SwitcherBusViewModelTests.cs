@@ -27,6 +27,11 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips.Switcher
             Assert.AreEqual(parent, vm.Parent);
             Assert.IsNotNull(vm.ProgramInputs);
             Assert.IsNotNull(vm.PreviewInputs);
+            Assert.IsNotNull(vm.CutButton);
+            Assert.IsNotNull(vm.AutoButton);
+
+            Assert.AreEqual("Cut", vm.CutButton.Text);
+            Assert.AreEqual("Auto", vm.AutoButton.Text);
         }
     }
 }
