@@ -1,4 +1,5 @@
 ﻿using ABCo.Multicam.Core;
+using ABCo.Multicam.UI.Enumerations;
 using ABCo.Multicam.UI.Helpers;
 using ABCo.Multicam.UI.ViewModels.Strips.Switcher;
 using Moq;
@@ -25,6 +26,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips.Switcher
 
             Assert.AreEqual(parent, vm.Parent);
             Assert.AreEqual("abc", vm.Text);
+            Assert.AreEqual(SwitcherButtonStatus.NeutralInactive, vm.Status);
         }
     }
 }
