@@ -2,15 +2,73 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:viewmodels="using:ABCo.Multicam.UI.ViewModels.Strips.Switcher"
+			 xmlns:controls="using:ABCo.Multicam.UI.Avalonia.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="ABCo.Multicam.UI.Avalonia.Views.Strips.SwitcherStripView">
+             x:Class="ABCo.Multicam.UI.Avalonia.Views.Strips.SwitcherStripView"
+			 x:DataType="viewmodels:SwitcherStripViewModel">
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 
-		<!-- Switcher Switcher -->
-		
+		<!-- Switcher Name -->
+		<TextBlock>Currently unlinked</TextBlock>
+
+		<!-- Buses -->
+		<Grid Grid.Row="1">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			
+			<!-- Inputs -->
+			<ItemsControl Grid.Column="1" ItemsSource="{Binding Buses}">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate x:DataType="viewmodels:SwitcherBusViewModel">
+						<StackPanel>
+
+							<!-- Program -->
+							<ItemsControl ItemsSource="{Binding ProgramInputs}">
+								<ItemsControl.ItemsPanel>
+									<ItemsPanelTemplate>
+										<StackPanel Orientation="Horizontal" />
+									</ItemsPanelTemplate>
+								</ItemsControl.ItemsPanel>
+
+								<ItemsControl.ItemTemplate>
+									<DataTemplate x:DataType="viewmodels:SwitcherInputButtonViewModel">
+										<controls:SwitcherButton />
+									</DataTemplate>
+								</ItemsControl.ItemTemplate>
+							</ItemsControl>
+
+							<!-- Preview -->
+							<ItemsControl ItemsSource="{Binding PreviewInputs}">
+								<ItemsControl.ItemsPanel>
+									<ItemsPanelTemplate>
+										<StackPanel Orientation="Horizontal" />
+									</ItemsPanelTemplate>
+								</ItemsControl.ItemsPanel>
+								
+								<ItemsControl.ItemTemplate>
+									<DataTemplate x:DataType="viewmodels:SwitcherInputButtonViewModel">
+										<controls:SwitcherButton />
+									</DataTemplate>
+								</ItemsControl.ItemTemplate>
+							</ItemsControl>
+
+						</StackPanel>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+			
+			
+
+			<!-- Controls -->
+		</Grid>
+
 	</Grid>
 </UserControl>

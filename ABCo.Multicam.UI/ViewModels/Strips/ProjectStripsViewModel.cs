@@ -1,7 +1,7 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Tests.UI;
 using ABCo.Multicam.UI.Helpers;
-using ABCo.Multicam.UI.ViewModels.Strips.BusGroup;
+using ABCo.Multicam.UI.ViewModels.Strips.Switcher;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;

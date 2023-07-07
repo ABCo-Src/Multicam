@@ -1,7 +1,7 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.UI.Enumerations;
 using ABCo.Multicam.UI.ViewModels.Strips;
-using ABCo.Multicam.UI.ViewModels.Strips.BusGroup;
+using ABCo.Multicam.UI.ViewModels.Strips.Switcher;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -29,7 +29,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips.Switcher
 
             Assert.AreEqual(parent, vm.Parent);
             Assert.AreEqual(serviceSource, vm.Source);
-            Assert.IsNotNull(vm.ButtonColumns);
+            Assert.IsNotNull(vm.Buses);
         }
 
         [TestMethod]
