@@ -16,8 +16,8 @@ namespace ABCo.Multicam.UI.ViewModels.Strips.Switcher
     {
         public readonly ISwitcherStripViewModel Parent;
 
-        [ObservableProperty] ObservableCollection<SwitcherButtonViewModel> _programInputs;
-        [ObservableProperty] ObservableCollection<SwitcherButtonViewModel> _previewInputs;
+        [ObservableProperty] ObservableCollection<SwitcherButtonViewModel> _programBus;
+        [ObservableProperty] ObservableCollection<SwitcherButtonViewModel> _previewBus;
 
         [ObservableProperty] SwitcherButtonViewModel _cutButton;
         [ObservableProperty] SwitcherButtonViewModel _autoButton;
@@ -27,7 +27,7 @@ namespace ABCo.Multicam.UI.ViewModels.Strips.Switcher
             if (source == null) throw new ServiceSourceNotGivenException();
 
             Parent = parent;
-            ProgramInputs = new ObservableCollection<SwitcherButtonViewModel>()
+            _programBus = new ObservableCollection<SwitcherButtonViewModel>()
             {
                 new SwitcherButtonViewModel(source, this, "Cam1") { Status = SwitcherButtonStatus.ProgramActive },
                 new SwitcherButtonViewModel(source, this, "Cam2"),
@@ -35,7 +35,7 @@ namespace ABCo.Multicam.UI.ViewModels.Strips.Switcher
                 new SwitcherButtonViewModel(source, this, "Cam4")
             };
 
-            PreviewInputs = new ObservableCollection<SwitcherButtonViewModel>()
+            _previewBus = new ObservableCollection<SwitcherButtonViewModel>()
             {
                 new SwitcherButtonViewModel(source, this, "Cam1"),
                 new SwitcherButtonViewModel(source, this, "Cam2") { Status = SwitcherButtonStatus.PreviewActive },

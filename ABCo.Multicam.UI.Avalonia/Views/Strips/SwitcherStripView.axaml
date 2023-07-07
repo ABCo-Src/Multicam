@@ -46,7 +46,7 @@
 							<TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0 0 10 10">Preview</TextBlock>
 
 							<!-- Program -->
-							<ItemsControl ItemsSource="{Binding ProgramInputs}" Grid.Row="0" Grid.Column="1">
+							<ItemsControl ItemsSource="{Binding ProgramBus}" Grid.Row="0" Grid.Column="1">
 								<ItemsControl.ItemsPanel>
 									<ItemsPanelTemplate>
 										<StackPanel Orientation="Horizontal" />
@@ -61,7 +61,7 @@
 							</ItemsControl>
 
 							<!-- Preview -->
-							<ItemsControl ItemsSource="{Binding PreviewInputs}" Grid.Row="1" Grid.Column="1">
+							<ItemsControl ItemsSource="{Binding ProgramBus}" Grid.Row="1" Grid.Column="1">
 								<ItemsControl.ItemsPanel>
 									<ItemsPanelTemplate>
 										<StackPanel Orientation="Horizontal" />

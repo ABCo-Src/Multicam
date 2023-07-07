@@ -25,8 +25,8 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips.Switcher
             var vm = new SwitcherMixBlockViewModel(serviceSource, parent);
 
             Assert.AreEqual(parent, vm.Parent);
-            Assert.IsNotNull(vm.ProgramInputs);
-            Assert.IsNotNull(vm.PreviewInputs);
+            Assert.IsNotNull(vm.ProgramBus);
+            Assert.IsNotNull(vm.PreviewBus);
             Assert.IsNotNull(vm.CutButton);
             Assert.IsNotNull(vm.AutoButton);
 
