@@ -14,8 +14,8 @@ namespace ABCo.Multicam.UI.ViewModels.Strips.Switcher
     public interface ISwitcherStripViewModel { }
     public partial class SwitcherStripViewModel : StripViewModel, ISwitcherStripViewModel
     {
-        [ObservableProperty] ObservableCollection<SwitcherBusViewModel> _buses;
-        public SwitcherStripViewModel(IServiceSource serviceSource, IProjectStripsViewModel parent) : base(serviceSource, parent) => _buses = new ObservableCollection<SwitcherBusViewModel>() { new SwitcherBusViewModel(serviceSource, this), new SwitcherBusViewModel(serviceSource, this) };
+        [ObservableProperty] ObservableCollection<SwitcherMixBlockViewModel> _mixBlocks;
+        public SwitcherStripViewModel(IServiceSource serviceSource, IProjectStripsViewModel parent) : base(serviceSource, parent) => _mixBlocks = new ObservableCollection<SwitcherMixBlockViewModel>() { new SwitcherMixBlockViewModel(serviceSource, this), new SwitcherMixBlockViewModel(serviceSource, this) };
 
         public override StripViewType ContentView => StripViewType.Switcher;
     }

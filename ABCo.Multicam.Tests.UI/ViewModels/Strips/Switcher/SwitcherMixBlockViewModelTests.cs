@@ -12,17 +12,17 @@ using System.Threading.Tasks;
 namespace ABCo.Multicam.Tests.UI.ViewModels.Strips.Switcher
 {
     [TestClass]
-    public class SwitcherBusViewModelTests
+    public class SwitcherMixBlockViewModelTests
     {
         [TestMethod]
-        public void Ctor_ThrowsWithNoServiceSource() => Assert.ThrowsException<ServiceSourceNotGivenException>(() => new SwitcherBusViewModel(null!, Mock.Of<ISwitcherStripViewModel>()));
+        public void Ctor_ThrowsWithNoServiceSource() => Assert.ThrowsException<ServiceSourceNotGivenException>(() => new SwitcherMixBlockViewModel(null!, Mock.Of<ISwitcherStripViewModel>()));
 
         [TestMethod]
         public void Ctor()
         {
             var parent = Mock.Of<ISwitcherStripViewModel>();
             var serviceSource = Mock.Of<IServiceSource>();
-            var vm = new SwitcherBusViewModel(serviceSource, parent);
+            var vm = new SwitcherMixBlockViewModel(serviceSource, parent);
 
             Assert.AreEqual(parent, vm.Parent);
             Assert.IsNotNull(vm.ProgramInputs);

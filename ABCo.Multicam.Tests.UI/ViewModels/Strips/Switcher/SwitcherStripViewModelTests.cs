@@ -29,7 +29,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips.Switcher
 
             Assert.AreEqual(parent, vm.Parent);
             Assert.AreEqual(serviceSource, vm.Source);
-            Assert.IsNotNull(vm.Buses);
+            Assert.IsNotNull(vm.MixBlocks);
         }
 
         [TestMethod]

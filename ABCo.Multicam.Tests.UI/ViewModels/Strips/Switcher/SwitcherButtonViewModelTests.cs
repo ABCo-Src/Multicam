@@ -15,12 +15,12 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips.Switcher
     public class SwitcherButtonViewModelTests
     {
         [TestMethod]
-        public void Ctor_ThrowsWithNoServiceSource() => Assert.ThrowsException<ServiceSourceNotGivenException>(() => new SwitcherButtonViewModel(null!, Mock.Of<ISwitcherBusViewModel>(), ""));
+        public void Ctor_ThrowsWithNoServiceSource() => Assert.ThrowsException<ServiceSourceNotGivenException>(() => new SwitcherButtonViewModel(null!, Mock.Of<ISwitcherMixBlockViewModel>(), ""));
 
         [TestMethod]
         public void Ctor()
         {
-            var parent = Mock.Of<ISwitcherBusViewModel>();
+            var parent = Mock.Of<ISwitcherMixBlockViewModel>();
             var serviceSource = Mock.Of<IServiceSource>();
             var vm = new SwitcherButtonViewModel(serviceSource, parent, "abc");
 

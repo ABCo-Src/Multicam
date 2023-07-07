@@ -11,8 +11,8 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.ViewModels.Strips.Switcher
 {
-    public interface ISwitcherBusViewModel { }
-    public partial class SwitcherBusViewModel : ViewModelBase, ISwitcherBusViewModel
+    public interface ISwitcherMixBlockViewModel { }
+    public partial class SwitcherMixBlockViewModel : ViewModelBase, ISwitcherMixBlockViewModel
     {
         public readonly ISwitcherStripViewModel Parent;
 
@@ -22,7 +22,7 @@ namespace ABCo.Multicam.UI.ViewModels.Strips.Switcher
         [ObservableProperty] SwitcherButtonViewModel _cutButton;
         [ObservableProperty] SwitcherButtonViewModel _autoButton;
 
-        public SwitcherBusViewModel(IServiceSource source, ISwitcherStripViewModel parent)
+        public SwitcherMixBlockViewModel(IServiceSource source, ISwitcherStripViewModel parent)
         {
             if (source == null) throw new ServiceSourceNotGivenException();
 
