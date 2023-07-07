@@ -61,7 +61,7 @@
 							</ItemsControl>
 
 							<!-- Preview -->
-							<ItemsControl ItemsSource="{Binding ProgramBus}" Grid.Row="1" Grid.Column="1">
+							<ItemsControl ItemsSource="{Binding PreviewBus}" Grid.Row="1" Grid.Column="1">
 								<ItemsControl.ItemsPanel>
 									<ItemsPanelTemplate>
 										<StackPanel Orientation="Horizontal" />
