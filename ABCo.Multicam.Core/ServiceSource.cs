@@ -9,8 +9,8 @@ namespace ABCo.Multicam.Core
 {
     public interface IServiceSource
     {
-        T Create<T>() where T : class;
-        T CreateWithParent<T, TParent>(TParent parent) where T : class;
+        T Get<T>() where T : class;
+        T GetWithParent<T, TParent>(TParent parent) where T : class;
     }
 
     // NOTE: not unit tested, be careful when adding functionality.
@@ -18,7 +18,7 @@ namespace ABCo.Multicam.Core
     {
         ServiceContainer _container;
         public ServiceSource(ServiceContainer container) => _container = container;
-        public T Create<T>() where T : class => _container.GetInstance<T>();
-        public T CreateWithParent<T, TParent>(TParent parent) where T : class => _container.GetInstance<TParent, T>(parent);
+        public T Get<T>() where T : class => _container.GetInstance<T>();
+        public T GetWithParent<T, TParent>(TParent parent) where T : class => _container.GetInstance<TParent, T>(parent);
     }
 }

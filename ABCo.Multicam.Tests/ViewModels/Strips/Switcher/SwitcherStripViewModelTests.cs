@@ -1,4 +1,5 @@
 ﻿using ABCo.Multicam.Core;
+using ABCo.Multicam.Core.Switchers.Types;
 using ABCo.Multicam.UI.Enumerations;
 using ABCo.Multicam.UI.ViewModels.Strips;
 using ABCo.Multicam.UI.ViewModels.Strips.Switcher;
@@ -30,6 +31,18 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips.Switcher
             Assert.AreEqual(parent, vm.Parent);
             Assert.AreEqual(serviceSource, vm.Source);
             Assert.IsNotNull(vm.MixBlocks);
+        }
+
+        [TestMethod]
+        public void Ctor_StartsWithDummySwitcher()
+        {            
+            var dummySwitcher = Mock.Of<IDummySwitcher>();
+            var serviceSource = new Mock<IServiceSource>();
+            serviceSource.Setup(s => s.Get<IDummySwitcher>()).Returns(dummySwitcher);
+
+            var vm = new Dummy(serviceSource.Object, Mock.Of<IProjectStripsViewModel>());
+
+            serviceSource.Verify(s => s.Get<IDummySwitcher>(), Times.Once);
         }
 
         [TestMethod]

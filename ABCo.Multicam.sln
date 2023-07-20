@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ABCo.Multicam.UI", "ABCo.Mu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ABCo.Multicam.Core", "ABCo.Multicam.Core\ABCo.Multicam.Core.csproj", "{9B24EC47-6D83-46C6-83BF-80B0D44B3ED1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ABCo.Multicam.Tests.UI", "ABCo.Multicam.Tests.UI\ABCo.Multicam.Tests.UI.csproj", "{EF650F4A-0685-45EB-A06A-2BE2D8B59975}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ABCo.Multicam.Tests", "ABCo.Multicam.Tests\ABCo.Multicam.Tests.csproj", "{EF650F4A-0685-45EB-A06A-2BE2D8B59975}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
