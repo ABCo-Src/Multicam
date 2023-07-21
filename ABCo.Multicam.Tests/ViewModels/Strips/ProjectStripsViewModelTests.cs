@@ -27,8 +27,6 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
         //    return moq.Object;
         //}
 
-        IServiceSource CreateDefaultServiceSource() => Mock.Of<IServiceSource>();
-
         [TestMethod]
         public void Ctor_ThrowsWithNoServiceSource() => Assert.ThrowsException<ServiceSourceNotGivenException>(() => new ProjectStripsViewModel(CreateModelMockWithZeroStrips().Object, null!));
 
@@ -227,12 +225,6 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
             Assert.IsTrue(project.ShowEditingPanel);
         }
 
-        //[TestMethod]
-        //public void ShowEditingPanel_ChangesWithCurrentlyEditing()
-        //{
-        //    // TODO: Consistency check
-        //}
-
         static Mock<IStripManager> CreateModelMockWithZeroStrips()
         {
             var model = new Mock<IStripManager>();
@@ -247,5 +239,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
             model.SetReturnsDefault<IReadOnlyList<IRunningStrip>>(new List<IRunningStrip>() { strip  });
             return model;
         }
+
+        IServiceSource CreateDefaultServiceSource() => Mock.Of<IServiceSource>();
     }
 }

@@ -29,7 +29,19 @@ namespace ABCo.Multicam.UI.ViewModels.Strips
         IServiceSource _servSource;
 
         [ObservableProperty] ObservableCollection<StripViewModel> _items;
-        
+
+        public ProjectStripsViewModel(IStripManager manager, IServiceSource servSource)
+        {
+            if (servSource == null) throw new ServiceSourceNotGivenException();
+
+            _manager = manager;
+            _servSource = servSource;
+            _items = new ObservableCollection<StripViewModel>();
+
+            manager.SetStripsChangeForVM(OnStripsChange);
+            OnStripsChange();
+        }
+
         StripViewModel? _currentlyEditing;
         public StripViewModel? CurrentlyEditing
         {
@@ -52,29 +64,6 @@ namespace ABCo.Multicam.UI.ViewModels.Strips
         }
 
         public bool ShowEditingPanel => CurrentlyEditing != null;
-
-        public void CreateStrip()
-        {
-            _manager.CreateStrip();
-            //Items.Add(new SwitcherStripViewModel(_servSource, this));
-        }
-
-        public void EditStrip(StripViewModel vm)
-        {
-            CurrentlyEditing = vm;
-        }
-
-        public ProjectStripsViewModel(IStripManager manager, IServiceSource servSource)
-        {
-            if (servSource == null) throw new ServiceSourceNotGivenException();
-
-            _manager = manager;
-            _servSource = servSource;
-            _items = new ObservableCollection<StripViewModel>();
-
-            manager.SetStripsChangeForVM(OnStripsChange);
-            OnStripsChange();
-        }
 
         void OnStripsChange()
         {
@@ -104,6 +93,7 @@ namespace ABCo.Multicam.UI.ViewModels.Strips
                     CurrentlyEditing = null;
         }
 
+        public void CreateStrip() => _manager.CreateStrip();
         public void MoveDown(StripViewModel strip) => _manager.MoveDown(strip.BaseStrip);
         public void MoveUp(StripViewModel strip) => _manager.MoveUp(strip.BaseStrip);
         public void Delete(StripViewModel strip) => _manager.Delete(strip.BaseStrip);

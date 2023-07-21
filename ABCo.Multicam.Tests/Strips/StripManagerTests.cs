@@ -163,21 +163,6 @@ namespace ABCo.Multicam.Tests.Strips
             Assert.AreEqual(unmoving2, project.Strips[1]);
         }
 
-        // TODO: Add a sanity check to this function that verifies something *did* change
-        static void TestTriggerForSingleOperation(Action<StripManager> op, bool needed)
-        {
-            bool triggered = false;
-            var manager = new StripManager();
-
-            manager.CreateStrip();
-            manager.CreateStrip();
-            manager.SetStripsChangeForVM(() => triggered = true);
-
-            op(manager);
-
-            Assert.AreEqual(needed, triggered);
-        }
-
         [TestMethod]
         public void CreateStrip_Trigger()
         {
@@ -212,6 +197,22 @@ namespace ABCo.Multicam.Tests.Strips
 
             manager.Delete(manager.Strips[0]);
             Assert.IsTrue(triggered);
+        }
+
+
+        // TODO: Add a sanity check to this function that verifies something *did* change
+        static void TestTriggerForSingleOperation(Action<StripManager> op, bool needed)
+        {
+            bool triggered = false;
+            var manager = new StripManager();
+
+            manager.CreateStrip();
+            manager.CreateStrip();
+            manager.SetStripsChangeForVM(() => triggered = true);
+
+            op(manager);
+
+            Assert.AreEqual(needed, triggered);
         }
     }
 }
