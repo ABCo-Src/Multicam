@@ -1,5 +1,6 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Strips;
+using ABCo.Multicam.Core.Switchers;
 using ABCo.Multicam.Tests.UI;
 using ABCo.Multicam.UI.Helpers;
 using ABCo.Multicam.UI.ViewModels.Strips.Switcher;
@@ -79,7 +80,7 @@ namespace ABCo.Multicam.UI.ViewModels.Strips
                 int vm = oldItems.FindIndex(s => s.BaseStrip == baseItems[i]);
 
                 if (vm == -1)
-                    Items.Add(new UnsupportedStripViewModel(baseItems[i], _servSource, this));
+                    Items.Add(CreateVMForStrip(baseItems[i]));
                 else
                 {
                     Items.Add(oldItems[vm]);
@@ -92,6 +93,13 @@ namespace ABCo.Multicam.UI.ViewModels.Strips
                 if (oldItems[i] == CurrentlyEditing)
                     CurrentlyEditing = null;
         }
+
+        StripViewModel CreateVMForStrip(IRunningStrip strip) => strip switch
+        {
+            ISwitcherRunningStrip switchingStrip => new SwitcherStripViewModel(switchingStrip, _servSource, this),
+            _ => new UnsupportedStripViewModel(strip, _servSource, this),
+        };
+
 
         public void CreateStrip() => _manager.CreateStrip();
         public void MoveDown(StripViewModel strip) => _manager.MoveDown(strip.BaseStrip);

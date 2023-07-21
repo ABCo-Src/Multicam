@@ -1,13 +1,17 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Strips;
+using ABCo.Multicam.Core.Structures;
+using ABCo.Multicam.Core.Switchers;
 using ABCo.Multicam.UI.Helpers;
 using ABCo.Multicam.UI.ViewModels;
 using ABCo.Multicam.UI.ViewModels.Strips;
+using ABCo.Multicam.UI.ViewModels.Strips.Switcher;
 using Moq;
 using NuGet.Frameworks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -71,9 +75,16 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
         }
 
         [TestMethod]
-        public void StripsChange_ItemAdded_CorrectCreationMethod()
-        {
+        public void StripVMCreation_Unsupported() => TestStripVMCreation<IRunningStrip, UnsupportedStripViewModel>();
 
+        [TestMethod]
+        public void StripVMCreation_Switcher() => TestStripVMCreation<ISwitcherRunningStrip, SwitcherStripViewModel>();
+
+        void TestStripVMCreation<TStripInterface, TExpectedVMType>() where TStripInterface : class, IRunningStrip
+        {
+            IStripManager model = Mock.Of<IStripManager>(m => m.Strips == new List<IRunningStrip>() { Mock.Of<TStripInterface>() });
+            var project = new ProjectStripsViewModel(model, CreateDefaultServiceSource());
+            Assert.IsInstanceOfType(project.Items[0], typeof(TExpectedVMType));
         }
 
         [TestMethod]
