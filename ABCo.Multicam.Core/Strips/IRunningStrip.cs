@@ -7,7 +7,12 @@ using System.Threading.Tasks;
 namespace ABCo.Multicam.Core.Strips
 {
     /// <summary>
-    /// Manages all the (running) strips in the current project.
+    /// Represents a strip currently running
     /// </summary>
-    public interface IStripManager { }
+    public interface IRunningStrip
+    {
+        
+    }
+
+    class DummyRunningStrip : IRunningStrip { }
 }

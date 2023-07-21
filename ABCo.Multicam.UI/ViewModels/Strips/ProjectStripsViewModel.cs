@@ -1,4 +1,5 @@
 ﻿using ABCo.Multicam.Core;
+using ABCo.Multicam.Core.Strips;
 using ABCo.Multicam.Tests.UI;
 using ABCo.Multicam.UI.Helpers;
 using ABCo.Multicam.UI.ViewModels.Strips.Switcher;
@@ -23,6 +24,9 @@ namespace ABCo.Multicam.UI.ViewModels.Strips
 
     public partial class ProjectStripsViewModel : ViewModelBase, IProjectStripsViewModel
     {
+        IStripManager _manager;
+        IServiceSource _servSource;
+
         [ObservableProperty] ObservableCollection<StripViewModel> _items;
         
         StripViewModel? _currentlyEditing;
@@ -48,11 +52,9 @@ namespace ABCo.Multicam.UI.ViewModels.Strips
 
         public bool ShowEditingPanel => CurrentlyEditing != null;
 
-        IServiceSource _manager;
-
         public void AddStrip()
         {
-            Items.Add(new SwitcherStripViewModel(_manager, this));
+            Items.Add(new SwitcherStripViewModel(_servSource, this));
         }
 
         public void EditStrip(StripViewModel vm)
@@ -60,38 +62,27 @@ namespace ABCo.Multicam.UI.ViewModels.Strips
             CurrentlyEditing = vm;
         }
 
-        public ProjectStripsViewModel(IServiceSource manager)
+        public ProjectStripsViewModel(IServiceSource servSource, IStripManager manager)
         {
-            if (manager == null) throw new ServiceSourceNotGivenException();
+            if (servSource == null) throw new ServiceSourceNotGivenException();
 
-            _manager = manager;
+            _servSource = servSource;
             _items = new ObservableCollection<StripViewModel>();
         }
 
         public void MoveDown(StripViewModel strip)
         {
-            int indexOfStrip = Items.IndexOf(strip);
-
-            // Don't do anything if it's at the end
-            if (indexOfStrip == Items.Count - 1) return;
-
-            (Items[indexOfStrip], Items[indexOfStrip + 1]) = (Items[indexOfStrip + 1], Items[indexOfStrip]);
+            
         }
 
         public void MoveUp(StripViewModel strip)
         {
-            int indexOfStrip = Items.IndexOf(strip);
-
-            // Don't do anything if it's at the start
-            if (indexOfStrip == 0) return;
-
-            (Items[indexOfStrip], Items[indexOfStrip - 1]) = (Items[indexOfStrip - 1], Items[indexOfStrip]);
+            
         }
 
         public void Delete(StripViewModel strip)
         {
-            Items.Remove(strip);
-            if (strip == CurrentlyEditing) CurrentlyEditing = null;
+            
         }
     }
 }
