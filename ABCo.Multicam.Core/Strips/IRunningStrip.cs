@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ABCo.Multicam.Core.Switchers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,5 +15,5 @@ namespace ABCo.Multicam.Core.Strips
         
     }
 
-    class DummyRunningStrip : IRunningStrip { }
+    class DummyRunningStrip : ISwitcherRunningStrip { }
 }
