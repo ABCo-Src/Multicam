@@ -1,4 +1,5 @@
-﻿using LightInject;
+﻿using ABCo.Multicam.Core.Strips;
+using LightInject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace ABCo.Multicam.Core
         public static void Initialize(ServiceContainer container)
         {
             container.RegisterInstance<IServiceSource>(new ServiceSource(container));
+            container.RegisterSingleton<IStripManager, StripManager>();
         }
     }
 }

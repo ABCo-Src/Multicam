@@ -104,19 +104,8 @@ namespace ABCo.Multicam.UI.ViewModels.Strips
                     CurrentlyEditing = null;
         }
 
-        public void MoveDown(StripViewModel strip)
-        {
-            
-        }
-
-        public void MoveUp(StripViewModel strip)
-        {
-            
-        }
-
-        public void Delete(StripViewModel strip)
-        {
-            
-        }
+        public void MoveDown(StripViewModel strip) => _manager.MoveDown(strip.BaseStrip);
+        public void MoveUp(StripViewModel strip) => _manager.MoveUp(strip.BaseStrip);
+        public void Delete(StripViewModel strip) => _manager.Delete(strip.BaseStrip);
     }
 }

@@ -8,6 +8,7 @@ using NuGet.Frameworks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -150,6 +151,88 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
             testCode(project, changeTrigger, stripsList);
         }
 
+        [TestMethod]
+        public void MoveUp()
+        {
+            var model = CreateModelMockWithOneStrip(out var initialStrip);
+            var project = new ProjectStripsViewModel(model.Object, CreateDefaultServiceSource());
+            project.MoveUp(project.Items[0]);
+            model.Verify(v => v.MoveUp(initialStrip), Times.Once);
+        }
+
+        [TestMethod]
+        public void MoveDown()
+        {
+            var model = CreateModelMockWithOneStrip(out var initialStrip);
+            var project = new ProjectStripsViewModel(model.Object, CreateDefaultServiceSource());
+            project.MoveDown(project.Items[0]);
+            model.Verify(v => v.MoveDown(initialStrip), Times.Once);
+        }
+
+        [TestMethod]
+        public void Delete()
+        {
+            var model = CreateModelMockWithOneStrip(out var initialStrip);
+            var project = new ProjectStripsViewModel(model.Object, CreateDefaultServiceSource());
+            project.Delete(project.Items[0]);
+            model.Verify(v => v.Delete(initialStrip), Times.Once);
+        }
+
+        [TestMethod]
+        public void CurrentlyEditing_NoPreviousItem()
+        {
+            var project = new ProjectStripsViewModel(CreateModelMockWithOneStrip(out _).Object, CreateDefaultServiceSource());
+            project.CurrentlyEditing = project.Items[0];
+            Assert.IsTrue(project.Items[0].IsEditing);
+        }
+
+        [TestMethod]
+        public void CurrentlyEditing_RemoveItem()
+        {
+            var project = new ProjectStripsViewModel(CreateModelMockWithOneStrip(out _).Object, CreateDefaultServiceSource());
+
+            project.CurrentlyEditing = project.Items[0];
+            project.CurrentlyEditing = null;
+
+            Assert.IsFalse(project.Items[0].IsEditing);
+        }
+
+        [TestMethod]
+        public void CurrentlyEditing_ReplaceItem()
+        {
+            var model = Mock.Of<IStripManager>(m => m.Strips == new List<IRunningStrip>() { Mock.Of<IRunningStrip>(), Mock.Of<IRunningStrip>() });
+            var project = new ProjectStripsViewModel(model, CreateDefaultServiceSource());
+
+            project.CurrentlyEditing = project.Items[0];
+            project.CurrentlyEditing = project.Items[1];
+
+            Assert.IsFalse(project.Items[0].IsEditing);
+            Assert.IsTrue(project.Items[1].IsEditing);
+
+            Assert.IsFalse(project.Items[0].IsEditing);
+        }
+
+        [TestMethod]
+        public void ShowEditingPanel_NotEditing()
+        {
+            var project = new ProjectStripsViewModel(CreateModelMockWithZeroStrips().Object, CreateDefaultServiceSource());
+            Assert.IsFalse(project.ShowEditingPanel);
+        }
+
+        [TestMethod]
+        public void ShowEditingPanel_Editing()
+        {
+            var project = new ProjectStripsViewModel(CreateModelMockWithOneStrip(out _).Object, CreateDefaultServiceSource());
+            project.CurrentlyEditing = project.Items[0];
+            Assert.IsTrue(project.ShowEditingPanel);
+        }
+
+        //[TestMethod]
+        //public void ShowEditingPanel_ChangesWithCurrentlyEditing()
+        //{
+        //    // TODO: Consistency check
+        //}
+
         static Mock<IStripManager> CreateModelMockWithZeroStrips()
         {
             var model = new Mock<IStripManager>();
@@ -157,147 +240,12 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
             return model;
         }
 
-        //[TestMethod]
-        //public void MoveUp()
-        //{
-        //    var model = new Mock<IStripManager>();
-        //    var vm = new 
-        //    var project = new ProjectStripsViewModel(model.Object, CreateDefaultServiceSource());
-        //    project.MoveUp();
-        //    model.Verify(v => v.MoveUp(), Times.Once);
-        //}
-
-        //[TestMethod]
-        //public void CreateStrip_Normal_StripHasParent()
-        //{
-        //    var serviceSource = CreateDefaultServiceSource();
-        //    var project = new ProjectStripsViewModel(serviceSource);
-        //    project.AddStrip();
-
-        //    Assert.AreEqual(project, project.Items[0].Parent);
-        //}
-
-        //[TestMethod]
-        //public void Delete()
-        //{
-        //    var serviceSource = CreateDefaultServiceSource();
-        //    var project = new ProjectStripsViewModel(serviceSource);
-        //    project.CreateStrip();
-        //    project.CreateStrip();
-        //    project.CreateStrip();
-        //    var unmoving1 = project.Items[0];
-        //    var movingStrip = project.Items[1];
-        //    var unmoving2 = project.Items[2];
-
-        //    project.Delete(movingStrip);
-
-        //    Assert.AreEqual(unmoving1, project.Items[0]);
-        //    Assert.AreEqual(unmoving2, project.Items[1]);
-        //}
-
-        //[TestMethod]
-        //public void Delete_Editing()
-        //{
-        //    var serviceSource = CreateDefaultServiceSource();
-        //    var project = new ProjectStripsViewModel(serviceSource);
-        //    project.CreateStrip();
-        //    var newStrip = project.Items[0];
-        //    project.CurrentlyEditing = newStrip;
-
-        //    project.Delete(newStrip);
-
-        //    Assert.IsNull(project.CurrentlyEditing);
-        //    Assert.IsFalse(newStrip.IsEditing);
-        //}
-
-        //[TestMethod]
-        //public void Delete_OtherEditing()
-        //{
-        //    var serviceSource = CreateDefaultServiceSource();
-        //    var project = new ProjectStripsViewModel(serviceSource);
-        //    project.CreateStrip();
-        //    project.CreateStrip();
-        //    var newStrip = project.Items[0];
-        //    project.CurrentlyEditing = project.Items[1];
-
-        //    project.Delete(newStrip);
-
-        //    Assert.AreEqual(project.Items[0], project.CurrentlyEditing);
-        //}
-
-        //[TestMethod]
-        //public void CreateStrip_Normal_UsesFactory()
-        //{
-        //    StripViewModel? stripVM = null;
-        //    stripVM = new StripViewModel(CreateDefaultFactory());
-
-        //    var factoryFactory = new Mock<IServiceProvider>(MockBehavior.Strict);
-        //    factoryFactory.Setup(x => x.Create<IStripViewModel>()).Returns(() => stripVM!);
-        //    factoryFactory.Setup(x => x.Create<StripViewModel>()).Throws(new Exception("Should ask for interface, not concrete."));
-
-        //    var project = new ProjectStripsViewModel(factoryFactory.Object);
-
-        //    project.AddStrip();
-        //    factoryFactory.Verify(x => x.Create<IStripViewModel>(), Times.Once);
-        //}
-
-        //[TestMethod]
-        //public void CurrentlyEditing_NoPreviousItem()
-        //{
-        //    var project = new ProjectStripsViewModel(CreateDefaultServiceSource());
-        //    project.CreateStrip();
-
-        //    project.CurrentlyEditing = project.Items[0];
-        //    Assert.IsTrue(project.Items[0].IsEditing);
-        //}
-
-        //[TestMethod]
-        //public void CurrentlyEditing_RemoveItem()
-        //{
-        //    var project = new ProjectStripsViewModel(CreateDefaultServiceSource());
-        //    project.CreateStrip();
-
-        //    project.CurrentlyEditing = project.Items[0];
-        //    project.CurrentlyEditing = null;
-
-        //    Assert.IsFalse(project.Items[0].IsEditing);
-        //}
-
-        //// Potentially redundant test?
-        //[TestMethod]
-        //public void CurrentlyEditing_ReplaceItem()
-        //{
-        //    var project = new ProjectStripsViewModel(CreateDefaultServiceSource());
-        //    project.CreateStrip();
-        //    project.CreateStrip();
-
-        //    project.CurrentlyEditing = project.Items[0];
-        //    project.CurrentlyEditing = project.Items[1];
-
-        //    Assert.IsFalse(project.Items[0].IsEditing);
-        //    Assert.IsTrue(project.Items[1].IsEditing);
-        //}
-
-        //[TestMethod]
-        //public void ShowEditingPanel_NotEditing()
-        //{
-        //    var project = new ProjectStripsViewModel(CreateDefaultServiceSource());
-        //    Assert.IsFalse(project.ShowEditingPanel);
-        //}
-
-        //[TestMethod]
-        //public void ShowEditingPanel_Editing()
-        //{
-        //    var project = new ProjectStripsViewModel(CreateDefaultServiceSource());
-        //    project.CreateStrip();
-        //    project.CurrentlyEditing = project.Items[0];
-        //    Assert.IsTrue(project.ShowEditingPanel);
-        //}
-
-        //[TestMethod]
-        //public void ShowEditingPanel_ChangesWithCurrentlyEditing()
-        //{
-        //    // TODO: Consistency check
-        //}
+        static Mock<IStripManager> CreateModelMockWithOneStrip(out IRunningStrip strip)
+        {
+            strip = Mock.Of<IRunningStrip>();
+            var model = new Mock<IStripManager>();
+            model.SetReturnsDefault<IReadOnlyList<IRunningStrip>>(new List<IRunningStrip>() { strip  });
+            return model;
+        }
     }
 }
