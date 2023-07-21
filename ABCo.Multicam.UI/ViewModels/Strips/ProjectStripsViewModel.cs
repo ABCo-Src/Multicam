@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -70,6 +71,37 @@ namespace ABCo.Multicam.UI.ViewModels.Strips
             _manager = manager;
             _servSource = servSource;
             _items = new ObservableCollection<StripViewModel>();
+
+            manager.SetStripsChangeForVM(OnStripsChange);
+            OnStripsChange();
+        }
+
+        void OnStripsChange()
+        {
+            // Clear the old strips
+            var oldItems = new List<StripViewModel>(Items);
+            Items.Clear();
+            
+            // Re-add them
+            var baseItems = _manager.Strips;
+            for (int i = 0; i < baseItems.Count; i++)
+            {
+                // Re-use or create a new vm
+                int vm = oldItems.FindIndex(s => s.BaseStrip == baseItems[i]);
+
+                if (vm == -1)
+                    Items.Add(new UnsupportedStripViewModel(baseItems[i], _servSource, this));
+                else
+                {
+                    Items.Add(oldItems[vm]);
+                    oldItems.RemoveAt(vm);
+                }
+            }
+
+            // If we were editing a removed vm, deselect it
+            for (int i = 0; i < oldItems.Count; i++)
+                if (oldItems[i] == CurrentlyEditing)
+                    CurrentlyEditing = null;
         }
 
         public void MoveDown(StripViewModel strip)

@@ -4,6 +4,7 @@ using ABCo.Multicam.UI.Helpers;
 using ABCo.Multicam.UI.ViewModels;
 using ABCo.Multicam.UI.ViewModels.Strips;
 using Moq;
+using NuGet.Frameworks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,24 +29,132 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
         IServiceSource CreateDefaultServiceSource() => Mock.Of<IServiceSource>();
 
         [TestMethod]
-        public void Ctor_ThrowsWithNoServiceSource() => Assert.ThrowsException<ServiceSourceNotGivenException>(() => new ProjectStripsViewModel(Mock.Of<IStripManager>(), null!));
+        public void Ctor_ThrowsWithNoServiceSource() => Assert.ThrowsException<ServiceSourceNotGivenException>(() => new ProjectStripsViewModel(CreateModelMockWithZeroStrips().Object, null!));
 
         [TestMethod]
-        public void Ctor_InitializedOC()
+        public void Ctor_InitializesLocal()
         {
-            var project = new ProjectStripsViewModel(Mock.Of<IStripManager>(), CreateDefaultServiceSource());
+            var project = new ProjectStripsViewModel(CreateModelMockWithZeroStrips().Object, CreateDefaultServiceSource());
             Assert.IsNotNull(project.Items);
             Assert.IsNull(project.CurrentlyEditing);
             Assert.AreEqual(0, project.Items.Count);
         }
 
         [TestMethod]
+        public void Ctor_InitializesEventHandler()
+        {
+            var model = CreateModelMockWithZeroStrips();
+            var project = new ProjectStripsViewModel(model.Object, CreateDefaultServiceSource());
+
+            model.Verify(m => m.SetStripsChangeForVM(It.IsAny<Action>()), Times.Once);
+        }
+
+        [TestMethod]
+        public void Ctor_UpdatesItems()
+        {
+            List<IRunningStrip> items = new() { Mock.Of<IRunningStrip>(), Mock.Of<IRunningStrip>() };
+            var model = Mock.Of<IStripManager>(m => m.Strips == items);
+            var project = new ProjectStripsViewModel(model, CreateDefaultServiceSource());
+
+            Assert.AreEqual(2, project.Items.Count);
+            Assert.AreEqual(items[0], project.Items[0].BaseStrip);
+            Assert.AreEqual(items[1], project.Items[1].BaseStrip);
+        }
+
+        [TestMethod]
         public void CreateStrip()
         {
-            var model = new Mock<IStripManager>();
+            Mock<IStripManager> model = CreateModelMockWithZeroStrips();
+
             var project = new ProjectStripsViewModel(model.Object, CreateDefaultServiceSource());
             project.CreateStrip();
             model.Verify(v => v.CreateStrip(), Times.Once);
+        }
+
+        [TestMethod]
+        public void StripsChange_ItemAdded_CorrectCreationMethod()
+        {
+
+        }
+
+        [TestMethod]
+        public void StripsChange_AddToEnd()
+        {
+            List<IRunningStrip> stripsList = new();
+            SetupStripsChangeMockAndVM((project, changeTrigger, stripsList) =>
+            {
+                var addedItem = Mock.Of<IRunningStrip>();
+                stripsList.Add(addedItem);
+                changeTrigger();
+
+                Assert.AreEqual(1, project.Items.Count);
+                Assert.AreEqual(addedItem, project.Items[0].BaseStrip);
+            }, new());
+        }
+
+        [TestMethod]
+        public void StripsChange_AddToStart()
+        {
+            var firstItemMock = Mock.Of<IRunningStrip>();
+            SetupStripsChangeMockAndVM((project, changeTrigger, stripsList) =>
+            {
+                var addedItem = Mock.Of<IRunningStrip>();
+                stripsList.Insert(0, addedItem);
+                changeTrigger();
+
+                Assert.AreEqual(2, project.Items.Count);
+                Assert.AreEqual(addedItem, project.Items[0].BaseStrip);
+                Assert.AreEqual(firstItemMock, project.Items[1].BaseStrip);
+            }, new() { firstItemMock });
+        }
+
+        [TestMethod]
+        public void StripsChange_RemoveFromStart()
+        {
+            var firstItemMock = Mock.Of<IRunningStrip>();
+            var secondItemMock = Mock.Of<IRunningStrip>();
+            SetupStripsChangeMockAndVM((project, changeTrigger, stripsList) =>
+            {
+                stripsList.Remove(firstItemMock);
+                changeTrigger();
+
+                Assert.AreEqual(1, project.Items.Count);
+                Assert.AreEqual(secondItemMock, project.Items[0].BaseStrip);
+            }, new() { firstItemMock, secondItemMock });
+        }
+
+        [TestMethod]
+        public void StripsChange_Remove_Editing()
+        {
+            var firstItemMock = Mock.Of<IRunningStrip>();
+            SetupStripsChangeMockAndVM((project, changeTrigger, stripsList) =>
+            {
+                project.CurrentlyEditing = project.Items[0];
+
+                stripsList.Remove(firstItemMock);
+                changeTrigger();
+
+                Assert.AreEqual(1, project.Items.Count);
+                Assert.IsNull(project.CurrentlyEditing);
+            }, new() { firstItemMock, Mock.Of<IRunningStrip>() });
+        }
+
+        private void SetupStripsChangeMockAndVM(Action<ProjectStripsViewModel, Action, List<IRunningStrip>> testCode, List<IRunningStrip> stripsList)
+        {
+            Action changeTrigger = null!;
+            var model = new Mock<IStripManager>();
+            model.Setup(e => e.SetStripsChangeForVM(It.IsAny<Action>())).Callback<Action>(a => changeTrigger = a);
+            model.SetupGet(e => e.Strips).Returns(() => stripsList);
+
+            var project = new ProjectStripsViewModel(model.Object, CreateDefaultServiceSource());
+            testCode(project, changeTrigger, stripsList);
+        }
+
+        static Mock<IStripManager> CreateModelMockWithZeroStrips()
+        {
+            var model = new Mock<IStripManager>();
+            model.SetReturnsDefault<IReadOnlyList<IRunningStrip>>(new List<IRunningStrip>());
+            return model;
         }
 
         //[TestMethod]

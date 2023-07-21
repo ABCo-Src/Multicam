@@ -48,4 +48,15 @@ namespace ABCo.Multicam.UI.ViewModels.Strips
         public void MoveUp() => Parent.MoveUp(this);
         public void Delete() => Parent.Delete(this);
     }
+
+    public class UnsupportedStripViewModel : StripViewModel
+    {
+        IRunningStrip _strip;
+
+        public UnsupportedStripViewModel(IRunningStrip strip, IServiceSource serviceSource, IProjectStripsViewModel parent)
+            : base(serviceSource, parent) => _strip = strip;
+
+        public override IRunningStrip BaseStrip => _strip;
+        public override StripViewType ContentView => StripViewType.Unsupported;
+    }
 }

@@ -106,6 +106,18 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
         }
 
         [TestMethod]
+        public void Unknown_Ctor()
+        {
+            var parent = Mock.Of<IProjectStripsViewModel>();
+            var serviceSource = Mock.Of<IServiceSource>();
+            var model = Mock.Of<IRunningStrip>();
+            var vm = new UnsupportedStripViewModel(model, serviceSource, parent);
+
+            Assert.AreEqual(StripViewType.Unsupported, vm.ContentView);
+            Assert.AreEqual(model, vm.BaseStrip);
+        }
+
+        [TestMethod]
         public void IsEditing_UpdatesEditBtnText()
         {
             // TODO: Create viewmodel consistency tests

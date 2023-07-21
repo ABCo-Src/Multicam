@@ -14,6 +14,7 @@ namespace ABCo.Multicam.Core.Strips
         IReadOnlyList<IRunningStrip> Strips { get; }
 
         void CreateStrip();
+        void SetStripsChangeForVM(Action act);
         void MoveUp(IRunningStrip strip);
         void MoveDown(IRunningStrip strip);
         void Delete(IRunningStrip strip);
