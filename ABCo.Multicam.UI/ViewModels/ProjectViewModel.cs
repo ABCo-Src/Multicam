@@ -1,4 +1,5 @@
 ﻿using ABCo.Multicam.Core;
+using ABCo.Multicam.Core.Strips;
 using ABCo.Multicam.UI.Helpers;
 using ABCo.Multicam.UI.ViewModels.Strips;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -19,7 +20,7 @@ namespace ABCo.Multicam.UI.ViewModels
         public ProjectViewModel(IServiceSource manager)
         {
             if (manager == null) throw new ServiceSourceNotGivenException();
-            _strips = new ProjectStripsViewModel(manager);
+            _strips = new ProjectStripsViewModel(manager.Get<IStripManager>(), manager);
         }
     }
 }

@@ -52,9 +52,10 @@ namespace ABCo.Multicam.UI.ViewModels.Strips
 
         public bool ShowEditingPanel => CurrentlyEditing != null;
 
-        public void AddStrip()
+        public void CreateStrip()
         {
-            Items.Add(new SwitcherStripViewModel(_servSource, this));
+            _manager.CreateStrip();
+            //Items.Add(new SwitcherStripViewModel(_servSource, this));
         }
 
         public void EditStrip(StripViewModel vm)
@@ -62,10 +63,11 @@ namespace ABCo.Multicam.UI.ViewModels.Strips
             CurrentlyEditing = vm;
         }
 
-        public ProjectStripsViewModel(IServiceSource servSource, IStripManager manager)
+        public ProjectStripsViewModel(IStripManager manager, IServiceSource servSource)
         {
             if (servSource == null) throw new ServiceSourceNotGivenException();
 
+            _manager = manager;
             _servSource = servSource;
             _items = new ObservableCollection<StripViewModel>();
         }

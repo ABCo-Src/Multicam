@@ -88,7 +88,7 @@
 						<Rectangle Grid.Column="1" Grid.RowSpan="2" Width="5" Fill="{DynamicResource AccentColor}"></Rectangle>
 
 						<!-- New Button -->
-						<Button Classes="Dashed" Command="{Binding AddStrip}" Grid.Column="2" Margin="10 0" Width="{Binding $parent[Grid].Width}">New Strip</Button>
+						<Button Classes="Dashed" Command="{Binding CreateStrip}" Grid.Column="2" Margin="10 0" Width="{Binding $parent[Grid].Width}">New Strip</Button>
 					</Grid>
 				</StackPanel>
 			</StackPanel>

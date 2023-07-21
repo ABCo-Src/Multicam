@@ -1,4 +1,5 @@
 ﻿using ABCo.Multicam.Core;
+using ABCo.Multicam.Core.Strips;
 using ABCo.Multicam.UI.Helpers;
 using ABCo.Multicam.UI.ViewModels;
 using ABCo.Multicam.UI.ViewModels.Strips;
@@ -20,8 +21,10 @@ namespace ABCo.Multicam.Tests.UI.ViewModels
         [TestMethod]
         public void Ctor_Normal()
         {
-            var vm = new ProjectViewModel(Mock.Of<IServiceSource>());
+            var servSrc = new Mock<IServiceSource>();
+            var vm = new ProjectViewModel(servSrc.Object);
             Assert.IsNotNull(vm.Strips);
+            servSrc.Verify(v => v.Get<IStripManager>(), Times.Once);
         }
     }
 }
