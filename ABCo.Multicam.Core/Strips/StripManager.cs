@@ -21,13 +21,17 @@ namespace ABCo.Multicam.Core.Strips
 
     public class StripManager : IStripManager
     {
+        Action? _onStripsChange;
         List<IRunningStrip> _runningStrips = new();
 
         public IReadOnlyList<IRunningStrip> Strips => _runningStrips;
-        
+
+        public void SetStripsChangeForVM(Action act) => _onStripsChange = act;
+
         public void CreateStrip()
         {
             _runningStrips.Add(new DummyRunningStrip());
+            _onStripsChange?.Invoke();
         }
 
         public void MoveUp(IRunningStrip strip)
@@ -38,6 +42,8 @@ namespace ABCo.Multicam.Core.Strips
             if (indexOfStrip == 0) return;
 
             (_runningStrips[indexOfStrip], _runningStrips[indexOfStrip - 1]) = (_runningStrips[indexOfStrip - 1], _runningStrips[indexOfStrip]);
+
+            _onStripsChange?.Invoke();
         }
 
         public void MoveDown(IRunningStrip strip)
@@ -48,11 +54,14 @@ namespace ABCo.Multicam.Core.Strips
             if (indexOfStrip == _runningStrips.Count - 1) return;
 
             (_runningStrips[indexOfStrip], _runningStrips[indexOfStrip + 1]) = (_runningStrips[indexOfStrip + 1], _runningStrips[indexOfStrip]);
+
+            _onStripsChange?.Invoke();
         }
 
         public void Delete(IRunningStrip strip)
         {
             _runningStrips.Remove(strip);
+            _onStripsChange?.Invoke();
         }
     }
 }

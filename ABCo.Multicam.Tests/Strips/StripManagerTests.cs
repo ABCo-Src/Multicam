@@ -19,7 +19,7 @@ namespace ABCo.Multicam.Tests.Strips
         }
 
         [TestMethod]
-        public void CreateStrip_Normal_AddsStrip()
+        public void CreateStrip_AddsStrip()
         {
             var project = new StripManager();
             project.CreateStrip();
@@ -161,6 +161,57 @@ namespace ABCo.Multicam.Tests.Strips
 
             Assert.AreEqual(unmoving1, project.Strips[0]);
             Assert.AreEqual(unmoving2, project.Strips[1]);
+        }
+
+        // TODO: Add a sanity check to this function that verifies something *did* change
+        static void TestTriggerForSingleOperation(Action<StripManager> op, bool needed)
+        {
+            bool triggered = false;
+            var manager = new StripManager();
+
+            manager.CreateStrip();
+            manager.CreateStrip();
+            manager.SetStripsChangeForVM(() => triggered = true);
+
+            op(manager);
+
+            Assert.AreEqual(needed, triggered);
+        }
+
+        [TestMethod]
+        public void CreateStrip_Trigger()
+        {
+            bool triggered = false;
+            var project = new StripManager();
+            project.SetStripsChangeForVM(() => triggered = true);
+
+            project.CreateStrip();
+            Assert.IsTrue(triggered);
+        }
+
+        [TestMethod]
+        public void MoveDown_Trigger_Unneeded() => TestTriggerForSingleOperation(m => m.MoveDown(m.Strips[1]), false);
+
+        [TestMethod]
+        public void MoveDown_Trigger_Needed() => TestTriggerForSingleOperation(m => m.MoveDown(m.Strips[0]), true);
+
+        [TestMethod]
+        public void MoveUp_Trigger_Unneeded() => TestTriggerForSingleOperation(m => m.MoveUp(m.Strips[0]), false);
+
+        [TestMethod]
+        public void MoveUp_Trigger_Needed() => TestTriggerForSingleOperation(m => m.MoveUp(m.Strips[1]), true);
+
+        [TestMethod]
+        public void Delete_Trigger()
+        {
+            bool triggered = false;
+            var manager = new StripManager();
+            manager.CreateStrip();
+
+            manager.SetStripsChangeForVM(() => triggered = true);
+
+            manager.Delete(manager.Strips[0]);
+            Assert.IsTrue(triggered);
         }
     }
 }
