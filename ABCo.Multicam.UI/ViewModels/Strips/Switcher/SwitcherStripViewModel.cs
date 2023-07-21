@@ -1,4 +1,5 @@
 ﻿using ABCo.Multicam.Core;
+using ABCo.Multicam.Core.Strips;
 using ABCo.Multicam.Core.Switchers;
 using ABCo.Multicam.Core.Switchers.Types;
 using ABCo.Multicam.UI.Enumerations;
@@ -16,16 +17,17 @@ namespace ABCo.Multicam.UI.ViewModels.Strips.Switcher
     public interface ISwitcherStripViewModel { }
     public partial class SwitcherStripViewModel : StripViewModel, ISwitcherStripViewModel
     {
-        ISwitcher _switcher;
+        ISwitcherRunningStrip _model;
 
-        [ObservableProperty] ObservableCollection<SwitcherMixBlockViewModel> _mixBlocks;
-
-        public SwitcherStripViewModel(IServiceSource serviceSource, IProjectStripsViewModel parent) : base(serviceSource, parent)
+        public SwitcherStripViewModel(ISwitcherRunningStrip model, IServiceSource serviceSource, IProjectStripsViewModel parent) : base(serviceSource, parent)
         {
+            _model = model;
             _mixBlocks = new ObservableCollection<SwitcherMixBlockViewModel>() { new SwitcherMixBlockViewModel(serviceSource, this), new SwitcherMixBlockViewModel(serviceSource, this) };
-            _switcher = serviceSource.Get<IDummySwitcher>();
         }
 
         public override StripViewType ContentView => StripViewType.Switcher;
+        public override IRunningStrip BaseStrip => _model;
+
+        [ObservableProperty] ObservableCollection<SwitcherMixBlockViewModel> _mixBlocks;
     }
 }

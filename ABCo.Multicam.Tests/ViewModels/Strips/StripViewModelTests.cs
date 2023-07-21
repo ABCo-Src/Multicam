@@ -1,4 +1,5 @@
 ﻿using ABCo.Multicam.Core;
+using ABCo.Multicam.Core.Strips;
 using ABCo.Multicam.UI.Enumerations;
 using ABCo.Multicam.UI.Helpers;
 using ABCo.Multicam.UI.ViewModels.Strips;
@@ -14,6 +15,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
     public class DummyStripViewModel : StripViewModel
     {
         public IServiceSource Source => _serviceSource;
+        public override IRunningStrip BaseStrip => throw new NotImplementedException();
         public override StripViewType ContentView => StripViewType.Unsupported;
         public DummyStripViewModel(IServiceSource serviceSource, IProjectStripsViewModel parent) : base(serviceSource, parent) { }
     }
