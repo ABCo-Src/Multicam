@@ -1,5 +1,6 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Strips;
+using ABCo.Multicam.Core.Structures;
 using ABCo.Multicam.Core.Switchers;
 using ABCo.Multicam.Tests.UI;
 using ABCo.Multicam.UI.Helpers;
@@ -109,11 +110,11 @@ namespace ABCo.Multicam.UI.ViewModels.Strips
         public void CreateStrip()
         {
             // Temporary test
-            _dialogHandler.OpenSimpleContext("Choose Type", a => Debugger.Break(), Debugger.Break, new ContextMenuItem<int>[]
+            _dialogHandler.OpenContextMenu(new ContextMenuDetails<int>("Choose Type", a => Debugger.Break(), Debugger.Break, new ContextMenuItem<int>[]
             {
                 new() { Name = "First Item", Value = 1 },
                 new() { Name = "Second Item", Value = 2 }
-            });
+            }));
 
             _manager.CreateStrip();
         }

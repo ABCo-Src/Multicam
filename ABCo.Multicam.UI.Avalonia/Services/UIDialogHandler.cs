@@ -17,33 +17,34 @@ namespace ABCo.Multicam.UI.Avalonia.Services
         MainWindowView _mainView;
         public UIDialogHandler(MainWindowView window) => _mainView = window;
 
-        public void OpenSimpleContext<T>(string title, Action<T> selected, Action? cancel, ContextMenuItem<T>[] items)
+        public void OpenContextMenu<T>(ContextMenuDetails<T> details)
         {
             // Create items
             var itemsControl = new StackPanel();
 
-            if (title != "")
+            if (details.Title != "")
             {
-                var titleControl = new TextBlock() { Text = title };
+                var titleControl = new TextBlock() { Text = details.Title };
                 titleControl.Classes.Add("ContextMenuTitle");
                 itemsControl.Children.Add(titleControl);
             }
 
-            for (int i = 0; i < items.Length; i++)
+            for (int i = 0; i < details.Items.Length; i++)
             {
-                var button = new Button() { Content = items[i].Name };
+                var button = new Button() { Content = details.Items[i].Name };
                 button.Classes.Add("Borderless");
                 button.Classes.Add("ContextMenuButton");
 
                 // TODO: Optimize click event here
-                var itemCapture = items[i].Value;
-                button.Click += (s, e) => selected(itemCapture);
+                var itemCapture = details.Items[i].Value;
+                var onSelectCapture = details.OnSelect;
+                button.Click += (s, e) => onSelectCapture(itemCapture);
 
                 itemsControl.Children.Add(button);
             }
 
             // Set flyout
-            SetFlyout(itemsControl, cancel);
+            SetFlyout(itemsControl, details.OnCancel);
         }
 
         private void SetFlyout(Control content, Action? cancel)
