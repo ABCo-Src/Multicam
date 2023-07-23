@@ -78,6 +78,15 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
             Assert.AreEqual("Finish", vm.EditBtnText);
         }
 
+
+        [TestMethod]
+        public void EditPanelTitle()
+        {
+            var vm = new DummyStripViewModel(Mock.Of<IServiceSource>(), Mock.Of<IProjectStripsViewModel>());
+            vm.StripTitle = "abc";
+            Assert.AreEqual("Editing 'abc'", vm.EditPanelTitle);
+        }
+
         [TestMethod]
         public void MoveDown()
         {

@@ -105,7 +105,7 @@
 							<RowDefinition Height="Auto" />
 						</Grid.RowDefinitions>
 					
-						<TextBlock Margin="5 10" VerticalAlignment="Center">Editing</TextBlock>
+						<TextBlock Margin="10 10" VerticalAlignment="Center" Text="{Binding EditPanelTitle}" />
 						<Button Grid.Column="1" Classes="Borderless" Command="{Binding ToggleEdit}">
 							<Image Source="{DynamicResource CloseIcon}" Width="16" Height="16" />
 						</Button>

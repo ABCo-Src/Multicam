@@ -18,10 +18,11 @@ namespace ABCo.Multicam.UI.ViewModels.Strips
         protected IServiceSource _serviceSource;
         public readonly IProjectStripsViewModel Parent;
 
-        [ObservableProperty] string _stripTitle;
+        [ObservableProperty][NotifyPropertyChangedFor(nameof(EditPanelTitle))] string _stripTitle;
         [ObservableProperty][NotifyPropertyChangedFor(nameof(EditBtnText))] bool _isEditing;
 
         public string EditBtnText => IsEditing ? "Finish" : "Edit";
+        public string EditPanelTitle => $"Editing '{StripTitle}'";
 
         public abstract IRunningStrip BaseStrip { get; }
         public abstract StripViewType ContentView { get; }
