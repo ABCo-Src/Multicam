@@ -43,10 +43,10 @@ namespace ABCo.Multicam.UI.Avalonia.Services
             }
 
             // Set flyout
-            SetFlyout(itemsControl);
+            SetFlyout(itemsControl, cancel);
         }
 
-        private void SetFlyout(Control content)
+        private void SetFlyout(Control content, Action? cancel)
         {
             var control = new Flyout()
             {
@@ -56,6 +56,9 @@ namespace ABCo.Multicam.UI.Avalonia.Services
 
             FlyoutBase.SetAttachedFlyout(_mainView, control);
             control.ShowAt(_mainView, true);
+
+            if (cancel != null)
+                control.Closed += (s, e) => cancel();
         }
     }
 }
