@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace ABCo.Multicam.UI.Avalonia.Controls.Window
+namespace ABCo.Multicam.UI.Avalonia.Views
 {
     public partial class MainWindowView : UserControl
     {

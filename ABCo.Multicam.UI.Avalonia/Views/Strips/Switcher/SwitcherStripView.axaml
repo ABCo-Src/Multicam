@@ -3,7 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:viewmodels="using:ABCo.Multicam.UI.ViewModels.Strips.Switcher"
-			 xmlns:controls="using:ABCo.Multicam.UI.Avalonia.Controls"
+			 xmlns:strips="using:ABCo.Multicam.UI.Avalonia.Views.Strips.Switcher"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="ABCo.Multicam.UI.Avalonia.Views.Strips.Switcher.SwitcherStripView"
 			 x:DataType="viewmodels:SwitcherStripViewModel">
@@ -58,7 +58,7 @@
 
 								<ItemsControl.ItemTemplate>
 									<DataTemplate>
-										<controls:SwitcherButton />
+										<strips:SwitcherButton />
 									</DataTemplate>
 								</ItemsControl.ItemTemplate>
 							</ItemsControl>
@@ -73,7 +73,7 @@
 								
 								<ItemsControl.ItemTemplate>
 									<DataTemplate>
-										<controls:SwitcherButton />
+										<strips:SwitcherButton />
 									</DataTemplate>
 								</ItemsControl.ItemTemplate>
 							</ItemsControl>
@@ -82,10 +82,10 @@
 							<StackPanel Orientation="Horizontal" Margin="60 0" Grid.Row="0" Grid.Column="2">
 								
 								<!-- Cut -->
-								<controls:SwitcherButton DataContext="{Binding CutButton}" />
+								<strips:SwitcherButton DataContext="{Binding CutButton}" />
 
 								<!-- Auto -->
-								<controls:SwitcherButton DataContext="{Binding AutoButton}" />
+								<strips:SwitcherButton DataContext="{Binding AutoButton}" />
 								
 							</StackPanel>
 						</Grid>

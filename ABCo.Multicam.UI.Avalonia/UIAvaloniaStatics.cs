@@ -1,5 +1,4 @@
-﻿using ABCo.Multicam.UI.Avalonia.Controls.Window;
-using ABCo.Multicam.UI.Avalonia.Services;
+﻿using ABCo.Multicam.UI.Avalonia.Services;
 using ABCo.Multicam.UI.Avalonia.Views;
 using ABCo.Multicam.UI.Services;
 using Avalonia.Controls;

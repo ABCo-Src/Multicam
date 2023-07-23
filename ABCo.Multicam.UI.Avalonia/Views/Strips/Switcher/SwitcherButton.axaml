@@ -6,7 +6,7 @@
 			 xmlns:converters="using:ABCo.Multicam.UI.Avalonia.Converters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 Margin="0 0 10 10"
-             x:Class="ABCo.Multicam.UI.Avalonia.Controls.SwitcherButton"
+             x:Class="ABCo.Multicam.UI.Avalonia.Views.Strips.Switcher.SwitcherButton"
 			 x:DataType="viewmodels:SwitcherButtonViewModel">
 	
 	<Button Classes="SwitcherButton" Content="{Binding Text}" Background="{Binding Status, Converter={x:Static converters:SwitcherStripStatusToColor.Instance}}" />

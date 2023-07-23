@@ -5,10 +5,6 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
-using ABCo.Multicam.UI.Avalonia.Controls.Window;
-using ABCo.Multicam.UI.Services;
-using LightInject;
-using System.Diagnostics;
 
 namespace ABCo.Multicam.UI.Avalonia;
 
@@ -32,7 +28,7 @@ public partial class App : Application
             var newWindow = new MainWindow();
 
             // Initialize the DI container
-            var container = UIAvaloniaStatics.InitializeContainer(newWindow, newWindow.AppContent);
+            var container = UIAvaloniaStatics.InitializeContainer(newWindow, null!);
 
             // Use this to create the main VM + finish
             newWindow.DataContext = container.GetInstance(typeof(MainWindowViewModel));
