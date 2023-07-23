@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ABCo.Multicam.Core.Switchers
+namespace ABCo.Multicam.Core.Strips.Switchers
 {
     public struct SwitcherSpecs
     {

@@ -1,4 +1,4 @@
-﻿using ABCo.Multicam.Core.Switchers;
+﻿using ABCo.Multicam.Core.Strips.Switchers;
 using System;
 using System.Collections.Generic;
 using System.Linq;

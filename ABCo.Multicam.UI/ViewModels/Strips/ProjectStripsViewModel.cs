@@ -1,7 +1,7 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Strips;
+using ABCo.Multicam.Core.Strips.Switchers;
 using ABCo.Multicam.Core.Structures;
-using ABCo.Multicam.Core.Switchers;
 using ABCo.Multicam.Tests.UI;
 using ABCo.Multicam.UI.Helpers;
 using ABCo.Multicam.UI.Services;

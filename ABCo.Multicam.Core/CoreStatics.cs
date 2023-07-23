@@ -1,5 +1,5 @@
 ﻿using ABCo.Multicam.Core.Strips;
-using ABCo.Multicam.Core.Switchers;
+using ABCo.Multicam.Core.Strips.Switchers;
 using LightInject;
 using System;
 using System.Collections.Generic;

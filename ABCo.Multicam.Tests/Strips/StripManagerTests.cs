@@ -1,7 +1,7 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Strips;
+using ABCo.Multicam.Core.Strips.Switchers;
 using ABCo.Multicam.Core.Structures;
-using ABCo.Multicam.Core.Switchers;
 using ABCo.Multicam.UI.ViewModels.Strips;
 using Moq;
 using System;

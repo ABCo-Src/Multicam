@@ -1,7 +1,7 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Strips;
-using ABCo.Multicam.Core.Switchers;
-using ABCo.Multicam.Core.Switchers.Types;
+using ABCo.Multicam.Core.Strips.Switchers;
+using ABCo.Multicam.Core.Strips.Switchers.Types;
 using ABCo.Multicam.UI.Enumerations;
 using ABCo.Multicam.UI.ViewModels.Strips.Switcher;
 using CommunityToolkit.Mvvm.ComponentModel;
