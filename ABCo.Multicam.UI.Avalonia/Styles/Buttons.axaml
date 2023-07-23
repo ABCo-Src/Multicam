@@ -42,7 +42,7 @@
 
 	<Style Selector="Button.SwitcherButton">
 		<Setter Property="BorderThickness" Value="2" />
-		<Setter Property="BorderBrush" Value="{DynamicResource StripButtonOutline}" />
+		<Setter Property="BorderBrush" Value="{DynamicResource SwitcherButtonOutline}" />
 		<Setter Property="Width" Value="64" />
 		<Setter Property="CornerRadius" Value="2" />
 		<Setter Property="Height" Value="{Binding $self.Width}" />

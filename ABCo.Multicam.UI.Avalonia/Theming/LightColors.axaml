@@ -1,0 +1,34 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:window="using:ABCo.Multicam.UI.Avalonia.Controls.Window">
+
+	<Design.PreviewWith>
+		<window:MainWindowView />
+	</Design.PreviewWith>
+
+	<!-- Dark Theme -->
+	<SolidColorBrush x:Key="AppBack">#eee</SolidColorBrush>
+	<SolidColorBrush x:Key="PanelBack">#ccc</SolidColorBrush>
+	<SolidColorBrush x:Key="PanelSeparator">#888</SolidColorBrush>
+	<SolidColorBrush x:Key="PanelInnerBack">#bbb</SolidColorBrush>
+	<SolidColorBrush x:Key="PanelInnerSeparator">#777</SolidColorBrush>
+
+	<!--
+	<LinearGradientBrush x:Key="PanelSeparator" StartPoint="0%,50%" EndPoint="100%,50%">
+		<LinearGradientBrush.GradientStops>
+			<GradientStop Offset="0" Color="#222" />
+			<GradientStop Offset="1" Color="#00222222" />
+		</LinearGradientBrush.GradientStops>
+	</LinearGradientBrush>-->
+
+	<!-- Switcher Button colors in SwitcherStripStatusToColor converter -->
+
+	<SolidColorBrush x:Key="ForegroundColor">Black</SolidColorBrush>
+	
+	<SolidColorBrush x:Key="AccentColor">Green</SolidColorBrush>
+	<SolidColorBrush x:Key="AccentColor_PanelBack">DarkGreen</SolidColorBrush>
+	<SolidColorBrush x:Key="AccentColor_Inactive">DarkGreen</SolidColorBrush>
+	<SolidColorBrush x:Key="AccentColor_Highlight">LightGreen</SolidColorBrush>
+	
+	<SolidColorBrush x:Key="HighlightColor">#aaa</SolidColorBrush>
+</ResourceDictionary>

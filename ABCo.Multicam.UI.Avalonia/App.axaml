@@ -9,6 +9,7 @@
 
 		<!-- Styles -->
 		<StyleInclude Source="/Styles/Buttons.axaml" />
+		<StyleInclude Source="/Styles/Texts.axaml" />
 		<StyleInclude Source="/Styles/Windows.axaml" />
 		<StyleInclude Source="/Styles/Menus.axaml" />
 		
@@ -20,7 +21,7 @@
 				
 				<!-- Resources -->
 				<ResourceInclude Source="/Theming/Icons.axaml" />
-				<ResourceInclude Source="/Theming/Colors.axaml" />
+				<ResourceInclude Source="/Theming/DarkColors.axaml" />
 				
 			</ResourceDictionary.MergedDictionaries>	
 		</ResourceDictionary>

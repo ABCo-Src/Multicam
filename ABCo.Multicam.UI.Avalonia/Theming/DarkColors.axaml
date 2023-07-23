@@ -6,16 +6,44 @@
 		<window:MainWindowView />
 	</Design.PreviewWith>
 
+	<!-- Dark Theme -->
 	<SolidColorBrush x:Key="AppBack">#111</SolidColorBrush>
 	<SolidColorBrush x:Key="PanelBack">#222</SolidColorBrush>
+	<!--<SolidColorBrush x:Key="PanelSeparator">#555</SolidColorBrush>-->
 	<SolidColorBrush x:Key="PanelInnerBack">#333</SolidColorBrush>
+	<!--<SolidColorBrush x:Key="PanelInnerSeparator">#777</SolidColorBrush>-->
+
+	<LinearGradientBrush x:Key="PanelSeparator" StartPoint="50%,0%" EndPoint="50%,100%">
+		<LinearGradientBrush.GradientStops>
+			<GradientStop Offset="0" Color="#555" />
+			<GradientStop Offset="0.5" Color="#666" />
+			<GradientStop Offset="1" Color="#555" />
+		</LinearGradientBrush.GradientStops>
+	</LinearGradientBrush>
+
+	<LinearGradientBrush x:Key="PanelInnerSeparator" StartPoint="0%,50%" EndPoint="100%,50%">
+		<LinearGradientBrush.GradientStops>
+			<GradientStop Offset="0" Color="#777" />
+			<GradientStop Offset="0.5" Color="#888" />
+			<GradientStop Offset="0.9" Color="#777" />
+			<GradientStop Offset="1" Color="#555" />
+		</LinearGradientBrush.GradientStops>
+	</LinearGradientBrush>
+
+	<LinearGradientBrush x:Key="TitlebarSeparator" StartPoint="0%,50%" EndPoint="100%,50%">
+		<LinearGradientBrush.GradientStops>
+			<GradientStop Offset="0" Color="#5a5" />
+			<GradientStop Offset="0.5" Color="#6b6" />
+			<GradientStop Offset="1" Color="#5a5" />
+		</LinearGradientBrush.GradientStops>
+	</LinearGradientBrush>
+
 
 	<SolidColorBrush x:Key="StripButtonBack">#333</SolidColorBrush>
 	<SolidColorBrush x:Key="StripButtonOutline">#aaa</SolidColorBrush>
 	<SolidColorBrush x:Key="ButtonActive">#999</SolidColorBrush>
 	<SolidColorBrush x:Key="PreviewButtonActive">Green</SolidColorBrush>
 	<SolidColorBrush x:Key="ProgramButtonActive">Red</SolidColorBrush>
-
 	<SolidColorBrush x:Key="ForegroundColor">White</SolidColorBrush>
 	
 	<SolidColorBrush x:Key="AccentColor">#006900</SolidColorBrush>

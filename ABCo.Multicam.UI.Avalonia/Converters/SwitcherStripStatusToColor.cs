@@ -16,10 +16,17 @@ namespace ABCo.Multicam.UI.Avalonia.Converters
     {
         public static readonly SwitcherStripStatusToColor Instance = new();
 
+        // Dark:
         static readonly SolidColorBrush _neutralInactive = new SolidColorBrush(Color.FromRgb(0x33, 0x33, 0x33));
         static readonly SolidColorBrush _neutralActive = new SolidColorBrush(Color.FromRgb(0x99, 0x99, 0x99));
         static readonly SolidColorBrush _previewActive = new SolidColorBrush(Color.FromRgb(0x33, 0x80, 0x33));
         static readonly SolidColorBrush _programActive = new SolidColorBrush(Color.FromRgb(0x80, 0x33, 0x33));
+
+        // Light:
+        //static readonly SolidColorBrush _neutralInactive = new SolidColorBrush(Color.FromRgb(0x88, 0x88, 0x88));
+        //static readonly SolidColorBrush _neutralActive = new SolidColorBrush(Color.FromRgb(0xaa, 0xaa, 0xaa));
+        //static readonly SolidColorBrush _previewActive = new SolidColorBrush(Color.FromRgb(0x66, 0xff, 0x66));
+        //static readonly SolidColorBrush _programActive = new SolidColorBrush(Color.FromRgb(0xff, 0x66, 0x66));
 
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {

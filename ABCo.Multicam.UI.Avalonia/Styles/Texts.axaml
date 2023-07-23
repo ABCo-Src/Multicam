@@ -1,0 +1,19 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+		<Button Classes="SwitcherButton">ABC</Button>
+    </Design.PreviewWith>
+
+	<!--
+	<Style Selector="Button">
+		<Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
+	</Style>
+
+	<Style Selector="TextBox">
+		<Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
+	</Style>
+
+	<Style Selector="TextBlock">
+		<Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
+	</Style>-->
+</Styles>

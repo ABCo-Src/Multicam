@@ -45,7 +45,6 @@
 
 									<!-- Left of Strip -->
 									<StackPanel Margin="10 25" Orientation="Horizontal">
-
 										<!-- Edit Button -->
 										<LayoutTransformControl VerticalAlignment="Center" Margin="5 0">
 											<LayoutTransformControl.LayoutTransform>
@@ -95,58 +94,73 @@
 		</ScrollViewer>
 		
 		<!-- Edit Panel -->
-		<Border Width="400" Grid.Column="0" Background="{DynamicResource PanelBack}" IsVisible="{Binding ShowEditingPanel}" DataContext="{Binding Strips}" x:DataType="sviewmodels:ProjectStripsViewModel">
-			<Grid DataContext="{Binding CurrentlyEditing}" x:DataType="sviewmodels:StripViewModel">
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="*" />
-				</Grid.RowDefinitions>
+		<Border Width="400" Grid.Column="0" IsVisible="{Binding ShowEditingPanel}" Background="{DynamicResource PanelBack}"
+				DataContext="{Binding Strips}" x:DataType="sviewmodels:ProjectStripsViewModel">
 
-				<!-- Panel Titlebar -->
-				<Grid Background="{DynamicResource PanelInnerBack}">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="*" />
-						<ColumnDefinition Width="Auto" />
-					</Grid.ColumnDefinitions>
-					
-					<TextBlock Margin="5 10" VerticalAlignment="Center">Editing</TextBlock>
-					<Button Grid.Column="1" Classes="Borderless" Command="{Binding ToggleEdit}">
-						<Image Source="{DynamicResource CloseIcon}" Width="16" Height="16" />
-					</Button>
-				</Grid>
+			<DockPanel>
 
-				<!-- Panel Content -->
-				<StackPanel Grid.Row="1" Margin="10">
+				<!-- Border -->
+				<Rectangle DockPanel.Dock="Right" Fill="{DynamicResource PanelSeparator}" Grid.Column="1" Width="2" />
+			
+				<Grid DataContext="{Binding CurrentlyEditing}" x:DataType="sviewmodels:StripViewModel">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="*" />
+					</Grid.RowDefinitions>
 
-					<!-- Shared panel controls -->
-					<Grid>
-						<Grid.RowDefinitions>
-							<RowDefinition Height="Auto" />
-							<RowDefinition Height="5" />
-							<RowDefinition Height="Auto" />
-							<RowDefinition Height="5" />
-							<RowDefinition Height="Auto" />
-						</Grid.RowDefinitions>
-
+					<!-- Panel Titlebar -->
+					<Grid Background="{DynamicResource PanelInnerBack}">
 						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*" />
 							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="*" />
-							<ColumnDefinition Width="*" />
 						</Grid.ColumnDefinitions>
 
-						<TextBlock Margin="0 0 5 0" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Title</TextBlock>
-						<TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding StripTitle}" />
+						<Grid.RowDefinitions>
+							<RowDefinition Height="*" />
+							<RowDefinition Height="Auto" />
+						</Grid.RowDefinitions>
+					
+						<TextBlock Margin="5 10" VerticalAlignment="Center">Editing</TextBlock>
+						<Button Grid.Column="1" Classes="Borderless" Command="{Binding ToggleEdit}">
+							<Image Source="{DynamicResource CloseIcon}" Width="16" Height="16" />
+						</Button>
 
-						<TextBlock Margin="0 0 5 0" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Position</TextBlock>
-						<Button Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" Command="{Binding MoveUp}">Move Up</Button>
-						<Button Grid.Row="2" Grid.Column="2" HorizontalAlignment="Stretch" Command="{Binding MoveDown}">Move Down</Button>
-						
-						<Button Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" Command="{Binding Delete}">Delete</Button>
+						<Rectangle Fill="{DynamicResource PanelInnerSeparator}" Height="2" Grid.Row="1" Grid.ColumnSpan="2" />
 					</Grid>
 
-					<!-- Panel-specific items -->
-				</StackPanel>
-			</Grid>
+					<!-- Panel Content -->
+					<StackPanel Grid.Row="1" Margin="10">
+
+						<!-- Shared panel controls -->
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="5" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="5" />
+								<RowDefinition Height="Auto" />
+							</Grid.RowDefinitions>
+
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="*" />
+								<ColumnDefinition Width="*" />
+							</Grid.ColumnDefinitions>
+
+							<TextBlock Margin="0 0 5 0" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Title</TextBlock>
+							<TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding StripTitle}" />
+
+							<TextBlock Margin="0 0 5 0" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Position</TextBlock>
+							<Button Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" Command="{Binding MoveUp}">Move Up</Button>
+							<Button Grid.Row="2" Grid.Column="2" HorizontalAlignment="Stretch" Command="{Binding MoveDown}">Move Down</Button>
+						
+							<Button Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" Command="{Binding Delete}">Delete</Button>
+						</Grid>
+
+						<!-- Panel-specific items -->
+					</StackPanel>
+				</Grid>
+			</DockPanel>
 		</Border>
 	</Grid>
 </UserControl>
