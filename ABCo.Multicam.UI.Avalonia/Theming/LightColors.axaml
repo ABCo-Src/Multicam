@@ -1,6 +1,6 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-					xmlns:window="using:ABCo.Multicam.UI.Avalonia.Controls.Window">
+					xmlns:window="using:ABCo.Multicam.UI.Avalonia.Views">
 
 	<Design.PreviewWith>
 		<window:MainWindowView />

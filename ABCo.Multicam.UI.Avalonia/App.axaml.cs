@@ -28,7 +28,7 @@ public partial class App : Application
             var newWindow = new MainWindow();
 
             // Initialize the DI container
-            var container = UIAvaloniaStatics.InitializeContainer(newWindow, null!);
+            var container = UIAvaloniaStatics.InitializeContainer(newWindow, newWindow.AppContent);
 
             // Use this to create the main VM + finish
             newWindow.DataContext = container.GetInstance(typeof(MainWindowViewModel));
