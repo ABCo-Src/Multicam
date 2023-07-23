@@ -110,13 +110,11 @@ namespace ABCo.Multicam.UI.ViewModels.Strips
         public void CreateStrip()
         {
             // Temporary test
-            _dialogHandler.OpenContextMenu(new ContextMenuDetails<int>("Choose Type", a => Debugger.Break(), Debugger.Break, new ContextMenuItem<int>[]
+            _dialogHandler.OpenContextMenu(new ContextMenuDetails<StripTypes>("Choose Type", _manager.CreateStrip, null, new ContextMenuItem<StripTypes>[]
             {
-                new() { Name = "First Item", Value = 1 },
-                new() { Name = "Second Item", Value = 2 }
+                new("Switcher", StripTypes.Switcher),
+                new("Tally", StripTypes.Tally)
             }));
-
-            _manager.CreateStrip();
         }
 
         public void MoveDown(StripViewModel strip) => _manager.MoveDown(strip.BaseStrip);

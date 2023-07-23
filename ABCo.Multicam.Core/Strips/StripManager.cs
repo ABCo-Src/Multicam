@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ABCo.Multicam.Core.Structures;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,7 @@ namespace ABCo.Multicam.Core.Strips
     {
         IReadOnlyList<IRunningStrip> Strips { get; }
 
-        void CreateStrip();
+        void CreateStrip(StripTypes type);
         void SetStripsChangeForVM(Action act);
         void MoveUp(IRunningStrip strip);
         void MoveDown(IRunningStrip strip);
@@ -29,7 +30,7 @@ namespace ABCo.Multicam.Core.Strips
 
         public void SetStripsChangeForVM(Action act) => _onStripsChange = act;
 
-        public void CreateStrip()
+        public void CreateStrip(StripTypes type)
         {
             _runningStrips.Add(new DummyRunningStrip());
             _onStripsChange?.Invoke();

@@ -3,6 +3,7 @@ using ABCo.Multicam.Core.Strips;
 using ABCo.Multicam.Core.Structures;
 using ABCo.Multicam.Core.Switchers;
 using ABCo.Multicam.UI.Helpers;
+using ABCo.Multicam.UI.Services;
 using ABCo.Multicam.UI.ViewModels;
 using ABCo.Multicam.UI.ViewModels.Strips;
 using ABCo.Multicam.UI.ViewModels.Strips.Switcher;
@@ -65,13 +66,45 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
         }
 
         [TestMethod]
-        public void CreateStrip()
+        public void CreateStrip_OpensDialog()
         {
-            Mock<IStripManager> model = CreateModelMockWithZeroStrips();
-
-            var project = new ProjectStripsViewModel(model.Object, CreateDefaultServiceSource());
+            var dialogHandler = new Mock<IUIDialogHandler>();
+            var serviceSource = Mock.Of<IServiceSource>(m => m.Get<IUIDialogHandler>() == dialogHandler.Object);
+            var project = new ProjectStripsViewModel(CreateModelMockWithZeroStrips().Object, serviceSource);
             project.CreateStrip();
-            model.Verify(v => v.CreateStrip(), Times.Once);
+
+            dialogHandler.Verify(a => a.OpenContextMenu(It.Is<ContextMenuDetails<StripTypes>>(d =>
+                d.Title == "Choose Type" &&
+                d.OnSelect != null &&
+                d.OnCancel == null &&
+                d.Items.SequenceEqual(new ContextMenuItem<StripTypes>[]
+                    {
+                        new("Switcher", StripTypes.Switcher),
+                        new("Tally", StripTypes.Tally)
+                    })
+                ))
+            );
+        }
+
+        [TestMethod]
+        [DataRow(StripTypes.Switcher)]
+        [DataRow(StripTypes.Tally)]
+        public void CreateStrip_OnChoose(StripTypes type)
+        {
+            Action<StripTypes> callback = null!;
+
+            var dialogHandler = new Mock<IUIDialogHandler>();
+            dialogHandler
+                .Setup(a => a.OpenContextMenu(It.IsAny<ContextMenuDetails<StripTypes>>()))
+                .Callback<ContextMenuDetails<StripTypes>>((details) => callback = details.OnSelect);
+
+            var serviceSource = Mock.Of<IServiceSource>(m => m.Get<IUIDialogHandler>() == dialogHandler.Object);
+            var model = CreateModelMockWithZeroStrips();
+            var project = new ProjectStripsViewModel(model.Object, serviceSource);
+
+            project.CreateStrip();
+            callback(type);
+            model.Verify(m => m.CreateStrip(type), Times.Once);
         }
 
         [TestMethod]

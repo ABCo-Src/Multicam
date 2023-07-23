@@ -1,4 +1,5 @@
 ﻿using ABCo.Multicam.Core.Strips;
+using ABCo.Multicam.Core.Structures;
 using ABCo.Multicam.UI.ViewModels.Strips;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,7 @@ namespace ABCo.Multicam.Tests.Strips
         public void CreateStrip_AddsStrip()
         {
             var project = new StripManager();
-            project.CreateStrip();
+            project.CreateStrip(StripTypes.Switcher);
             Assert.AreEqual(1, project.Strips.Count);
         }
 
@@ -30,7 +31,7 @@ namespace ABCo.Multicam.Tests.Strips
         public void MoveDown_OneItem()
         {
             var project = new StripManager();
-            project.CreateStrip();
+            project.CreateStrip(StripTypes.Switcher);
             var newStrip = project.Strips[0];
 
             project.MoveDown(newStrip);
@@ -42,8 +43,8 @@ namespace ABCo.Multicam.Tests.Strips
         public void MoveDown_OnTop()
         {
             var project = new StripManager();
-            project.CreateStrip();
-            project.CreateStrip();
+            project.CreateStrip(StripTypes.Switcher);
+            project.CreateStrip(StripTypes.Switcher);
             var movingStrip = project.Strips[0];
             var unmovingStrip = project.Strips[1];
 
@@ -57,8 +58,8 @@ namespace ABCo.Multicam.Tests.Strips
         public void MoveDown_OnBottom()
         {
             var project = new StripManager();
-            project.CreateStrip();
-            project.CreateStrip();
+            project.CreateStrip(StripTypes.Switcher);
+            project.CreateStrip(StripTypes.Switcher);
             var movingStrip = project.Strips[1];
             var unmovingStrip = project.Strips[0];
 
@@ -72,9 +73,9 @@ namespace ABCo.Multicam.Tests.Strips
         public void MoveDown_Middle()
         {
             var project = new StripManager();
-            project.CreateStrip();
-            project.CreateStrip();
-            project.CreateStrip();
+            project.CreateStrip(StripTypes.Switcher);
+            project.CreateStrip(StripTypes.Switcher);
+            project.CreateStrip(StripTypes.Switcher);
             var unmoving1 = project.Strips[0];
             var movingStrip = project.Strips[1];
             var unmoving2 = project.Strips[2];
@@ -90,7 +91,7 @@ namespace ABCo.Multicam.Tests.Strips
         public void MoveUp_OneItem()
         {
             var project = new StripManager();
-            project.CreateStrip();
+            project.CreateStrip(StripTypes.Switcher);
             var newStrip = project.Strips[0];
 
             project.MoveUp(newStrip);
@@ -102,8 +103,8 @@ namespace ABCo.Multicam.Tests.Strips
         public void MoveUp_OnTop()
         {
             var project = new StripManager();
-            project.CreateStrip();
-            project.CreateStrip();
+            project.CreateStrip(StripTypes.Switcher);
+            project.CreateStrip(StripTypes.Switcher);
             var movingStrip = project.Strips[0];
             var unmovingStrip = project.Strips[1];
 
@@ -117,8 +118,8 @@ namespace ABCo.Multicam.Tests.Strips
         public void MoveUp_OnBottom()
         {
             var project = new StripManager();
-            project.CreateStrip();
-            project.CreateStrip();
+            project.CreateStrip(StripTypes.Switcher);
+            project.CreateStrip(StripTypes.Switcher);
             var movingStrip = project.Strips[1];
             var unmovingStrip = project.Strips[0];
 
@@ -132,9 +133,9 @@ namespace ABCo.Multicam.Tests.Strips
         public void MoveUp_Middle()
         {
             var project = new StripManager();
-            project.CreateStrip();
-            project.CreateStrip();
-            project.CreateStrip();
+            project.CreateStrip(StripTypes.Switcher);
+            project.CreateStrip(StripTypes.Switcher);
+            project.CreateStrip(StripTypes.Switcher);
             var unmoving1 = project.Strips[0];
             var movingStrip = project.Strips[1];
             var unmoving2 = project.Strips[2];
@@ -150,9 +151,9 @@ namespace ABCo.Multicam.Tests.Strips
         public void Delete()
         {
             var project = new StripManager();
-            project.CreateStrip();
-            project.CreateStrip();
-            project.CreateStrip();
+            project.CreateStrip(StripTypes.Switcher);
+            project.CreateStrip(StripTypes.Switcher);
+            project.CreateStrip(StripTypes.Switcher);
             var unmoving1 = project.Strips[0];
             var movingStrip = project.Strips[1];
             var unmoving2 = project.Strips[2];
@@ -170,7 +171,7 @@ namespace ABCo.Multicam.Tests.Strips
             var project = new StripManager();
             project.SetStripsChangeForVM(() => triggered = true);
 
-            project.CreateStrip();
+            project.CreateStrip(StripTypes.Switcher);
             Assert.IsTrue(triggered);
         }
 
@@ -191,7 +192,7 @@ namespace ABCo.Multicam.Tests.Strips
         {
             bool triggered = false;
             var manager = new StripManager();
-            manager.CreateStrip();
+            manager.CreateStrip(StripTypes.Switcher);
 
             manager.SetStripsChangeForVM(() => triggered = true);
 
@@ -206,8 +207,8 @@ namespace ABCo.Multicam.Tests.Strips
             bool triggered = false;
             var manager = new StripManager();
 
-            manager.CreateStrip();
-            manager.CreateStrip();
+            manager.CreateStrip(StripTypes.Switcher);
+            manager.CreateStrip(StripTypes.Switcher);
             manager.SetStripsChangeForVM(() => triggered = true);
 
             op(manager);
