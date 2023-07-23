@@ -1,4 +1,5 @@
 ﻿using ABCo.Multicam.Core.Structures;
+using ABCo.Multicam.Core.Switchers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,17 +24,29 @@ namespace ABCo.Multicam.Core.Strips
 
     public class StripManager : IStripManager
     {
+        IServiceSource _servSource;
         Action? _onStripsChange;
         List<IRunningStrip> _runningStrips = new();
 
         public IReadOnlyList<IRunningStrip> Strips => _runningStrips;
 
+        public StripManager(IServiceSource source) => _servSource = source;
+
         public void SetStripsChangeForVM(Action act) => _onStripsChange = act;
 
         public void CreateStrip(StripTypes type)
         {
-            _runningStrips.Add(new DummyRunningStrip());
+            _runningStrips.Add(GetStripFromType(type));
             _onStripsChange?.Invoke();
+        }
+
+        IRunningStrip GetStripFromType(StripTypes type)
+        {
+            return type switch
+            {
+                StripTypes.Switcher => _servSource.Get<ISwitcherRunningStrip>(),
+                _ => _servSource.Get<IUnsupportedRunningStrip>()
+            };
         }
 
         public void MoveUp(IRunningStrip strip)

@@ -15,5 +15,7 @@ namespace ABCo.Multicam.Core.Strips
         
     }
 
-    class DummyRunningStrip : ISwitcherRunningStrip { }
+    public interface IUnsupportedRunningStrip : IRunningStrip { }
+
+    public class UnsupportedRunningStrip : IUnsupportedRunningStrip { }
 }

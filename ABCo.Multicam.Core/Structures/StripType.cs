@@ -13,6 +13,8 @@ namespace ABCo.Multicam.Core.Structures
 
     public enum StripTypes
     {
+        Unsupported,
+
         // v1 features
         Switcher,
         Tally,

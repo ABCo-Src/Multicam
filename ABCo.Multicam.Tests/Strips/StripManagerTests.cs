@@ -1,6 +1,9 @@
-﻿using ABCo.Multicam.Core.Strips;
+﻿using ABCo.Multicam.Core;
+using ABCo.Multicam.Core.Strips;
 using ABCo.Multicam.Core.Structures;
+using ABCo.Multicam.Core.Switchers;
 using ABCo.Multicam.UI.ViewModels.Strips;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,26 +15,53 @@ namespace ABCo.Multicam.Tests.Strips
     [TestClass]
     public class StripManagerTests
     {
+        static StripManager CreateDefault()
+        {
+            var mock = new Mock<IServiceSource>();
+            mock.Setup(m => m.Get<IUnsupportedRunningStrip>()).Returns(() => Mock.Of<IUnsupportedRunningStrip>());
+            return new StripManager(mock.Object);
+        }
+
+        static StripManager CreateWithCustomSource(IServiceSource src) => new StripManager(src);
+
         [TestMethod]
         public void Ctor()
         {
-            var project = new StripManager();
+            var project = CreateDefault();
             Assert.IsNotNull(project.Strips);
         }
 
         [TestMethod]
         public void CreateStrip_AddsStrip()
         {
-            var project = new StripManager();
-            project.CreateStrip(StripTypes.Switcher);
+            var project = CreateDefault();
+            project.CreateStrip(StripTypes.Unsupported);
             Assert.AreEqual(1, project.Strips.Count);
+        }
+
+        [TestMethod]
+        public void CreateStrip_Switcher() => TestAddStripType<ISwitcherRunningStrip>(StripTypes.Switcher);
+
+        [TestMethod]
+        public void CreateStrip_Unsupported() => TestAddStripType<IUnsupportedRunningStrip>(StripTypes.Tally);
+
+        private static void TestAddStripType<T>(StripTypes type) where T : class
+        {
+            var mock = new Mock<IServiceSource>();
+            mock.Setup(m => m.Get<T>()).Returns(Mock.Of<T>());
+
+            var project = CreateWithCustomSource(mock.Object);
+            project.CreateStrip(type);
+
+            mock.Verify(m => m.Get<T>(), Times.Once);
+            Assert.IsTrue(project.Strips[0].GetType().IsAssignableTo(typeof(T)));
         }
 
         [TestMethod]
         public void MoveDown_OneItem()
         {
-            var project = new StripManager();
-            project.CreateStrip(StripTypes.Switcher);
+            var project = CreateDefault();
+            project.CreateStrip(StripTypes.Unsupported);
             var newStrip = project.Strips[0];
 
             project.MoveDown(newStrip);
@@ -42,9 +72,9 @@ namespace ABCo.Multicam.Tests.Strips
         [TestMethod]
         public void MoveDown_OnTop()
         {
-            var project = new StripManager();
-            project.CreateStrip(StripTypes.Switcher);
-            project.CreateStrip(StripTypes.Switcher);
+            var project = CreateDefault();
+            project.CreateStrip(StripTypes.Unsupported);
+            project.CreateStrip(StripTypes.Unsupported);
             var movingStrip = project.Strips[0];
             var unmovingStrip = project.Strips[1];
 
@@ -57,9 +87,9 @@ namespace ABCo.Multicam.Tests.Strips
         [TestMethod]
         public void MoveDown_OnBottom()
         {
-            var project = new StripManager();
-            project.CreateStrip(StripTypes.Switcher);
-            project.CreateStrip(StripTypes.Switcher);
+            var project = CreateDefault();
+            project.CreateStrip(StripTypes.Unsupported);
+            project.CreateStrip(StripTypes.Unsupported);
             var movingStrip = project.Strips[1];
             var unmovingStrip = project.Strips[0];
 
@@ -72,10 +102,10 @@ namespace ABCo.Multicam.Tests.Strips
         [TestMethod]
         public void MoveDown_Middle()
         {
-            var project = new StripManager();
-            project.CreateStrip(StripTypes.Switcher);
-            project.CreateStrip(StripTypes.Switcher);
-            project.CreateStrip(StripTypes.Switcher);
+            var project = CreateDefault();
+            project.CreateStrip(StripTypes.Unsupported);
+            project.CreateStrip(StripTypes.Unsupported);
+            project.CreateStrip(StripTypes.Unsupported);
             var unmoving1 = project.Strips[0];
             var movingStrip = project.Strips[1];
             var unmoving2 = project.Strips[2];
@@ -90,8 +120,8 @@ namespace ABCo.Multicam.Tests.Strips
         [TestMethod]
         public void MoveUp_OneItem()
         {
-            var project = new StripManager();
-            project.CreateStrip(StripTypes.Switcher);
+            var project = CreateDefault();
+            project.CreateStrip(StripTypes.Unsupported);
             var newStrip = project.Strips[0];
 
             project.MoveUp(newStrip);
@@ -102,9 +132,9 @@ namespace ABCo.Multicam.Tests.Strips
         [TestMethod]
         public void MoveUp_OnTop()
         {
-            var project = new StripManager();
-            project.CreateStrip(StripTypes.Switcher);
-            project.CreateStrip(StripTypes.Switcher);
+            var project = CreateDefault();
+            project.CreateStrip(StripTypes.Unsupported);
+            project.CreateStrip(StripTypes.Unsupported);
             var movingStrip = project.Strips[0];
             var unmovingStrip = project.Strips[1];
 
@@ -117,9 +147,9 @@ namespace ABCo.Multicam.Tests.Strips
         [TestMethod]
         public void MoveUp_OnBottom()
         {
-            var project = new StripManager();
-            project.CreateStrip(StripTypes.Switcher);
-            project.CreateStrip(StripTypes.Switcher);
+            var project = CreateDefault();
+            project.CreateStrip(StripTypes.Unsupported);
+            project.CreateStrip(StripTypes.Unsupported);
             var movingStrip = project.Strips[1];
             var unmovingStrip = project.Strips[0];
 
@@ -132,10 +162,10 @@ namespace ABCo.Multicam.Tests.Strips
         [TestMethod]
         public void MoveUp_Middle()
         {
-            var project = new StripManager();
-            project.CreateStrip(StripTypes.Switcher);
-            project.CreateStrip(StripTypes.Switcher);
-            project.CreateStrip(StripTypes.Switcher);
+            var project = CreateDefault();
+            project.CreateStrip(StripTypes.Unsupported);
+            project.CreateStrip(StripTypes.Unsupported);
+            project.CreateStrip(StripTypes.Unsupported);
             var unmoving1 = project.Strips[0];
             var movingStrip = project.Strips[1];
             var unmoving2 = project.Strips[2];
@@ -150,10 +180,10 @@ namespace ABCo.Multicam.Tests.Strips
         [TestMethod]
         public void Delete()
         {
-            var project = new StripManager();
-            project.CreateStrip(StripTypes.Switcher);
-            project.CreateStrip(StripTypes.Switcher);
-            project.CreateStrip(StripTypes.Switcher);
+            var project = CreateDefault();
+            project.CreateStrip(StripTypes.Unsupported);
+            project.CreateStrip(StripTypes.Unsupported);
+            project.CreateStrip(StripTypes.Unsupported);
             var unmoving1 = project.Strips[0];
             var movingStrip = project.Strips[1];
             var unmoving2 = project.Strips[2];
@@ -168,10 +198,10 @@ namespace ABCo.Multicam.Tests.Strips
         public void CreateStrip_Trigger()
         {
             bool triggered = false;
-            var project = new StripManager();
+            var project = CreateDefault();
             project.SetStripsChangeForVM(() => triggered = true);
 
-            project.CreateStrip(StripTypes.Switcher);
+            project.CreateStrip(StripTypes.Unsupported);
             Assert.IsTrue(triggered);
         }
 
@@ -191,8 +221,8 @@ namespace ABCo.Multicam.Tests.Strips
         public void Delete_Trigger()
         {
             bool triggered = false;
-            var manager = new StripManager();
-            manager.CreateStrip(StripTypes.Switcher);
+            var manager = CreateDefault();
+            manager.CreateStrip(StripTypes.Unsupported);
 
             manager.SetStripsChangeForVM(() => triggered = true);
 
@@ -205,10 +235,10 @@ namespace ABCo.Multicam.Tests.Strips
         static void TestTriggerForSingleOperation(Action<StripManager> op, bool needed)
         {
             bool triggered = false;
-            var manager = new StripManager();
+            var manager = CreateDefault();
 
-            manager.CreateStrip(StripTypes.Switcher);
-            manager.CreateStrip(StripTypes.Switcher);
+            manager.CreateStrip(StripTypes.Unsupported);
+            manager.CreateStrip(StripTypes.Unsupported);
             manager.SetStripsChangeForVM(() => triggered = true);
 
             op(manager);

@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Core.Switchers
 {
-    public interface ISwitcherRunningStrip : IRunningStrip
+    public interface ISwitcherRunningStrip : IRunningStrip { }
+    public class SwitcherRunningStrip : ISwitcherRunningStrip
     {
+
     }
 }
