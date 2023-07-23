@@ -3,6 +3,7 @@ using ABCo.Multicam.UI.Avalonia.Views;
 using ABCo.Multicam.UI.Services;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Interactivity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +34,11 @@ namespace ABCo.Multicam.UI.Avalonia.Services
                 var button = new Button() { Content = items[i].Name };
                 button.Classes.Add("Borderless");
                 button.Classes.Add("ContextMenuButton");
+
+                // TODO: Optimize click event here
+                var itemCapture = items[i].Value;
+                button.Click += (s, e) => selected(itemCapture);
+
                 itemsControl.Children.Add(button);
             }
 

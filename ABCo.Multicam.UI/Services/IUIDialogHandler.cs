@@ -14,7 +14,7 @@ namespace ABCo.Multicam.UI.Services
     public struct ContextMenuItem<T>
     {
         public string Name;
-        public T Item;
+        public T Value;
     }
 
     public interface IUIDialogHandler 

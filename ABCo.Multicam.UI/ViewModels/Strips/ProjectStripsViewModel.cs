@@ -111,8 +111,8 @@ namespace ABCo.Multicam.UI.ViewModels.Strips
             // Temporary test
             _dialogHandler.OpenSimpleContext("Choose Type", a => Debugger.Break(), Debugger.Break, new ContextMenuItem<int>[]
             {
-                new() { Name = "First Item" },
-                new() { Name = "Second Item" }
+                new() { Name = "First Item", Value = 1 },
+                new() { Name = "Second Item", Value = 2 }
             });
 
             _manager.CreateStrip();
