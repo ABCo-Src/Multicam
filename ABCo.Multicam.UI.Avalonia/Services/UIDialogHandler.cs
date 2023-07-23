@@ -7,7 +7,9 @@ using Avalonia.Interactivity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.Avalonia.Services
@@ -19,9 +21,10 @@ namespace ABCo.Multicam.UI.Avalonia.Services
 
         public void OpenContextMenu<T>(ContextMenuDetails<T> details)
         {
-            // Create items
             var itemsControl = new StackPanel();
+            var menuInfo = new ContextMenuInfo<T>(CreateFlyout(itemsControl), details.OnSelect, details.OnCancel);
 
+            // Create title
             if (details.Title != "")
             {
                 var titleControl = new TextBlock() { Text = details.Title };
@@ -29,25 +32,23 @@ namespace ABCo.Multicam.UI.Avalonia.Services
                 itemsControl.Children.Add(titleControl);
             }
 
+            // Create items
             for (int i = 0; i < details.Items.Length; i++)
             {
                 var button = new Button() { Content = details.Items[i].Name };
                 button.Classes.Add("Borderless");
                 button.Classes.Add("ContextMenuButton");
-
-                // TODO: Optimize click event here
-                var itemCapture = details.Items[i].Value;
-                var onSelectCapture = details.OnSelect;
-                button.Click += (s, e) => onSelectCapture(itemCapture);
+                button.Tag = details.Items[i].Value;
+                button.Click += menuInfo.HandleButtonClick;
 
                 itemsControl.Children.Add(button);
             }
 
-            // Set flyout
-            SetFlyout(itemsControl, details.OnCancel);
+            // Show flyout
+            ShowFlyout(menuInfo.Flyout);
         }
 
-        private void SetFlyout(Control content, Action? cancel)
+        private Flyout CreateFlyout(Control content)
         {
             var control = new Flyout()
             {
@@ -56,10 +57,41 @@ namespace ABCo.Multicam.UI.Avalonia.Services
             };
 
             FlyoutBase.SetAttachedFlyout(_mainView, control);
-            control.ShowAt(_mainView, true);
+            return control;
+        }
 
-            if (cancel != null)
-                control.Closed += (s, e) => cancel();
+        void ShowFlyout(Flyout flyout) => flyout.ShowAt(_mainView, true);
+
+        class ContextMenuInfo<T>
+        {
+            public Flyout Flyout { get; }
+
+            readonly Action<T> _select;
+            Action? _cancel;
+
+            public ContextMenuInfo(Flyout flyout, Action<T> select, Action? cancel)
+            {
+                (Flyout, _select, _cancel) = (flyout, select, cancel);
+
+                if (_cancel != null)
+                    flyout.Closed += HandleCancel;
+            }
+
+            public void HandleButtonClick(object? sender, RoutedEventArgs args)
+            {
+                var button = (Button)sender!;
+                var value = (T)button.Tag!;
+
+                // Run the action
+                _select(value);
+
+                // Disable cancel and close
+                _cancel = null;
+                Flyout.Hide();
+            }
+
+            public void HandleCancel(object? sender, EventArgs args) => _cancel?.Invoke();
         }
     }
+
 }
