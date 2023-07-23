@@ -27,16 +27,16 @@ namespace ABCo.Multicam.Tests.Strips
         [TestMethod]
         public void Ctor()
         {
-            var project = CreateDefault();
-            Assert.IsNotNull(project.Strips);
+            var manager = CreateDefault();
+            Assert.IsNotNull(manager.Strips);
         }
 
         [TestMethod]
         public void CreateStrip_AddsStrip()
         {
-            var project = CreateDefault();
-            project.CreateStrip(StripTypes.Unsupported);
-            Assert.AreEqual(1, project.Strips.Count);
+            var manager = CreateDefault();
+            manager.CreateStrip(StripTypes.Unsupported);
+            Assert.AreEqual(1, manager.Strips.Count);
         }
 
         [TestMethod]
@@ -50,158 +50,158 @@ namespace ABCo.Multicam.Tests.Strips
             var mock = new Mock<IServiceSource>();
             mock.Setup(m => m.Get<T>()).Returns(Mock.Of<T>());
 
-            var project = CreateWithCustomSource(mock.Object);
-            project.CreateStrip(type);
+            var manager = CreateWithCustomSource(mock.Object);
+            manager.CreateStrip(type);
 
             mock.Verify(m => m.Get<T>(), Times.Once);
-            Assert.IsTrue(project.Strips[0].GetType().IsAssignableTo(typeof(T)));
+            Assert.IsTrue(manager.Strips[0].GetType().IsAssignableTo(typeof(T)));
         }
 
         [TestMethod]
         public void MoveDown_OneItem()
         {
-            var project = CreateDefault();
-            project.CreateStrip(StripTypes.Unsupported);
-            var newStrip = project.Strips[0];
+            var manager = CreateDefault();
+            manager.CreateStrip(StripTypes.Unsupported);
+            var newStrip = manager.Strips[0];
 
-            project.MoveDown(newStrip);
+            manager.MoveDown(newStrip);
 
-            Assert.AreEqual(newStrip, project.Strips[0]);
+            Assert.AreEqual(newStrip, manager.Strips[0]);
         }
 
         [TestMethod]
         public void MoveDown_OnTop()
         {
-            var project = CreateDefault();
-            project.CreateStrip(StripTypes.Unsupported);
-            project.CreateStrip(StripTypes.Unsupported);
-            var movingStrip = project.Strips[0];
-            var unmovingStrip = project.Strips[1];
+            var manager = CreateDefault();
+            manager.CreateStrip(StripTypes.Unsupported);
+            manager.CreateStrip(StripTypes.Unsupported);
+            var movingStrip = manager.Strips[0];
+            var unmovingStrip = manager.Strips[1];
 
-            project.MoveDown(movingStrip);
+            manager.MoveDown(movingStrip);
 
-            Assert.AreEqual(unmovingStrip, project.Strips[0]);
-            Assert.AreEqual(movingStrip, project.Strips[1]);
+            Assert.AreEqual(unmovingStrip, manager.Strips[0]);
+            Assert.AreEqual(movingStrip, manager.Strips[1]);
         }
 
         [TestMethod]
         public void MoveDown_OnBottom()
         {
-            var project = CreateDefault();
-            project.CreateStrip(StripTypes.Unsupported);
-            project.CreateStrip(StripTypes.Unsupported);
-            var movingStrip = project.Strips[1];
-            var unmovingStrip = project.Strips[0];
+            var manager = CreateDefault();
+            manager.CreateStrip(StripTypes.Unsupported);
+            manager.CreateStrip(StripTypes.Unsupported);
+            var movingStrip = manager.Strips[1];
+            var unmovingStrip = manager.Strips[0];
 
-            project.MoveDown(movingStrip);
+            manager.MoveDown(movingStrip);
 
-            Assert.AreEqual(unmovingStrip, project.Strips[0]);
-            Assert.AreEqual(movingStrip, project.Strips[1]);
+            Assert.AreEqual(unmovingStrip, manager.Strips[0]);
+            Assert.AreEqual(movingStrip, manager.Strips[1]);
         }
 
         [TestMethod]
         public void MoveDown_Middle()
         {
-            var project = CreateDefault();
-            project.CreateStrip(StripTypes.Unsupported);
-            project.CreateStrip(StripTypes.Unsupported);
-            project.CreateStrip(StripTypes.Unsupported);
-            var unmoving1 = project.Strips[0];
-            var movingStrip = project.Strips[1];
-            var unmoving2 = project.Strips[2];
+            var manager = CreateDefault();
+            manager.CreateStrip(StripTypes.Unsupported);
+            manager.CreateStrip(StripTypes.Unsupported);
+            manager.CreateStrip(StripTypes.Unsupported);
+            var unmoving1 = manager.Strips[0];
+            var movingStrip = manager.Strips[1];
+            var unmoving2 = manager.Strips[2];
 
-            project.MoveDown(movingStrip);
+            manager.MoveDown(movingStrip);
 
-            Assert.AreEqual(unmoving1, project.Strips[0]);
-            Assert.AreEqual(unmoving2, project.Strips[1]);
-            Assert.AreEqual(movingStrip, project.Strips[2]);
+            Assert.AreEqual(unmoving1, manager.Strips[0]);
+            Assert.AreEqual(unmoving2, manager.Strips[1]);
+            Assert.AreEqual(movingStrip, manager.Strips[2]);
         }
 
         [TestMethod]
         public void MoveUp_OneItem()
         {
-            var project = CreateDefault();
-            project.CreateStrip(StripTypes.Unsupported);
-            var newStrip = project.Strips[0];
+            var manager = CreateDefault();
+            manager.CreateStrip(StripTypes.Unsupported);
+            var newStrip = manager.Strips[0];
 
-            project.MoveUp(newStrip);
+            manager.MoveUp(newStrip);
 
-            Assert.AreEqual(newStrip, project.Strips[0]);
+            Assert.AreEqual(newStrip, manager.Strips[0]);
         }
 
         [TestMethod]
         public void MoveUp_OnTop()
         {
-            var project = CreateDefault();
-            project.CreateStrip(StripTypes.Unsupported);
-            project.CreateStrip(StripTypes.Unsupported);
-            var movingStrip = project.Strips[0];
-            var unmovingStrip = project.Strips[1];
+            var manager = CreateDefault();
+            manager.CreateStrip(StripTypes.Unsupported);
+            manager.CreateStrip(StripTypes.Unsupported);
+            var movingStrip = manager.Strips[0];
+            var unmovingStrip = manager.Strips[1];
 
-            project.MoveUp(movingStrip);
+            manager.MoveUp(movingStrip);
 
-            Assert.AreEqual(movingStrip, project.Strips[0]);
-            Assert.AreEqual(unmovingStrip, project.Strips[1]);
+            Assert.AreEqual(movingStrip, manager.Strips[0]);
+            Assert.AreEqual(unmovingStrip, manager.Strips[1]);
         }
 
         [TestMethod]
         public void MoveUp_OnBottom()
         {
-            var project = CreateDefault();
-            project.CreateStrip(StripTypes.Unsupported);
-            project.CreateStrip(StripTypes.Unsupported);
-            var movingStrip = project.Strips[1];
-            var unmovingStrip = project.Strips[0];
+            var manager = CreateDefault();
+            manager.CreateStrip(StripTypes.Unsupported);
+            manager.CreateStrip(StripTypes.Unsupported);
+            var movingStrip = manager.Strips[1];
+            var unmovingStrip = manager.Strips[0];
 
-            project.MoveUp(movingStrip);
+            manager.MoveUp(movingStrip);
 
-            Assert.AreEqual(movingStrip, project.Strips[0]);
-            Assert.AreEqual(unmovingStrip, project.Strips[1]);
+            Assert.AreEqual(movingStrip, manager.Strips[0]);
+            Assert.AreEqual(unmovingStrip, manager.Strips[1]);
         }
 
         [TestMethod]
         public void MoveUp_Middle()
         {
-            var project = CreateDefault();
-            project.CreateStrip(StripTypes.Unsupported);
-            project.CreateStrip(StripTypes.Unsupported);
-            project.CreateStrip(StripTypes.Unsupported);
-            var unmoving1 = project.Strips[0];
-            var movingStrip = project.Strips[1];
-            var unmoving2 = project.Strips[2];
+            var manager = CreateDefault();
+            manager.CreateStrip(StripTypes.Unsupported);
+            manager.CreateStrip(StripTypes.Unsupported);
+            manager.CreateStrip(StripTypes.Unsupported);
+            var unmoving1 = manager.Strips[0];
+            var movingStrip = manager.Strips[1];
+            var unmoving2 = manager.Strips[2];
 
-            project.MoveUp(movingStrip);
+            manager.MoveUp(movingStrip);
 
-            Assert.AreEqual(movingStrip, project.Strips[0]);
-            Assert.AreEqual(unmoving1, project.Strips[1]);
-            Assert.AreEqual(unmoving2, project.Strips[2]);
+            Assert.AreEqual(movingStrip, manager.Strips[0]);
+            Assert.AreEqual(unmoving1, manager.Strips[1]);
+            Assert.AreEqual(unmoving2, manager.Strips[2]);
         }
 
         [TestMethod]
         public void Delete()
         {
-            var project = CreateDefault();
-            project.CreateStrip(StripTypes.Unsupported);
-            project.CreateStrip(StripTypes.Unsupported);
-            project.CreateStrip(StripTypes.Unsupported);
-            var unmoving1 = project.Strips[0];
-            var movingStrip = project.Strips[1];
-            var unmoving2 = project.Strips[2];
+            var manager = CreateDefault();
+            manager.CreateStrip(StripTypes.Unsupported);
+            manager.CreateStrip(StripTypes.Unsupported);
+            manager.CreateStrip(StripTypes.Unsupported);
+            var unmoving1 = manager.Strips[0];
+            var movingStrip = manager.Strips[1];
+            var unmoving2 = manager.Strips[2];
 
-            project.Delete(movingStrip);
+            manager.Delete(movingStrip);
 
-            Assert.AreEqual(unmoving1, project.Strips[0]);
-            Assert.AreEqual(unmoving2, project.Strips[1]);
+            Assert.AreEqual(unmoving1, manager.Strips[0]);
+            Assert.AreEqual(unmoving2, manager.Strips[1]);
         }
 
         [TestMethod]
         public void CreateStrip_Trigger()
         {
             bool triggered = false;
-            var project = CreateDefault();
-            project.SetStripsChangeForVM(() => triggered = true);
+            var manager = CreateDefault();
+            manager.SetStripsChangeForVM(() => triggered = true);
 
-            project.CreateStrip(StripTypes.Unsupported);
+            manager.CreateStrip(StripTypes.Unsupported);
             Assert.IsTrue(triggered);
         }
 

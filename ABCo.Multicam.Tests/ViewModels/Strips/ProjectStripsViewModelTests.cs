@@ -32,13 +32,18 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
         //    return moq.Object;
         //}
 
+        static ProjectStripsViewModel CreateDefault() => new(CreateModelMockWithZeroStrips().Object, CreateDefaultServiceSource());
+        static ProjectStripsViewModel CreateWithCustomModel(IStripManager manager) => new(manager, CreateDefaultServiceSource());
+        static ProjectStripsViewModel CreateWithCustomServSource(IServiceSource src) => new(CreateModelMockWithZeroStrips().Object, src);
+        static ProjectStripsViewModel CreateWithCustomModelAndServSource(IStripManager manager, IServiceSource src) => new(manager, src);
+
         [TestMethod]
         public void Ctor_ThrowsWithNoServiceSource() => Assert.ThrowsException<ServiceSourceNotGivenException>(() => new ProjectStripsViewModel(CreateModelMockWithZeroStrips().Object, null!));
 
         [TestMethod]
         public void Ctor_InitializesLocal()
         {
-            var project = new ProjectStripsViewModel(CreateModelMockWithZeroStrips().Object, CreateDefaultServiceSource());
+            var project = CreateDefault();
             Assert.IsNotNull(project.Items);
             Assert.IsNull(project.CurrentlyEditing);
             Assert.AreEqual(0, project.Items.Count);
@@ -48,8 +53,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
         public void Ctor_InitializesEventHandler()
         {
             var model = CreateModelMockWithZeroStrips();
-            var project = new ProjectStripsViewModel(model.Object, CreateDefaultServiceSource());
-
+            var project = CreateWithCustomModel(model.Object);
             model.Verify(m => m.SetStripsChangeForVM(It.IsAny<Action>()), Times.Once);
         }
 
@@ -58,7 +62,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
         {
             List<IRunningStrip> items = new() { Mock.Of<IRunningStrip>(), Mock.Of<IRunningStrip>() };
             var model = Mock.Of<IStripManager>(m => m.Strips == items);
-            var project = new ProjectStripsViewModel(model, CreateDefaultServiceSource());
+            var project = CreateWithCustomModel(model);
 
             Assert.AreEqual(2, project.Items.Count);
             Assert.AreEqual(items[0], project.Items[0].BaseStrip);
@@ -70,7 +74,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
         {
             var dialogHandler = new Mock<IUIDialogHandler>();
             var serviceSource = Mock.Of<IServiceSource>(m => m.Get<IUIDialogHandler>() == dialogHandler.Object);
-            var project = new ProjectStripsViewModel(CreateModelMockWithZeroStrips().Object, serviceSource);
+            var project = CreateWithCustomServSource(serviceSource);
             project.CreateStrip();
 
             dialogHandler.Verify(a => a.OpenContextMenu(It.Is<ContextMenuDetails<StripTypes>>(d =>
@@ -100,7 +104,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
 
             var serviceSource = Mock.Of<IServiceSource>(m => m.Get<IUIDialogHandler>() == dialogHandler.Object);
             var model = CreateModelMockWithZeroStrips();
-            var project = new ProjectStripsViewModel(model.Object, serviceSource);
+            var project = CreateWithCustomModelAndServSource(model.Object, serviceSource);
 
             project.CreateStrip();
             callback(type);
@@ -116,7 +120,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
         void TestStripVMCreation<TStripInterface, TExpectedVMType>() where TStripInterface : class, IRunningStrip
         {
             IStripManager model = Mock.Of<IStripManager>(m => m.Strips == new List<IRunningStrip>() { Mock.Of<TStripInterface>() });
-            var project = new ProjectStripsViewModel(model, CreateDefaultServiceSource());
+            var project = CreateWithCustomModel(model);
             Assert.IsInstanceOfType(project.Items[0], typeof(TExpectedVMType));
         }
 
@@ -189,7 +193,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
             model.Setup(e => e.SetStripsChangeForVM(It.IsAny<Action>())).Callback<Action>(a => changeTrigger = a);
             model.SetupGet(e => e.Strips).Returns(() => stripsList);
 
-            var project = new ProjectStripsViewModel(model.Object, CreateDefaultServiceSource());
+            var project = CreateWithCustomModel(model.Object);
             testCode(project, changeTrigger, stripsList);
         }
 
@@ -197,7 +201,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
         public void MoveUp()
         {
             var model = CreateModelMockWithOneStrip(out var initialStrip);
-            var project = new ProjectStripsViewModel(model.Object, CreateDefaultServiceSource());
+            var project = CreateWithCustomModel(model.Object);
             project.MoveUp(project.Items[0]);
             model.Verify(v => v.MoveUp(initialStrip), Times.Once);
         }
@@ -206,7 +210,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
         public void MoveDown()
         {
             var model = CreateModelMockWithOneStrip(out var initialStrip);
-            var project = new ProjectStripsViewModel(model.Object, CreateDefaultServiceSource());
+            var project = CreateWithCustomModel(model.Object);
             project.MoveDown(project.Items[0]);
             model.Verify(v => v.MoveDown(initialStrip), Times.Once);
         }
@@ -215,7 +219,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
         public void Delete()
         {
             var model = CreateModelMockWithOneStrip(out var initialStrip);
-            var project = new ProjectStripsViewModel(model.Object, CreateDefaultServiceSource());
+            var project = CreateWithCustomModel(model.Object);
             project.Delete(project.Items[0]);
             model.Verify(v => v.Delete(initialStrip), Times.Once);
         }
@@ -223,7 +227,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
         [TestMethod]
         public void CurrentlyEditing_NoPreviousItem()
         {
-            var project = new ProjectStripsViewModel(CreateModelMockWithOneStrip(out _).Object, CreateDefaultServiceSource());
+            var project = CreateWithCustomModel(CreateModelMockWithOneStrip(out _).Object);
             project.CurrentlyEditing = project.Items[0];
             Assert.IsTrue(project.Items[0].IsEditing);
         }
@@ -231,7 +235,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
         [TestMethod]
         public void CurrentlyEditing_RemoveItem()
         {
-            var project = new ProjectStripsViewModel(CreateModelMockWithOneStrip(out _).Object, CreateDefaultServiceSource());
+            var project = CreateWithCustomModel(CreateModelMockWithOneStrip(out _).Object);
 
             project.CurrentlyEditing = project.Items[0];
             project.CurrentlyEditing = null;
@@ -243,7 +247,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
         public void CurrentlyEditing_ReplaceItem()
         {
             var model = Mock.Of<IStripManager>(m => m.Strips == new List<IRunningStrip>() { Mock.Of<IRunningStrip>(), Mock.Of<IRunningStrip>() });
-            var project = new ProjectStripsViewModel(model, CreateDefaultServiceSource());
+            var project = CreateWithCustomModel(model);
 
             project.CurrentlyEditing = project.Items[0];
             project.CurrentlyEditing = project.Items[1];
@@ -257,18 +261,19 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
         [TestMethod]
         public void ShowEditingPanel_NotEditing()
         {
-            var project = new ProjectStripsViewModel(CreateModelMockWithZeroStrips().Object, CreateDefaultServiceSource());
+            var project = CreateWithCustomModel(CreateModelMockWithZeroStrips().Object);
             Assert.IsFalse(project.ShowEditingPanel);
         }
 
         [TestMethod]
         public void ShowEditingPanel_Editing()
         {
-            var project = new ProjectStripsViewModel(CreateModelMockWithOneStrip(out _).Object, CreateDefaultServiceSource());
+            var project = CreateWithCustomModel(CreateModelMockWithOneStrip(out _).Object);
             project.CurrentlyEditing = project.Items[0];
             Assert.IsTrue(project.ShowEditingPanel);
         }
 
+        // HELPERS:
         static Mock<IStripManager> CreateModelMockWithZeroStrips()
         {
             var model = new Mock<IStripManager>();
@@ -284,6 +289,6 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
             return model;
         }
 
-        IServiceSource CreateDefaultServiceSource() => Mock.Of<IServiceSource>();
+        static IServiceSource CreateDefaultServiceSource() => Mock.Of<IServiceSource>();
     }
 }
