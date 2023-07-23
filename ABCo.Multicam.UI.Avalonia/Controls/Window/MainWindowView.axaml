@@ -5,7 +5,7 @@
 			 xmlns:viewmodels="using:ABCo.Multicam.UI.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="ABCo.Multicam.UI.Avalonia.Controls.Window.MainWindowView"
-			 xmlns:pages="using:ABCo.Multicam.UI.Avalonia.Pages">
+			 xmlns:views="using:ABCo.Multicam.UI.Avalonia.Views">
 
 	<FlyoutBase.AttachedFlyout>
 		<Flyout>
@@ -87,7 +87,7 @@
 
 			<Border Grid.Row="1" Grid.Column="1" Background="{Binding $self.Background}">
 				<!--<TextBlock>Test</TextBlock>-->
-				<pages:StripView DataContext="{Binding Application.Project}"></pages:StripView>
+				<views:StripView DataContext="{Binding Application.Project}"></views:StripView>
 			</Border>
 		</Grid>
 	</Panel>

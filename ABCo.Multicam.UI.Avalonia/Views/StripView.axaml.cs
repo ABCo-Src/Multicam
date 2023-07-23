@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace ABCo.Multicam.UI.Avalonia.Pages
+namespace ABCo.Multicam.UI.Avalonia.Views
 {
     public partial class StripView : UserControl
     {

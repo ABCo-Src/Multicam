@@ -6,7 +6,7 @@
         xmlns:window="using:ABCo.Multicam.UI.Avalonia.Controls.Window"
 		xmlns:pages="using:ABCo.Multicam.UI.Avalonia.Pages"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="ABCo.Multicam.UI.Avalonia.Views.MainWindow"
+        x:Class="ABCo.Multicam.UI.Avalonia.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Title="ABCo.Multicam.UI.Avalonia"
 		Background="{DynamicResource AppBack}"

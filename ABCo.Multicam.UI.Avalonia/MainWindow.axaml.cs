@@ -1,7 +1,7 @@
 ﻿using ABCo.Multicam.UI.ViewModels;
 using Avalonia.Controls;
 
-namespace ABCo.Multicam.UI.Avalonia.Views;
+namespace ABCo.Multicam.UI.Avalonia;
 
 public partial class MainWindow : Window
 {

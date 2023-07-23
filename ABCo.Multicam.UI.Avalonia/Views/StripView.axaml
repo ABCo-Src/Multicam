@@ -6,7 +6,7 @@
 			 xmlns:locators="using:ABCo.Multicam.UI.Avalonia.Locators"
 			 xmlns:sviewmodels="using:ABCo.Multicam.UI.ViewModels.Strips"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="ABCo.Multicam.UI.Avalonia.Pages.StripView"
+             x:Class="ABCo.Multicam.UI.Avalonia.Views.StripView"
 			 x:DataType="viewmodels:ProjectViewModel">
 	<Grid>
 		<Grid.ColumnDefinitions>
