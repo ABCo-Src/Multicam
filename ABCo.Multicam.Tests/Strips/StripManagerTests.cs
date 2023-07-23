@@ -195,6 +195,19 @@ namespace ABCo.Multicam.Tests.Strips
         }
 
         [TestMethod]
+        public void Delete_DisposesStrip()
+        {
+            var mockStrip = new Mock<IUnsupportedRunningStrip>();
+            var serviceSource = Mock.Of<IServiceSource>(s => s.Get<IUnsupportedRunningStrip>() == mockStrip.Object);
+            var manager = CreateWithCustomSource(serviceSource);
+
+            manager.CreateStrip(StripTypes.Unsupported);
+            manager.Delete(mockStrip.Object);
+
+            mockStrip.Verify(m => m.Dispose());
+        }
+
+        [TestMethod]
         public void CreateStrip_Trigger()
         {
             bool triggered = false;
@@ -230,6 +243,21 @@ namespace ABCo.Multicam.Tests.Strips
             Assert.IsTrue(triggered);
         }
 
+        [TestMethod]
+        public void Dispose_DisposesAllStrips()
+        {
+            var mockStrip1 = new Mock<IUnsupportedRunningStrip>();
+            var mockStrip2 = new Mock<ISwitcherRunningStrip>();
+            var serviceSource = Mock.Of<IServiceSource>(s => s.Get<IUnsupportedRunningStrip>() == mockStrip1.Object && s.Get<ISwitcherRunningStrip>() == mockStrip2.Object);
+            var manager = CreateWithCustomSource(serviceSource);
+
+            manager.CreateStrip(StripTypes.Unsupported);
+            manager.CreateStrip(StripTypes.Switcher);
+            manager.Dispose();
+
+            mockStrip1.Verify(m => m.Dispose());
+            mockStrip2.Verify(m => m.Dispose());
+        }
 
         // TODO: Add a sanity check to this function that verifies something *did* change
         static void TestTriggerForSingleOperation(Action<StripManager> op, bool needed)

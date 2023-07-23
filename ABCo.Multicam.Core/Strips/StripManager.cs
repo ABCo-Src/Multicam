@@ -11,7 +11,7 @@ namespace ABCo.Multicam.Core.Strips
     /// <summary>
     /// Manages all the (running) strips in the current project.
     /// </summary>
-    public interface IStripManager
+    public interface IStripManager : IDisposable
     {
         IReadOnlyList<IRunningStrip> Strips { get; }
 
@@ -76,7 +76,14 @@ namespace ABCo.Multicam.Core.Strips
         public void Delete(IRunningStrip strip)
         {
             _runningStrips.Remove(strip);
+            strip.Dispose();
             _onStripsChange?.Invoke();
+        }
+
+        public void Dispose()
+        {
+            for (int i = 0; i <  _runningStrips.Count; i++)
+                _runningStrips[i].Dispose();
         }
     }
 }

@@ -11,14 +11,13 @@ namespace ABCo.Multicam.Core.Strips.Switchers
     public interface ISwitcherRunningStrip : IRunningStrip { }
     public class SwitcherRunningStrip : ISwitcherRunningStrip
     {
+        ISwitcher _switcher;
+
         public SwitcherRunningStrip(IDummySwitcher switcher)
         {
-
+            _switcher = switcher;
         }
 
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
+        public void Dispose() => _switcher.Dispose();
     }
 }

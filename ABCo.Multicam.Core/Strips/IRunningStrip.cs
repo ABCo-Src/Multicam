@@ -10,12 +10,18 @@ namespace ABCo.Multicam.Core.Strips
     /// <summary>
     /// Represents a strip currently running
     /// </summary>
-    public interface IRunningStrip
+    public interface IRunningStrip : IDisposable
     {
         
     }
 
     public interface IUnsupportedRunningStrip : IRunningStrip { }
 
-    public class UnsupportedRunningStrip : IUnsupportedRunningStrip { }
+    public class UnsupportedRunningStrip : IUnsupportedRunningStrip
+    {
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

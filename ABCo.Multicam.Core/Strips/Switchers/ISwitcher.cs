@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Core.Strips.Switchers
 {
-    public interface ISwitcher
+    public interface ISwitcher : IDisposable
     {
         SwitcherSpecs Specs { get; }
 

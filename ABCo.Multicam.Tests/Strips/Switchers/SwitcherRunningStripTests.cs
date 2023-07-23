@@ -13,12 +13,17 @@ namespace ABCo.Multicam.Tests.Strips.Switchers
     public class SwitcherRunningStripTests
     {
         public SwitcherRunningStrip CreateDefault() => new SwitcherRunningStrip(Mock.Of<IDummySwitcher>());
+        public SwitcherRunningStrip CreateWithCustomSwitcher(IDummySwitcher switcher) => new SwitcherRunningStrip(switcher);
 
         [TestMethod]
-        public void Ctor()
+        public void Dispose_DisposesSwitcher()
         {
-            var switcherRunningStrip = CreateDefault();
+            var switcherMock = new Mock<IDummySwitcher>();
+            var switcherRunningStrip = CreateWithCustomSwitcher(switcherMock.Object);
 
+            switcherRunningStrip.Dispose();
+
+            switcherMock.Verify(m => m.Dispose());
         }
     }
 }
