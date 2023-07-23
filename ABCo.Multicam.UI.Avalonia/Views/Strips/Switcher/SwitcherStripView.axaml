@@ -5,7 +5,7 @@
 			 xmlns:viewmodels="using:ABCo.Multicam.UI.ViewModels.Strips.Switcher"
 			 xmlns:controls="using:ABCo.Multicam.UI.Avalonia.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="ABCo.Multicam.UI.Avalonia.Views.Strips.SwitcherStripView"
+             x:Class="ABCo.Multicam.UI.Avalonia.Views.Strips.Switcher.SwitcherStripView"
 			 x:DataType="viewmodels:SwitcherStripViewModel">
 	<Grid>
 		<Grid.RowDefinitions>

@@ -1,4 +1,5 @@
 ﻿using ABCo.Multicam.UI.Avalonia.Views.Strips;
+using ABCo.Multicam.UI.Avalonia.Views.Strips.Switcher;
 using ABCo.Multicam.UI.Enumerations;
 using Avalonia;
 using Avalonia.Controls;
