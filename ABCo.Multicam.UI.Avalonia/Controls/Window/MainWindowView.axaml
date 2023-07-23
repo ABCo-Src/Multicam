@@ -23,7 +23,6 @@
 			</Grid.ColumnDefinitions>
 
 			<!-- Titlebar -->
-			<!-- (Very messily implemented so the hitting works right) -->
 			<Grid Grid.Column="1">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto" />

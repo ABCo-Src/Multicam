@@ -18,7 +18,7 @@
 		<ScrollViewer Grid.Column="1">
 			<StackPanel>
 				<!-- Connection Manager -->
-				<Grid Background="{DynamicResource AccentColor}" Margin="74 10 10 0">
+				<Grid Background="{DynamicResource AccentColor}" Margin="65 10 10 0">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="*" />
 						<ColumnDefinition Width="Auto" />
@@ -32,37 +32,22 @@
 
 				<!-- Strips -->
 				<StackPanel Name="StripsList" Margin="10 0" DataContext="{Binding Strips}" x:DataType="sviewmodels:ProjectStripsViewModel">
-					<!-- Strips -->
+					
+					<!-- List of Strips -->
 					<ItemsControl Margin="0 5" ItemsSource="{Binding Items}">
 						<ItemsControl.ItemTemplate>
 							<DataTemplate x:DataType="sviewmodels:StripViewModel">
-								<Grid Margin="0 5">
+								<Grid Margin="0 5" MinHeight="60">
 									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="45" />
+										<ColumnDefinition Width="55" />
 										<ColumnDefinition Width="Auto" />
 										<ColumnDefinition Width="*" />
 									</Grid.ColumnDefinitions>
 
-									<!-- Left of Strip -->
-									<StackPanel Margin="10 25" Orientation="Horizontal">
-										<!-- Edit Button -->
-										<LayoutTransformControl VerticalAlignment="Center" Margin="5 0">
-											<LayoutTransformControl.LayoutTransform>
-												<RotateTransform Angle="-90" />
-											</LayoutTransformControl.LayoutTransform>
-
-											<Button Classes="Hyperlink" FontWeight="Bold" RenderTransform="rotate(-90deg)" Command="{Binding ToggleEdit}" Content="{Binding EditBtnText}" />
-										</LayoutTransformControl>
-
-										<!-- Strip Title -->
-										<LayoutTransformControl VerticalAlignment="Center">
-											<LayoutTransformControl.LayoutTransform>
-												<RotateTransform Angle="-90" />
-											</LayoutTransformControl.LayoutTransform>
-
-											<TextBlock FontWeight="Bold" RenderTransform="rotate(-90deg)" Text="{Binding StripTitle}" />
-										</LayoutTransformControl>
-									</StackPanel>
+									<!-- Edit Button -->
+									<Button Classes="Borderless" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Command="{Binding ToggleEdit}">
+										<TextBlock Classes="Hyperlink" RenderTransform="rotate(-90deg)" Text="{Binding EditBtnText}" ClipToBounds="False" />
+									</Button>
 
 									<!-- Title Separator -->
 									<Rectangle Grid.Column="1" Grid.RowSpan="2" Width="5" Fill="{DynamicResource AccentColor}"></Rectangle>
@@ -76,9 +61,9 @@
 					</ItemsControl>
 
 					<!-- Create New Strip -->
-					<Grid Margin="10 5">
+					<Grid Margin="0 5">
 						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="54" />
+							<ColumnDefinition Width="55" />
 							<ColumnDefinition Width="Auto" />
 							<ColumnDefinition Width="*" />
 						</Grid.ColumnDefinitions>

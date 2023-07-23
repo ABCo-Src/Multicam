@@ -13,8 +13,11 @@
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 
-		<!-- Switcher Name -->
-		<TextBlock Margin="0 5" FontSize="16">Currently unlinked</TextBlock>
+		<!-- Strip Name + Switcher Info -->
+		<StackPanel Margin="0 15" Orientation="Horizontal">
+			<TextBlock Text="{Binding StripTitle}" Classes="StripTitleText" VerticalAlignment="Center" />
+			<TextBlock Margin="20 0" VerticalAlignment="Center">Currently unlinked</TextBlock>
+		</StackPanel>
 
 		<!-- Buses -->
 		<Grid Grid.Row="1">
