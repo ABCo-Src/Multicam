@@ -19,6 +19,6 @@ namespace ABCo.Multicam.UI.Services
 
     public interface IUIDialogHandler 
     {
-        public void OpenSimpleContext<T>(ContextMenuItem<T>[] items, Action<T> selected, Action? cancel);
+        public void OpenSimpleContext<T>(string title, Action<T> selected, Action? cancel, ContextMenuItem<T>[] items);
     }
 }

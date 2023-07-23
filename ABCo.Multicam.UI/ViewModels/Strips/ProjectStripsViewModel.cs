@@ -109,11 +109,11 @@ namespace ABCo.Multicam.UI.ViewModels.Strips
         public void CreateStrip()
         {
             // Temporary test
-            _dialogHandler.OpenSimpleContext(new ContextMenuItem<int>[]
+            _dialogHandler.OpenSimpleContext("Choose Type", a => Debugger.Break(), Debugger.Break, new ContextMenuItem<int>[]
             {
                 new() { Name = "First Item" },
                 new() { Name = "Second Item" }
-            }, a => Debugger.Break(), Debugger.Break);
+            });
 
             _manager.CreateStrip();
         }

@@ -16,21 +16,28 @@ namespace ABCo.Multicam.UI.Avalonia.Services
         MainWindowView _mainView;
         public UIDialogHandler(MainWindowView window) => _mainView = window;
 
-        public void OpenSimpleContext<T>(ContextMenuItem<T>[] items, Action<T> selected, Action? cancel)
+        public void OpenSimpleContext<T>(string title, Action<T> selected, Action? cancel, ContextMenuItem<T>[] items)
         {
             // Create items
-            var itemsCollection = new ItemsControl();
+            var itemsControl = new StackPanel();
+
+            if (title != "")
+            {
+                var titleControl = new TextBlock() { Text = title };
+                titleControl.Classes.Add("ContextMenuTitle");
+                itemsControl.Children.Add(titleControl);
+            }
 
             for (int i = 0; i < items.Length; i++)
             {
                 var button = new Button() { Content = items[i].Name };
-                //button.Classes.Add("Borderless");
+                button.Classes.Add("Borderless");
                 button.Classes.Add("ContextMenuButton");
-                itemsCollection.Items.Add(button);
+                itemsControl.Children.Add(button);
             }
 
             // Set flyout
-            SetFlyout(itemsCollection);
+            SetFlyout(itemsControl);
         }
 
         private void SetFlyout(Control content)

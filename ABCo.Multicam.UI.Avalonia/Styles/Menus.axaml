@@ -1,0 +1,17 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+    </Design.PreviewWith>
+
+	<Style Selector="Button.ContextMenuButton">
+		<Setter Property="Padding" Value="10" />
+		<Setter Property="MinWidth" Value="150" />
+		<Setter Property="HorizontalAlignment" Value="Stretch" />
+	</Style>
+
+	<Style Selector="TextBlock.ContextMenuTitle">
+		<Setter Property="HorizontalAlignment" Value="Center" />
+		<Setter Property="FontWeight" Value="Bold" />
+		<Setter Property="Margin" Value="0 0 0 10" />
+	</Style>
+</Styles>

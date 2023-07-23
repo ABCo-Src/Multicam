@@ -10,6 +10,7 @@
 		<!-- Styles -->
 		<StyleInclude Source="/Styles/Buttons.axaml" />
 		<StyleInclude Source="/Styles/Windows.axaml" />
+		<StyleInclude Source="/Styles/Menus.axaml" />
 		
     </Application.Styles>
 
