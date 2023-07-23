@@ -104,7 +104,7 @@
 							<RowDefinition Height="*" />
 							<RowDefinition Height="Auto" />
 						</Grid.RowDefinitions>
-					
+
 						<TextBlock Margin="10 10" VerticalAlignment="Center" Text="{Binding EditPanelTitle}" />
 						<Button Grid.Column="1" Classes="Borderless" Command="{Binding ToggleEdit}">
 							<Image Source="{DynamicResource CloseIcon}" Width="16" Height="16" />
@@ -114,10 +114,10 @@
 					</Grid>
 
 					<!-- Panel Content -->
-					<StackPanel Grid.Row="1" Margin="10">
+					<StackPanel Grid.Row="1" Margin="0 10">
 
 						<!-- Shared panel controls -->
-						<Grid>
+						<Grid Margin="10 0">
 							<Grid.RowDefinitions>
 								<RowDefinition Height="Auto" />
 								<RowDefinition Height="5" />
@@ -143,6 +143,8 @@
 						</Grid>
 
 						<!-- Panel-specific items -->
+						<Rectangle Classes="PanelContentSeparator" />
+						<ContentControl Margin="10 0" Content="{Binding ContentView, Converter={x:Static locators:StripSettingsViewLocator.Instance}}" />
 					</StackPanel>
 				</Grid>
 			</DockPanel>
