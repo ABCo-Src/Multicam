@@ -7,80 +7,89 @@
              x:Class="ABCo.Multicam.UI.Avalonia.Controls.Window.MainWindowView"
 			 xmlns:pages="using:ABCo.Multicam.UI.Avalonia.Pages">
 
-	<Grid x:DataType="viewmodels:MainWindowViewModel">
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="*" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
+	<FlyoutBase.AttachedFlyout>
+		<Flyout>
+			
+		</Flyout>
+	</FlyoutBase.AttachedFlyout>
 
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto" />
-			<ColumnDefinition Width="*" />
-			<ColumnDefinition Width="Auto" />
-		</Grid.ColumnDefinitions>
+	<Panel>
+		<!-- General UI -->
+		<Grid x:DataType="viewmodels:MainWindowViewModel">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="*" />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
 
-		<!-- Titlebar -->
-		<!-- (Very messily implemented so the hitting works right) -->
-		<Grid Grid.Column="1">
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
 
-			<!-- Title -->
-			<Border Background="{DynamicResource AccentColor}" Height="{Binding TitleBarHeight}" IsHitTestVisible="False" VerticalAlignment="Stretch">
-				<TextBlock Margin="5 0" VerticalAlignment="Center">ABCo Multicamera Platform</TextBlock>
-			</Border>
+			<!-- Titlebar -->
+			<!-- (Very messily implemented so the hitting works right) -->
+			<Grid Grid.Column="1">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
 
-			<Border Background="{DynamicResource AccentColor}" Grid.Column="1" IsHitTestVisible="False" />
+				<!-- Title -->
+				<Border Background="{DynamicResource AccentColor}" Height="{Binding TitleBarHeight}" IsHitTestVisible="False" VerticalAlignment="Stretch">
+					<TextBlock Margin="5 0" VerticalAlignment="Center">ABCo Multicamera Platform</TextBlock>
+				</Border>
 
-			<!-- Center -->
-			<Border Background="{DynamicResource AccentColor}" Grid.Column="2" IsHitTestVisible="False" VerticalAlignment="Stretch">
-				<TextBlock VerticalAlignment="Center" IsVisible="{Binding IsMaximized}">Maximized</TextBlock>
-			</Border>
+				<Border Background="{DynamicResource AccentColor}" Grid.Column="1" IsHitTestVisible="False" />
 
-			<Border Background="{DynamicResource AccentColor}" Grid.Column="3" IsHitTestVisible="False" />
+				<!-- Center -->
+				<Border Background="{DynamicResource AccentColor}" Grid.Column="2" IsHitTestVisible="False" VerticalAlignment="Stretch">
+					<TextBlock VerticalAlignment="Center" IsVisible="{Binding IsMaximized}">Maximized</TextBlock>
+				</Border>
 
-			<Border Background="{DynamicResource AccentColor_PanelBack}" Grid.Column="4" IsHitTestVisible="True" VerticalAlignment="Stretch">
-				<StackPanel Orientation="Horizontal" Margin="0">
-					<Button Name="Minimize" Classes="Borderless" Command="{Binding RequestMinimize}" IsVisible="{Binding ShowMinimize}" VerticalAlignment="Stretch">
-						<Canvas Width="16" Height="16">
-							<Line StartPoint="2,13" EndPoint="14,13" Stroke="{DynamicResource ForegroundColor}" StrokeThickness="2" />
-						</Canvas>
-					</Button>
-					<Button Name="Maximize" Classes="Borderless" Command="{Binding RequestMaximizeToggle}" IsVisible="{Binding ShowMaximize}" Height="{Binding TitleBarHeight}">
-						<Canvas Width="16" Height="16">
-							<Rectangle Canvas.Left="2" Canvas.Top="2" Width="13" Height="13" Stroke="{DynamicResource ForegroundColor}" StrokeThickness="2" />
-							<!--<Line StartPoint="2,2" EndPoint="14,2" Stroke="{DynamicResource ForegroundColor}" StrokeThickness="2" />
+				<Border Background="{DynamicResource AccentColor}" Grid.Column="3" IsHitTestVisible="False" />
+
+				<Border Background="{DynamicResource AccentColor_PanelBack}" Grid.Column="4" IsHitTestVisible="True" VerticalAlignment="Stretch">
+					<StackPanel Orientation="Horizontal" Margin="0">
+						<Button Name="Minimize" Classes="Borderless" Command="{Binding RequestMinimize}" IsVisible="{Binding ShowMinimize}" VerticalAlignment="Stretch">
+							<Canvas Width="16" Height="16">
+								<Line StartPoint="2,13" EndPoint="14,13" Stroke="{DynamicResource ForegroundColor}" StrokeThickness="2" />
+							</Canvas>
+						</Button>
+						<Button Name="Maximize" Classes="Borderless" Command="{Binding RequestMaximizeToggle}" IsVisible="{Binding ShowMaximize}" Height="{Binding TitleBarHeight}">
+							<Canvas Width="16" Height="16">
+								<Rectangle Canvas.Left="2" Canvas.Top="2" Width="13" Height="13" Stroke="{DynamicResource ForegroundColor}" StrokeThickness="2" />
+								<!--<Line StartPoint="2,2" EndPoint="14,2" Stroke="{DynamicResource ForegroundColor}" StrokeThickness="2" />
 							<Line StartPoint="3,4" EndPoint="3,14" Stroke="{DynamicResource ForegroundColor}" StrokeThickness="2" />
 							<Line StartPoint="13,4" EndPoint="13,14" Stroke="{DynamicResource ForegroundColor}" StrokeThickness="2" />
 							<Line StartPoint="2,14" EndPoint="14,14" Stroke="{DynamicResource ForegroundColor}" StrokeThickness="2" />-->
-						</Canvas>
-					</Button>
-					<Button Name="Close" Classes="Borderless" Command="{Binding Close}" IsVisible="{Binding ShowClose}" Height="{Binding TitleBarHeight}">
-						<Image Source="{DynamicResource CloseIcon}" Width="16" Height="16" />
-					</Button>
-				</StackPanel>
+							</Canvas>
+						</Button>
+						<Button Name="Close" Classes="Borderless" Command="{Binding Close}" IsVisible="{Binding ShowClose}" Height="{Binding TitleBarHeight}">
+							<Image Source="{DynamicResource CloseIcon}" Width="16" Height="16" />
+						</Button>
+					</StackPanel>
+				</Border>
+			</Grid>
+
+			<!-- Left Border -->
+			<Panel Background="{DynamicResource AccentColor}" Width="{Binding BorderWidth}" Grid.RowSpan="3" />
+
+			<!-- Right Border -->
+			<Panel Background="{DynamicResource AccentColor}" Width="{Binding BorderWidth}" Grid.Column="2" Grid.RowSpan="3" />
+
+			<!-- Bottom Border -->
+			<Panel Background="{DynamicResource AccentColor}" Height="{Binding BorderWidth}" Grid.Row="2" Grid.Column="1" />
+
+			<Border Grid.Row="1" Grid.Column="1" Background="{Binding $self.Background}">
+				<!--<TextBlock>Test</TextBlock>-->
+				<pages:StripView DataContext="{Binding Application.Project}"></pages:StripView>
 			</Border>
 		</Grid>
-
-		<!-- Left Border -->
-		<Panel Background="{DynamicResource AccentColor}" Width="{Binding BorderWidth}" Grid.RowSpan="3" />
-
-		<!-- Right Border -->
-		<Panel Background="{DynamicResource AccentColor}" Width="{Binding BorderWidth}" Grid.Column="2" Grid.RowSpan="3" />
-
-		<!-- Bottom Border -->
-		<Panel Background="{DynamicResource AccentColor}" Height="{Binding BorderWidth}" Grid.Row="2" Grid.Column="1" />
-
-		<Border Grid.Row="1" Grid.Column="1" Background="{Binding $self.Background}">
-			<!--<TextBlock>Test</TextBlock>-->
-			<pages:StripView DataContext="{Binding Application.Project}"></pages:StripView>
-		</Border>
-	</Grid>
+	</Panel>
 	
 </UserControl>

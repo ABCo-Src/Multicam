@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.Avalonia.Services
 {
-    public class DesktopUIWindow : IUIWindow
+    public class WindowedUIWindow : IUIWindow
     {
         Window _window;
-        public DesktopUIWindow(Window window) => _window = window;
+        public WindowedUIWindow(Window window) => _window = window;
 
         public bool CanMinimize => true;
         public bool CanMaximize => true;
@@ -23,7 +23,7 @@ namespace ABCo.Multicam.UI.Avalonia.Services
         public void RequestMainWindowMinimize() => _window.WindowState = WindowState.Minimized;
     }
 
-    public class WebUIWindow : IUIWindow
+    public class UnwindowedUIWindow : IUIWindow
     {
         public bool CanMinimize => false;
         public bool CanMaximize => false;

@@ -15,4 +15,8 @@
     <ProjectReference Include="..\ABCo.Multicam.Core\ABCo.Multicam.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ViewModels\General\" />
+  </ItemGroup>
+
 </Project>

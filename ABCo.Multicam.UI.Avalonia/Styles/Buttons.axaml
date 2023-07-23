@@ -21,17 +21,6 @@
 		<Setter Property="Cursor" Value="Hand" />
 	</Style>
 
-	<Style Selector="Button.SwitcherButton">
-		<Setter Property="BorderThickness" Value="2" />
-		<Setter Property="BorderBrush" Value="{DynamicResource StripButtonOutline}" />
-		<Setter Property="Width" Value="64" />
-		<Setter Property="CornerRadius" Value="2" />
-		<Setter Property="Height" Value="{Binding $self.Width}" />
-		<Setter Property="VerticalAlignment" Value="Stretch" />
-		<Setter Property="HorizontalContentAlignment" Value="Center" />
-		<Setter Property="VerticalContentAlignment" Value="Center" />
-	</Style>
-
 	<Style Selector="Button.Dashed">
 		<Setter Property="Template">
 			<Setter.Value>
@@ -49,5 +38,20 @@
 
 		<Setter Property="BorderBrush" Value="{DynamicResource ForegroundColor}" />
 		<Setter Property="BorderThickness" Value="3" />
+	</Style>
+
+	<Style Selector="Button.SwitcherButton">
+		<Setter Property="BorderThickness" Value="2" />
+		<Setter Property="BorderBrush" Value="{DynamicResource StripButtonOutline}" />
+		<Setter Property="Width" Value="64" />
+		<Setter Property="CornerRadius" Value="2" />
+		<Setter Property="Height" Value="{Binding $self.Width}" />
+		<Setter Property="VerticalAlignment" Value="Stretch" />
+		<Setter Property="HorizontalContentAlignment" Value="Center" />
+		<Setter Property="VerticalContentAlignment" Value="Center" />
+	</Style>
+
+	<Style Selector="Button.ContextMenuButton">
+		
 	</Style>
 </Styles>

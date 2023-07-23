@@ -3,12 +3,15 @@ using ABCo.Multicam.Core.Strips;
 using ABCo.Multicam.Core.Switchers;
 using ABCo.Multicam.Tests.UI;
 using ABCo.Multicam.UI.Helpers;
+using ABCo.Multicam.UI.Services;
 using ABCo.Multicam.UI.ViewModels.Strips.Switcher;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -28,6 +31,7 @@ namespace ABCo.Multicam.UI.ViewModels.Strips
     {
         IStripManager _manager;
         IServiceSource _servSource;
+        IUIDialogHandler _dialogHandler;
 
         [ObservableProperty] ObservableCollection<StripViewModel> _items;
 
@@ -38,6 +42,7 @@ namespace ABCo.Multicam.UI.ViewModels.Strips
             _manager = manager;
             _servSource = servSource;
             _items = new ObservableCollection<StripViewModel>();
+            _dialogHandler = servSource.Get<IUIDialogHandler>();
 
             manager.SetStripsChangeForVM(OnStripsChange);
             OnStripsChange();
@@ -101,7 +106,18 @@ namespace ABCo.Multicam.UI.ViewModels.Strips
         };
 
 
-        public void CreateStrip() => _manager.CreateStrip();
+        public void CreateStrip()
+        {
+            // Temporary test
+            _dialogHandler.OpenSimpleContext(new ContextMenuItem<int>[]
+            {
+                new() { Name = "First Item" },
+                new() { Name = "Second Item" }
+            }, a => Debugger.Break(), Debugger.Break);
+
+            _manager.CreateStrip();
+        }
+
         public void MoveDown(StripViewModel strip) => _manager.MoveDown(strip.BaseStrip);
         public void MoveUp(StripViewModel strip) => _manager.MoveUp(strip.BaseStrip);
         public void Delete(StripViewModel strip) => _manager.Delete(strip.BaseStrip);
