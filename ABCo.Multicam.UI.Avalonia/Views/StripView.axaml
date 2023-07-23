@@ -10,12 +10,12 @@
 			 x:DataType="viewmodels:ProjectViewModel">
 	<Grid>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="*" />
 			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
 
-		<!-- Left Side -->
-		<ScrollViewer>
+		<!-- Main Area -->
+		<ScrollViewer Grid.Column="1">
 			<StackPanel>
 				<!-- Connection Manager -->
 				<Grid Background="{DynamicResource AccentColor}" Margin="74 10 10 0">
@@ -95,7 +95,7 @@
 		</ScrollViewer>
 		
 		<!-- Edit Panel -->
-		<Border Width="300" Grid.Column="1" Background="{DynamicResource PanelBack}" IsVisible="{Binding ShowEditingPanel}" DataContext="{Binding Strips}" x:DataType="sviewmodels:ProjectStripsViewModel">
+		<Border Width="400" Grid.Column="0" Background="{DynamicResource PanelBack}" IsVisible="{Binding ShowEditingPanel}" DataContext="{Binding Strips}" x:DataType="sviewmodels:ProjectStripsViewModel">
 			<Grid DataContext="{Binding CurrentlyEditing}" x:DataType="sviewmodels:StripViewModel">
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto" />
@@ -147,8 +147,6 @@
 					<!-- Panel-specific items -->
 				</StackPanel>
 			</Grid>
-
-
 		</Border>
 	</Grid>
 </UserControl>
