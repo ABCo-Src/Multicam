@@ -22,11 +22,16 @@ namespace ABCo.Multicam.UI.ViewModels.Strips.Switcher
         public SwitcherStripViewModel(ISwitcherRunningStrip model, IServiceSource serviceSource, IProjectStripsViewModel parent) : base(serviceSource, parent)
         {
             _model = model;
-            _mixBlocks = new ObservableCollection<SwitcherMixBlockViewModel>() { new SwitcherMixBlockViewModel(serviceSource, this), new SwitcherMixBlockViewModel(serviceSource, this) };
+
+            var targetSpecs = _model.SwitcherSpecs;
+            _mixBlocks = new ObservableCollection<SwitcherMixBlockViewModel>();
+
+            for (int i = 0; i < targetSpecs.MixBlocks.Count; i++)
+                _mixBlocks.Add(new SwitcherMixBlockViewModel(targetSpecs.MixBlocks[i], serviceSource, this));
         }
 
-        public override StripViewType ContentView => StripViewType.Switcher;
         public override IRunningStrip BaseStrip => _model;
+        public override StripViewType ContentView => StripViewType.Switcher;
 
         [ObservableProperty] ObservableCollection<SwitcherMixBlockViewModel> _mixBlocks;
     }

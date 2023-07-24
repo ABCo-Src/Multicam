@@ -16,30 +16,45 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips.Switcher
     [TestClass]
     public class SwitcherStripViewModelTests
     {
-        class Dummy : SwitcherStripViewModel
-        {
-            public IServiceSource Source => _serviceSource;
-            public Dummy(ISwitcherRunningStrip strip, IServiceSource serviceSource, IProjectStripsViewModel parent) : base(strip, serviceSource, parent) { }
-        }
+        public SwitcherStripViewModel CreateDefault() => new SwitcherStripViewModel(Mock.Of<ISwitcherRunningStrip>(s => s.SwitcherSpecs == new SwitcherSpecs()), Mock.Of<IServiceSource>(), Mock.Of<IProjectStripsViewModel>());
+        public SwitcherStripViewModel CreateWithCustomModel(ISwitcherRunningStrip model) => new SwitcherStripViewModel(model, Mock.Of<IServiceSource>(), Mock.Of<IProjectStripsViewModel>());
+        public SwitcherStripViewModel CreateWithCustomModelAndParent(ISwitcherRunningStrip model, IProjectStripsViewModel parent) => new SwitcherStripViewModel(model, Mock.Of<IServiceSource>(), parent);
 
         [TestMethod]
         public void CtorAndRunningStrip()
         {
+            var model = Mock.Of<ISwitcherRunningStrip>(s => s.SwitcherSpecs == new SwitcherSpecs());
             var parent = Mock.Of<IProjectStripsViewModel>();
-            var serviceSource = Mock.Of<IServiceSource>();
-            var model = Mock.Of<ISwitcherRunningStrip>();
-            var vm = new Dummy(model, serviceSource, parent);
+            var vm = CreateWithCustomModelAndParent(model, parent);
 
             Assert.AreEqual(parent, vm.Parent);
-            Assert.AreEqual(serviceSource, vm.Source);
             Assert.AreEqual(model, vm.BaseStrip);
             Assert.IsNotNull(vm.MixBlocks);
         }
 
         [TestMethod]
+        public void Ctor_SetsVMToMatchSpecs()
+        {
+            var testSpecs = new SwitcherSpecs(new SwitcherMixBlock[]
+            {
+                // Cut Bus
+                new SwitcherMixBlock(SwitcherBusInputType.CutBus, Array.Empty<SwitcherBusInput>(), null),
+                new SwitcherMixBlock(SwitcherBusInputType.PreviewProgram, Array.Empty<SwitcherBusInput>(), null)
+            });
+
+            var model = Mock.Of<ISwitcherRunningStrip>(s => s.SwitcherSpecs == testSpecs);
+            var vm = CreateWithCustomModel(model);
+
+            Assert.AreEqual(2, vm.MixBlocks.Count);
+            Assert.AreEqual(testSpecs.MixBlocks[0], vm.MixBlocks[0].BaseBlock);
+            Assert.AreEqual(testSpecs.MixBlocks[1], vm.MixBlocks[1].BaseBlock);
+            Assert.AreEqual(vm, vm.MixBlocks[0].Parent);
+        }
+
+        [TestMethod]
         public void ContentView()
         {
-            var vm = new SwitcherStripViewModel(Mock.Of<ISwitcherRunningStrip>(), Mock.Of<IServiceSource>(), Mock.Of<IProjectStripsViewModel>());
+            var vm = CreateDefault();
             Assert.AreEqual(StripViewType.Switcher, vm.ContentView);
         }
     }

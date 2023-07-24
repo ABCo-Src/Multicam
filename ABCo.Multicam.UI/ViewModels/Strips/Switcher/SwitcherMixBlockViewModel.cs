@@ -1,4 +1,5 @@
 ﻿using ABCo.Multicam.Core;
+using ABCo.Multicam.Core.Strips.Switchers;
 using ABCo.Multicam.UI.Enumerations;
 using ABCo.Multicam.UI.Helpers;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -14,6 +15,7 @@ namespace ABCo.Multicam.UI.ViewModels.Strips.Switcher
     public interface ISwitcherMixBlockViewModel { }
     public partial class SwitcherMixBlockViewModel : ViewModelBase, ISwitcherMixBlockViewModel
     {
+        public readonly SwitcherMixBlock BaseBlock;
         public readonly ISwitcherStripViewModel Parent;
 
         [ObservableProperty] ObservableCollection<SwitcherButtonViewModel> _programBus;
@@ -22,10 +24,11 @@ namespace ABCo.Multicam.UI.ViewModels.Strips.Switcher
         [ObservableProperty] SwitcherButtonViewModel _cutButton;
         [ObservableProperty] SwitcherButtonViewModel _autoButton;
 
-        public SwitcherMixBlockViewModel(IServiceSource source, ISwitcherStripViewModel parent)
+        public SwitcherMixBlockViewModel(SwitcherMixBlock model, IServiceSource source, ISwitcherStripViewModel parent)
         {
             if (source == null) throw new ServiceSourceNotGivenException();
 
+            BaseBlock = model;
             Parent = parent;
             _programBus = new ObservableCollection<SwitcherButtonViewModel>()
             {

@@ -10,20 +10,22 @@ namespace ABCo.Multicam.Core.Strips.Switchers
     {
         public readonly IReadOnlyList<SwitcherMixBlock> MixBlocks;
 
+        public SwitcherSpecs() => MixBlocks = Array.Empty<SwitcherMixBlock>();
         public SwitcherSpecs(SwitcherMixBlock[] mixBlocks) => MixBlocks = mixBlocks;
     }
 
-    public struct SwitcherMixBlock
+    public class SwitcherMixBlock
     {
         public readonly IReadOnlyList<SwitcherBusInput> ProgramInputs;
         public readonly IReadOnlyList<SwitcherBusInput>? PreviewInputs;
 
         public SwitcherBusInputType NativeType;
 
+        public SwitcherMixBlock() => (NativeType, ProgramInputs, PreviewInputs) = (SwitcherBusInputType.Unknown, Array.Empty<SwitcherBusInput>(), null);
         public SwitcherMixBlock(SwitcherBusInputType nativeType, SwitcherBusInput[] programInputs, SwitcherBusInput[]? previewInputs) => (NativeType, ProgramInputs, PreviewInputs) = (nativeType, programInputs, previewInputs);
     }
 
-    public struct SwitcherBusInput
+    public class SwitcherBusInput
     {
         public int Id;
 
