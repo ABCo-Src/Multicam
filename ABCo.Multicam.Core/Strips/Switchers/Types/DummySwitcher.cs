@@ -10,7 +10,7 @@ namespace ABCo.Multicam.Core.Strips.Switchers.Types
     public interface IDummySwitcher : ISwitcher { }
     public class DummySwitcher : IDummySwitcher
     {
-        public SwitcherSpecs Specs { get; private set; }
+        SwitcherSpecs _specs;
 
         public DummySwitcher() 
         {
@@ -22,13 +22,15 @@ namespace ABCo.Multicam.Core.Strips.Switchers.Types
                 new SwitcherBusInput(4)
             };
 
-            Specs = new SwitcherSpecs(
+            _specs = new SwitcherSpecs(
                 new SwitcherMixBlock[]
                 {
                     new SwitcherMixBlock(SwitcherBusInputType.PreviewProgram, mixBlk1Inputs, mixBlk1Inputs)
                 }
             );
         }
+
+        public SwitcherSpecs ReceiveSpecs() => _specs;
 
         public void Connect()
         {
@@ -50,7 +52,7 @@ namespace ABCo.Multicam.Core.Strips.Switchers.Types
             throw new NotImplementedException();
         }
 
-        public void SetValue(int mixBlock, int bus, int newValue)
+        public void SendValue(int mixBlock, int bus, int newValue)
         {
             throw new NotImplementedException();
         }

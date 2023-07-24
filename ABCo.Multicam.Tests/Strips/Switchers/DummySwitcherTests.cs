@@ -17,16 +17,16 @@ namespace ABCo.Multicam.Tests.Strips.Switchers
         public void Ctor_CorrectDefaults()
         {
             var dummy = CreateDefault();
-            var specs = dummy.Specs;
+            var specs = dummy.ReceiveSpecs();
 
-            Assert.AreEqual(1, dummy.Specs.MixBlocks.Count);
-            Assert.AreEqual(SwitcherBusInputType.PreviewProgram, dummy.Specs.MixBlocks[0].NativeType);
-            Assert.AreEqual(4, dummy.Specs.MixBlocks[0].ProgramInputs.Count);
-            Assert.AreEqual(1, dummy.Specs.MixBlocks[0].ProgramInputs[0].Id);
-            Assert.AreEqual(2, dummy.Specs.MixBlocks[0].ProgramInputs[1].Id);
-            Assert.AreEqual(3, dummy.Specs.MixBlocks[0].ProgramInputs[2].Id);
-            Assert.AreEqual(4, dummy.Specs.MixBlocks[0].ProgramInputs[3].Id);
-            Assert.AreEqual(dummy.Specs.MixBlocks[0].ProgramInputs, dummy.Specs.MixBlocks[0].PreviewInputs);
+            Assert.AreEqual(1, specs.MixBlocks.Count);
+            Assert.AreEqual(SwitcherBusInputType.PreviewProgram, specs.MixBlocks[0].NativeType);
+            Assert.AreEqual(4, specs.MixBlocks[0].ProgramInputs.Count);
+            Assert.AreEqual(1, specs.MixBlocks[0].ProgramInputs[0].Id);
+            Assert.AreEqual(2, specs.MixBlocks[0].ProgramInputs[1].Id);
+            Assert.AreEqual(3, specs.MixBlocks[0].ProgramInputs[2].Id);
+            Assert.AreEqual(4, specs.MixBlocks[0].ProgramInputs[3].Id);
+            Assert.AreEqual(specs.MixBlocks[0].ProgramInputs, specs.MixBlocks[0].PreviewInputs);
         }
     }
 }
