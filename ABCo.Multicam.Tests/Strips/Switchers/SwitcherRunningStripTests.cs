@@ -16,6 +16,14 @@ namespace ABCo.Multicam.Tests.Strips.Switchers
         public SwitcherRunningStrip CreateWithCustomSwitcher(IDummySwitcher switcher) => new SwitcherRunningStrip(switcher);
 
         [TestMethod]
+        public void Ctor_AssignsPublicSwitcherProp()
+        {
+            var switcherMock = Mock.Of<IDummySwitcher>();
+            var switcherRunningStrip = CreateWithCustomSwitcher(switcherMock);
+            Assert.AreEqual(switcherMock, switcherRunningStrip.Switcher);
+        }
+
+        [TestMethod]
         public void Dispose_DisposesSwitcher()
         {
             var switcherMock = new Mock<IDummySwitcher>();

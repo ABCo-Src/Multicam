@@ -8,8 +8,51 @@ using ABCo.Multicam.Core.Strips.Switchers;
 namespace ABCo.Multicam.Core.Strips.Switchers.Types
 {
     public interface IDummySwitcher : ISwitcher { }
-    internal class DummySwitcher
+    public class DummySwitcher : IDummySwitcher
     {
+        public SwitcherSpecs Specs { get; private set; }
 
+        public DummySwitcher() 
+        {
+            var mixBlk1Inputs = new SwitcherBusInput[]
+            {
+                new SwitcherBusInput(1),
+                new SwitcherBusInput(2),
+                new SwitcherBusInput(3),
+                new SwitcherBusInput(4)
+            };
+
+            Specs = new SwitcherSpecs(
+                new SwitcherMixBlock[]
+                {
+                    new SwitcherMixBlock(SwitcherBusInputType.PreviewProgram, mixBlk1Inputs, mixBlk1Inputs)
+                }
+            );
+        }
+
+        public void Connect()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Disconnect()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int ReceiveValue(int mixBlock, int bus)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetValue(int mixBlock, int bus, int newValue)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using ABCo.Multicam.Core.Strips;
 using ABCo.Multicam.Core.Strips.Switchers;
+using ABCo.Multicam.Core.Strips.Switchers.Types;
 using LightInject;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,9 @@ namespace ABCo.Multicam.Core
             container.RegisterSingleton<IStripManager, StripManager>();
             container.RegisterSingleton<IUnsupportedRunningStrip, UnsupportedRunningStrip>();
             container.RegisterSingleton<ISwitcherRunningStrip, SwitcherRunningStrip>();
+
+            // Switcher
+            container.RegisterSingleton<IDummySwitcher, DummySwitcher>();
         }
     }
 }
