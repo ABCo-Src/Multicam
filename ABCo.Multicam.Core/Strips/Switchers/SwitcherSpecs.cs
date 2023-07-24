@@ -27,16 +27,17 @@ namespace ABCo.Multicam.Core.Strips.Switchers
 
     public class SwitcherBusInput
     {
-        public int Id;
-        public string Name;
+        public readonly int Id;
+        public readonly string Name;
 
+        public SwitcherBusInput() { }
         public SwitcherBusInput(int id, string name) => (Id, Name) = (id, name);
     }
 
     public enum SwitcherBusInputType
     {
         CutBus,
-        PreviewProgram,
+        ProgramPreview,
         Unknown
     }
 }

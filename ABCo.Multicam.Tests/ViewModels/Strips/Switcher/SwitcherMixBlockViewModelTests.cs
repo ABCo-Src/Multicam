@@ -17,10 +17,10 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips.Switcher
     {
         [TestMethod]
         public void Ctor_ThrowsWithNoServiceSource() => Assert.ThrowsException<ServiceSourceNotGivenException>(() => 
-        new SwitcherMixBlockViewModel(new SwitcherMixBlock(), null!, Mock.Of<ISwitcherStripViewModel>()));
+            new SwitcherMixBlockViewModel(new SwitcherMixBlock(), null!, Mock.Of<ISwitcherStripViewModel>()));
 
         [TestMethod]
-        public void Ctor()
+        public void Ctor_General()
         {
             var model = new SwitcherMixBlock();
             var parent = Mock.Of<ISwitcherStripViewModel>();
@@ -35,6 +35,52 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips.Switcher
 
             Assert.AreEqual("Cut", vm.CutButton.Text);
             Assert.AreEqual("Auto", vm.AutoButton.Text);
+        }
+
+        [TestMethod]
+        public void Ctor_ProgramOnly()
+        {
+            var busInput1 = new SwitcherBusInput(1, "Cam1");
+            var busInput2 = new SwitcherBusInput(2, "Cam2");
+            var model = new SwitcherMixBlock(SwitcherBusInputType.CutBus, new SwitcherBusInput[] { busInput1, busInput2 }, null);
+            var parent = Mock.Of<ISwitcherStripViewModel>();
+            SwitcherMixBlockViewModel vm = CreateWithParent(model, parent);
+
+            Assert.AreEqual(2, vm.ProgramBus.Count);
+            Assert.AreEqual(busInput1, vm.ProgramBus[0].Base);
+            Assert.AreEqual(busInput2, vm.ProgramBus[1].Base);
+            Assert.AreEqual(vm, vm.ProgramBus[0].Parent);
+            Assert.AreEqual(vm, vm.ProgramBus[1].Parent);
+            Assert.IsTrue(vm.ProgramBus[0].IsProgram);
+            Assert.IsTrue(vm.ProgramBus[1].IsProgram);
+        }
+
+        [TestMethod]
+        public void Ctor_NoPreview()
+        {
+            var model = new SwitcherMixBlock(SwitcherBusInputType.CutBus, Array.Empty<SwitcherBusInput>(), null);
+            var parent = Mock.Of<ISwitcherStripViewModel>();
+            SwitcherMixBlockViewModel vm = CreateWithParent(model, parent);
+
+            Assert.AreEqual(0, vm.PreviewBus.Count);
+        }
+
+        [TestMethod]
+        public void Ctor_Preview()
+        {
+            var busInput1 = new SwitcherBusInput(1, "Cam1");
+            var busInput2 = new SwitcherBusInput(2, "Cam2");
+            var model = new SwitcherMixBlock(SwitcherBusInputType.CutBus, Array.Empty<SwitcherBusInput>(), new SwitcherBusInput[2] { busInput1, busInput2 });
+            var parent = Mock.Of<ISwitcherStripViewModel>();
+            SwitcherMixBlockViewModel vm = CreateWithParent(model, parent);
+
+            Assert.AreEqual(2, vm.PreviewBus.Count);
+            Assert.AreEqual(busInput1, vm.PreviewBus[0].Base);
+            Assert.AreEqual(busInput2, vm.PreviewBus[1].Base);
+            Assert.AreEqual(vm, vm.PreviewBus[0].Parent);
+            Assert.AreEqual(vm, vm.PreviewBus[1].Parent);
+            Assert.IsFalse(vm.PreviewBus[0].IsProgram);
+            Assert.IsFalse(vm.PreviewBus[1].IsProgram);
         }
 
         private static SwitcherMixBlockViewModel CreateDefault(SwitcherMixBlock model) => new SwitcherMixBlockViewModel(model, Mock.Of<IServiceSource>(), Mock.Of<ISwitcherStripViewModel>());

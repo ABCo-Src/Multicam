@@ -25,7 +25,7 @@ namespace ABCo.Multicam.Core.Strips.Switchers.Types
             _specs = new SwitcherSpecs(
                 new SwitcherMixBlock[]
                 {
-                    new SwitcherMixBlock(SwitcherBusInputType.PreviewProgram, mixBlk1Inputs, mixBlk1Inputs)
+                    new SwitcherMixBlock(SwitcherBusInputType.ProgramPreview, mixBlk1Inputs, mixBlk1Inputs)
                 }
             );
         }

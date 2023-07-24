@@ -20,7 +20,7 @@ namespace ABCo.Multicam.Tests.Strips.Switchers
             var specs = dummy.ReceiveSpecs();
 
             Assert.AreEqual(1, specs.MixBlocks.Count);
-            Assert.AreEqual(SwitcherBusInputType.PreviewProgram, specs.MixBlocks[0].NativeType);
+            Assert.AreEqual(SwitcherBusInputType.ProgramPreview, specs.MixBlocks[0].NativeType);
             Assert.AreEqual(4, specs.MixBlocks[0].ProgramInputs.Count);
             Assert.AreEqual(1, specs.MixBlocks[0].ProgramInputs[0].Id);
             Assert.AreEqual(2, specs.MixBlocks[0].ProgramInputs[1].Id);

@@ -18,36 +18,29 @@ namespace ABCo.Multicam.UI.ViewModels.Strips.Switcher
         public readonly SwitcherMixBlock BaseBlock;
         public readonly ISwitcherStripViewModel Parent;
 
-        [ObservableProperty] ObservableCollection<SwitcherButtonViewModel> _programBus;
-        [ObservableProperty] ObservableCollection<SwitcherButtonViewModel> _previewBus;
+        [ObservableProperty] ObservableCollection<SwitcherBusInputViewModel> _programBus;
+        [ObservableProperty] ObservableCollection<SwitcherBusInputViewModel> _previewBus;
 
-        [ObservableProperty] SwitcherButtonViewModel _cutButton;
-        [ObservableProperty] SwitcherButtonViewModel _autoButton;
+        [ObservableProperty] SwitcherBusInputViewModel _cutButton;
+        [ObservableProperty] SwitcherBusInputViewModel _autoButton;
 
         public SwitcherMixBlockViewModel(SwitcherMixBlock model, IServiceSource source, ISwitcherStripViewModel parent)
         {
             if (source == null) throw new ServiceSourceNotGivenException();
 
-            BaseBlock = model;
             Parent = parent;
-            _programBus = new ObservableCollection<SwitcherButtonViewModel>()
-            {
-                new SwitcherButtonViewModel(source, this, "Cam1") { Status = SwitcherButtonStatus.ProgramActive },
-                new SwitcherButtonViewModel(source, this, "Cam2"),
-                new SwitcherButtonViewModel(source, this, "Cam3"),
-                new SwitcherButtonViewModel(source, this, "Cam4")
-            };
+            BaseBlock = model;
 
-            _previewBus = new ObservableCollection<SwitcherButtonViewModel>()
-            {
-                new SwitcherButtonViewModel(source, this, "Cam1"),
-                new SwitcherButtonViewModel(source, this, "Cam2") { Status = SwitcherButtonStatus.PreviewActive },
-                new SwitcherButtonViewModel(source, this, "Cam3"),
-                new SwitcherButtonViewModel(source, this, "Cam4")
-            };
+            _programBus = new ObservableCollection<SwitcherBusInputViewModel>();
+            for (int i = 0; i < model.ProgramInputs.Count; i++)
+                _programBus.Add(new SwitcherBusInputViewModel(model.ProgramInputs[i], true, source, this));
 
-            _cutButton = new SwitcherButtonViewModel(source, this, "Cut");
-            _autoButton = new SwitcherButtonViewModel(source, this, "Auto");
+            _previewBus = new ObservableCollection<SwitcherBusInputViewModel>();
+            if (model.PreviewInputs !=  null)
+            {
+                for (int i = 0; i < model.PreviewInputs.Count; i++)
+                    _previewBus.Add(new SwitcherBusInputViewModel(model.PreviewInputs[i], false, source, this));
+            }
         }
     }
 }

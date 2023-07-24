@@ -39,7 +39,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips.Switcher
             {
                 // Cut Bus
                 new SwitcherMixBlock(SwitcherBusInputType.CutBus, Array.Empty<SwitcherBusInput>(), null),
-                new SwitcherMixBlock(SwitcherBusInputType.PreviewProgram, Array.Empty<SwitcherBusInput>(), null)
+                new SwitcherMixBlock(SwitcherBusInputType.ProgramPreview, Array.Empty<SwitcherBusInput>(), null)
             });
 
             var model = Mock.Of<ISwitcherRunningStrip>(s => s.SwitcherSpecs == testSpecs);
