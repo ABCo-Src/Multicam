@@ -16,11 +16,29 @@ namespace ABCo.Multicam.Tests.Strips.Switchers
         public SwitcherRunningStrip CreateWithCustomSwitcher(IDummySwitcher switcher) => new SwitcherRunningStrip(switcher);
 
         [TestMethod]
-        public void Ctor_AssignsPublicSwitcherProp()
+        public void SwitcherSpecs_Matches()
         {
-            var switcherMock = Mock.Of<IDummySwitcher>();
+            var mockSpecs = new SwitcherSpecs(Array.Empty<SwitcherMixBlock>());
+            var switcherMock = Mock.Of<IDummySwitcher>(m => m.ReceiveSpecs() == mockSpecs);
             var switcherRunningStrip = CreateWithCustomSwitcher(switcherMock);
-            Assert.AreEqual(switcherMock, switcherRunningStrip.Switcher);
+            Assert.AreEqual(mockSpecs, switcherRunningStrip.SwitcherSpecs);
+        }
+
+        [TestMethod]
+        public void SwitcherSpecs_NoChangeBetweenGets()
+        {
+            var mockSpecs = new SwitcherSpecs(Array.Empty<SwitcherMixBlock>());
+            var switcherMock = new Mock<IDummySwitcher>();
+            switcherMock.Setup(m => m.ReceiveSpecs()).Returns(mockSpecs);
+
+            var switcherRunningStrip = CreateWithCustomSwitcher(switcherMock.Object);
+            Assert.AreEqual(mockSpecs, switcherRunningStrip.SwitcherSpecs);
+            Assert.AreEqual(mockSpecs, switcherRunningStrip.SwitcherSpecs);
+            Assert.AreEqual(mockSpecs, switcherRunningStrip.SwitcherSpecs);
+
+            // Verify it was only received once
+            switcherMock.Verify(m => m.ReceiveSpecs(), Times.Once);
+
         }
 
         [TestMethod]

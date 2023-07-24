@@ -10,7 +10,7 @@ namespace ABCo.Multicam.Core.Strips.Switchers
 {
     public interface ISwitcherRunningStrip : IRunningStrip 
     { 
-        ISwitcher Switcher { get; }
+        SwitcherSpecs SwitcherSpecs { get; }
     }
 
     /// <summary>
@@ -18,14 +18,15 @@ namespace ABCo.Multicam.Core.Strips.Switchers
     /// </summary>
     public class SwitcherRunningStrip : ISwitcherRunningStrip
     {
-        public ISwitcher Switcher { get; }
-        public SwitcherSpecs SwitcherSpecs { get; }
+        ISwitcher _rawSwitcher;
+        public SwitcherSpecs SwitcherSpecs { get; private set; }
 
         public SwitcherRunningStrip(IDummySwitcher switcher)
         {
-            Switcher = switcher;
+            _rawSwitcher = switcher;
+            SwitcherSpecs = _rawSwitcher.ReceiveSpecs();
         }
 
-        public void Dispose() => Switcher.Dispose();
+        public void Dispose() => _rawSwitcher.Dispose();
     }
 }

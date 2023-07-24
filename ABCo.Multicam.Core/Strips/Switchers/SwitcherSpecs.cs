@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Core.Strips.Switchers
 {
-    public struct SwitcherSpecs
+    public class SwitcherSpecs
     {
         public readonly IReadOnlyList<SwitcherMixBlock> MixBlocks;
 
