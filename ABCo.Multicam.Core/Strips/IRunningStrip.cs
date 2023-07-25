@@ -19,9 +19,6 @@ namespace ABCo.Multicam.Core.Strips
 
     public class UnsupportedRunningStrip : IUnsupportedRunningStrip
     {
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
+        public void Dispose() { }
     }
 }

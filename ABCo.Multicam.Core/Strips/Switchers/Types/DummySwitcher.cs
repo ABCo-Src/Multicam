@@ -9,7 +9,7 @@ namespace ABCo.Multicam.Core.Strips.Switchers.Types
 {
     public interface IDummySwitcher : ISwitcher 
     {
-        // Non-async variant so specs can be immediately received for the runner to have *something* to start with initially.
+        // Non-async variant so specs can be immediately received, allows the runner to neatly use a dummy switcher as an initial safe state.
         SwitcherSpecs ReceiveSpecs();
     }
     public class DummySwitcher : IDummySwitcher
