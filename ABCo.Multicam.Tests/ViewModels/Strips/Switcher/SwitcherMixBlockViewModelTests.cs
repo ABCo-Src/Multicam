@@ -7,6 +7,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,6 +16,9 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips.Switcher
     [TestClass]
     public class SwitcherMixBlockViewModelTests
     {
+        private static SwitcherMixBlockViewModel CreateDefault(SwitcherMixBlock model) => new SwitcherMixBlockViewModel(model, Mock.Of<IServiceSource>(), Mock.Of<ISwitcherStripViewModel>());
+        private static SwitcherMixBlockViewModel CreateWithParent(SwitcherMixBlock model, ISwitcherStripViewModel parent) => new SwitcherMixBlockViewModel(model, Mock.Of<IServiceSource>(), parent);
+
         [TestMethod]
         public void Ctor_ThrowsWithNoServiceSource() => Assert.ThrowsException<ServiceSourceNotGivenException>(() => 
             new SwitcherMixBlockViewModel(new SwitcherMixBlock(), null!, Mock.Of<ISwitcherStripViewModel>()));
@@ -83,7 +87,20 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips.Switcher
             Assert.IsFalse(vm.PreviewBus[1].IsProgram);
         }
 
-        private static SwitcherMixBlockViewModel CreateDefault(SwitcherMixBlock model) => new SwitcherMixBlockViewModel(model, Mock.Of<IServiceSource>(), Mock.Of<ISwitcherStripViewModel>());
-        private static SwitcherMixBlockViewModel CreateWithParent(SwitcherMixBlock model, ISwitcherStripViewModel parent) => new SwitcherMixBlockViewModel(model, Mock.Of<IServiceSource>(), parent);
+        [TestMethod]
+        public void MainLabel_ProgramPreview()
+        {
+            var model = new SwitcherMixBlock(SwitcherBusInputType.ProgramPreview, Array.Empty<SwitcherBusInput>(), Array.Empty<SwitcherBusInput>());
+            SwitcherMixBlockViewModel vm = CreateDefault(model);
+            Assert.AreEqual("Program", vm.MainLabel);
+        }
+
+        [TestMethod]
+        public void MainLabel_CutBus()
+        {
+            var model = new SwitcherMixBlock(SwitcherBusInputType.CutBus, Array.Empty<SwitcherBusInput>(), Array.Empty<SwitcherBusInput>());
+            SwitcherMixBlockViewModel vm = CreateDefault(model);
+            Assert.AreEqual("Cut Bus", vm.MainLabel);
+        }
     }
 }

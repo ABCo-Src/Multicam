@@ -16,6 +16,8 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips.Switcher
     public class SwitcherBusInputViewModelTests
     {
         public SwitcherBusInputViewModel CreateDefault() => new SwitcherBusInputViewModel(new SwitcherBusInput(), false, Mock.Of<IServiceSource>(), Mock.Of<ISwitcherMixBlockViewModel>());
+        public SwitcherBusInputViewModel CreateWithModel(SwitcherBusInput input, bool isProgram) =>
+            new SwitcherBusInputViewModel(input, isProgram, Mock.Of<IServiceSource>(), Mock.Of<ISwitcherMixBlockViewModel>());
         public SwitcherBusInputViewModel CreateWithParent(SwitcherBusInput input, bool isProgram, ISwitcherMixBlockViewModel parent) => 
             new SwitcherBusInputViewModel(input, isProgram, Mock.Of<IServiceSource>(), parent);
 
@@ -46,6 +48,13 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips.Switcher
             Assert.IsFalse(vm.IsProgram);
             Assert.AreEqual(SwitcherButtonStatus.NeutralInactive, vm.Status);
             Assert.AreEqual(baseModel, vm.Base);            
+        }
+
+        [TestMethod]
+        public void Text()
+        {
+            var vm = CreateWithModel(new SwitcherBusInput(1, "Cam1"), true);
+            Assert.AreEqual("Cam1", vm.Text);
         }
     }
 }

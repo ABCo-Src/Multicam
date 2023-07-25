@@ -17,16 +17,17 @@ namespace ABCo.Multicam.UI.ViewModels.Strips.Switcher
         public readonly bool IsProgram;
         public readonly ISwitcherMixBlockViewModel Parent;
 
-        [ObservableProperty] string _text;
+        public string Text => Base.Name;
+
         [ObservableProperty] SwitcherButtonStatus _status;
 
         public SwitcherBusInputViewModel(SwitcherBusInput input, bool isProgram, IServiceSource source, ISwitcherMixBlockViewModel parent)
         {
             if (source == null) throw new ServiceSourceNotGivenException();
+
             Parent = parent;
             Base = input;
             IsProgram = isProgram;
-            Text = input.Name;
         }
     }
 }

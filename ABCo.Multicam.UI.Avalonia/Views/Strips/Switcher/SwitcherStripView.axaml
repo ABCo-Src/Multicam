@@ -45,7 +45,7 @@
 							</Grid.ColumnDefinitions>
 							
 							<!-- Labels -->
-							<TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0 0 10 10">Program</TextBlock>
+							<TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0 0 10 10" Text="{Binding MainLabel}" />
 							<TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0 0 10 10">Preview</TextBlock>
 
 							<!-- Program -->

@@ -18,6 +18,8 @@ namespace ABCo.Multicam.UI.ViewModels.Strips.Switcher
         public readonly SwitcherMixBlock BaseBlock;
         public readonly ISwitcherStripViewModel Parent;
 
+        public string MainLabel => BaseBlock.NativeType == SwitcherBusInputType.CutBus ? "Cut Bus" : "Program";
+
         [ObservableProperty] ObservableCollection<SwitcherBusInputViewModel> _programBus;
         [ObservableProperty] ObservableCollection<SwitcherBusInputViewModel> _previewBus;
 
@@ -36,11 +38,9 @@ namespace ABCo.Multicam.UI.ViewModels.Strips.Switcher
                 _programBus.Add(new SwitcherBusInputViewModel(model.ProgramInputs[i], true, source, this));
 
             _previewBus = new ObservableCollection<SwitcherBusInputViewModel>();
-            if (model.PreviewInputs !=  null)
-            {
+            if (model.PreviewInputs != null)
                 for (int i = 0; i < model.PreviewInputs.Count; i++)
                     _previewBus.Add(new SwitcherBusInputViewModel(model.PreviewInputs[i], false, source, this));
-            }
         }
     }
 }
