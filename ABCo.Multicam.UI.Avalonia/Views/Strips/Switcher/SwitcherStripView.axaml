@@ -46,7 +46,7 @@
 							
 							<!-- Labels -->
 							<TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0 0 10 10" Text="{Binding MainLabel}" />
-							<TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0 0 10 10">Preview</TextBlock>
+							<TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0 0 10 10" IsVisible="{Binding ShowPreview}">Preview</TextBlock>
 
 							<!-- Program -->
 							<ItemsControl ItemsSource="{Binding ProgramBus}" Grid.Row="0" Grid.Column="1">
@@ -64,7 +64,7 @@
 							</ItemsControl>
 
 							<!-- Preview -->
-							<ItemsControl ItemsSource="{Binding PreviewBus}" Grid.Row="1" Grid.Column="1">
+							<ItemsControl ItemsSource="{Binding PreviewBus}" Grid.Row="1" Grid.Column="1" IsVisible="{Binding ShowPreview}">
 								<ItemsControl.ItemsPanel>
 									<ItemsPanelTemplate>
 										<StackPanel Orientation="Horizontal" />

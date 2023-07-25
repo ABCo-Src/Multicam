@@ -102,5 +102,21 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips.Switcher
             SwitcherMixBlockViewModel vm = CreateDefault(model);
             Assert.AreEqual("Cut Bus", vm.MainLabel);
         }
+
+        [TestMethod]
+        public void ShowPreview_ProgramPreview()
+        {
+            var model = new SwitcherMixBlock(SwitcherBusInputType.ProgramPreview, Array.Empty<SwitcherBusInput>(), null);
+            SwitcherMixBlockViewModel vm = CreateDefault(model);
+            Assert.IsTrue(vm.ShowPreview);
+        }
+
+        [TestMethod]
+        public void ShowPreview_CutBus()
+        {
+            var model = new SwitcherMixBlock(SwitcherBusInputType.CutBus, Array.Empty<SwitcherBusInput>(), null);
+            SwitcherMixBlockViewModel vm = CreateDefault(model);
+            Assert.IsFalse(vm.ShowPreview);
+        }
     }
 }
