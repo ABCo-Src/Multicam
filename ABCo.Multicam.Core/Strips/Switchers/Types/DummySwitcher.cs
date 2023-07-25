@@ -16,10 +16,10 @@ namespace ABCo.Multicam.Core.Strips.Switchers.Types
         {
             var mixBlk1Inputs = new SwitcherBusInput[]
             {
-                new SwitcherBusInput(1, ""),
-                new SwitcherBusInput(2, ""),
-                new SwitcherBusInput(3, ""),
-                new SwitcherBusInput(4, "")
+                new SwitcherBusInput(1, "Cam 1"),
+                new SwitcherBusInput(2, "Cam 2"),
+                new SwitcherBusInput(3, "Cam 3"),
+                new SwitcherBusInput(4, "Cam 4")
             };
 
             _specs = new SwitcherSpecs(
