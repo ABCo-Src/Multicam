@@ -46,7 +46,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips.Switcher
         {
             var busInput1 = new SwitcherBusInput(1, "Cam1");
             var busInput2 = new SwitcherBusInput(2, "Cam2");
-            var model = new SwitcherMixBlock(SwitcherBusInputType.CutBus, new SwitcherBusInput[] { busInput1, busInput2 }, null);
+            var model = new SwitcherMixBlock(SwitcherMixBlockInputType.CutBus, new SwitcherBusInput[] { busInput1, busInput2 }, null);
             var parent = Mock.Of<ISwitcherStripViewModel>();
             SwitcherMixBlockViewModel vm = CreateWithParent(model, parent);
 
@@ -62,7 +62,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips.Switcher
         [TestMethod]
         public void Ctor_NoPreview()
         {
-            var model = new SwitcherMixBlock(SwitcherBusInputType.CutBus, Array.Empty<SwitcherBusInput>(), null);
+            var model = new SwitcherMixBlock(SwitcherMixBlockInputType.CutBus, Array.Empty<SwitcherBusInput>(), null);
             var parent = Mock.Of<ISwitcherStripViewModel>();
             SwitcherMixBlockViewModel vm = CreateWithParent(model, parent);
 
@@ -74,7 +74,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips.Switcher
         {
             var busInput1 = new SwitcherBusInput(1, "Cam1");
             var busInput2 = new SwitcherBusInput(2, "Cam2");
-            var model = new SwitcherMixBlock(SwitcherBusInputType.CutBus, Array.Empty<SwitcherBusInput>(), new SwitcherBusInput[2] { busInput1, busInput2 });
+            var model = new SwitcherMixBlock(SwitcherMixBlockInputType.CutBus, Array.Empty<SwitcherBusInput>(), new SwitcherBusInput[2] { busInput1, busInput2 });
             var parent = Mock.Of<ISwitcherStripViewModel>();
             SwitcherMixBlockViewModel vm = CreateWithParent(model, parent);
 
@@ -90,7 +90,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips.Switcher
         [TestMethod]
         public void MainLabel_ProgramPreview()
         {
-            var model = new SwitcherMixBlock(SwitcherBusInputType.ProgramPreview, Array.Empty<SwitcherBusInput>(), Array.Empty<SwitcherBusInput>());
+            var model = new SwitcherMixBlock(SwitcherMixBlockInputType.ProgramPreview, Array.Empty<SwitcherBusInput>(), Array.Empty<SwitcherBusInput>());
             SwitcherMixBlockViewModel vm = CreateDefault(model);
             Assert.AreEqual("Program", vm.MainLabel);
         }
@@ -98,7 +98,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips.Switcher
         [TestMethod]
         public void MainLabel_CutBus()
         {
-            var model = new SwitcherMixBlock(SwitcherBusInputType.CutBus, Array.Empty<SwitcherBusInput>(), Array.Empty<SwitcherBusInput>());
+            var model = new SwitcherMixBlock(SwitcherMixBlockInputType.CutBus, Array.Empty<SwitcherBusInput>(), Array.Empty<SwitcherBusInput>());
             SwitcherMixBlockViewModel vm = CreateDefault(model);
             Assert.AreEqual("Cut Bus", vm.MainLabel);
         }
@@ -106,7 +106,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips.Switcher
         [TestMethod]
         public void ShowPreview_ProgramPreview()
         {
-            var model = new SwitcherMixBlock(SwitcherBusInputType.ProgramPreview, Array.Empty<SwitcherBusInput>(), null);
+            var model = new SwitcherMixBlock(SwitcherMixBlockInputType.ProgramPreview, Array.Empty<SwitcherBusInput>(), null);
             SwitcherMixBlockViewModel vm = CreateDefault(model);
             Assert.IsTrue(vm.ShowPreview);
         }
@@ -114,7 +114,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips.Switcher
         [TestMethod]
         public void ShowPreview_CutBus()
         {
-            var model = new SwitcherMixBlock(SwitcherBusInputType.CutBus, Array.Empty<SwitcherBusInput>(), null);
+            var model = new SwitcherMixBlock(SwitcherMixBlockInputType.CutBus, Array.Empty<SwitcherBusInput>(), null);
             SwitcherMixBlockViewModel vm = CreateDefault(model);
             Assert.IsFalse(vm.ShowPreview);
         }

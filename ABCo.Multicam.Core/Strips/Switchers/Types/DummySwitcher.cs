@@ -11,10 +11,14 @@ namespace ABCo.Multicam.Core.Strips.Switchers.Types
     {
         // Non-async variant so specs can be immediately received, allows the runner to neatly use a dummy switcher as an initial safe state.
         SwitcherSpecs ReceiveSpecs();
+        void UpdateSpecs(DummyMixBlock[] mixBlocks);
     }
+
     public class DummySwitcher : IDummySwitcher
     {
         SwitcherSpecs _specs;
+        int _program = 1;
+        int _preview = 1;
 
         public DummySwitcher() 
         {
@@ -29,13 +33,32 @@ namespace ABCo.Multicam.Core.Strips.Switchers.Types
             _specs = new SwitcherSpecs(
                 new SwitcherMixBlock[]
                 {
-                    new SwitcherMixBlock(SwitcherBusInputType.ProgramPreview, mixBlk1Inputs, mixBlk1Inputs)
+                    new SwitcherMixBlock(SwitcherMixBlockInputType.ProgramPreview, mixBlk1Inputs, mixBlk1Inputs)
                 }
             );
         }
 
         public SwitcherSpecs ReceiveSpecs() => _specs;
         public Task<SwitcherSpecs> ReceiveSpecsAsync() => Task.FromResult(ReceiveSpecs());
+
+        public void UpdateSpecs(DummyMixBlock[] mixBlocks) 
+        {
+            var mixBlocksArray = new SwitcherMixBlock[mixBlocks.Length];
+
+            for (int i = 0; i < mixBlocks.Length; i++)
+            {
+                // Create the program array
+                var programArray = new SwitcherBusInput[mixBlocks[i].InputCount];
+                for (int j = 0; j < programArray.Length; j++)
+                    programArray[j] = new SwitcherBusInput(j + 1, "Cam " + (j + 1));
+
+                // Determine the relevant preview array and create the final mix block
+                var previewArray = mixBlocks[i].Type == SwitcherMixBlockInputType.ProgramPreview ? programArray : null;                
+                mixBlocksArray[i] = new SwitcherMixBlock(mixBlocks[i].Type, programArray, previewArray);
+            }
+
+            _specs = new SwitcherSpecs(mixBlocksArray);            
+        }
 
         public Task ConnectAsync()
         {
@@ -47,19 +70,30 @@ namespace ABCo.Multicam.Core.Strips.Switchers.Types
             throw new NotImplementedException();
         }
 
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<int> ReceiveValueAsync(int mixBlock, int bus)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(bus == 0 ? _program : _preview);
         }
 
         public Task SendValueAsync(int mixBlock, int bus, int newValue)
         {
-            throw new NotImplementedException();
+            if (bus == 0)
+                _program = newValue;
+            else
+                _preview = newValue;
+
+            return Task.CompletedTask;
         }
+
+        public void Dispose() { }
     }
+
+    public struct DummyMixBlock
+    {
+        public int InputCount;
+        public SwitcherMixBlockInputType Type;
+
+        public DummyMixBlock(int inputCount, SwitcherMixBlockInputType type) => (InputCount, Type) = (inputCount, type);
+    }
+
 }
