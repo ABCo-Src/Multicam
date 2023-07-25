@@ -24,9 +24,9 @@ namespace ABCo.Multicam.Core.Strips.Switchers
         public SwitcherRunningStrip(IDummySwitcher switcher)
         {
             _rawSwitcher = switcher;
-            SwitcherSpecs = _rawSwitcher.ReceiveSpecs();
+            SwitcherSpecs = switcher.ReceiveSpecs();
         }
-
+        
         public void Dispose() => _rawSwitcher.Dispose();
     }
 }

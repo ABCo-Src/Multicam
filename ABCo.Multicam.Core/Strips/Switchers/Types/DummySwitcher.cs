@@ -7,7 +7,11 @@ using ABCo.Multicam.Core.Strips.Switchers;
 
 namespace ABCo.Multicam.Core.Strips.Switchers.Types
 {
-    public interface IDummySwitcher : ISwitcher { }
+    public interface IDummySwitcher : ISwitcher 
+    {
+        // Non-async variant so specs can be immediately received for the runner to have *something* to start with initially.
+        SwitcherSpecs ReceiveSpecs();
+    }
     public class DummySwitcher : IDummySwitcher
     {
         SwitcherSpecs _specs;
@@ -31,13 +35,14 @@ namespace ABCo.Multicam.Core.Strips.Switchers.Types
         }
 
         public SwitcherSpecs ReceiveSpecs() => _specs;
+        public Task<SwitcherSpecs> ReceiveSpecsAsync() => Task.FromResult(ReceiveSpecs());
 
-        public void Connect()
+        public Task ConnectAsync()
         {
             throw new NotImplementedException();
         }
 
-        public void Disconnect()
+        public Task DisconnectAsync()
         {
             throw new NotImplementedException();
         }
@@ -47,12 +52,12 @@ namespace ABCo.Multicam.Core.Strips.Switchers.Types
             throw new NotImplementedException();
         }
 
-        public int ReceiveValue(int mixBlock, int bus)
+        public Task<int> ReceiveValueAsync(int mixBlock, int bus)
         {
             throw new NotImplementedException();
         }
 
-        public void SendValue(int mixBlock, int bus, int newValue)
+        public Task SendValueAsync(int mixBlock, int bus, int newValue)
         {
             throw new NotImplementedException();
         }

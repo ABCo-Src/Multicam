@@ -16,28 +16,28 @@ namespace ABCo.Multicam.Core.Strips.Switchers
         /// <summary>
         /// Establishes a connection with the physical switcher
         /// </summary>
-        void Connect();
+        Task ConnectAsync();
 
         /// <summary>
         /// Disconnects from the physical switcher
         /// </summary>
-        void Disconnect();
+        Task DisconnectAsync();
 
         /// <summary>
         /// Contacts the switcher and receives its current specifications.
         /// </summary>
-        SwitcherSpecs ReceiveSpecs();
+        Task<SwitcherSpecs> ReceiveSpecsAsync();
 
         /// <summary>
         /// Contacts the switcher and receives the current value (with no cache) stored in the given mix block.
         /// </summary>
         /// <param name="bus">The bus within the block. 0 is always program, and 1 may be preview IF the switcher supports it natively.</param>
-        int ReceiveValue(int mixBlock, int bus);
+        Task<int> ReceiveValueAsync(int mixBlock, int bus);
 
         /// <summary>
         /// Contacts the switcher and sends a new value.
         /// </summary>
         /// <param name="bus">The bus within the block. 0 is always program, and 1 may be preview IF the switcher supports it natively.</param>
-        void SendValue(int mixBlock, int bus, int id);
+        Task SendValueAsync(int mixBlock, int bus, int id);
     }
 }

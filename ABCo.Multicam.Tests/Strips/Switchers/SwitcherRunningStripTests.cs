@@ -38,7 +38,6 @@ namespace ABCo.Multicam.Tests.Strips.Switchers
 
             // Verify it was only received once
             switcherMock.Verify(m => m.ReceiveSpecs(), Times.Once);
-
         }
 
         [TestMethod]

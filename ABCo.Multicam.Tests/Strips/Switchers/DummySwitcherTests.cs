@@ -35,5 +35,13 @@ namespace ABCo.Multicam.Tests.Strips.Switchers
 
             Assert.AreEqual(specs.MixBlocks[0].ProgramInputs, specs.MixBlocks[0].PreviewInputs);
         }
+
+        [TestMethod]
+        public async Task ReceiveSpecsAsync_MatchesRegular()
+        {
+            var dummy = CreateDefault();
+            var specs = await dummy.ReceiveSpecsAsync();
+            Assert.AreEqual(dummy.ReceiveSpecs(), specs);
+        }
     }
 }
