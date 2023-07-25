@@ -34,11 +34,11 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips.Switcher
             Assert.AreEqual(model, vm.BaseBlock);
             Assert.IsNotNull(vm.ProgramBus);
             Assert.IsNotNull(vm.PreviewBus);
-            Assert.IsNotNull(vm.CutButton);
-            Assert.IsNotNull(vm.AutoButton);
 
-            Assert.AreEqual("Cut", vm.CutButton.Text);
-            Assert.AreEqual("Auto", vm.AutoButton.Text);
+            Assert.AreEqual(SwitcherActButtonViewModel.Type.Cut, vm.CutButton.Action);
+            Assert.AreEqual(vm, vm.CutButton.Parent);
+            Assert.AreEqual(SwitcherActButtonViewModel.Type.Auto, vm.AutoButton.Action);
+            Assert.AreEqual(vm, vm.AutoButton.Parent);
         }
 
         [TestMethod]

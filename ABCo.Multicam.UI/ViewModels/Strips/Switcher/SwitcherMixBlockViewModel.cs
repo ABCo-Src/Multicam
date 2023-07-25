@@ -24,8 +24,8 @@ namespace ABCo.Multicam.UI.ViewModels.Strips.Switcher
         [ObservableProperty] ObservableCollection<SwitcherBusInputViewModel> _programBus;
         [ObservableProperty] ObservableCollection<SwitcherBusInputViewModel> _previewBus;
 
-        [ObservableProperty] SwitcherBusInputViewModel _cutButton;
-        [ObservableProperty] SwitcherBusInputViewModel _autoButton;
+        [ObservableProperty] SwitcherActButtonViewModel _cutButton;
+        [ObservableProperty] SwitcherActButtonViewModel _autoButton;
 
         public SwitcherMixBlockViewModel(SwitcherMixBlock model, IServiceSource source, ISwitcherStripViewModel parent)
         {
@@ -45,6 +45,9 @@ namespace ABCo.Multicam.UI.ViewModels.Strips.Switcher
             if (model.PreviewInputs != null)
                 for (int i = 0; i < model.PreviewInputs.Count; i++)
                     _previewBus.Add(new SwitcherBusInputViewModel(model.PreviewInputs[i], false, source, this));
+
+            _cutButton = new SwitcherActButtonViewModel(SwitcherActButtonViewModel.Type.Cut, source, this);
+            _autoButton = new SwitcherActButtonViewModel(SwitcherActButtonViewModel.Type.Auto, source, this);
         }
     }
 }

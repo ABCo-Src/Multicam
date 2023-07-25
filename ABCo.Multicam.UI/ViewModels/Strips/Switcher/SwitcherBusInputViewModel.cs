@@ -11,21 +11,14 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.ViewModels.Strips.Switcher
 {
-    public partial class SwitcherBusInputViewModel : ViewModelBase
+    public partial class SwitcherBusInputViewModel : SwitcherButtonViewModel
     {
         public readonly SwitcherBusInput Base;
         public readonly bool IsProgram;
-        public readonly ISwitcherMixBlockViewModel Parent;
 
-        public string Text => Base.Name;
-
-        [ObservableProperty] SwitcherButtonStatus _status;
-
-        public SwitcherBusInputViewModel(SwitcherBusInput input, bool isProgram, IServiceSource source, ISwitcherMixBlockViewModel parent)
+        public SwitcherBusInputViewModel(SwitcherBusInput input, bool isProgram, IServiceSource source, ISwitcherMixBlockViewModel parent) : base(source, parent, input.Name)
         {
-            if (source == null) throw new ServiceSourceNotGivenException();
-
-            Parent = parent;
+            Text = input.Name;
             Base = input;
             IsProgram = isProgram;
         }
