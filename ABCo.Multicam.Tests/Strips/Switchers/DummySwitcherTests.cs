@@ -206,6 +206,36 @@ namespace ABCo.Multicam.Tests.Strips.Switchers
         }
 
         [TestMethod]
+        public async Task SendValue_CutBusMB()
+        {
+            var dummy = CreateDefault();
+            dummy.UpdateSpecs(new DummyMixBlock[] { new(3, SwitcherMixBlockInputType.CutBus) });
+
+            await dummy.SendValueAsync(0, 0, 2);
+            Assert.AreEqual(2, await dummy.ReceiveValueAsync(0, 0));
+
+            await dummy.SendValueAsync(0, 0, 3);
+            Assert.AreEqual(3, await dummy.ReceiveValueAsync(0, 0));
+        }
+
+        [TestMethod]
+        public async Task SendValue_SecondMB()
+        {
+            var dummy = CreateDefault();
+            dummy.UpdateSpecs(new DummyMixBlock[] { new(4, SwitcherMixBlockInputType.CutBus), new(4, SwitcherMixBlockInputType.ProgramPreview) });
+
+            await dummy.SendValueAsync(1, 0, 4);
+            Assert.AreEqual(1, await dummy.ReceiveValueAsync(0, 0));
+            Assert.AreEqual(4, await dummy.ReceiveValueAsync(1, 0));
+            Assert.AreEqual(1, await dummy.ReceiveValueAsync(1, 1));
+
+            await dummy.SendValueAsync(1, 1, 3);
+            Assert.AreEqual(1, await dummy.ReceiveValueAsync(0, 0));
+            Assert.AreEqual(4, await dummy.ReceiveValueAsync(1, 0));
+            Assert.AreEqual(3, await dummy.ReceiveValueAsync(1, 1));
+        }
+
+        [TestMethod]
         public void Dispose_DoesNotThrow() => CreateDefault().Dispose();
     }
 }
