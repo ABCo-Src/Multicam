@@ -237,5 +237,14 @@ namespace ABCo.Multicam.Tests.Strips.Switchers
 
         [TestMethod]
         public void Dispose_DoesNotThrow() => CreateDefault().Dispose();
+
+        [TestMethod]
+        public void IsConnected() => Assert.IsTrue(CreateDefault().IsConnected);
+
+        [TestMethod]
+        public async Task Connect_NoException() => await CreateDefault().ConnectAsync();
+
+        [TestMethod]
+        public async Task Disconnect_NoException() => await CreateDefault().DisconnectAsync();
     }
 }

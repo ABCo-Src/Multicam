@@ -13,6 +13,8 @@ namespace ABCo.Multicam.Core.Strips.Switchers
     /// </summary>
     public interface ISwitcher : IDisposable
     {
+        bool IsConnected { get; }
+
         /// <summary>
         /// Establishes a connection with the physical switcher
         /// </summary>

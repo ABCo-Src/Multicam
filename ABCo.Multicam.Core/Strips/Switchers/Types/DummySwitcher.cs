@@ -51,15 +51,9 @@ namespace ABCo.Multicam.Core.Strips.Switchers.Types
             Array.Fill(_states, new MixBlockState(1, 1));
         }
 
-        public Task ConnectAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task DisconnectAsync()
-        {
-            throw new NotImplementedException();
-        }
+        public bool IsConnected => true;
+        public Task ConnectAsync() => Task.CompletedTask;
+        public Task DisconnectAsync() => Task.CompletedTask;
 
         public Task<int> ReceiveValueAsync(int mixBlock, int bus)
         {
