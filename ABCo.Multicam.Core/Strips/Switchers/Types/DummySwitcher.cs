@@ -72,11 +72,38 @@ namespace ABCo.Multicam.Core.Strips.Switchers.Types
 
         public Task<int> ReceiveValueAsync(int mixBlock, int bus)
         {
+            ValidateMixBlockAndBus(mixBlock, bus);
             return Task.FromResult(bus == 0 ? _program : _preview);
+        }
+
+        private void ValidateMixBlockAndBus(int mixBlock, int bus)
+        {
+            // Validate mix block
+            if (mixBlock < 0 || mixBlock >= _specs.MixBlocks.Count) throw new ArgumentException("Invalid mix block given to DummySwitcher");
+
+            // Validate bus
+            if (bus == 0) return;
+            if (bus == 1 && _specs.MixBlocks[mixBlock].NativeType == SwitcherMixBlockInputType.ProgramPreview) return;
+
+            throw new ArgumentException("Invalid bus given to DummySwitcher");
         }
 
         public Task SendValueAsync(int mixBlock, int bus, int newValue)
         {
+            // Validate mixBlock and bus
+            ValidateMixBlockAndBus(mixBlock, bus);
+
+            // Validate input
+            bool found = false;
+            for (int i = 0; i < _specs.MixBlocks[mixBlock].ProgramInputs.Count; i++)
+                if (_specs.MixBlocks[mixBlock].ProgramInputs[i].Id == newValue)
+                {
+                    found = true;
+                    break;
+                }
+
+            if (!found) throw new ArgumentException("Invalid input ID given to DummySwitcher");
+
             if (bus == 0)
                 _program = newValue;
             else

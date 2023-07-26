@@ -134,8 +134,51 @@ namespace ABCo.Multicam.Tests.Strips.Switchers
             Assert.AreEqual(1, value);
         }
 
+
         [TestMethod]
-        public async Task SendValue_OneMB_Program()
+        public async Task ReceiveAndSendValue_InvalidMixBlock()
+        {
+            var dummy = CreateDefault();
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.ReceiveValueAsync(1, 0));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.ReceiveValueAsync(-1, 0));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.SendValueAsync(1, 0, 3));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.SendValueAsync(-1, 0, 3));
+        }
+
+        [TestMethod]
+        public async Task ReceiveAndSendValue_InvalidBus_PreviewProgram()
+        {
+            var dummy = CreateDefault();
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.ReceiveValueAsync(0, -1));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.ReceiveValueAsync(0, 2));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.SendValueAsync(0, -1, 3));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.SendValueAsync(0, 2, 3));
+        }
+
+        [TestMethod]
+        public async Task ReceiveAndSendValue_InvalidBus_CutBus()
+        {
+            var dummy = CreateDefault();
+            dummy.UpdateSpecs(new DummyMixBlock[] { new(4, SwitcherMixBlockInputType.CutBus) });
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.ReceiveValueAsync(0, 1));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.ReceiveValueAsync(0, -1));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.ReceiveValueAsync(0, 2));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.SendValueAsync(0, 1, 3));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.SendValueAsync(0, -1, 3));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.SendValueAsync(0, 2, 3));
+        }
+
+        [TestMethod]
+        public async Task SendValue_InvalidInput()
+        {
+            var dummy = CreateDefault();
+            dummy.UpdateSpecs(new DummyMixBlock[] { new DummyMixBlock(2, SwitcherMixBlockInputType.ProgramPreview) });
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.SendValueAsync(0, 0, -1));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.SendValueAsync(0, 0, 3));
+        }
+
+        [TestMethod]
+        public async Task SendValue_PreviewProgramMB_Program()
         {
             var dummy = CreateDefault();
 
@@ -149,7 +192,7 @@ namespace ABCo.Multicam.Tests.Strips.Switchers
         }
 
         [TestMethod]
-        public async Task SendValue_OneMB_Preview()
+        public async Task SendValue_PreviewProgramMB_Preview()
         {
             var dummy = CreateDefault();
 
