@@ -112,16 +112,20 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
         }
 
         [TestMethod]
-        public void StripVMCreation_Unsupported() => TestStripVMCreation<IRunningStrip, UnsupportedStripViewModel>();
+        public void StripVMCreation_Switcher() => TestStripVMCreation<ISwitcherRunningStrip, ISwitcherStripViewModel>();
 
-        [TestMethod]
-        public void StripVMCreation_Switcher() => TestStripVMCreation<ISwitcherRunningStrip, SwitcherStripViewModel>();
-
-        void TestStripVMCreation<TStripInterface, TExpectedVMType>() where TStripInterface : class, IRunningStrip
+        void TestStripVMCreation<TStripInterface, TExpectedVMType>() 
+            where TStripInterface : class, IRunningStrip
+            where TExpectedVMType : class, IStripViewModel
         {
+            var servSourceMock = new Mock<IServiceSource>();
+            servSourceMock.Setup(m => m.GetWithParameter<TExpectedVMType, StripViewModelInfo>(It.IsAny<StripViewModelInfo>())).Returns(Mock.Of<TExpectedVMType>());
+
             IStripManager model = Mock.Of<IStripManager>(m => m.Strips == new List<IRunningStrip>() { Mock.Of<TStripInterface>() });
-            var project = CreateWithCustomModel(model);
-            Assert.IsInstanceOfType(project.Items[0], typeof(TExpectedVMType));
+            var project = CreateWithCustomModelAndServSource(model, servSourceMock.Object);
+
+            Assert.IsTrue(project.Items[0].GetType().IsAssignableTo(typeof(TExpectedVMType)));
+            servSourceMock.Verify(m => m.GetWithParameter<TExpectedVMType, StripViewModelInfo>(It.IsAny<StripViewModelInfo>()), Times.Once);
         }
 
         [TestMethod]

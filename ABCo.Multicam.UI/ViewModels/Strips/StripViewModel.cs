@@ -12,7 +12,12 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.ViewModels.Strips
 {
-    public interface IStripViewModel { }
+    public interface IStripViewModel 
+    {
+        public abstract IRunningStrip BaseStrip { get; }
+        public bool IsEditing { get; set; }
+    }
+
     public abstract partial class StripViewModel : ViewModelBase, IStripViewModel
     {
         protected IServiceSource _serviceSource;
@@ -49,12 +54,13 @@ namespace ABCo.Multicam.UI.ViewModels.Strips
         public void Delete() => Parent.Delete(this);
     }
 
-    public class UnsupportedStripViewModel : StripViewModel
+    public interface IUnsupportedStripViewModel : IStripViewModel { }
+    public class UnsupportedStripViewModel : StripViewModel, IUnsupportedStripViewModel
     {
         IRunningStrip _strip;
 
-        public UnsupportedStripViewModel(IRunningStrip strip, IServiceSource serviceSource, IProjectStripsViewModel parent)
-            : base(serviceSource, parent) => _strip = strip;
+        public UnsupportedStripViewModel(StripViewModelInfo info, IServiceSource serviceSource)
+            : base(serviceSource, info.Parent) => _strip = info.Strip;
 
         public override IRunningStrip BaseStrip => _strip;
         public override StripViewType ContentView => StripViewType.Unsupported;

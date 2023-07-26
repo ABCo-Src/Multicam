@@ -120,7 +120,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips
             var parent = Mock.Of<IProjectStripsViewModel>();
             var serviceSource = Mock.Of<IServiceSource>();
             var model = Mock.Of<IRunningStrip>();
-            var vm = new UnsupportedStripViewModel(model, serviceSource, parent);
+            var vm = new UnsupportedStripViewModel(new StripViewModelInfo(model, parent), serviceSource);
 
             Assert.AreEqual(StripViewType.Unsupported, vm.ContentView);
             Assert.AreEqual(model, vm.BaseStrip);

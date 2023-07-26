@@ -2,6 +2,7 @@
 using ABCo.Multicam.Tests.UI;
 using ABCo.Multicam.UI.ViewModels;
 using ABCo.Multicam.UI.ViewModels.Strips;
+using ABCo.Multicam.UI.ViewModels.Strips.Switcher;
 using LightInject;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,7 @@ namespace ABCo.Multicam.UI
             //container.RegisterSingleton<IProjectViewModel, ProjectViewModel>();
             //container.RegisterSingleton<IProjectStripsViewModel, ProjectStripsViewModel>();
             //container.RegisterSingleton<IStripViewModel, StripViewModel>();
+            container.Register<StripViewModelInfo, ISwitcherStripViewModel>((factory, info) => new SwitcherStripViewModel(info, factory.GetInstance<IServiceSource>()));
 
             CoreStatics.Initialize(container);
         }

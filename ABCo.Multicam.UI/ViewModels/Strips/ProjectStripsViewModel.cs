@@ -22,10 +22,10 @@ namespace ABCo.Multicam.UI.ViewModels.Strips
 {
     public interface IProjectStripsViewModel 
     {
-        StripViewModel? CurrentlyEditing { get; set; }
-        void MoveDown(StripViewModel strip);
-        void MoveUp(StripViewModel strip);
-        void Delete(StripViewModel strip);
+        IStripViewModel? CurrentlyEditing { get; set; }
+        void MoveDown(IStripViewModel strip);
+        void MoveUp(IStripViewModel strip);
+        void Delete(IStripViewModel strip);
     }
 
     public partial class ProjectStripsViewModel : ViewModelBase, IProjectStripsViewModel
@@ -34,7 +34,7 @@ namespace ABCo.Multicam.UI.ViewModels.Strips
         IServiceSource _servSource;
         IUIDialogHandler _dialogHandler;
 
-        [ObservableProperty] ObservableCollection<StripViewModel> _items;
+        [ObservableProperty] ObservableCollection<IStripViewModel> _items;
 
         public ProjectStripsViewModel(IStripManager manager, IServiceSource servSource)
         {
@@ -42,15 +42,15 @@ namespace ABCo.Multicam.UI.ViewModels.Strips
 
             _manager = manager;
             _servSource = servSource;
-            _items = new ObservableCollection<StripViewModel>();
+            _items = new ObservableCollection<IStripViewModel>();
             _dialogHandler = servSource.Get<IUIDialogHandler>();
 
             manager.SetStripsChangeForVM(OnStripsChange);
             OnStripsChange();
         }
 
-        StripViewModel? _currentlyEditing;
-        public StripViewModel? CurrentlyEditing
+        IStripViewModel? _currentlyEditing;
+        public IStripViewModel? CurrentlyEditing
         {
             get => _currentlyEditing;
             set
@@ -75,7 +75,7 @@ namespace ABCo.Multicam.UI.ViewModels.Strips
         void OnStripsChange()
         {
             // Clear the old strips
-            var oldItems = new List<StripViewModel>(Items);
+            var oldItems = new List<IStripViewModel>(Items);
             Items.Clear();
             
             // Re-add them
@@ -100,10 +100,10 @@ namespace ABCo.Multicam.UI.ViewModels.Strips
                     CurrentlyEditing = null;
         }
 
-        StripViewModel CreateVMForStrip(IRunningStrip strip) => strip switch
+        IStripViewModel CreateVMForStrip(IRunningStrip strip) => strip switch
         {
-            ISwitcherRunningStrip switchingStrip => new SwitcherStripViewModel(switchingStrip, _servSource, this),
-            _ => new UnsupportedStripViewModel(strip, _servSource, this),
+            ISwitcherRunningStrip switchingStrip => _servSource.GetWithParameter<ISwitcherStripViewModel, StripViewModelInfo>(new StripViewModelInfo(strip, this)),
+            _ => new UnsupportedStripViewModel(new StripViewModelInfo(strip, this), _servSource),
         };
 
 
@@ -117,8 +117,10 @@ namespace ABCo.Multicam.UI.ViewModels.Strips
             }));
         }
 
-        public void MoveDown(StripViewModel strip) => _manager.MoveDown(strip.BaseStrip);
-        public void MoveUp(StripViewModel strip) => _manager.MoveUp(strip.BaseStrip);
-        public void Delete(StripViewModel strip) => _manager.Delete(strip.BaseStrip);
+        public void MoveDown(IStripViewModel strip) => _manager.MoveDown(strip.BaseStrip);
+        public void MoveUp(IStripViewModel strip) => _manager.MoveUp(strip.BaseStrip);
+        public void Delete(IStripViewModel strip) => _manager.Delete(strip.BaseStrip);
     }
+
+    public record struct StripViewModelInfo(IRunningStrip Strip, IProjectStripsViewModel Parent);
 }

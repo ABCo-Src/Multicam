@@ -14,14 +14,14 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.ViewModels.Strips.Switcher
 {
-    public interface ISwitcherStripViewModel { }
+    public interface ISwitcherStripViewModel : IStripViewModel { }
     public partial class SwitcherStripViewModel : StripViewModel, ISwitcherStripViewModel
     {
         ISwitcherRunningStrip _model;
 
-        public SwitcherStripViewModel(ISwitcherRunningStrip model, IServiceSource serviceSource, IProjectStripsViewModel parent) : base(serviceSource, parent)
+        public SwitcherStripViewModel(StripViewModelInfo info, IServiceSource serviceSource) : base(serviceSource, info.Parent)
         {
-            _model = model;
+            _model = (ISwitcherRunningStrip)info.Strip;
 
             var targetSpecs = _model.SwitcherSpecs;
             _mixBlocks = new ObservableCollection<SwitcherMixBlockViewModel>();

@@ -16,9 +16,9 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Strips.Switcher
     [TestClass]
     public class SwitcherStripViewModelTests
     {
-        public SwitcherStripViewModel CreateDefault() => new SwitcherStripViewModel(Mock.Of<ISwitcherRunningStrip>(s => s.SwitcherSpecs == new SwitcherSpecs()), Mock.Of<IServiceSource>(), Mock.Of<IProjectStripsViewModel>());
-        public SwitcherStripViewModel CreateWithCustomModel(ISwitcherRunningStrip model) => new SwitcherStripViewModel(model, Mock.Of<IServiceSource>(), Mock.Of<IProjectStripsViewModel>());
-        public SwitcherStripViewModel CreateWithCustomModelAndParent(ISwitcherRunningStrip model, IProjectStripsViewModel parent) => new SwitcherStripViewModel(model, Mock.Of<IServiceSource>(), parent);
+        public SwitcherStripViewModel CreateDefault() => new(new(Mock.Of<ISwitcherRunningStrip>(s => s.SwitcherSpecs == new SwitcherSpecs()), Mock.Of<IProjectStripsViewModel>()), Mock.Of<IServiceSource>());
+        public SwitcherStripViewModel CreateWithCustomModel(ISwitcherRunningStrip model) => new(new(model, Mock.Of<IProjectStripsViewModel>()), Mock.Of<IServiceSource>());
+        public SwitcherStripViewModel CreateWithCustomModelAndParent(ISwitcherRunningStrip model, IProjectStripsViewModel parent) => new(new(model, parent), Mock.Of<IServiceSource>());
 
         [TestMethod]
         public void CtorAndRunningStrip()
