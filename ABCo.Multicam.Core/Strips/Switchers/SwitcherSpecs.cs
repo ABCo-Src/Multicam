@@ -19,10 +19,10 @@ namespace ABCo.Multicam.Core.Strips.Switchers
         public readonly IReadOnlyList<SwitcherBusInput> ProgramInputs;
         public readonly IReadOnlyList<SwitcherBusInput>? PreviewInputs;
 
-        public SwitcherMixBlockInputType NativeType;
+        public SwitcherMixBlockType NativeType;
 
-        public SwitcherMixBlock() => (NativeType, ProgramInputs, PreviewInputs) = (SwitcherMixBlockInputType.Unknown, Array.Empty<SwitcherBusInput>(), null);
-        public SwitcherMixBlock(SwitcherMixBlockInputType nativeType, SwitcherBusInput[] programInputs, SwitcherBusInput[]? previewInputs) => (NativeType, ProgramInputs, PreviewInputs) = (nativeType, programInputs, previewInputs);
+        public SwitcherMixBlock() => (NativeType, ProgramInputs, PreviewInputs) = (SwitcherMixBlockType.Unknown, Array.Empty<SwitcherBusInput>(), null);
+        public SwitcherMixBlock(SwitcherMixBlockType nativeType, SwitcherBusInput[] programInputs, SwitcherBusInput[]? previewInputs) => (NativeType, ProgramInputs, PreviewInputs) = (nativeType, programInputs, previewInputs);
     }
 
     public class SwitcherBusInput
@@ -34,7 +34,7 @@ namespace ABCo.Multicam.Core.Strips.Switchers
         public SwitcherBusInput(int id, string name) => (Id, Name) = (id, name);
     }
 
-    public enum SwitcherMixBlockInputType
+    public enum SwitcherMixBlockType
     {
         CutBus,
         ProgramPreview,

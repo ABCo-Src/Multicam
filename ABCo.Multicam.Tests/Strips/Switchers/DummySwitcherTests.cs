@@ -20,7 +20,7 @@ namespace ABCo.Multicam.Tests.Strips.Switchers
             var specs = dummy.ReceiveSpecs();
 
             Assert.AreEqual(1, specs.MixBlocks.Count);
-            Assert.AreEqual(SwitcherMixBlockInputType.ProgramPreview, specs.MixBlocks[0].NativeType);
+            Assert.AreEqual(SwitcherMixBlockType.ProgramPreview, specs.MixBlocks[0].NativeType);
             Assert.AreEqual(4, specs.MixBlocks[0].ProgramInputs.Count);
             AssertInputsList(specs.MixBlocks[0].ProgramInputs);
             Assert.AreEqual(specs.MixBlocks[0].ProgramInputs, specs.MixBlocks[0].PreviewInputs);
@@ -38,11 +38,11 @@ namespace ABCo.Multicam.Tests.Strips.Switchers
         public void UpdateSpecs_ZeroInputMixBlock()
         {
             var dummy = CreateDefault();
-            dummy.UpdateSpecs(new DummyMixBlock[] { new DummyMixBlock(0, SwitcherMixBlockInputType.ProgramPreview) });
+            dummy.UpdateSpecs(new DummyMixBlock[] { new DummyMixBlock(0, SwitcherMixBlockType.ProgramPreview) });
 
             var specs = dummy.ReceiveSpecs();
             Assert.AreEqual(1, specs.MixBlocks.Count);
-            Assert.AreEqual(SwitcherMixBlockInputType.ProgramPreview, specs.MixBlocks[0].NativeType);
+            Assert.AreEqual(SwitcherMixBlockType.ProgramPreview, specs.MixBlocks[0].NativeType);
             Assert.AreEqual(0, specs.MixBlocks[0].ProgramInputs.Count);
             Assert.AreEqual(specs.MixBlocks[0].ProgramInputs, specs.MixBlocks[0].PreviewInputs);
         }
@@ -51,11 +51,11 @@ namespace ABCo.Multicam.Tests.Strips.Switchers
         public void UpdateSpecs_MixBlock_ProgramPreview()
         {
             var dummy = CreateDefault();
-            dummy.UpdateSpecs(new DummyMixBlock[] { new DummyMixBlock(1, SwitcherMixBlockInputType.ProgramPreview) });
+            dummy.UpdateSpecs(new DummyMixBlock[] { new DummyMixBlock(1, SwitcherMixBlockType.ProgramPreview) });
 
             var specs = dummy.ReceiveSpecs();
             Assert.AreEqual(1, specs.MixBlocks.Count);
-            Assert.AreEqual(SwitcherMixBlockInputType.ProgramPreview, specs.MixBlocks[0].NativeType);
+            Assert.AreEqual(SwitcherMixBlockType.ProgramPreview, specs.MixBlocks[0].NativeType);
             Assert.AreEqual(1, specs.MixBlocks[0].ProgramInputs.Count);
             AssertInputsList(specs.MixBlocks[0].ProgramInputs);
             Assert.AreEqual(specs.MixBlocks[0].ProgramInputs, specs.MixBlocks[0].PreviewInputs);
@@ -65,11 +65,11 @@ namespace ABCo.Multicam.Tests.Strips.Switchers
         public void UpdateSpecs_MixBlock_CutBus()
         {
             var dummy = CreateDefault();
-            dummy.UpdateSpecs(new DummyMixBlock[] { new DummyMixBlock(1, SwitcherMixBlockInputType.CutBus) });
+            dummy.UpdateSpecs(new DummyMixBlock[] { new DummyMixBlock(1, SwitcherMixBlockType.CutBus) });
 
             var specs = dummy.ReceiveSpecs();
             Assert.AreEqual(1, specs.MixBlocks.Count);
-            Assert.AreEqual(SwitcherMixBlockInputType.CutBus, specs.MixBlocks[0].NativeType);
+            Assert.AreEqual(SwitcherMixBlockType.CutBus, specs.MixBlocks[0].NativeType);
             Assert.AreEqual(1, specs.MixBlocks[0].ProgramInputs.Count);
             AssertInputsList(specs.MixBlocks[0].ProgramInputs);
             Assert.IsNull(specs.MixBlocks[0].PreviewInputs);
@@ -82,15 +82,15 @@ namespace ABCo.Multicam.Tests.Strips.Switchers
 
             dummy.UpdateSpecs(new DummyMixBlock[]
             {
-                new DummyMixBlock(2, SwitcherMixBlockInputType.ProgramPreview),
-                new DummyMixBlock(2, SwitcherMixBlockInputType.ProgramPreview),
+                new DummyMixBlock(2, SwitcherMixBlockType.ProgramPreview),
+                new DummyMixBlock(2, SwitcherMixBlockType.ProgramPreview),
             });
 
             var specs = dummy.ReceiveSpecs();
 
             Assert.AreEqual(2, specs.MixBlocks.Count);
-            Assert.AreEqual(SwitcherMixBlockInputType.ProgramPreview, specs.MixBlocks[0].NativeType);
-            Assert.AreEqual(SwitcherMixBlockInputType.ProgramPreview, specs.MixBlocks[1].NativeType);
+            Assert.AreEqual(SwitcherMixBlockType.ProgramPreview, specs.MixBlocks[0].NativeType);
+            Assert.AreEqual(SwitcherMixBlockType.ProgramPreview, specs.MixBlocks[1].NativeType);
 
             // Mix Block 1
             Assert.AreEqual(2, specs.MixBlocks[0].ProgramInputs.Count);
@@ -159,7 +159,7 @@ namespace ABCo.Multicam.Tests.Strips.Switchers
         public async Task ReceiveAndSendValue_InvalidBus_CutBus()
         {
             var dummy = CreateDefault();
-            dummy.UpdateSpecs(new DummyMixBlock[] { new(4, SwitcherMixBlockInputType.CutBus) });
+            dummy.UpdateSpecs(new DummyMixBlock[] { new(4, SwitcherMixBlockType.CutBus) });
             await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.ReceiveValueAsync(0, 1));
             await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.ReceiveValueAsync(0, -1));
             await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.ReceiveValueAsync(0, 2));
@@ -172,7 +172,7 @@ namespace ABCo.Multicam.Tests.Strips.Switchers
         public async Task SendValue_InvalidInput()
         {
             var dummy = CreateDefault();
-            dummy.UpdateSpecs(new DummyMixBlock[] { new DummyMixBlock(2, SwitcherMixBlockInputType.ProgramPreview) });
+            dummy.UpdateSpecs(new DummyMixBlock[] { new DummyMixBlock(2, SwitcherMixBlockType.ProgramPreview) });
             await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.SendValueAsync(0, 0, -1));
             await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.SendValueAsync(0, 0, 3));
         }
@@ -209,7 +209,7 @@ namespace ABCo.Multicam.Tests.Strips.Switchers
         public async Task SendValue_CutBusMB()
         {
             var dummy = CreateDefault();
-            dummy.UpdateSpecs(new DummyMixBlock[] { new(3, SwitcherMixBlockInputType.CutBus) });
+            dummy.UpdateSpecs(new DummyMixBlock[] { new(3, SwitcherMixBlockType.CutBus) });
 
             await dummy.SendValueAsync(0, 0, 2);
             Assert.AreEqual(2, await dummy.ReceiveValueAsync(0, 0));
@@ -222,7 +222,7 @@ namespace ABCo.Multicam.Tests.Strips.Switchers
         public async Task SendValue_SecondMB()
         {
             var dummy = CreateDefault();
-            dummy.UpdateSpecs(new DummyMixBlock[] { new(4, SwitcherMixBlockInputType.CutBus), new(4, SwitcherMixBlockInputType.ProgramPreview) });
+            dummy.UpdateSpecs(new DummyMixBlock[] { new(4, SwitcherMixBlockType.CutBus), new(4, SwitcherMixBlockType.ProgramPreview) });
 
             await dummy.SendValueAsync(1, 0, 4);
             Assert.AreEqual(1, await dummy.ReceiveValueAsync(0, 0));

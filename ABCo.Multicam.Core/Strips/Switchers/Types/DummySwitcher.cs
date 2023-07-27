@@ -22,7 +22,7 @@ namespace ABCo.Multicam.Core.Strips.Switchers.Types
         public DummySwitcher()
         {
             (_specs, _states) = (null!, null!); // Assigned by UpdateSpecs
-            UpdateSpecs(new DummyMixBlock[] { new(4, SwitcherMixBlockInputType.ProgramPreview) });            
+            UpdateSpecs(new DummyMixBlock[] { new(4, SwitcherMixBlockType.ProgramPreview) });            
         }
 
         public SwitcherSpecs ReceiveSpecs() => _specs;
@@ -40,7 +40,7 @@ namespace ABCo.Multicam.Core.Strips.Switchers.Types
                     programArray[j] = new SwitcherBusInput(j + 1, "Cam " + (j + 1));
 
                 // Determine the relevant preview array and create the final mix block
-                var previewArray = mixBlocks[i].Type == SwitcherMixBlockInputType.ProgramPreview ? programArray : null;
+                var previewArray = mixBlocks[i].Type == SwitcherMixBlockType.ProgramPreview ? programArray : null;
                 mixBlocksArray[i] = new SwitcherMixBlock(mixBlocks[i].Type, programArray, previewArray);
             }
 
@@ -93,7 +93,7 @@ namespace ABCo.Multicam.Core.Strips.Switchers.Types
 
             // Validate bus
             if (bus == 0) return;
-            if (bus == 1 && _specs.MixBlocks[mixBlock].NativeType == SwitcherMixBlockInputType.ProgramPreview) return;
+            if (bus == 1 && _specs.MixBlocks[mixBlock].NativeType == SwitcherMixBlockType.ProgramPreview) return;
 
             throw new ArgumentException("Invalid bus given to DummySwitcher");
         }
@@ -112,8 +112,8 @@ namespace ABCo.Multicam.Core.Strips.Switchers.Types
     public struct DummyMixBlock
     {
         public int InputCount;
-        public SwitcherMixBlockInputType Type;
+        public SwitcherMixBlockType Type;
 
-        public DummyMixBlock(int inputCount, SwitcherMixBlockInputType type) => (InputCount, Type) = (inputCount, type);
+        public DummyMixBlock(int inputCount, SwitcherMixBlockType type) => (InputCount, Type) = (inputCount, type);
     }
 }
