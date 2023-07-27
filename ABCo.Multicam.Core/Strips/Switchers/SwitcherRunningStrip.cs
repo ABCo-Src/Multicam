@@ -27,19 +27,14 @@ namespace ABCo.Multicam.Core.Strips.Switchers
         {
             _rawSwitcher = switcher;
             SwitcherSpecs = switcher.ReceiveSpecs();
+
             _store = new MixBlockStore[SwitcherSpecs.MixBlocks.Count];
 
             // Temporary method
-            SetupStoreAsync().Wait();
+            SetupStoreAsync(_store).Wait();
         }
 
         public int GetValue(int mixBlock, int bus) => bus == 0 ? _store[mixBlock].Program : _store[mixBlock].Preview;
-
-        public async void SetValueBackground(int mixBlock, int bus, int value)
-        {
-            // TODO: Error handling
-            await SetValueAndWaitAsync(mixBlock, bus, value);
-        }
 
         public async Task SetValueAndWaitAsync(int mixBlock, int bus, int value)
         {
@@ -52,24 +47,41 @@ namespace ABCo.Multicam.Core.Strips.Switchers
                 _store[mixBlock].Preview = value;
         }
 
-        async Task SetupStoreAsync()
+        public async Task ChangeSwitcherAsync(ISwitcher switcher)
         {
-            // Prepare values
-            for (int i = 0; i < _store.Length; i++)
+            var specs = await switcher.ReceiveSpecsAsync();
+            var newStore = new MixBlockStore[specs.MixBlocks.Count];
+            await SetupStoreAsync(newStore);
+
+            SwitcherSpecs = specs;
+            _store = newStore;
+            _rawSwitcher.Dispose();
+            _rawSwitcher = switcher;
+        }
+
+        async Task SetupStoreAsync(MixBlockStore[] store)
+        {
+            for (int i = 0; i < store.Length; i++)
             {
                 var mixBlock = SwitcherSpecs.MixBlocks[i];
 
                 // Program
-                _store[i].Program = await _rawSwitcher.ReceiveValueAsync(i, 0);
+                store[i].Program = await _rawSwitcher.ReceiveValueAsync(i, 0);
 
                 // Preview
                 if (mixBlock.NativeType == SwitcherMixBlockType.CutBus)
-                    _store[i].Preview = mixBlock.ProgramInputs.Count == 0 ? 0 : mixBlock.ProgramInputs[0].Id;
-                else 
-                    _store[i].Preview = await _rawSwitcher.ReceiveValueAsync(i, 1);
+                    store[i].Preview = mixBlock.ProgramInputs.Count == 0 ? 0 : mixBlock.ProgramInputs[0].Id;
+                else
+                    store[i].Preview = await _rawSwitcher.ReceiveValueAsync(i, 1);
             }
         }
-        
+
+        public async void SetValueBackground(int mixBlock, int bus, int value)
+        {
+            // TODO: Error handling
+            await SetValueAndWaitAsync(mixBlock, bus, value);
+        }
+
         public void Dispose() => _rawSwitcher.Dispose();
 
         record struct MixBlockStore(int Program, int Preview);

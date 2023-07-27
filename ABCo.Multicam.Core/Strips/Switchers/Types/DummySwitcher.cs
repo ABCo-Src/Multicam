@@ -100,6 +100,13 @@ namespace ABCo.Multicam.Core.Strips.Switchers.Types
 
         public void Dispose() { }
 
+        public static DummySwitcher ForSpecs(params DummyMixBlock[] mixBlocks)
+        {
+            var dummy = new DummySwitcher();
+            dummy.UpdateSpecs(mixBlocks);
+            return dummy;
+        }
+
         struct MixBlockState
         {
             public int Program;

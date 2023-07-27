@@ -11,7 +11,8 @@ namespace ABCo.Multicam.Core.Strips.Switchers
         public readonly IReadOnlyList<SwitcherMixBlock> MixBlocks;
 
         public SwitcherSpecs() => MixBlocks = Array.Empty<SwitcherMixBlock>();
-        public SwitcherSpecs(SwitcherMixBlock[] mixBlocks) => MixBlocks = mixBlocks;
+        public SwitcherSpecs(params SwitcherMixBlock[] mixBlocks) => MixBlocks = mixBlocks;        
+
     }
 
     public class SwitcherMixBlock
