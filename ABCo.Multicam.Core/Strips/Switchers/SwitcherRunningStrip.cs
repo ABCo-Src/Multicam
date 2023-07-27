@@ -28,10 +28,9 @@ namespace ABCo.Multicam.Core.Strips.Switchers
             _rawSwitcher = switcher;
             SwitcherSpecs = switcher.ReceiveSpecs();
 
+            // Initialize store to all 1s, a known valid state for dummy switchers
             _store = new MixBlockStore[SwitcherSpecs.MixBlocks.Count];
-
-            // Temporary method
-            SetupStoreAsync(_rawSwitcher, SwitcherSpecs, _store).Wait();
+            Array.Fill(_store, new MixBlockStore(1, 1));
         }
 
         public int GetValue(int mixBlock, int bus) => bus == 0 ? _store[mixBlock].Program : _store[mixBlock].Preview;

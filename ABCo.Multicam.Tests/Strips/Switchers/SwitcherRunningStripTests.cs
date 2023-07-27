@@ -53,6 +53,16 @@ namespace ABCo.Multicam.Tests.Strips.Switchers
         }
 
         [TestMethod]
+        public async Task GetValue_InitialDummy()
+        {
+            var switcher = CreateWithSpecs(new(SwitcherMixBlock.NewProgPrevSameInputs(new(), new()), SwitcherMixBlock.NewProgPrevSameInputs(new(), new())));
+            Assert.AreEqual(1, switcher.GetValue(0, 0));
+            Assert.AreEqual(1, switcher.GetValue(0, 1));
+            Assert.AreEqual(1, switcher.GetValue(1, 0));
+            Assert.AreEqual(1, switcher.GetValue(1, 1));
+        }
+
+        [TestMethod]
         public async Task GetValue_NativePreview()
         {
             var mixBlock = SwitcherMixBlock.NewProgPrev(Array.Empty<SwitcherBusInput>(), new(), new());
