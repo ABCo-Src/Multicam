@@ -49,11 +49,11 @@ namespace ABCo.Multicam.Tests.Strips.Switchers
             var inputs = new SwitcherBusInput[2] { new(), new() };
             var mixBlock = type == SwitcherMixBlockType.CutBus ? SwitcherMixBlock.NewCutBus(inputs) : SwitcherMixBlock.NewProgPrev(inputs);
 
-            await TestGetValueNative(mixBlock, 0);
+            await TestChangeAndGetValueNative(mixBlock, 0);
         }
 
         [TestMethod]
-        public async Task GetValue_InitialDummy()
+        public async Task ChangeAndGet_InitialDummy()
         {
             var switcher = CreateWithSpecs(new(SwitcherMixBlock.NewProgPrevSameInputs(new(), new()), SwitcherMixBlock.NewProgPrevSameInputs(new(), new())));
             Assert.AreEqual(1, switcher.GetValue(0, 0));
@@ -63,14 +63,14 @@ namespace ABCo.Multicam.Tests.Strips.Switchers
         }
 
         [TestMethod]
-        public async Task GetValue_NativePreview()
+        public async Task ChangeAndGet_NativePreview()
         {
             var mixBlock = SwitcherMixBlock.NewProgPrev(Array.Empty<SwitcherBusInput>(), new(), new());
-            await TestGetValueNative(mixBlock, 1);
+            await TestChangeAndGetValueNative(mixBlock, 1);
         }
 
         [TestMethod]
-        public async Task GetValue_EmulatedPreview_WithInputs()
+        public async Task ChangeAndGet_EmulatedPreview_WithInputs()
         {
             var mixBlock = SwitcherMixBlock.NewCutBus(new(76, ""), new(35, ""));
             var switcherRunningStrip = CreateDefault();
@@ -87,7 +87,7 @@ namespace ABCo.Multicam.Tests.Strips.Switchers
         }
 
         [TestMethod]
-        public async Task GetValue_EmulatedPreview_NoInputs()
+        public async Task ChangeAndGet_EmulatedPreview_NoInputs()
         {
             var mixBlock = SwitcherMixBlock.NewCutBus();
             var switcherRunningStrip = CreateDefault();
@@ -106,7 +106,7 @@ namespace ABCo.Multicam.Tests.Strips.Switchers
         [TestMethod]
         [DataRow(SwitcherMixBlockType.CutBus)]
         [DataRow(SwitcherMixBlockType.ProgramPreview)]
-        public async Task SetValue_Program(SwitcherMixBlockType type)
+        public async Task ChangeAndSet_Program(SwitcherMixBlockType type)
         {
             var inputs = new SwitcherBusInput[2] { new(4, ""), new(13, "") };
             var mixBlock = type == SwitcherMixBlockType.CutBus ? SwitcherMixBlock.NewCutBus(inputs) : SwitcherMixBlock.NewProgPrev(inputs);
@@ -121,7 +121,7 @@ namespace ABCo.Multicam.Tests.Strips.Switchers
         }
 
         [TestMethod]
-        public async Task SetValue_NativePreview()
+        public async Task ChangeAndSet_NativePreview()
         {
             var mixBlock = SwitcherMixBlock.NewProgPrev(Array.Empty<SwitcherBusInput>(), new(4, ""), new(13, ""));
             var switcherRunningStrip = CreateDefault();
@@ -135,7 +135,7 @@ namespace ABCo.Multicam.Tests.Strips.Switchers
         }
 
         [TestMethod]
-        public async Task SetValue_EmulatedPreview()
+        public async Task ChangeAndSet_EmulatedPreview()
         {
             var mixBlock = SwitcherMixBlock.NewCutBus(new(4, ""), new(13, ""), new(28, ""));
             var switcherRunningStrip = CreateDefault();
@@ -153,7 +153,7 @@ namespace ABCo.Multicam.Tests.Strips.Switchers
             switcherMock.Verify(m => m.SendValueAsync(1, 1, 28), Times.Never);
         }
 
-        async Task TestGetValueNative(SwitcherMixBlock mixBlock, int bus)
+        async Task TestChangeAndGetValueNative(SwitcherMixBlock mixBlock, int bus)
         {
             var switcherMock = new Mock<ISwitcher>();
             switcherMock.Setup(m => m.ReceiveSpecsAsync()).ReturnsAsync(new SwitcherSpecs(mixBlock, mixBlock));

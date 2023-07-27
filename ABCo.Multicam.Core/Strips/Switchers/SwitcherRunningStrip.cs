@@ -50,7 +50,7 @@ namespace ABCo.Multicam.Core.Strips.Switchers
         {
             var specs = await switcher.ReceiveSpecsAsync();
             var newStore = new MixBlockStore[specs.MixBlocks.Count];
-            await SetupStoreAsync(switcher, specs, newStore);
+            await UpdateStoreValues(switcher, specs, newStore);
 
             SwitcherSpecs = specs;
             _store = newStore;
@@ -58,7 +58,7 @@ namespace ABCo.Multicam.Core.Strips.Switchers
             _rawSwitcher = switcher;
         }
 
-        async Task SetupStoreAsync(ISwitcher switcher, SwitcherSpecs newSpecs, MixBlockStore[] store)
+        async Task UpdateStoreValues(ISwitcher switcher, SwitcherSpecs newSpecs, MixBlockStore[] store)
         {
             for (int i = 0; i < store.Length; i++)
             {
