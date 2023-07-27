@@ -36,12 +36,9 @@ namespace ABCo.Multicam.Tests.Helpers
             base.Post(d, state);
         }
 
-        /// <summary>
-        /// Sets up a check. The given function will be called around every await, and if it returns true at any point, the action is considered to have failed.
-        /// </summary>        
-        public static RunCheckBetweenAwaits SetupCheck(Action actionRetIfOk)
+        public static RunCheckBetweenAwaits SetupCheck(Action action)
         {
-            var context = new RunCheckBetweenAwaits(actionRetIfOk);
+            var context = new RunCheckBetweenAwaits(action);
             SetSynchronizationContext(context);
             return context;
         }

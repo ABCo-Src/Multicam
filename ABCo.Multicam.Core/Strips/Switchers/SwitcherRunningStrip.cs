@@ -31,7 +31,7 @@ namespace ABCo.Multicam.Core.Strips.Switchers
             _store = new MixBlockStore[SwitcherSpecs.MixBlocks.Count];
 
             // Temporary method
-            SetupStoreAsync(_store).Wait();
+            SetupStoreAsync(_rawSwitcher, SwitcherSpecs, _store).Wait();
         }
 
         public int GetValue(int mixBlock, int bus) => bus == 0 ? _store[mixBlock].Program : _store[mixBlock].Preview;
@@ -51,7 +51,7 @@ namespace ABCo.Multicam.Core.Strips.Switchers
         {
             var specs = await switcher.ReceiveSpecsAsync();
             var newStore = new MixBlockStore[specs.MixBlocks.Count];
-            await SetupStoreAsync(newStore);
+            await SetupStoreAsync(switcher, specs, newStore);
 
             SwitcherSpecs = specs;
             _store = newStore;
@@ -59,20 +59,20 @@ namespace ABCo.Multicam.Core.Strips.Switchers
             _rawSwitcher = switcher;
         }
 
-        async Task SetupStoreAsync(MixBlockStore[] store)
+        async Task SetupStoreAsync(ISwitcher switcher, SwitcherSpecs newSpecs, MixBlockStore[] store)
         {
             for (int i = 0; i < store.Length; i++)
             {
-                var mixBlock = SwitcherSpecs.MixBlocks[i];
+                var mixBlock = newSpecs.MixBlocks[i];
 
                 // Program
-                store[i].Program = await _rawSwitcher.ReceiveValueAsync(i, 0);
+                store[i].Program = await switcher.ReceiveValueAsync(i, 0);
 
                 // Preview
                 if (mixBlock.NativeType == SwitcherMixBlockType.CutBus)
                     store[i].Preview = mixBlock.ProgramInputs.Count == 0 ? 0 : mixBlock.ProgramInputs[0].Id;
                 else
-                    store[i].Preview = await _rawSwitcher.ReceiveValueAsync(i, 1);
+                    store[i].Preview = await switcher.ReceiveValueAsync(i, 1);
             }
         }
 
@@ -81,6 +81,8 @@ namespace ABCo.Multicam.Core.Strips.Switchers
             // TODO: Error handling
             await SetValueAndWaitAsync(mixBlock, bus, value);
         }
+
+        public ISwitcher GetRawSwitcher() => _rawSwitcher;
 
         public void Dispose() => _rawSwitcher.Dispose();
 

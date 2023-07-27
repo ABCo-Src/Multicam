@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,7 +24,17 @@ namespace ABCo.Multicam.Core.Strips.Switchers
         public SwitcherMixBlockType NativeType;
 
         public SwitcherMixBlock() => (NativeType, ProgramInputs, PreviewInputs) = (SwitcherMixBlockType.Unknown, Array.Empty<SwitcherBusInput>(), null);
-        public SwitcherMixBlock(SwitcherMixBlockType nativeType, SwitcherBusInput[] programInputs, SwitcherBusInput[]? previewInputs) => (NativeType, ProgramInputs, PreviewInputs) = (nativeType, programInputs, previewInputs);
+
+        private SwitcherMixBlock(SwitcherBusInput[] programInputs) =>
+            (NativeType, ProgramInputs, PreviewInputs) = (SwitcherMixBlockType.CutBus, programInputs, null);
+
+        private SwitcherMixBlock(SwitcherBusInput[] programInputs, params SwitcherBusInput[] previewInputs) => 
+            (NativeType, ProgramInputs, PreviewInputs) = (SwitcherMixBlockType.ProgramPreview, programInputs, previewInputs);
+
+        public static SwitcherMixBlock NewCutBus(params SwitcherBusInput[] programInputs) => new(programInputs);
+        public static SwitcherMixBlock NewProgPrev() => new(Array.Empty<SwitcherBusInput>(), Array.Empty<SwitcherBusInput>());
+        public static SwitcherMixBlock NewProgPrev(SwitcherBusInput[] programInputs, params SwitcherBusInput[] previewInputs) => new(programInputs, previewInputs);
+        public static SwitcherMixBlock NewProgPrevSameInputs(params SwitcherBusInput[] inputs) => new(inputs, inputs);
     }
 
     public class SwitcherBusInput

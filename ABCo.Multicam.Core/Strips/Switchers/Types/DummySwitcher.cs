@@ -28,7 +28,16 @@ namespace ABCo.Multicam.Core.Strips.Switchers.Types
         public SwitcherSpecs ReceiveSpecs() => _specs;
         public Task<SwitcherSpecs> ReceiveSpecsAsync() => Task.FromResult(ReceiveSpecs());
 
-        public void UpdateSpecs(DummyMixBlock[] mixBlocks)
+        public void UpdateSpecs(params DummyMixBlock[] mixBlocks)
+        {
+            _specs = CreateSpecsFrom(mixBlocks);
+
+            // Create new state, starting at 1
+            _states = new MixBlockState[_specs.MixBlocks.Count];
+            Array.Fill(_states, new MixBlockState(1, 1));
+        }
+
+        public static SwitcherSpecs CreateSpecsFrom(params DummyMixBlock[] mixBlocks)
         {
             var mixBlocksArray = new SwitcherMixBlock[mixBlocks.Length];
 
@@ -39,16 +48,14 @@ namespace ABCo.Multicam.Core.Strips.Switchers.Types
                 for (int j = 0; j < programArray.Length; j++)
                     programArray[j] = new SwitcherBusInput(j + 1, "Cam " + (j + 1));
 
-                // Determine the relevant preview array and create the final mix block
-                var previewArray = mixBlocks[i].Type == SwitcherMixBlockType.ProgramPreview ? programArray : null;
-                mixBlocksArray[i] = new SwitcherMixBlock(mixBlocks[i].Type, programArray, previewArray);
+                // Create the mix block
+                if (mixBlocks[i].Type == SwitcherMixBlockType.ProgramPreview)
+                    mixBlocksArray[i] = SwitcherMixBlock.NewProgPrevSameInputs(programArray);
+                else
+                    mixBlocksArray[i] = SwitcherMixBlock.NewCutBus(programArray);
             }
 
-            _specs = new SwitcherSpecs(mixBlocksArray);
-
-            // Create new state, starting at 1
-            _states = new MixBlockState[mixBlocksArray.Length];
-            Array.Fill(_states, new MixBlockState(1, 1));
+            return new SwitcherSpecs(mixBlocksArray);
         }
 
         public bool IsConnected => true;
