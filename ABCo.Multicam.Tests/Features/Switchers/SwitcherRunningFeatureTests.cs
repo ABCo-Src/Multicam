@@ -42,24 +42,24 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         }
 
         [TestMethod]
-        [DataRow(SwitcherMixBlockType.CutBus)]
-        [DataRow(SwitcherMixBlockType.ProgramPreview)]
-        public async Task GetValue_Program(SwitcherMixBlockType type)
-        {
-            var inputs = new SwitcherBusInput[2] { new(), new() };
-            var mixBlock = type == SwitcherMixBlockType.CutBus ? SwitcherMixBlock.NewCutBus(inputs) : SwitcherMixBlock.NewProgPrev(inputs);
-
-            await TestChangeAndGetValueNative(mixBlock, 0);
-        }
-
-        [TestMethod]
-        public void ChangeAndGet_InitialDummy()
+        public void GetValue_InitialDummy()
         {
             var switcher = CreateWithSpecs(new(SwitcherMixBlock.NewProgPrevSameInputs(new(), new()), SwitcherMixBlock.NewProgPrevSameInputs(new(), new())));
             Assert.AreEqual(1, switcher.GetValue(0, 0));
             Assert.AreEqual(1, switcher.GetValue(0, 1));
             Assert.AreEqual(1, switcher.GetValue(1, 0));
             Assert.AreEqual(1, switcher.GetValue(1, 1));
+        }
+
+        [TestMethod]
+        [DataRow(SwitcherMixBlockType.CutBus)]
+        [DataRow(SwitcherMixBlockType.ProgramPreview)]
+        public async Task ChangeAndGet_Program(SwitcherMixBlockType type)
+        {
+            var inputs = new SwitcherBusInput[2] { new(), new() };
+            var mixBlock = type == SwitcherMixBlockType.CutBus ? SwitcherMixBlock.NewCutBus(inputs) : SwitcherMixBlock.NewProgPrev(inputs);
+
+            await TestChangeAndGetValueNative(mixBlock, 0);
         }
 
         [TestMethod]
@@ -153,9 +153,24 @@ namespace ABCo.Multicam.Tests.Features.Switchers
             switcherMock.Verify(m => m.SendValueAsync(1, 1, 28), Times.Never);
         }
 
+        [TestMethod]
+        public async Task ChangeAndSet_Disconnected()
+        {
+            var mixBlock = SwitcherMixBlock.NewProgPrevSameInputs(new SwitcherBusInput(4, ""));
+            var feature = CreateDefault();
+
+            // TODO: Change IsConnected *after* ChangeSwitcher so the specs properly assign.
+            var switcherMock = Mock.Of<ISwitcher>(m => m.IsConnected == false);
+            await feature.ChangeSwitcherAsync(switcherMock);
+
+            await feature.SetValueAndWaitAsync(0, 0, 13);
+            Mock.Get(switcherMock).Verify(m => m.SendValueAsync(0, 0, 13), Times.Never);
+        }
+
         async Task TestChangeAndGetValueNative(SwitcherMixBlock mixBlock, int bus)
         {
             var switcherMock = new Mock<ISwitcher>();
+            switcherMock.Setup(m => m.IsConnected).Returns(true);
             switcherMock.Setup(m => m.ReceiveSpecsAsync()).ReturnsAsync(new SwitcherSpecs(mixBlock, mixBlock));
             switcherMock.Setup(m => m.ReceiveValueAsync(0, bus)).ReturnsAsync(2);
             switcherMock.Setup(m => m.ReceiveValueAsync(1, bus)).ReturnsAsync(4);
@@ -176,6 +191,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         static async Task<Mock<ISwitcher>> ChangeSwitcherToMockWithTwoMBs(SwitcherRunningFeature feature, SwitcherMixBlock mixBlock)
         {
             var switcherMock = new Mock<ISwitcher>();
+            switcherMock.Setup(m => m.IsConnected).Returns(true);
             switcherMock.Setup(m => m.ReceiveSpecsAsync()).ReturnsAsync(new SwitcherSpecs(mixBlock, mixBlock));
             await feature.ChangeSwitcherAsync(switcherMock.Object);
 
@@ -183,36 +199,95 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         }
 
         [TestMethod]
-        public async Task ChangeSwitcher_ChangesSpecs()
+        public async Task ChangeSwitcher_Disconnected_BlankSpecs()
+        {
+            var feature = CreateDefault();            
+            await feature.ChangeSwitcherAsync(Mock.Of<ISwitcher>(m => m.IsConnected == false));
+            Assert.AreEqual(0, feature.SwitcherSpecs.MixBlocks.Count);
+        }
+
+        [TestMethod]
+        public async Task ChangeSwitcher_Disconnected_ClearsCacheState()
+        {
+            var feature = CreateWithSpecs(new(SwitcherMixBlock.NewProgPrevSameInputs(new SwitcherBusInput())));
+            await feature.ChangeSwitcherAsync(Mock.Of<ISwitcher>(m => m.IsConnected == false));
+            Assert.ThrowsException<IndexOutOfRangeException>(() => feature.GetValue(0, 0));
+        }
+
+        [TestMethod]
+        public async Task ChangeSwitcher_Disconnected_ClearsIsConnected()
+        {
+            var feature = CreateWithSpecs(new(SwitcherMixBlock.NewProgPrevSameInputs(new SwitcherBusInput())));
+            await feature.ChangeSwitcherAsync(Mock.Of<ISwitcher>(m => m.IsConnected == false));
+            Assert.IsFalse(feature.IsConnected);
+        }
+
+        [TestMethod]
+        public async Task ChangeSwitcher_Connected_ChangesSpecs()
         {
             var feature = CreateDefault();
 
             var switcher2Specs = new SwitcherSpecs();
-            var switcher2 = Mock.Of<ISwitcher>(m => m.ReceiveSpecsAsync() == Task.FromResult(switcher2Specs));
+            var switcher2 = Mock.Of<ISwitcher>(m => m.ReceiveSpecsAsync() == Task.FromResult(switcher2Specs) && m.IsConnected == true);
             await feature.ChangeSwitcherAsync(switcher2);
 
             Assert.AreEqual(switcher2Specs, feature.SwitcherSpecs);
         }
 
         [TestMethod]
-        public async Task ChangeSwitcher_DisposesOld()
+        public async Task ChangeSwitcher_Connected_SetsIsConnected()
+        {
+            var feature = CreateDefault();
+
+            var switcher = Mock.Of<ISwitcher>(m => m.IsConnected == false);
+            await feature.ChangeSwitcherAsync(switcher);
+
+            var switcher2 = Mock.Of<ISwitcher>(m => m.ReceiveSpecsAsync() == Task.FromResult(new SwitcherSpecs()) && m.IsConnected == true);
+            await feature.ChangeSwitcherAsync(switcher2);
+
+            Assert.IsTrue(feature.IsConnected);
+        }
+
+        [TestMethod]
+        [DataRow(false)]
+        [DataRow(true)]
+        public async Task ChangeSwitcher_UpdatesSwitcher(bool connected)
+        {
+            var feature = CreateWithSpecs(new(SwitcherMixBlock.NewProgPrevSameInputs(new SwitcherBusInput())));
+            var switcher = Mock.Of<ISwitcher>(m => m.ReceiveSpecsAsync() == Task.FromResult(new SwitcherSpecs()) && m.IsConnected == connected);
+            await feature.ChangeSwitcherAsync(switcher);
+            Assert.AreEqual(switcher, feature.GetRawSwitcher());
+        }
+
+        [TestMethod]
+        [DataRow(false)]
+        [DataRow(true)]
+        public async Task ChangeSwitcher_DisposesOld(bool connected)
         {
             var switcher1 = Mock.Of<IDummySwitcher>(m => m.ReceiveSpecs() == new SwitcherSpecs());
             var feature = CreateWithSwitcher(switcher1);
 
-            await feature.ChangeSwitcherAsync(Mock.Of<ISwitcher>(m => m.ReceiveSpecsAsync() == Task.FromResult(new SwitcherSpecs())));
-
+            var switcher2 = Mock.Of<ISwitcher>(m => m.ReceiveSpecsAsync() == Task.FromResult(new SwitcherSpecs()) && m.IsConnected == connected);
+            await feature.ChangeSwitcherAsync(switcher2);
             Mock.Get(switcher1).Verify(m => m.Dispose(), Times.Once);
+
+            var switcher3 = Mock.Of<ISwitcher>(m => m.ReceiveSpecsAsync() == Task.FromResult(new SwitcherSpecs()) && m.IsConnected == connected);
+            await feature.ChangeSwitcherAsync(switcher3);
+            Mock.Get(switcher2).Verify(m => m.Dispose(), Times.Once);
         }
 
         // Verifies ChangeSwitcher doesn't leave the class in a "half-changed" state while it's awaiting, by verifying nothing changes until the end:
         [TestMethod]
-        public async Task ChangeSwitcher_NoDataTearing()
+        [DataRow(false)]
+        [DataRow(true)]
+        public async Task ChangeSwitcher_NoDataTearing(bool connected)
         {
             var feature = CreateWithSpecs(new(SwitcherMixBlock.NewCutBus()));
 
             var switcher = new Mock<ISwitcher>();
             var switcher2Specs = new SwitcherSpecs(SwitcherMixBlock.NewProgPrevSameInputs(new(), new(), new(), new()));
+
+            switcher.Setup(m => m.IsConnected).Returns(connected);
 
             switcher.Setup(m => m.ReceiveSpecsAsync()).ReturnsAsync(() =>
             {
@@ -233,6 +308,13 @@ namespace ABCo.Multicam.Tests.Features.Switchers
             }
 
             await feature.ChangeSwitcherAsync(switcher.Object);
+        }
+
+        [TestMethod]
+        public void IsConnected_Default()
+        {
+            var feature = CreateDefault();
+            Assert.IsTrue(feature.IsConnected);
         }
 
         [TestMethod]

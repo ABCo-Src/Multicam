@@ -22,11 +22,13 @@ namespace ABCo.Multicam.Core.Features.Switchers
         MixBlockStore[] _store;
 
         public SwitcherSpecs SwitcherSpecs { get; private set; }
+        public bool IsConnected { get; private set; }
 
         public SwitcherRunningFeature(IDummySwitcher switcher)
         {
             _rawSwitcher = switcher;
             SwitcherSpecs = switcher.ReceiveSpecs();
+            IsConnected = true;
 
             // Initialize store to all 1s, a known valid state for dummy switchers
             _store = new MixBlockStore[SwitcherSpecs.MixBlocks.Count];
@@ -37,6 +39,8 @@ namespace ABCo.Multicam.Core.Features.Switchers
 
         public async Task SetValueAndWaitAsync(int mixBlock, int bus, int value)
         {
+            if (!IsConnected) return;
+
             // Native
             if (bus == 0 || SwitcherSpecs.MixBlocks[mixBlock].NativeType == SwitcherMixBlockType.ProgramPreview)
                 await _rawSwitcher.SendValueAsync(mixBlock, bus, value);
@@ -48,12 +52,25 @@ namespace ABCo.Multicam.Core.Features.Switchers
 
         public async Task ChangeSwitcherAsync(ISwitcher switcher)
         {
-            var specs = await switcher.ReceiveSpecsAsync();
-            var newStore = new MixBlockStore[specs.MixBlocks.Count];
-            await UpdateStoreValues(switcher, specs, newStore);
+            if (switcher.IsConnected)
+            {
+                // Update details instantly
+                var specs = await switcher.ReceiveSpecsAsync();
+                var newStore = new MixBlockStore[specs.MixBlocks.Count];
+                await UpdateStoreValues(switcher, specs, newStore);
 
-            SwitcherSpecs = specs;
-            _store = newStore;
+                SwitcherSpecs = specs;
+                _store = newStore;
+                IsConnected = true;
+            }
+            else
+            {
+                // Disconnected - use completely blank specs
+                SwitcherSpecs = new();
+                _store = Array.Empty<MixBlockStore>();
+                IsConnected = false;
+            }
+
             _rawSwitcher.Dispose();
             _rawSwitcher = switcher;
         }
