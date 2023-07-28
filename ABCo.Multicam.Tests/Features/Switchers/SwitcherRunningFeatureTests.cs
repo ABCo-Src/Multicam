@@ -143,5 +143,25 @@ namespace ABCo.Multicam.Tests.Features.Switchers
             await feature.ChangeSwitcherAsync(_mocks.NewISwitcher.Object);
             _mocks.FactoryDummyBuffer.Verify(m => m.Dispose(), Times.Once);
         }
+
+        [TestMethod]
+        public async Task ChangeSwitcher_OldNotDisposedDuringAwaits()
+        {
+            _mocks.Factory.Setup(m => m.CreateRealAsync(It.IsAny<ISwitcher>())).ReturnsAsync(() =>
+            {
+                _mocks.FactoryDummyBuffer.Verify(m => m.Dispose(), Times.Never);
+                return _mocks.FactoryRealBuffer.Object;
+            });
+
+            var feature = Create();
+            await feature.ChangeSwitcherAsync(_mocks.NewISwitcher.Object);
+        }
+
+        [TestMethod]
+        public void Dispose()
+        {
+            Create().Dispose();
+            _mocks.FactoryDummyBuffer.Verify(m => m.Dispose(), Times.Once);
+        }
     }
 }

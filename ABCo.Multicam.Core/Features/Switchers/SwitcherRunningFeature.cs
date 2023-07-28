@@ -8,6 +8,11 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Core.Features.Switchers
 {
+    public interface ISwitcherRunningFeature : IRunningFeature
+    {
+        SwitcherSpecs SwitcherSpecs { get; }
+    }
+
     public class SwitcherRunningFeature : ISwitcherRunningFeature
     {
         // The raw underlying switcher
@@ -33,15 +38,16 @@ namespace ABCo.Multicam.Core.Features.Switchers
 
         public async Task ChangeSwitcherAsync(ISwitcher switcher)
         {
+            var oldBuffer = _buffer;
+
             if (switcher is IDummySwitcher dummy)
                 _buffer = _bufferFactory.CreateDummy(dummy);
             else
                 _buffer = await _bufferFactory.CreateRealAsync(switcher);
+
+            oldBuffer.Dispose();
         }
 
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
+        public void Dispose() => _buffer.Dispose();
     }
 }
