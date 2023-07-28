@@ -18,7 +18,10 @@ namespace ABCo.Multicam.Core.Features.Switchers
         // The raw underlying switcher
         //ISwitcher _rawSwitcher;
 
-        // The buffer that adds preview emulation, caching and more to all the switcher interactions.
+        // TODO: Add slamming protection
+        // TODO: Add error handling
+
+        // The buffer that sits between the switcher and adds preview emulation, caching and more to all the switcher interactions.
         // A new one is created anytime the specs change (which is why it's broken into its own service, it's an easy way to avoid async data tearing when switcher (specs) are changed).
         ISwitcherInteractionBuffer _buffer;
         ISwitcherInteractionBufferFactory _bufferFactory;
@@ -33,8 +36,7 @@ namespace ABCo.Multicam.Core.Features.Switchers
         }
 
         public int GetValue(int mixBlock, int bus) => _buffer.GetValue(mixBlock, bus);
-        public Task SetValueAndWaitAsync(int mixBlock, int bus, int value) => _buffer.SetValueAsync(mixBlock, bus, value);
-        public async void SetValueBackground(int mixBlock, int bus, int value) => await SetValueAndWaitAsync(mixBlock, bus, value);
+        public void PostValue(int mixBlock, int bus, int value) => _buffer.PostValue(mixBlock, bus, value);
 
         public async Task ChangeSwitcherAsync(ISwitcher switcher)
         {

@@ -9,8 +9,6 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types
 {
     public interface IDummySwitcher : ISwitcher
     {
-        // Non-async variant so specs can be immediately received, allows the runner to neatly use a dummy switcher as an initial safe state.
-        SwitcherSpecs ReceiveSpecs();
         void UpdateSpecs(DummyMixBlock[] mixBlocks);
     }
 
@@ -18,6 +16,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types
     {
         SwitcherSpecs _specs;
         MixBlockState[] _states;
+        Action<SwitcherBusChangeInfo>? _busChangeCallback;
 
         public DummySwitcher()
         {
@@ -26,7 +25,6 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types
         }
 
         public SwitcherSpecs ReceiveSpecs() => _specs;
-        public Task<SwitcherSpecs> ReceiveSpecsAsync() => Task.FromResult(ReceiveSpecs());
 
         public void UpdateSpecs(params DummyMixBlock[] mixBlocks)
         {
@@ -62,14 +60,13 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types
         public Task ConnectAsync() => Task.CompletedTask;
         public Task DisconnectAsync() => Task.CompletedTask;
 
-        public Task<int> ReceiveValueAsync(int mixBlock, int bus)
+        public int ReceiveValue(int mixBlock, int bus)
         {
             ValidateMixBlockAndBus(mixBlock, bus);
-
-            return Task.FromResult(bus == 0 ? _states[mixBlock].Program : _states[mixBlock].Preview);
+            return bus == 0 ? _states[mixBlock].Program : _states[mixBlock].Preview;
         }
 
-        public Task SendValueAsync(int mixBlock, int bus, int newValue)
+        public void PostValue(int mixBlock, int bus, int newValue)
         {
             // Validate mixBlock and bus
             ValidateMixBlockAndBus(mixBlock, bus);
@@ -90,7 +87,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types
             else
                 _states[mixBlock].Preview = newValue;
 
-            return Task.CompletedTask;
+            _busChangeCallback?.Invoke(new SwitcherBusChangeInfo(true, 1, 1, 4));
         }
 
         void ValidateMixBlockAndBus(int mixBlock, int bus)
@@ -113,6 +110,8 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types
             dummy.UpdateSpecs(mixBlocks);
             return dummy;
         }
+
+        public void SetOnBusChangeCallback(Action<SwitcherBusChangeInfo>? callback) => _busChangeCallback = callback;
 
         struct MixBlockState
         {

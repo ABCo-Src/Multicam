@@ -14,8 +14,8 @@ namespace ABCo.Multicam.Core.Features.Switchers
 
         public bool IsConnected => true;
         public SwitcherSpecs Specs => _switcher.ReceiveSpecs();
-        public int GetValue(int mixBlock, int bus) => _switcher.ReceiveValueAsync(mixBlock, bus).Result;
-        public Task SetValueAsync(int mixBlock, int bus, int value) => _switcher.SendValueAsync(mixBlock, bus, value);
+        public int GetValue(int mixBlock, int bus) => _switcher.ReceiveValue(mixBlock, bus);
+        public void PostValue(int mixBlock, int bus, int value) => _switcher.PostValue(mixBlock, bus, value);
         public void Dispose() => _switcher.Dispose();
     }
 }

@@ -28,14 +28,14 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         public void GetValue()
         {
             Create().GetValue(5, 7);
-            _mocks.DummySwitcher.Verify(v => v.ReceiveValueAsync(5, 7));
+            _mocks.DummySwitcher.Verify(v => v.ReceiveValue(5, 7));
         }
 
         [TestMethod]
-        public async Task SetValue()
+        public void SetValue()
         {
-            await Create().SetValueAsync(5, 7, 9);
-            _mocks.DummySwitcher.Verify(v => v.SendValueAsync(5, 7, 9));
+            Create().PostValue(5, 7, 9);
+            _mocks.DummySwitcher.Verify(v => v.PostValue(5, 7, 9));
         }
 
         [TestMethod]

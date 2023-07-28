@@ -28,18 +28,22 @@ namespace ABCo.Multicam.Core.Features.Switchers
         /// <summary>
         /// Contacts the switcher and receives its current specifications.
         /// </summary>
-        Task<SwitcherSpecs> ReceiveSpecsAsync();
+        SwitcherSpecs ReceiveSpecs();
 
         /// <summary>
-        /// Contacts the switcher and receives the current value (with no cache) stored in the given mix block.
+        /// Contacts the switcher and receives the current value (with no cache) stored in the given mix block. Blocking.
         /// </summary>
         /// <param name="bus">The bus within the block. 0 is always program, and 1 may be preview IF the switcher supports it natively.</param>
-        Task<int> ReceiveValueAsync(int mixBlock, int bus);
+        int ReceiveValue(int mixBlock, int bus);
 
         /// <summary>
-        /// Contacts the switcher and sends a new value.
+        /// Contacts the switcher and sends a new value. Non-blocking.
         /// </summary>
         /// <param name="bus">The bus within the block. 0 is always program, and 1 may be preview IF the switcher supports it natively.</param>
-        Task SendValueAsync(int mixBlock, int bus, int id);
+        void PostValue(int mixBlock, int bus, int id);
+
+        void SetOnBusChangeCallback(Action<SwitcherBusChangeInfo>? callback);
     }
+
+    public record struct SwitcherBusChangeInfo(bool IsBusKnown, int MixBlock, int Bus, int NewValue);
 }

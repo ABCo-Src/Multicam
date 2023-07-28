@@ -12,7 +12,7 @@ namespace ABCo.Multicam.Core.Features.Switchers
         bool IsConnected { get; }
         SwitcherSpecs Specs { get; }
         int GetValue(int mixBlock, int bus);
-        Task SetValueAsync(int mixBlock, int bus, int value);
+        void PostValue(int mixBlock, int bus, int value);
     }
 
     public class SwitcherInteractionBuffer : ISwitcherInteractionBuffer
@@ -26,18 +26,21 @@ namespace ABCo.Multicam.Core.Features.Switchers
         private SwitcherInteractionBuffer(ISwitcher switcher, bool isConnected, MixBlockStore[] store, SwitcherSpecs specs) =>
             (_rawSwitcher, IsConnected, _store, Specs) = (switcher, isConnected, store, specs);
 
-        public static async Task<SwitcherInteractionBuffer> Create(ISwitcher switcher)
+        public static Task<SwitcherInteractionBuffer> CreateAsync(ISwitcher switcher) => Task.Run(() => Create(switcher));
+        public static SwitcherInteractionBuffer Create(ISwitcher switcher)
         {
             if (switcher.IsConnected)
             {
-                var specs = await switcher.ReceiveSpecsAsync();
-                return new SwitcherInteractionBuffer(switcher, true, await CreateStore(switcher, specs), specs);
+                var specs = switcher.ReceiveSpecs();
+                var newBuffer = new SwitcherInteractionBuffer(switcher, true, CreateStore(switcher, specs), specs);
+                switcher.SetOnBusChangeCallback(newBuffer.OnBusChange);
+                return newBuffer;
             }
-            else 
+            else
                 return new SwitcherInteractionBuffer(switcher, false, Array.Empty<MixBlockStore>(), new());
         }
 
-        static async Task<MixBlockStore[]> CreateStore(ISwitcher switcher, SwitcherSpecs specs)
+        static MixBlockStore[] CreateStore(ISwitcher switcher, SwitcherSpecs specs)
         {
             var newStore = new MixBlockStore[specs.MixBlocks.Count];
             for (int i = 0; i < newStore.Length; i++)
@@ -45,13 +48,13 @@ namespace ABCo.Multicam.Core.Features.Switchers
                 var mixBlock = specs.MixBlocks[i];
 
                 // Program
-                newStore[i].Program = await switcher.ReceiveValueAsync(i, 0);
+                newStore[i].Program = switcher.ReceiveValue(i, 0);
 
                 // Preview
                 if (mixBlock.NativeType == SwitcherMixBlockType.CutBus)
                     newStore[i].Preview = mixBlock.ProgramInputs.Count == 0 ? 0 : mixBlock.ProgramInputs[0].Id;
                 else
-                    newStore[i].Preview = await switcher.ReceiveValueAsync(i, 1);
+                    newStore[i].Preview = switcher.ReceiveValue(i, 1);
             }
             return newStore;
         }
@@ -59,17 +62,42 @@ namespace ABCo.Multicam.Core.Features.Switchers
         public void Dispose() => _rawSwitcher.Dispose();
 
         public int GetValue(int mixBlock, int bus) => bus == 0 ? _store[mixBlock].Program : _store[mixBlock].Preview;
-        public async Task SetValueAsync(int mixBlock, int bus, int value)
+        public void PostValue(int mixBlock, int bus, int value)
         {
             if (!IsConnected) return;
 
             // Native
             if (bus == 0 || Specs.MixBlocks[mixBlock].NativeType == SwitcherMixBlockType.ProgramPreview)
-                await _rawSwitcher.SendValueAsync(mixBlock, bus, value);
+                _rawSwitcher.PostValue(mixBlock, bus, value);
 
             // Emulated
             else
                 _store[mixBlock].Preview = value;
+        }
+
+        void OnBusChange(SwitcherBusChangeInfo info)
+        {
+            // If the bus is known, update directly
+            if (info.IsBusKnown)
+            {
+                if (info.Bus == 0)
+                    _store[info.MixBlock].Program = info.NewValue;
+                else
+                    _store[info.MixBlock].Preview = info.NewValue;
+            }
+
+            // Otherwise, re-read every bus
+            else
+            {
+                for (int i = 0; i < _store.Length; i++)
+                {
+                    _store[i].Program = _rawSwitcher.ReceiveValue(i, 0);
+                    
+                    // Only modify preview if not emulated
+                    if (Specs.MixBlocks[i].NativeType == SwitcherMixBlockType.ProgramPreview)
+                        _store[i].Preview = _rawSwitcher.ReceiveValue(i, 1);
+                }
+            }
         }
 
         record struct MixBlockStore(int Program, int Preview);
@@ -84,6 +112,6 @@ namespace ABCo.Multicam.Core.Features.Switchers
     public class SwitcherInteractionBufferFactory : ISwitcherInteractionBufferFactory
     {
         public ISwitcherInteractionBuffer CreateDummy(IDummySwitcher switcher) => new DummySwitcherInteractionBuffer(switcher);
-        public async Task<ISwitcherInteractionBuffer> CreateRealAsync(ISwitcher switcher) => await SwitcherInteractionBuffer.Create(switcher);
+        public async Task<ISwitcherInteractionBuffer> CreateRealAsync(ISwitcher switcher) => await SwitcherInteractionBuffer.CreateAsync(switcher);
     }
 }

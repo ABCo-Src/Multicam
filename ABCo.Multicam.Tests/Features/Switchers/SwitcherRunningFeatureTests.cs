@@ -74,34 +74,22 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         }
 
         [TestMethod]
-        [DataRow(false)]
-        [DataRow(true)]
-        public async Task SetValue_Dummy(bool useAsync)
+        public void SetValue_Dummy()
         {
             var feature = Create();
-
-            if (useAsync)
-                await feature.SetValueAndWaitAsync(3, 7, 34);
-            else
-                feature.SetValueBackground(3, 7, 34);
-
-            _mocks.FactoryDummyBuffer.Verify(m => m.SetValueAsync(3, 7, 34), Times.Once);
+            feature.PostValue(3, 7, 34);
+            _mocks.FactoryDummyBuffer.Verify(m => m.PostValue(3, 7, 34), Times.Once);
         }
 
         [TestMethod]
-        [DataRow(false)]
-        [DataRow(true)]
-        public async Task SetValue_PostChange(bool useAsync)
+        public async Task SetValue_PostChange()
         {
             var feature = Create();
             await feature.ChangeSwitcherAsync(_mocks.NewISwitcher.Object);
 
-            if (useAsync)
-                await feature.SetValueAndWaitAsync(3, 7, 34);
-            else
-                feature.SetValueBackground(3, 7, 34);
+            feature.PostValue(3, 7, 34);
 
-            _mocks.FactoryRealBuffer.Verify(m => m.SetValueAsync(3, 7, 34), Times.Once);
+            _mocks.FactoryRealBuffer.Verify(m => m.PostValue(3, 7, 34), Times.Once);
         }
 
         [TestMethod]

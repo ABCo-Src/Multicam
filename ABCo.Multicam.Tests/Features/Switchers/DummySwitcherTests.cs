@@ -11,12 +11,12 @@ namespace ABCo.Multicam.Tests.Features.Switchers
     [TestClass]
     public class DummySwitcherTests
     {
-        public DummySwitcher CreateDefault() => new DummySwitcher();
+        public DummySwitcher Create() => new DummySwitcher();
 
         [TestMethod]
         public void Ctor_CorrectDefaults()
         {
-            var dummy = CreateDefault();
+            var dummy = Create();
             var specs = dummy.ReceiveSpecs();
 
             Assert.AreEqual(1, specs.MixBlocks.Count);
@@ -29,7 +29,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         [TestMethod]
         public void UpdateSpecs_ZeroMixBlocks()
         {
-            var dummy = CreateDefault();
+            var dummy = Create();
             dummy.UpdateSpecs(Array.Empty<DummyMixBlock>());
             Assert.AreEqual(0, dummy.ReceiveSpecs().MixBlocks.Count);
         }
@@ -37,7 +37,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         [TestMethod]
         public void UpdateSpecs_ZeroInputMixBlock()
         {
-            var dummy = CreateDefault();
+            var dummy = Create();
             dummy.UpdateSpecs(new DummyMixBlock[] { new DummyMixBlock(0, SwitcherMixBlockType.ProgramPreview) });
 
             var specs = dummy.ReceiveSpecs();
@@ -50,7 +50,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         [TestMethod]
         public void UpdateSpecs_MixBlock_ProgramPreview()
         {
-            var dummy = CreateDefault();
+            var dummy = Create();
             dummy.UpdateSpecs(new DummyMixBlock[] { new DummyMixBlock(1, SwitcherMixBlockType.ProgramPreview) });
 
             var specs = dummy.ReceiveSpecs();
@@ -64,7 +64,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         [TestMethod]
         public void UpdateSpecs_MixBlock_CutBus()
         {
-            var dummy = CreateDefault();
+            var dummy = Create();
             dummy.UpdateSpecs(new DummyMixBlock[] { new DummyMixBlock(1, SwitcherMixBlockType.CutBus) });
 
             var specs = dummy.ReceiveSpecs();
@@ -78,7 +78,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         [TestMethod]
         public void UpdateSpecs_TwoMixBlocks_PreviewProgram()
         {
-            var dummy = CreateDefault();
+            var dummy = Create();
 
             dummy.UpdateSpecs(new DummyMixBlock[]
             {
@@ -113,138 +113,153 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         }
 
         [TestMethod]
-        public async Task ReceiveSpecsAsync_MatchesRegular()
+        public void ReceiveSpecs_MatchesRegular()
         {
-            var dummy = CreateDefault();
-            var specs = await dummy.ReceiveSpecsAsync();
+            var dummy = Create();
+            var specs = dummy.ReceiveSpecs();
             Assert.AreEqual(dummy.ReceiveSpecs(), specs);
         }
 
         [TestMethod]
-        public async Task ReceiveValueAsync_Program_Default()
+        public void ReceiveValue_Program_Default()
         {
-            var value = await CreateDefault().ReceiveValueAsync(0, 0);
-            Assert.AreEqual(1, value);
+            Assert.AreEqual(1, Create().ReceiveValue(0, 0));
         }
 
         [TestMethod]
-        public async Task ReceiveValueAsync_Preview_Default()
+        public void ReceiveValue_Preview_Default()
         {
-            var value = await CreateDefault().ReceiveValueAsync(0, 1);
-            Assert.AreEqual(1, value);
-        }
-
-
-        [TestMethod]
-        public async Task ReceiveAndSendValue_InvalidMixBlock()
-        {
-            var dummy = CreateDefault();
-            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.ReceiveValueAsync(1, 0));
-            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.ReceiveValueAsync(-1, 0));
-            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.SendValueAsync(1, 0, 3));
-            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.SendValueAsync(-1, 0, 3));
+            Assert.AreEqual(1, Create().ReceiveValue(0, 1));
         }
 
         [TestMethod]
-        public async Task ReceiveAndSendValue_InvalidBus_PreviewProgram()
+        public void ReceiveAndSendValue_InvalidMixBlock()
         {
-            var dummy = CreateDefault();
-            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.ReceiveValueAsync(0, -1));
-            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.ReceiveValueAsync(0, 2));
-            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.SendValueAsync(0, -1, 3));
-            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.SendValueAsync(0, 2, 3));
+            var dummy = Create();
+            Assert.ThrowsException<ArgumentException>(() => dummy.ReceiveValue(1, 0));
+            Assert.ThrowsException<ArgumentException>(() => dummy.ReceiveValue(-1, 0));
+            Assert.ThrowsException<ArgumentException>(() => dummy.PostValue(1, 0, 3));
+            Assert.ThrowsException<ArgumentException>(() => dummy.PostValue(-1, 0, 3));
         }
 
         [TestMethod]
-        public async Task ReceiveAndSendValue_InvalidBus_CutBus()
+        public void ReceiveAndSendValue_InvalidBus_PreviewProgram()
         {
-            var dummy = CreateDefault();
+            var dummy = Create();
+            Assert.ThrowsException<ArgumentException>(() => dummy.ReceiveValue(0, -1));
+            Assert.ThrowsException<ArgumentException>(() => dummy.ReceiveValue(0, 2));
+            Assert.ThrowsException<ArgumentException>(() => dummy.PostValue(0, -1, 3));
+            Assert.ThrowsException<ArgumentException>(() => dummy.PostValue(0, 2, 3));
+        }
+
+        [TestMethod]
+        public void ReceiveAndSendValue_InvalidBus_CutBus()
+        {
+            var dummy = Create();
             dummy.UpdateSpecs(new DummyMixBlock[] { new(4, SwitcherMixBlockType.CutBus) });
-            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.ReceiveValueAsync(0, 1));
-            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.ReceiveValueAsync(0, -1));
-            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.ReceiveValueAsync(0, 2));
-            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.SendValueAsync(0, 1, 3));
-            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.SendValueAsync(0, -1, 3));
-            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.SendValueAsync(0, 2, 3));
+            Assert.ThrowsException<ArgumentException>(() => dummy.ReceiveValue(0, 1));
+            Assert.ThrowsException<ArgumentException>(() => dummy.ReceiveValue(0, -1));
+            Assert.ThrowsException<ArgumentException>(() => dummy.ReceiveValue(0, 2));
+            Assert.ThrowsException<ArgumentException>(() => dummy.PostValue(0, 1, 3));
+            Assert.ThrowsException<ArgumentException>(() => dummy.PostValue(0, -1, 3));
+            Assert.ThrowsException<ArgumentException>(() => dummy.PostValue(0, 2, 3));
         }
 
         [TestMethod]
-        public async Task SendValue_InvalidInput()
+        public void SendValue_InvalidInput()
         {
-            var dummy = CreateDefault();
+            var dummy = Create();
             dummy.UpdateSpecs(new DummyMixBlock[] { new DummyMixBlock(2, SwitcherMixBlockType.ProgramPreview) });
-            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.SendValueAsync(0, 0, -1));
-            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dummy.SendValueAsync(0, 0, 3));
+            Assert.ThrowsException<ArgumentException>(() => dummy.PostValue(0, 0, -1));
+            Assert.ThrowsException<ArgumentException>(() => dummy.PostValue(0, 0, 3));
         }
 
         [TestMethod]
-        public async Task SendValue_PreviewProgramMB_Program()
+        public void SendValue_PreviewProgramMB_Program()
         {
-            var dummy = CreateDefault();
+            var dummy = Create();
 
-            await dummy.SendValueAsync(0, 0, 2);
-            Assert.AreEqual(2, await dummy.ReceiveValueAsync(0, 0)); // Impacts program
-            Assert.AreEqual(1, await dummy.ReceiveValueAsync(0, 1)); // Does not impact preview
+            dummy.PostValue(0, 0, 2);
+            Assert.AreEqual(2, dummy.ReceiveValue(0, 0)); // Impacts program
+            Assert.AreEqual(1, dummy.ReceiveValue(0, 1)); // Does not impact preview
 
-            await dummy.SendValueAsync(0, 0, 3);
-            Assert.AreEqual(3, await dummy.ReceiveValueAsync(0, 0)); // Impacts program
-            Assert.AreEqual(1, await dummy.ReceiveValueAsync(0, 1)); // Does not impact preview
+            dummy.PostValue(0, 0, 3);
+            Assert.AreEqual(3, dummy.ReceiveValue(0, 0)); // Impacts program
+            Assert.AreEqual(1, dummy.ReceiveValue(0, 1)); // Does not impact preview
         }
 
         [TestMethod]
-        public async Task SendValue_PreviewProgramMB_Preview()
+        public void SendValue_PreviewProgramMB_Preview()
         {
-            var dummy = CreateDefault();
+            var dummy = Create();
 
-            await dummy.SendValueAsync(0, 1, 2);
-            Assert.AreEqual(2, await dummy.ReceiveValueAsync(0, 1)); // Impacts preview
-            Assert.AreEqual(1, await dummy.ReceiveValueAsync(0, 0)); // Does not impact program
+            dummy.PostValue(0, 1, 2);
+            Assert.AreEqual(2, dummy.ReceiveValue(0, 1)); // Impacts preview
+            Assert.AreEqual(1, dummy.ReceiveValue(0, 0)); // Does not impact program
 
-            await dummy.SendValueAsync(0, 1, 3);
-            Assert.AreEqual(3, await dummy.ReceiveValueAsync(0, 1)); // Impacts preview
-            Assert.AreEqual(1, await dummy.ReceiveValueAsync(0, 0)); // Does not impact program
+            dummy.PostValue(0, 1, 3);
+            Assert.AreEqual(3, dummy.ReceiveValue(0, 1)); // Impacts preview
+            Assert.AreEqual(1, dummy.ReceiveValue(0, 0)); // Does not impact program
         }
 
         [TestMethod]
-        public async Task SendValue_CutBusMB()
+        public void SendValue_CutBusMB()
         {
-            var dummy = CreateDefault();
+            var dummy = Create();
             dummy.UpdateSpecs(new DummyMixBlock[] { new(3, SwitcherMixBlockType.CutBus) });
 
-            await dummy.SendValueAsync(0, 0, 2);
-            Assert.AreEqual(2, await dummy.ReceiveValueAsync(0, 0));
+            dummy.PostValue(0, 0, 2);
+            Assert.AreEqual(2, dummy.ReceiveValue(0, 0));
 
-            await dummy.SendValueAsync(0, 0, 3);
-            Assert.AreEqual(3, await dummy.ReceiveValueAsync(0, 0));
+            dummy.PostValue(0, 0, 3);
+            Assert.AreEqual(3, dummy.ReceiveValue(0, 0));
         }
 
         [TestMethod]
-        public async Task SendValue_SecondMB()
+        public void SendValue_SecondMB()
         {
-            var dummy = CreateDefault();
+            var dummy = Create();
             dummy.UpdateSpecs(new DummyMixBlock[] { new(4, SwitcherMixBlockType.CutBus), new(4, SwitcherMixBlockType.ProgramPreview) });
 
-            await dummy.SendValueAsync(1, 0, 4);
-            Assert.AreEqual(1, await dummy.ReceiveValueAsync(0, 0));
-            Assert.AreEqual(4, await dummy.ReceiveValueAsync(1, 0));
-            Assert.AreEqual(1, await dummy.ReceiveValueAsync(1, 1));
+            dummy.PostValue(1, 0, 4);
+            Assert.AreEqual(1, dummy.ReceiveValue(0, 0));
+            Assert.AreEqual(4, dummy.ReceiveValue(1, 0));
+            Assert.AreEqual(1, dummy.ReceiveValue(1, 1));
 
-            await dummy.SendValueAsync(1, 1, 3);
-            Assert.AreEqual(1, await dummy.ReceiveValueAsync(0, 0));
-            Assert.AreEqual(4, await dummy.ReceiveValueAsync(1, 0));
-            Assert.AreEqual(3, await dummy.ReceiveValueAsync(1, 1));
+            dummy.PostValue(1, 1, 3);
+            Assert.AreEqual(1, dummy.ReceiveValue(0, 0));
+            Assert.AreEqual(4, dummy.ReceiveValue(1, 0));
+            Assert.AreEqual(3, dummy.ReceiveValue(1, 1));
         }
 
         [TestMethod]
-        public void Dispose_DoesNotThrow() => CreateDefault().Dispose();
+        public void SendValue_TriggersBusChangeCallback()
+        {
+            SwitcherBusChangeInfo? info = null;
+
+            var dummy = Create();
+            dummy.UpdateSpecs(new DummyMixBlock[] { new(4, SwitcherMixBlockType.CutBus), new(4, SwitcherMixBlockType.ProgramPreview) });
+
+            dummy.SetOnBusChangeCallback(i => info = i);
+            dummy.PostValue(1, 1, 4);
+
+            Assert.IsNotNull(info);
+            Assert.IsTrue(info.Value.IsBusKnown);
+            Assert.AreEqual(1, info.Value.MixBlock);
+            Assert.AreEqual(1, info.Value.Bus);
+            Assert.AreEqual(4, info.Value.NewValue);
+        }
 
         [TestMethod]
-        public void IsConnected() => Assert.IsTrue(CreateDefault().IsConnected);
+        public void Dispose_DoesNotThrow() => Create().Dispose();
 
         [TestMethod]
-        public async Task Connect_NoException() => await CreateDefault().ConnectAsync();
+        public void IsConnected() => Assert.IsTrue(Create().IsConnected);
 
         [TestMethod]
-        public async Task Disconnect_NoException() => await CreateDefault().DisconnectAsync();
+        public async Task Connect_NoException() => await Create().ConnectAsync();
+
+        [TestMethod]
+        public async Task Disconnect_NoException() => await Create().DisconnectAsync();
     }
 }
