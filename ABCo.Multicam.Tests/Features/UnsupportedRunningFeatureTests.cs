@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace ABCo.Multicam.Tests.Features
 {
     [TestClass]
-    public class UnsupportedRunningStripTests
+    public class UnsupportedRunningFeatureTests
     {
         [TestMethod]
         public void Dispose_DoesNotThrow() => new UnsupportedRunningFeature().Dispose();

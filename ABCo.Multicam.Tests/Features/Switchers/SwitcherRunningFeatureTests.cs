@@ -22,8 +22,8 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         {
             var mockSpecs = new SwitcherSpecs(Array.Empty<SwitcherMixBlock>());
             var switcherMock = Mock.Of<IDummySwitcher>(m => m.ReceiveSpecs() == mockSpecs);
-            var switcherRunningStrip = CreateWithSwitcher(switcherMock);
-            Assert.AreEqual(mockSpecs, switcherRunningStrip.SwitcherSpecs);
+            var switcherRunningFeature = CreateWithSwitcher(switcherMock);
+            Assert.AreEqual(mockSpecs, switcherRunningFeature.SwitcherSpecs);
         }
 
         [TestMethod]
@@ -33,9 +33,9 @@ namespace ABCo.Multicam.Tests.Features.Switchers
             var switcherMock = new Mock<IDummySwitcher>();
             switcherMock.Setup(m => m.ReceiveSpecs()).Returns(mockSpecs);
 
-            var switcherRunningStrip = CreateWithSwitcher(switcherMock.Object);
-            Assert.AreEqual(mockSpecs, switcherRunningStrip.SwitcherSpecs);
-            Assert.AreEqual(mockSpecs, switcherRunningStrip.SwitcherSpecs);
+            var switcherRunningFeature = CreateWithSwitcher(switcherMock.Object);
+            Assert.AreEqual(mockSpecs, switcherRunningFeature.SwitcherSpecs);
+            Assert.AreEqual(mockSpecs, switcherRunningFeature.SwitcherSpecs);
 
             // Verify it was only received once
             switcherMock.Verify(m => m.ReceiveSpecs(), Times.Once);
@@ -73,13 +73,13 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         public async Task ChangeAndGet_EmulatedPreview_WithInputs()
         {
             var mixBlock = SwitcherMixBlock.NewCutBus(new(76, ""), new(35, ""));
-            var switcherRunningStrip = CreateDefault();
-            var switcherMock = await ChangeSwitcherToMockWithTwoMBs(switcherRunningStrip, mixBlock);
+            var switcherRunningFeature = CreateDefault();
+            var switcherMock = await ChangeSwitcherToMockWithTwoMBs(switcherRunningFeature, mixBlock);
 
-            Assert.AreEqual(76, switcherRunningStrip.GetValue(0, 1));
-            Assert.AreEqual(76, switcherRunningStrip.GetValue(0, 1));
-            Assert.AreEqual(76, switcherRunningStrip.GetValue(1, 1));
-            Assert.AreEqual(76, switcherRunningStrip.GetValue(1, 1));
+            Assert.AreEqual(76, switcherRunningFeature.GetValue(0, 1));
+            Assert.AreEqual(76, switcherRunningFeature.GetValue(0, 1));
+            Assert.AreEqual(76, switcherRunningFeature.GetValue(1, 1));
+            Assert.AreEqual(76, switcherRunningFeature.GetValue(1, 1));
 
             // Verify NO access to the switcher
             switcherMock.Verify(m => m.ReceiveValueAsync(0, 1), Times.Never);
@@ -90,13 +90,13 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         public async Task ChangeAndGet_EmulatedPreview_NoInputs()
         {
             var mixBlock = SwitcherMixBlock.NewCutBus();
-            var switcherRunningStrip = CreateDefault();
-            var switcherMock = await ChangeSwitcherToMockWithTwoMBs(switcherRunningStrip, mixBlock);
+            var switcherRunningFeature = CreateDefault();
+            var switcherMock = await ChangeSwitcherToMockWithTwoMBs(switcherRunningFeature, mixBlock);
 
-            Assert.AreEqual(0, switcherRunningStrip.GetValue(0, 1));
-            Assert.AreEqual(0, switcherRunningStrip.GetValue(0, 1));
-            Assert.AreEqual(0, switcherRunningStrip.GetValue(1, 1));
-            Assert.AreEqual(0, switcherRunningStrip.GetValue(1, 1));
+            Assert.AreEqual(0, switcherRunningFeature.GetValue(0, 1));
+            Assert.AreEqual(0, switcherRunningFeature.GetValue(0, 1));
+            Assert.AreEqual(0, switcherRunningFeature.GetValue(1, 1));
+            Assert.AreEqual(0, switcherRunningFeature.GetValue(1, 1));
 
             // Verify NO access to the switcher
             switcherMock.Verify(m => m.ReceiveValueAsync(0, 1), Times.Never);
@@ -110,11 +110,11 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         {
             var inputs = new SwitcherBusInput[2] { new(4, ""), new(13, "") };
             var mixBlock = type == SwitcherMixBlockType.CutBus ? SwitcherMixBlock.NewCutBus(inputs) : SwitcherMixBlock.NewProgPrev(inputs);
-            var switcherRunningStrip = CreateDefault();
-            var switcherMock = await ChangeSwitcherToMockWithTwoMBs(switcherRunningStrip, mixBlock);
+            var switcherRunningFeature = CreateDefault();
+            var switcherMock = await ChangeSwitcherToMockWithTwoMBs(switcherRunningFeature, mixBlock);
 
-            switcherRunningStrip.SetValueBackground(0, 0, 13);
-            switcherRunningStrip.SetValueBackground(1, 0, 4);
+            switcherRunningFeature.SetValueBackground(0, 0, 13);
+            switcherRunningFeature.SetValueBackground(1, 0, 4);
                 
             switcherMock.Verify(m => m.SendValueAsync(0, 0, 13), Times.Once);
             switcherMock.Verify(m => m.SendValueAsync(1, 0, 4), Times.Once);
@@ -124,11 +124,11 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         public async Task ChangeAndSet_NativePreview()
         {
             var mixBlock = SwitcherMixBlock.NewProgPrev(Array.Empty<SwitcherBusInput>(), new(4, ""), new(13, ""));
-            var switcherRunningStrip = CreateDefault();
-            var switcherMock = await ChangeSwitcherToMockWithTwoMBs(switcherRunningStrip, mixBlock);
+            var switcherRunningFeature = CreateDefault();
+            var switcherMock = await ChangeSwitcherToMockWithTwoMBs(switcherRunningFeature, mixBlock);
 
-            switcherRunningStrip.SetValueBackground(0, 1, 13);
-            switcherRunningStrip.SetValueBackground(1, 1, 4);
+            switcherRunningFeature.SetValueBackground(0, 1, 13);
+            switcherRunningFeature.SetValueBackground(1, 1, 4);
 
             switcherMock.Verify(m => m.SendValueAsync(0, 1, 13), Times.Once);
             switcherMock.Verify(m => m.SendValueAsync(1, 1, 4), Times.Once);
@@ -138,13 +138,13 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         public async Task ChangeAndSet_EmulatedPreview()
         {
             var mixBlock = SwitcherMixBlock.NewCutBus(new(4, ""), new(13, ""), new(28, ""));
-            var switcherRunningStrip = CreateDefault();
-            var switcherMock = await ChangeSwitcherToMockWithTwoMBs(switcherRunningStrip, mixBlock);
+            var switcherRunningFeature = CreateDefault();
+            var switcherMock = await ChangeSwitcherToMockWithTwoMBs(switcherRunningFeature, mixBlock);
 
-            switcherRunningStrip.SetValueBackground(0, 1, 13);
-            Assert.AreEqual(13, switcherRunningStrip.GetValue(0, 1));
-            switcherRunningStrip.SetValueBackground(1, 1, 28);
-            Assert.AreEqual(28, switcherRunningStrip.GetValue(1, 1));
+            switcherRunningFeature.SetValueBackground(0, 1, 13);
+            Assert.AreEqual(13, switcherRunningFeature.GetValue(0, 1));
+            switcherRunningFeature.SetValueBackground(1, 1, 28);
+            Assert.AreEqual(28, switcherRunningFeature.GetValue(1, 1));
 
             // Verify NO access to the switcher
             switcherMock.Verify(m => m.ReceiveValueAsync(0, 1), Times.Never);
@@ -160,24 +160,24 @@ namespace ABCo.Multicam.Tests.Features.Switchers
             switcherMock.Setup(m => m.ReceiveValueAsync(0, bus)).ReturnsAsync(2);
             switcherMock.Setup(m => m.ReceiveValueAsync(1, bus)).ReturnsAsync(4);
 
-            var switcherRunningStrip = CreateDefault();
-            await switcherRunningStrip.ChangeSwitcherAsync(switcherMock.Object);
+            var switcherRunningFeature = CreateDefault();
+            await switcherRunningFeature.ChangeSwitcherAsync(switcherMock.Object);
 
-            Assert.AreEqual(2, switcherRunningStrip.GetValue(0, bus));
-            Assert.AreEqual(2, switcherRunningStrip.GetValue(0, bus));
-            Assert.AreEqual(4, switcherRunningStrip.GetValue(1, bus));
-            Assert.AreEqual(4, switcherRunningStrip.GetValue(1, bus));
+            Assert.AreEqual(2, switcherRunningFeature.GetValue(0, bus));
+            Assert.AreEqual(2, switcherRunningFeature.GetValue(0, bus));
+            Assert.AreEqual(4, switcherRunningFeature.GetValue(1, bus));
+            Assert.AreEqual(4, switcherRunningFeature.GetValue(1, bus));
 
             // Verify it was received once
             switcherMock.Verify(m => m.ReceiveValueAsync(0, bus), Times.Once);
             switcherMock.Verify(m => m.ReceiveValueAsync(1, bus), Times.Once);
         }
 
-        static async Task<Mock<ISwitcher>> ChangeSwitcherToMockWithTwoMBs(SwitcherRunningFeature strip, SwitcherMixBlock mixBlock)
+        static async Task<Mock<ISwitcher>> ChangeSwitcherToMockWithTwoMBs(SwitcherRunningFeature feature, SwitcherMixBlock mixBlock)
         {
             var switcherMock = new Mock<ISwitcher>();
             switcherMock.Setup(m => m.ReceiveSpecsAsync()).ReturnsAsync(new SwitcherSpecs(mixBlock, mixBlock));
-            await strip.ChangeSwitcherAsync(switcherMock.Object);
+            await feature.ChangeSwitcherAsync(switcherMock.Object);
 
             return switcherMock;
         }
@@ -185,22 +185,22 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         [TestMethod]
         public async Task ChangeSwitcher_ChangesSpecs()
         {
-            var strip = CreateDefault();
+            var feature = CreateDefault();
 
             var switcher2Specs = new SwitcherSpecs();
             var switcher2 = Mock.Of<ISwitcher>(m => m.ReceiveSpecsAsync() == Task.FromResult(switcher2Specs));
-            await strip.ChangeSwitcherAsync(switcher2);
+            await feature.ChangeSwitcherAsync(switcher2);
 
-            Assert.AreEqual(switcher2Specs, strip.SwitcherSpecs);
+            Assert.AreEqual(switcher2Specs, feature.SwitcherSpecs);
         }
 
         [TestMethod]
         public async Task ChangeSwitcher_DisposesOld()
         {
             var switcher1 = Mock.Of<IDummySwitcher>(m => m.ReceiveSpecs() == new SwitcherSpecs());
-            var strip = CreateWithSwitcher(switcher1);
+            var feature = CreateWithSwitcher(switcher1);
 
-            await strip.ChangeSwitcherAsync(Mock.Of<ISwitcher>(m => m.ReceiveSpecsAsync() == Task.FromResult(new SwitcherSpecs())));
+            await feature.ChangeSwitcherAsync(Mock.Of<ISwitcher>(m => m.ReceiveSpecsAsync() == Task.FromResult(new SwitcherSpecs())));
 
             Mock.Get(switcher1).Verify(m => m.Dispose(), Times.Once);
         }
@@ -209,7 +209,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         [TestMethod]
         public async Task ChangeSwitcher_NoDataTearing()
         {
-            var strip = CreateWithSpecs(new(SwitcherMixBlock.NewCutBus()));
+            var feature = CreateWithSpecs(new(SwitcherMixBlock.NewCutBus()));
 
             var switcher = new Mock<ISwitcher>();
             var switcher2Specs = new SwitcherSpecs(SwitcherMixBlock.NewProgPrevSameInputs(new(), new(), new(), new()));
@@ -228,11 +228,11 @@ namespace ABCo.Multicam.Tests.Features.Switchers
 
             void AssertNoChanges()
             {
-                if (strip.SwitcherSpecs == switcher2Specs || strip.GetValue(0, 0) == 4 || strip.GetRawSwitcher() == switcher.Object)
+                if (feature.SwitcherSpecs == switcher2Specs || feature.GetValue(0, 0) == 4 || feature.GetRawSwitcher() == switcher.Object)
                     Assert.Fail("Aspects changed before completion");
             }
 
-            await strip.ChangeSwitcherAsync(switcher.Object);
+            await feature.ChangeSwitcherAsync(switcher.Object);
         }
 
         [TestMethod]
@@ -241,8 +241,8 @@ namespace ABCo.Multicam.Tests.Features.Switchers
             var switcherMock = new Mock<IDummySwitcher>();
             switcherMock.Setup(m => m.ReceiveSpecs()).Returns(new SwitcherSpecs());
 
-            var switcherRunningStrip = CreateWithSwitcher(switcherMock.Object);
-            switcherRunningStrip.Dispose();
+            var switcherRunningFeature = CreateWithSwitcher(switcherMock.Object);
+            switcherRunningFeature.Dispose();
 
             switcherMock.Verify(m => m.Dispose());
         }

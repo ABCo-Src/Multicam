@@ -12,9 +12,9 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.Avalonia.Converters
 {
-    public class SwitcherStripStatusToColor : IValueConverter
+    public class SwitcherFeatureStatusToColor : IValueConverter
     {
-        public static readonly SwitcherStripStatusToColor Instance = new();
+        public static readonly SwitcherFeatureStatusToColor Instance = new();
 
         // Dark:
         static readonly SolidColorBrush _neutralInactive = new SolidColorBrush(Color.FromRgb(0x33, 0x33, 0x33));

@@ -36,7 +36,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features
         {
             if (serviceSource == null) throw new ServiceSourceNotGivenException();
 
-            FeatureTitle = "New Strip";
+            FeatureTitle = "New Feature";
             _serviceSource = serviceSource;
             Parent = parent;
         }
@@ -57,12 +57,12 @@ namespace ABCo.Multicam.UI.ViewModels.Features
     public interface IUnsupportedFeatureViewModel : IFeatureViewModel { }
     public class UnsupportedFeatureViewModel : FeatureViewModel, IUnsupportedFeatureViewModel
     {
-        IRunningFeature _strip;
+        IRunningFeature _feature;
 
-        public UnsupportedFeatureViewModel(StripViewModelInfo info, IServiceSource serviceSource)
-            : base(serviceSource, info.Parent) => _strip = info.Strip;
+        public UnsupportedFeatureViewModel(FeatureViewModelInfo info, IServiceSource serviceSource)
+            : base(serviceSource, info.Parent) => _feature = info.Feature;
 
-        public override IRunningFeature BaseFeature => _strip;
+        public override IRunningFeature BaseFeature => _feature;
         public override FeatureViewType ContentView => FeatureViewType.Unsupported;
     }
 }

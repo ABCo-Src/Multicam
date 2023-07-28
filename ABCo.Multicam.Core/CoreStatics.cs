@@ -16,7 +16,7 @@ namespace ABCo.Multicam.Core
         {
             container.RegisterInstance<IServiceSource>(new ServiceSource(container));
 
-            // Strips
+            // Features
             container.RegisterSingleton<IFeatureManager, FeatureManager>();
             container.RegisterSingleton<IUnsupportedRunningFeature, UnsupportedRunningFeature>();
             container.RegisterSingleton<ISwitcherRunningFeature, SwitcherRunningFeature>();

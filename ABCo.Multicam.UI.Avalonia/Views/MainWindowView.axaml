@@ -87,7 +87,7 @@
 
 			<Border Grid.Row="1" Grid.Column="1" Background="{Binding $self.Background}">
 				<!--<TextBlock>Test</TextBlock>-->
-				<views:StripView DataContext="{Binding Application.Project}"></views:StripView>
+				<views:FeatureView DataContext="{Binding Application.Project}"></views:FeatureView>
 			</Border>
 		</Grid>
 	</Panel>

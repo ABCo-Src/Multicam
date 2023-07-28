@@ -22,9 +22,9 @@ namespace ABCo.Multicam.UI.ViewModels.Features
     public interface IProjectFeaturesViewModel 
     {
         IFeatureViewModel? CurrentlyEditing { get; set; }
-        void MoveDown(IFeatureViewModel strip);
-        void MoveUp(IFeatureViewModel strip);
-        void Delete(IFeatureViewModel strip);
+        void MoveDown(IFeatureViewModel feature);
+        void MoveUp(IFeatureViewModel feature);
+        void Delete(IFeatureViewModel feature);
     }
 
     public partial class ProjectFeaturesViewModel : ViewModelBase, IProjectFeaturesViewModel
@@ -73,7 +73,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features
 
         void OnFeaturesChange()
         {
-            // Clear the old strips
+            // Clear the old features
             var oldItems = new List<IFeatureViewModel>(Items);
             Items.Clear();
             
@@ -99,10 +99,10 @@ namespace ABCo.Multicam.UI.ViewModels.Features
                     CurrentlyEditing = null;
         }
 
-        IFeatureViewModel CreateVMForFeature(IRunningFeature strip) => strip switch
+        IFeatureViewModel CreateVMForFeature(IRunningFeature feature) => feature switch
         {
-            ISwitcherRunningFeature => _servSource.GetWithParameter<ISwitcherFeatureViewModel, StripViewModelInfo>(new StripViewModelInfo(strip, this)),
-            _ => new UnsupportedFeatureViewModel(new StripViewModelInfo(strip, this), _servSource),
+            ISwitcherRunningFeature => _servSource.GetWithParameter<ISwitcherFeatureViewModel, FeatureViewModelInfo>(new FeatureViewModelInfo(feature, this)),
+            _ => new UnsupportedFeatureViewModel(new FeatureViewModelInfo(feature, this), _servSource),
         };
 
         public void CreateFeature()
@@ -114,10 +114,10 @@ namespace ABCo.Multicam.UI.ViewModels.Features
             }));
         }
 
-        public void MoveDown(IFeatureViewModel strip) => _manager.MoveDown(strip.BaseFeature);
-        public void MoveUp(IFeatureViewModel strip) => _manager.MoveUp(strip.BaseFeature);
-        public void Delete(IFeatureViewModel strip) => _manager.Delete(strip.BaseFeature);
+        public void MoveDown(IFeatureViewModel feature) => _manager.MoveDown(feature.BaseFeature);
+        public void MoveUp(IFeatureViewModel feature) => _manager.MoveUp(feature.BaseFeature);
+        public void Delete(IFeatureViewModel feature) => _manager.Delete(feature.BaseFeature);
     }
 
-    public record struct StripViewModelInfo(IRunningFeature Strip, IProjectFeaturesViewModel Parent);
+    public record struct FeatureViewModelInfo(IRunningFeature Feature, IProjectFeaturesViewModel Parent);
 }

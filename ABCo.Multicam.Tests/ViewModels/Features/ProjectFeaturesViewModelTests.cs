@@ -21,16 +21,6 @@ namespace ABCo.Multicam.Tests.ViewModels.Features
     [TestClass]
     public class ProjectFeaturesViewModelTests
     {
-        //IServiceManager CreateDefaultFactory()
-        //{
-        //    IServiceManager manager = null!;
-        //    var moq = new Mock<IServiceManager>();
-        //    moq.Setup(i => i.CreateWithParent<IStripViewModel, IProjectStripsViewModel>(It.IsAny<IProjectStripsViewModel>()))
-        //        .Callback<IProjectStripsViewModel>(parent => new StripViewModel(manager, parent));
-
-        //    return moq.Object;
-        //}
-
         static ProjectFeaturesViewModel CreateDefault() => new(CreateModelMockWithZeroFeatures().Object, CreateDefaultServiceSource());
         static ProjectFeaturesViewModel CreateWithCustomModel(IFeatureManager manager) => new(manager, CreateDefaultServiceSource());
         static ProjectFeaturesViewModel CreateWithCustomServSource(IServiceSource src) => new(CreateModelMockWithZeroFeatures().Object, src);
@@ -113,28 +103,27 @@ namespace ABCo.Multicam.Tests.ViewModels.Features
         [TestMethod]
         public void FeatureVMCreation_Switcher() => TestFeatureVMCreation<ISwitcherRunningFeature, ISwitcherFeatureViewModel>();
 
-        void TestFeatureVMCreation<TStripInterface, TExpectedVMType>() 
-            where TStripInterface : class, IRunningFeature
+        void TestFeatureVMCreation<TFeatureInterface, TExpectedVMType>() 
+            where TFeatureInterface : class, IRunningFeature
             where TExpectedVMType : class, IFeatureViewModel
         {
             var servSourceMock = new Mock<IServiceSource>();
-            servSourceMock.Setup(m => m.GetWithParameter<TExpectedVMType, StripViewModelInfo>(It.IsAny<StripViewModelInfo>())).Returns(Mock.Of<TExpectedVMType>());
+            servSourceMock.Setup(m => m.GetWithParameter<TExpectedVMType, FeatureViewModelInfo>(It.IsAny<FeatureViewModelInfo>())).Returns(Mock.Of<TExpectedVMType>());
 
-            IFeatureManager model = Mock.Of<IFeatureManager>(m => m.Features == new List<IRunningFeature>() { Mock.Of<TStripInterface>() });
+            IFeatureManager model = Mock.Of<IFeatureManager>(m => m.Features == new List<IRunningFeature>() { Mock.Of<TFeatureInterface>() });
             var project = CreateWithCustomModelAndServSource(model, servSourceMock.Object);
 
             Assert.IsTrue(project.Items[0].GetType().IsAssignableTo(typeof(TExpectedVMType)));
-            servSourceMock.Verify(m => m.GetWithParameter<TExpectedVMType, StripViewModelInfo>(It.IsAny<StripViewModelInfo>()), Times.Once);
+            servSourceMock.Verify(m => m.GetWithParameter<TExpectedVMType, FeatureViewModelInfo>(It.IsAny<FeatureViewModelInfo>()), Times.Once);
         }
 
         [TestMethod]
         public void FeaturesChange_AddToEnd()
         {
-            List<IRunningFeature> stripsList = new();
-            SetupFeaturesChangeMockAndVM((project, changeTrigger, stripsList) =>
+            SetupFeaturesChangeMockAndVM((project, changeTrigger, featuresList) =>
             {
                 var addedItem = Mock.Of<IRunningFeature>();
-                stripsList.Add(addedItem);
+                featuresList.Add(addedItem);
                 changeTrigger();
 
                 Assert.AreEqual(1, project.Items.Count);
@@ -146,10 +135,10 @@ namespace ABCo.Multicam.Tests.ViewModels.Features
         public void FeaturesChange_AddToStart()
         {
             var firstItemMock = Mock.Of<IRunningFeature>();
-            SetupFeaturesChangeMockAndVM((project, changeTrigger, stripsList) =>
+            SetupFeaturesChangeMockAndVM((project, changeTrigger, featuresList) =>
             {
                 var addedItem = Mock.Of<IRunningFeature>();
-                stripsList.Insert(0, addedItem);
+                featuresList.Insert(0, addedItem);
                 changeTrigger();
 
                 Assert.AreEqual(2, project.Items.Count);
@@ -163,9 +152,9 @@ namespace ABCo.Multicam.Tests.ViewModels.Features
         {
             var firstItemMock = Mock.Of<IRunningFeature>();
             var secondItemMock = Mock.Of<IRunningFeature>();
-            SetupFeaturesChangeMockAndVM((project, changeTrigger, stripsList) =>
+            SetupFeaturesChangeMockAndVM((project, changeTrigger, featuresList) =>
             {
-                stripsList.Remove(firstItemMock);
+                featuresList.Remove(firstItemMock);
                 changeTrigger();
 
                 Assert.AreEqual(1, project.Items.Count);
@@ -177,11 +166,11 @@ namespace ABCo.Multicam.Tests.ViewModels.Features
         public void FeaturesChange_Remove_Editing()
         {
             var firstItemMock = Mock.Of<IRunningFeature>();
-            SetupFeaturesChangeMockAndVM((project, changeTrigger, stripsList) =>
+            SetupFeaturesChangeMockAndVM((project, changeTrigger, featuresList) =>
             {
                 project.CurrentlyEditing = project.Items[0];
 
-                stripsList.Remove(firstItemMock);
+                featuresList.Remove(firstItemMock);
                 changeTrigger();
 
                 Assert.AreEqual(1, project.Items.Count);
@@ -189,48 +178,48 @@ namespace ABCo.Multicam.Tests.ViewModels.Features
             }, new() { firstItemMock, Mock.Of<IRunningFeature>() });
         }
 
-        private void SetupFeaturesChangeMockAndVM(Action<ProjectFeaturesViewModel, Action, List<IRunningFeature>> testCode, List<IRunningFeature> stripsList)
+        private void SetupFeaturesChangeMockAndVM(Action<ProjectFeaturesViewModel, Action, List<IRunningFeature>> testCode, List<IRunningFeature> featuresList)
         {
             Action changeTrigger = null!;
             var model = new Mock<IFeatureManager>();
             model.Setup(e => e.SetOnFeaturesChangeForVM(It.IsAny<Action>())).Callback<Action>(a => changeTrigger = a);
-            model.SetupGet(e => e.Features).Returns(() => stripsList);
+            model.SetupGet(e => e.Features).Returns(() => featuresList);
 
             var project = CreateWithCustomModel(model.Object);
-            testCode(project, changeTrigger, stripsList);
+            testCode(project, changeTrigger, featuresList);
         }
 
         [TestMethod]
         public void MoveUp()
         {
-            var model = CreateModelMockWithOneStrip(out var initialStrip);
+            var model = CreateModelMockWithOneFeature(out var initialFeature);
             var project = CreateWithCustomModel(model.Object);
             project.MoveUp(project.Items[0]);
-            model.Verify(v => v.MoveUp(initialStrip), Times.Once);
+            model.Verify(v => v.MoveUp(initialFeature), Times.Once);
         }
 
         [TestMethod]
         public void MoveDown()
         {
-            var model = CreateModelMockWithOneStrip(out var initialStrip);
+            var model = CreateModelMockWithOneFeature(out var initialFeature);
             var project = CreateWithCustomModel(model.Object);
             project.MoveDown(project.Items[0]);
-            model.Verify(v => v.MoveDown(initialStrip), Times.Once);
+            model.Verify(v => v.MoveDown(initialFeature), Times.Once);
         }
 
         [TestMethod]
         public void Delete()
         {
-            var model = CreateModelMockWithOneStrip(out var initialStrip);
+            var model = CreateModelMockWithOneFeature(out var initialFeature);
             var project = CreateWithCustomModel(model.Object);
             project.Delete(project.Items[0]);
-            model.Verify(v => v.Delete(initialStrip), Times.Once);
+            model.Verify(v => v.Delete(initialFeature), Times.Once);
         }
 
         [TestMethod]
         public void CurrentlyEditing_NoPreviousItem()
         {
-            var project = CreateWithCustomModel(CreateModelMockWithOneStrip(out _).Object);
+            var project = CreateWithCustomModel(CreateModelMockWithOneFeature(out _).Object);
             project.CurrentlyEditing = project.Items[0];
             Assert.IsTrue(project.Items[0].IsEditing);
         }
@@ -238,7 +227,7 @@ namespace ABCo.Multicam.Tests.ViewModels.Features
         [TestMethod]
         public void CurrentlyEditing_RemoveItem()
         {
-            var project = CreateWithCustomModel(CreateModelMockWithOneStrip(out _).Object);
+            var project = CreateWithCustomModel(CreateModelMockWithOneFeature(out _).Object);
 
             project.CurrentlyEditing = project.Items[0];
             project.CurrentlyEditing = null;
@@ -271,7 +260,7 @@ namespace ABCo.Multicam.Tests.ViewModels.Features
         [TestMethod]
         public void ShowEditingPanel_Editing()
         {
-            var project = CreateWithCustomModel(CreateModelMockWithOneStrip(out _).Object);
+            var project = CreateWithCustomModel(CreateModelMockWithOneFeature(out _).Object);
             project.CurrentlyEditing = project.Items[0];
             Assert.IsTrue(project.ShowEditingPanel);
         }
@@ -284,11 +273,11 @@ namespace ABCo.Multicam.Tests.ViewModels.Features
             return model;
         }
 
-        static Mock<IFeatureManager> CreateModelMockWithOneStrip(out IRunningFeature strip)
+        static Mock<IFeatureManager> CreateModelMockWithOneFeature(out IRunningFeature feature)
         {
-            strip = Mock.Of<IRunningFeature>();
+            feature = Mock.Of<IRunningFeature>();
             var model = new Mock<IFeatureManager>();
-            model.SetReturnsDefault<IReadOnlyList<IRunningFeature>>(new List<IRunningFeature>() { strip  });
+            model.SetReturnsDefault<IReadOnlyList<IRunningFeature>>(new List<IRunningFeature>() { feature });
             return model;
         }
 

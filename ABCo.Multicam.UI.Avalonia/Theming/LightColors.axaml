@@ -21,7 +21,7 @@
 		</LinearGradientBrush.GradientStops>
 	</LinearGradientBrush>-->
 
-	<!-- Switcher Button colors in SwitcherStripStatusToColor converter -->
+	<!-- Switcher Button colors in SwitcherFeatureStatusToColor converter -->
 
 	<SolidColorBrush x:Key="ForegroundColor">Black</SolidColorBrush>
 	

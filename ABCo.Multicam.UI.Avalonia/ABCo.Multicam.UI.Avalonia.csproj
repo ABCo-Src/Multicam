@@ -26,4 +26,16 @@
     <ProjectReference Include="..\ABCo.Multicam.Core\ABCo.Multicam.Core.csproj" />
     <ProjectReference Include="..\ABCo.Multicam.UI\ABCo.Multicam.UI.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\Features\Switcher\SwitcherFeatureView.axaml.cs">
+      <DependentUpon>SwitcherFeatureView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Features\Switcher\SwitcherFeatureSettingsView.axaml.cs">
+      <DependentUpon>SwitcherFeatureSettingsView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\FeatureView.axaml.cs">
+      <DependentUpon>FeatureView.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
 </Project>

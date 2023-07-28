@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace ABCo.Multicam.Core.Features
 {
     /// <summary>
-    /// Represents a strip currently running
+    /// Represents a feature currently running
     /// </summary>
     public interface IRunningFeature : IDisposable
     {

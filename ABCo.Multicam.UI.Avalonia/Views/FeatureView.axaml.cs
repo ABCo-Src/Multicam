@@ -2,9 +2,9 @@ using Avalonia.Controls;
 
 namespace ABCo.Multicam.UI.Avalonia.Views
 {
-    public partial class StripView : UserControl
+    public partial class FeatureView : UserControl
     {
-        public StripView()
+        public FeatureView()
         {
             InitializeComponent();
         }

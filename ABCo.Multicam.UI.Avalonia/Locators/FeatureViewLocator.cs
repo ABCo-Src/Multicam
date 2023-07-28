@@ -1,5 +1,4 @@
-﻿using ABCo.Multicam.UI.Avalonia.Views.Strips;
-using ABCo.Multicam.UI.Avalonia.Views.Strips.Switcher;
+﻿using ABCo.Multicam.UI.Avalonia.Views.Features.Switcher;
 using ABCo.Multicam.UI.Enumerations;
 using Avalonia;
 using Avalonia.Controls;
@@ -27,22 +26,22 @@ namespace ABCo.Multicam.UI.Avalonia.Locators
             FeatureViewType type = (FeatureViewType)value;
             return type switch
             {
-                FeatureViewType.Switcher => new SwitcherStripView(),
+                FeatureViewType.Switcher => new SwitcherFeatureView(),
                 FeatureViewType.Unsupported => CreateUnsupportedView(),
-                _ => new BindingNotification(new Exception("Unimplemented StripViewType value in the locator."), BindingErrorType.Error),
+                _ => new BindingNotification(new Exception("Unimplemented FeatureViewType value in the locator."), BindingErrorType.Error),
             };
         }
 
         Control CreateUnsupportedView()
         {
-            var stripTitleControl = new TextBlock() { VerticalAlignment = VerticalAlignment.Center };
-            stripTitleControl.Classes.Add("FeatureTitleText");
-            stripTitleControl.Bind(TextBlock.TextProperty, new Binding("StripTitle"));
+            var featureTitleControl = new TextBlock() { VerticalAlignment = VerticalAlignment.Center };
+            featureTitleControl.Classes.Add("FeatureTitleText");
+            featureTitleControl.Bind(TextBlock.TextProperty, new Binding("FeatureTitle"));
 
             var unsupportedText = new TextBlock { Text = "Unsupported - updating to the latest version may help.", Margin = new Thickness(20) };
 
             var stackPanelControl = new StackPanel() { Orientation = Orientation.Horizontal };
-            stackPanelControl.Children.Add(stripTitleControl);
+            stackPanelControl.Children.Add(featureTitleControl);
             stackPanelControl.Children.Add(unsupportedText);
             return stackPanelControl;
         }

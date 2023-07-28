@@ -1,4 +1,4 @@
-﻿using ABCo.Multicam.UI.Avalonia.Views.Strips.Switcher;
+﻿using ABCo.Multicam.UI.Avalonia.Views.Features.Switcher;
 using ABCo.Multicam.UI.Enumerations;
 using Avalonia.Controls;
 using Avalonia.Data;
@@ -23,9 +23,9 @@ namespace ABCo.Multicam.UI.Avalonia.Locators
             FeatureViewType type = (FeatureViewType)value;
             return type switch
             {
-                FeatureViewType.Switcher => new SwitcherStripSettingsView(),
-                FeatureViewType.Unsupported => new TextBlock { Text = "Unsupported strip." },
-                _ => new BindingNotification(new Exception("Unimplemented StripViewType value in the locator."), BindingErrorType.Error),
+                FeatureViewType.Switcher => new SwitcherFeatureSettingsView(),
+                FeatureViewType.Unsupported => new TextBlock { Text = "Unsupported feature." },
+                _ => new BindingNotification(new Exception("Unimplemented FeatureViewType value in the locator."), BindingErrorType.Error),
             };
         }
 

@@ -12,28 +12,28 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Tests.ViewModels.Features
 {
-    public class DummyStripViewModel : FeatureViewModel
+    public class DummyFeatureViewModel : FeatureViewModel
     {
         public IServiceSource Source => _serviceSource;
         public override IRunningFeature BaseFeature => throw new NotImplementedException();
         public override FeatureViewType ContentView => FeatureViewType.Unsupported;
-        public DummyStripViewModel(IServiceSource serviceSource, IProjectFeaturesViewModel parent) : base(serviceSource, parent) { }
+        public DummyFeatureViewModel(IServiceSource serviceSource, IProjectFeaturesViewModel parent) : base(serviceSource, parent) { }
     }
 
     [TestClass]
-    public class StripViewModelTests
+    public class FeatureViewModelTests
     {
         [TestMethod]
-        public void Ctor_ThrowsWithNoServiceSource() => Assert.ThrowsException<ServiceSourceNotGivenException>(() => new DummyStripViewModel(null!, Mock.Of<IProjectFeaturesViewModel>()));
+        public void Ctor_ThrowsWithNoServiceSource() => Assert.ThrowsException<ServiceSourceNotGivenException>(() => new DummyFeatureViewModel(null!, Mock.Of<IProjectFeaturesViewModel>()));
 
         [TestMethod]
         public void Ctor()
         {
             var parent = Mock.Of<IProjectFeaturesViewModel>();
             var serviceSource = Mock.Of<IServiceSource>();
-            var vm = new DummyStripViewModel(serviceSource, parent);
+            var vm = new DummyFeatureViewModel(serviceSource, parent);
 
-            Assert.AreEqual("New Strip", vm.FeatureTitle);
+            Assert.AreEqual("New Feature", vm.FeatureTitle);
             Assert.AreEqual(parent, vm.Parent);
             Assert.AreEqual(serviceSource, vm.Source);
             Assert.AreEqual(false, vm.IsEditing);
@@ -43,7 +43,7 @@ namespace ABCo.Multicam.Tests.ViewModels.Features
         public void ToggleEdit_NotEditing()
         {
             var parent = new Mock<IProjectFeaturesViewModel>();
-            var vm = new DummyStripViewModel(Mock.Of<IServiceSource>(), parent.Object);
+            var vm = new DummyFeatureViewModel(Mock.Of<IServiceSource>(), parent.Object);
 
             vm.ToggleEdit();
 
@@ -54,7 +54,7 @@ namespace ABCo.Multicam.Tests.ViewModels.Features
         public void ToggleEdit_Editing()
         {
             var parent = new Mock<IProjectFeaturesViewModel>();
-            var vm = new DummyStripViewModel(Mock.Of<IServiceSource>(), parent.Object);
+            var vm = new DummyFeatureViewModel(Mock.Of<IServiceSource>(), parent.Object);
 
             vm.IsEditing = true;
             vm.ToggleEdit();
@@ -65,7 +65,7 @@ namespace ABCo.Multicam.Tests.ViewModels.Features
         [TestMethod]
         public void EditBtnText_NotEditing()
         {
-            var vm = new DummyStripViewModel(Mock.Of<IServiceSource>(), Mock.Of<IProjectFeaturesViewModel>());
+            var vm = new DummyFeatureViewModel(Mock.Of<IServiceSource>(), Mock.Of<IProjectFeaturesViewModel>());
             vm.IsEditing = false;
             Assert.AreEqual("Edit", vm.EditBtnText);
         }
@@ -73,7 +73,7 @@ namespace ABCo.Multicam.Tests.ViewModels.Features
         [TestMethod]
         public void EditBtnText_Editing()
         {
-            var vm = new DummyStripViewModel(Mock.Of<IServiceSource>(), Mock.Of<IProjectFeaturesViewModel>());
+            var vm = new DummyFeatureViewModel(Mock.Of<IServiceSource>(), Mock.Of<IProjectFeaturesViewModel>());
             vm.IsEditing = true;
             Assert.AreEqual("Finish", vm.EditBtnText);
         }
@@ -82,7 +82,7 @@ namespace ABCo.Multicam.Tests.ViewModels.Features
         [TestMethod]
         public void EditPanelTitle()
         {
-            var vm = new DummyStripViewModel(Mock.Of<IServiceSource>(), Mock.Of<IProjectFeaturesViewModel>());
+            var vm = new DummyFeatureViewModel(Mock.Of<IServiceSource>(), Mock.Of<IProjectFeaturesViewModel>());
             vm.FeatureTitle = "abc";
             Assert.AreEqual("Editing 'abc'", vm.EditPanelTitle);
         }
@@ -91,7 +91,7 @@ namespace ABCo.Multicam.Tests.ViewModels.Features
         public void MoveDown()
         {
             var parent = new Mock<IProjectFeaturesViewModel>();
-            var vm = new DummyStripViewModel(Mock.Of<IServiceSource>(), parent.Object);
+            var vm = new DummyFeatureViewModel(Mock.Of<IServiceSource>(), parent.Object);
             vm.MoveDown();
             parent.Verify(i => i.MoveDown(vm));
         }
@@ -100,7 +100,7 @@ namespace ABCo.Multicam.Tests.ViewModels.Features
         public void MoveUp()
         {
             var parent = new Mock<IProjectFeaturesViewModel>();
-            var vm = new DummyStripViewModel(Mock.Of<IServiceSource>(), parent.Object);
+            var vm = new DummyFeatureViewModel(Mock.Of<IServiceSource>(), parent.Object);
             vm.MoveUp();
             parent.Verify(i => i.MoveUp(vm));
         }
@@ -109,7 +109,7 @@ namespace ABCo.Multicam.Tests.ViewModels.Features
         public void Delete()
         {
             var parent = new Mock<IProjectFeaturesViewModel>();
-            var vm = new DummyStripViewModel(Mock.Of<IServiceSource>(), parent.Object);
+            var vm = new DummyFeatureViewModel(Mock.Of<IServiceSource>(), parent.Object);
             vm.Delete();
             parent.Verify(i => i.Delete(vm));
         }
@@ -120,7 +120,7 @@ namespace ABCo.Multicam.Tests.ViewModels.Features
             var parent = Mock.Of<IProjectFeaturesViewModel>();
             var serviceSource = Mock.Of<IServiceSource>();
             var model = Mock.Of<IRunningFeature>();
-            var vm = new UnsupportedFeatureViewModel(new StripViewModelInfo(model, parent), serviceSource);
+            var vm = new UnsupportedFeatureViewModel(new FeatureViewModelInfo(model, parent), serviceSource);
 
             Assert.AreEqual(FeatureViewType.Unsupported, vm.ContentView);
             Assert.AreEqual(model, vm.BaseFeature);

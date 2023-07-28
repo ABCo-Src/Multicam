@@ -3,9 +3,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:viewmodels="using:ABCo.Multicam.UI.ViewModels.Features.Switcher"
-			 xmlns:strips="using:ABCo.Multicam.UI.Avalonia.Views.Strips.Switcher"
+			 xmlns:switcherviews="using:ABCo.Multicam.UI.Avalonia.Views.Features.Switcher"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="ABCo.Multicam.UI.Avalonia.Views.Strips.Switcher.SwitcherStripView"
+             x:Class="ABCo.Multicam.UI.Avalonia.Views.Features.Switcher.SwitcherFeatureView"
 			 x:DataType="viewmodels:SwitcherFeatureViewModel">
 	<Grid>
 		<Grid.RowDefinitions>
@@ -13,7 +13,7 @@
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 
-		<!-- Strip Name + Switcher Info -->
+		<!-- Feature Name + Switcher Info -->
 		<StackPanel Margin="0 15" Orientation="Horizontal">
 			<TextBlock Text="{Binding FeatureTitle}" Classes="FeatureTitleText" VerticalAlignment="Center" />
 			<TextBlock Margin="20 0" VerticalAlignment="Center">Currently unlinked</TextBlock>
@@ -58,7 +58,7 @@
 
 								<ItemsControl.ItemTemplate>
 									<DataTemplate>
-										<strips:SwitcherButton />
+										<switcherviews:SwitcherButton />
 									</DataTemplate>
 								</ItemsControl.ItemTemplate>
 							</ItemsControl>
@@ -73,7 +73,7 @@
 								
 								<ItemsControl.ItemTemplate>
 									<DataTemplate>
-										<strips:SwitcherButton />
+										<switcherviews:SwitcherButton />
 									</DataTemplate>
 								</ItemsControl.ItemTemplate>
 							</ItemsControl>
@@ -82,10 +82,10 @@
 							<StackPanel Orientation="Horizontal" Margin="60 0" Grid.Row="0" Grid.Column="2">
 								
 								<!-- Cut -->
-								<strips:SwitcherButton DataContext="{Binding CutButton}" />
+								<switcherviews:SwitcherButton DataContext="{Binding CutButton}" />
 
 								<!-- Auto -->
-								<strips:SwitcherButton DataContext="{Binding AutoButton}" />
+								<switcherviews:SwitcherButton DataContext="{Binding AutoButton}" />
 								
 							</StackPanel>
 						</Grid>

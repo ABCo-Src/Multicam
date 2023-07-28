@@ -22,7 +22,7 @@ namespace ABCo.Multicam.UI
             //container.RegisterSingleton<IProjectViewModel, ProjectViewModel>();
             //container.RegisterSingleton<IProjectStripsViewModel, ProjectStripsViewModel>();
             //container.RegisterSingleton<IStripViewModel, StripViewModel>();
-            container.Register<StripViewModelInfo, ISwitcherFeatureViewModel>((factory, info) => new SwitcherFeatureViewModel(info, factory.GetInstance<IServiceSource>()));
+            container.Register<FeatureViewModelInfo, ISwitcherFeatureViewModel>((factory, info) => new SwitcherFeatureViewModel(info, factory.GetInstance<IServiceSource>()));
 
             CoreStatics.Initialize(container);
         }

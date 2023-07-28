@@ -19,9 +19,9 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
     {
         ISwitcherRunningFeature _model;
 
-        public SwitcherFeatureViewModel(StripViewModelInfo info, IServiceSource serviceSource) : base(serviceSource, info.Parent)
+        public SwitcherFeatureViewModel(FeatureViewModelInfo info, IServiceSource serviceSource) : base(serviceSource, info.Parent)
         {
-            _model = (ISwitcherRunningFeature)info.Strip;
+            _model = (ISwitcherRunningFeature)info.Feature;
 
             var targetSpecs = _model.SwitcherSpecs;
             _mixBlocks = new ObservableCollection<SwitcherMixBlockViewModel>();

@@ -39,8 +39,8 @@
 	</LinearGradientBrush>
 
 
-	<SolidColorBrush x:Key="StripButtonBack">#333</SolidColorBrush>
-	<SolidColorBrush x:Key="StripButtonOutline">#aaa</SolidColorBrush>
+	<SolidColorBrush x:Key="FeatureButtonBack">#333</SolidColorBrush>
+	<SolidColorBrush x:Key="FeatureButtonOutline">#aaa</SolidColorBrush>
 	<SolidColorBrush x:Key="ButtonActive">#999</SolidColorBrush>
 	<SolidColorBrush x:Key="PreviewButtonActive">Green</SolidColorBrush>
 	<SolidColorBrush x:Key="ProgramButtonActive">Red</SolidColorBrush>
