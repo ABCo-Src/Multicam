@@ -13,6 +13,9 @@ namespace ABCo.Multicam.Tests.Helpers
 {
     public static class MoqExtensions
     {
+        public static void New<T>(this Mock mock, Expression<Func<T, bool>> expr) where T : class
+            => Mock.Get(Mock.Of(expr));
+
         public static void SetupTrueAsync<TMock, TRet>(this Mock<TMock> r, Expression<Func<TMock, Task<TRet>>> f) 
             where TMock : class
         {
