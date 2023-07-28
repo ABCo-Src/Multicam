@@ -1,7 +1,7 @@
 ﻿using ABCo.Multicam.Core;
-using ABCo.Multicam.Core.Strips;
+using ABCo.Multicam.Core.Features;
 using ABCo.Multicam.UI.Helpers;
-using ABCo.Multicam.UI.ViewModels.Strips;
+using ABCo.Multicam.UI.ViewModels.Features;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
@@ -15,12 +15,12 @@ namespace ABCo.Multicam.UI.ViewModels
     public interface IProjectViewModel { }
     public partial class ProjectViewModel : ViewModelBase, IProjectViewModel
     {
-        [ObservableProperty] ProjectStripsViewModel _strips;
+        [ObservableProperty] ProjectFeaturesViewModel _features;
 
         public ProjectViewModel(IServiceSource manager)
         {
             if (manager == null) throw new ServiceSourceNotGivenException();
-            _strips = new ProjectStripsViewModel(manager.Get<IStripManager>(), manager);
+            _features = new ProjectFeaturesViewModel(manager.Get<IFeatureManager>(), manager);
         }
     }
 }

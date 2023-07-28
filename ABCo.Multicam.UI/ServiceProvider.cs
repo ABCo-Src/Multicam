@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ABCo.Multicam.Tests.UI
+namespace ABCo.Multicam.Tests
 {
  
 }

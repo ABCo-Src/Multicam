@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ABCo.Multicam.Tests.UI.ViewModels
+namespace ABCo.Multicam.Tests.ViewModels
 {
     [TestClass]
     public class ApplicationViewModelTests

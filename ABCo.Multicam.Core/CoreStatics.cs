@@ -1,6 +1,6 @@
-﻿using ABCo.Multicam.Core.Strips;
-using ABCo.Multicam.Core.Strips.Switchers;
-using ABCo.Multicam.Core.Strips.Switchers.Types;
+﻿using ABCo.Multicam.Core.Features;
+using ABCo.Multicam.Core.Features.Switchers;
+using ABCo.Multicam.Core.Features.Switchers.Types;
 using LightInject;
 using System;
 using System.Collections.Generic;
@@ -17,9 +17,9 @@ namespace ABCo.Multicam.Core
             container.RegisterInstance<IServiceSource>(new ServiceSource(container));
 
             // Strips
-            container.RegisterSingleton<IStripManager, StripManager>();
-            container.RegisterSingleton<IUnsupportedRunningStrip, UnsupportedRunningStrip>();
-            container.RegisterSingleton<ISwitcherRunningStrip, SwitcherRunningStrip>();
+            container.RegisterSingleton<IFeatureManager, FeatureManager>();
+            container.RegisterSingleton<IUnsupportedRunningFeature, UnsupportedRunningFeature>();
+            container.RegisterSingleton<ISwitcherRunningFeature, SwitcherRunningFeature>();
 
             // Switcher
             container.RegisterSingleton<IDummySwitcher, DummySwitcher>();

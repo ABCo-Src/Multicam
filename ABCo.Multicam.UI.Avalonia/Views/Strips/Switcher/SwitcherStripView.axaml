@@ -2,11 +2,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 xmlns:viewmodels="using:ABCo.Multicam.UI.ViewModels.Strips.Switcher"
+			 xmlns:viewmodels="using:ABCo.Multicam.UI.ViewModels.Features.Switcher"
 			 xmlns:strips="using:ABCo.Multicam.UI.Avalonia.Views.Strips.Switcher"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="ABCo.Multicam.UI.Avalonia.Views.Strips.Switcher.SwitcherStripView"
-			 x:DataType="viewmodels:SwitcherStripViewModel">
+			 x:DataType="viewmodels:SwitcherFeatureViewModel">
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
@@ -15,7 +15,7 @@
 
 		<!-- Strip Name + Switcher Info -->
 		<StackPanel Margin="0 15" Orientation="Horizontal">
-			<TextBlock Text="{Binding StripTitle}" Classes="StripTitleText" VerticalAlignment="Center" />
+			<TextBlock Text="{Binding FeatureTitle}" Classes="FeatureTitleText" VerticalAlignment="Center" />
 			<TextBlock Margin="20 0" VerticalAlignment="Center">Currently unlinked</TextBlock>
 		</StackPanel>
 

@@ -3,7 +3,7 @@
     <Design.PreviewWith>
     </Design.PreviewWith>
 
-	<Style Selector="TextBlock.StripTitleText">
+	<Style Selector="TextBlock.FeatureTitleText">
 		<Setter Property="FontWeight" Value="Bold" />
 	</Style>
 

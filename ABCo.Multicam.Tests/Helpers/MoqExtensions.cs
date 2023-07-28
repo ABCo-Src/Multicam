@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using ABCo.Multicam.Core.Strips.Switchers;
+using ABCo.Multicam.Core.Features.Switchers;
 using Moq;
 using Moq.Language;
 using Moq.Language.Flow;
