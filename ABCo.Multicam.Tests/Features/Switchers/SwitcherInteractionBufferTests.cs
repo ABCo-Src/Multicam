@@ -257,6 +257,24 @@ namespace ABCo.Multicam.Tests.Features.Switchers
             Assert.AreEqual(1, feature.GetValue(1, 1));
         }
 
+        [TestMethod]
+        [DataRow(false, 0, 0)]
+        [DataRow(false, 1, 1)]
+        [DataRow(true, 0, 0)]
+        [DataRow(true, 1, 1)]
+        public async Task OnBusChange_TriggersCallback(bool isKnown, int mixBlock, int bus)
+        {
+            _switcherSpecs = new(SwitcherMixBlock.NewCutBus(new(1, ""), new(2, "")), SwitcherMixBlock.NewProgPrevSameInputs(new(1, ""), new(8, "")));
+            var feature = await Create();
+
+            bool ran = false;
+            feature.SetOnBusChangeCallback(() => ran = true);
+
+            _switcherBusChangeCallback(new SwitcherBusChangeInfo(isKnown, mixBlock, bus, 0));
+
+            Assert.IsTrue(ran);
+        }
+
         async Task TestChangeAndGetValueNative(SwitcherMixBlock mixBlock, int bus)
         {
             _switcherSpecs = new(mixBlock, mixBlock);

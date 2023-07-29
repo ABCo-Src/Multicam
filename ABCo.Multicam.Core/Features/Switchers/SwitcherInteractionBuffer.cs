@@ -13,12 +13,14 @@ namespace ABCo.Multicam.Core.Features.Switchers
         SwitcherSpecs Specs { get; }
         int GetValue(int mixBlock, int bus);
         void PostValue(int mixBlock, int bus, int value);
+        void SetOnBusChangeCallback(Action? callback);
     }
 
     public class SwitcherInteractionBuffer : ISwitcherInteractionBuffer
     {
         readonly ISwitcher _rawSwitcher;
         readonly MixBlockStore[] _store;
+        Action? _onBusChangeCallback;
 
         public bool IsConnected { get; private set; }
         public SwitcherSpecs Specs { get; private set; }
@@ -98,7 +100,11 @@ namespace ABCo.Multicam.Core.Features.Switchers
                         _store[i].Preview = _rawSwitcher.ReceiveValue(i, 1);
                 }
             }
+
+            _onBusChangeCallback?.Invoke();
         }
+
+        public void SetOnBusChangeCallback(Action? callback) => _onBusChangeCallback = callback;
 
         record struct MixBlockStore(int Program, int Preview);
     }

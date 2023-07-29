@@ -15,11 +15,15 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         public record struct Mocks(Mock<IDummySwitcher> DummySwitcher, SwitcherSpecs DummySwitcherSpecs);
         Mocks _mocks = new();
 
+        Action<SwitcherBusChangeInfo> _onBusChangeCallback = i => { };
+
         [TestInitialize]
         public void MakeMocks()
         {
             _mocks.DummySwitcherSpecs = new();
-            _mocks.DummySwitcher = Mock.Get(Mock.Of<IDummySwitcher>(m => m.ReceiveSpecs() == _mocks.DummySwitcherSpecs));
+            _mocks.DummySwitcher = new Mock<IDummySwitcher>();
+            _mocks.DummySwitcher.Setup(m => m.ReceiveSpecs()).Returns(_mocks.DummySwitcherSpecs);
+            _mocks.DummySwitcher.Setup(m => m.SetOnBusChangeCallback(It.IsAny<Action<SwitcherBusChangeInfo>>())).Callback<Action<SwitcherBusChangeInfo>>(v => _onBusChangeCallback = v);
         }
 
         public DummySwitcherInteractionBuffer Create() => new(_mocks.DummySwitcher.Object);
@@ -43,6 +47,22 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         {
             Create().Dispose();
             _mocks.DummySwitcher.Verify(v => v.Dispose());
+        }
+
+        [TestMethod]
+        [DataRow(false, 0, 0)]
+        [DataRow(false, 1, 1)]
+        [DataRow(true, 0, 0)]
+        [DataRow(true, 1, 1)]
+        public void OnBusChange(bool isKnown, int mixBlock, int bus)
+        {
+            var buffer = Create();
+
+            bool ran = false;
+            buffer.SetOnBusChangeCallback(() => ran = true);
+            _onBusChangeCallback(new SwitcherBusChangeInfo(isKnown, mixBlock, bus, 0));
+
+            Assert.IsTrue(ran);
         }
 
         [TestMethod]

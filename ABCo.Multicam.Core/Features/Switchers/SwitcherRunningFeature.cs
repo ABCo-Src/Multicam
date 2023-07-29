@@ -25,6 +25,7 @@ namespace ABCo.Multicam.Core.Features.Switchers
         // A new one is created anytime the specs change (which is why it's broken into its own service, it's an easy way to avoid async data tearing when switcher (specs) are changed).
         ISwitcherInteractionBuffer _buffer;
         ISwitcherInteractionBufferFactory _bufferFactory;
+        Action? _busChangeCallback;
 
         public bool IsConnected => _buffer.IsConnected;
         public SwitcherSpecs SwitcherSpecs => _buffer.Specs;
@@ -33,6 +34,7 @@ namespace ABCo.Multicam.Core.Features.Switchers
         {
             _bufferFactory = bufferFactory;
             _buffer = bufferFactory.CreateDummy(dummySwitcher);
+            _buffer.SetOnBusChangeCallback(OnBusChange);
         }
 
         public int GetValue(int mixBlock, int bus) => _buffer.GetValue(mixBlock, bus);
@@ -47,8 +49,12 @@ namespace ABCo.Multicam.Core.Features.Switchers
             else
                 _buffer = await _bufferFactory.CreateRealAsync(switcher);
 
+            _buffer.SetOnBusChangeCallback(OnBusChange);
             oldBuffer.Dispose();
         }
+
+        void OnBusChange() => _busChangeCallback?.Invoke();
+        public void SetOnBusChangeForVM(Action? callback) => _busChangeCallback = callback;
 
         public void Dispose() => _buffer.Dispose();
     }
