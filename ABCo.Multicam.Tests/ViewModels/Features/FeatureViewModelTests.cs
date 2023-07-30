@@ -120,7 +120,7 @@ namespace ABCo.Multicam.Tests.ViewModels.Features
             var parent = Mock.Of<IProjectFeaturesViewModel>();
             var serviceSource = Mock.Of<IServiceSource>();
             var model = Mock.Of<IRunningFeature>();
-            var vm = new UnsupportedFeatureViewModel(new FeatureViewModelInfo(model, parent), serviceSource);
+            var vm = new UnsupportedFeatureViewModel(new NewViewModelInfo(model, parent), serviceSource);
 
             Assert.AreEqual(FeatureViewType.Unsupported, vm.ContentView);
             Assert.AreEqual(model, vm.BaseFeature);

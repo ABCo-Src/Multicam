@@ -12,12 +12,12 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
     public abstract partial class SwitcherButtonViewModel : ViewModelBase
     {
-        public readonly ISwitcherMixBlockViewModel Parent;
+        public readonly ISwitcherMixBlockVM Parent;
 
         [ObservableProperty] string _text;
         [ObservableProperty] SwitcherButtonStatus _status;
 
-        public SwitcherButtonViewModel(IServiceSource source, ISwitcherMixBlockViewModel parent, string text)
+        public SwitcherButtonViewModel(IServiceSource source, ISwitcherMixBlockVM parent, string text)
         {
             if (source == null) throw new ServiceSourceNotGivenException();
 

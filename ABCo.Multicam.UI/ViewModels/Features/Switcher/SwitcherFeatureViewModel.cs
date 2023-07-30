@@ -14,25 +14,25 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
-    public interface ISwitcherFeatureViewModel : IFeatureViewModel { }
-    public partial class SwitcherFeatureViewModel : FeatureViewModel, ISwitcherFeatureViewModel
+    public interface ISwitcherFeatureVM : IFeatureViewModel { }
+    public partial class SwitcherFeatureViewModel : FeatureViewModel, ISwitcherFeatureVM
     {
         ISwitcherRunningFeature _model;
 
-        public SwitcherFeatureViewModel(FeatureViewModelInfo info, IServiceSource serviceSource) : base(serviceSource, info.Parent)
+        public SwitcherFeatureViewModel(NewViewModelInfo info, IServiceSource serviceSource) : base(serviceSource, (IProjectFeaturesViewModel)info.Parent)
         {
-            _model = (ISwitcherRunningFeature)info.Feature;
+            _model = (ISwitcherRunningFeature)info.Model!;
 
             var targetSpecs = _model.SwitcherSpecs;
-            _mixBlocks = new ObservableCollection<SwitcherMixBlockViewModel>();
+            _mixBlocks = new ObservableCollection<ISwitcherMixBlockVM>();
 
             for (int i = 0; i < targetSpecs.MixBlocks.Count; i++)
-                _mixBlocks.Add(new SwitcherMixBlockViewModel(targetSpecs.MixBlocks[i], serviceSource, this));
+                _mixBlocks.Add(serviceSource.GetVM<ISwitcherMixBlockVM>(new(targetSpecs.MixBlocks[i], this)));
         }
 
         public override IRunningFeature BaseFeature => _model;
         public override FeatureViewType ContentView => FeatureViewType.Switcher;
 
-        [ObservableProperty] ObservableCollection<SwitcherMixBlockViewModel> _mixBlocks;
+        [ObservableProperty] ObservableCollection<ISwitcherMixBlockVM> _mixBlocks;
     }
 }

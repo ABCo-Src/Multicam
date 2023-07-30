@@ -10,6 +10,7 @@ namespace ABCo.Multicam.Core
     public interface IServiceSource
     {
         T Get<T>() where T : class;
+        T GetVM<T>(NewViewModelInfo info) where T : class;
         T GetWithParameter<T, TParameter>(TParameter parent) where T : class;
     }
 
@@ -19,6 +20,10 @@ namespace ABCo.Multicam.Core
         ServiceContainer _container;
         public ServiceSource(ServiceContainer container) => _container = container;
         public T Get<T>() where T : class => _container.GetInstance<T>();
+        public T GetVM<T>(NewViewModelInfo info) where T : class => _container.GetInstance<NewViewModelInfo, T>(info);
+
         public T GetWithParameter<T, TParameter>(TParameter parent) where T : class => _container.GetInstance<TParameter, T>(parent);
     }
+
+    public record struct NewViewModelInfo(object? Model, object Parent);
 }

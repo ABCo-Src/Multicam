@@ -7,16 +7,21 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
-    public class SwitcherActButtonViewModel : SwitcherButtonViewModel
+    public interface ISwitcherActButtonViewModel { }
+    public abstract class SwitcherActButtonViewModel : SwitcherButtonViewModel, ISwitcherActButtonViewModel
     {
-        public readonly Type Action;
-        public SwitcherActButtonViewModel(Type act, IServiceSource source, ISwitcherMixBlockViewModel parent) : base(source, parent, act == Type.Cut ? "Cut" : "Auto")
-            => Action = act;
+        public SwitcherActButtonViewModel(NewViewModelInfo info, string text, IServiceSource source) : base(source, (ISwitcherMixBlockVM)info.Parent, text) { }
+    }
 
-        public enum Type
-        {
-            Cut,
-            Auto
-        }
+    public interface ISwitcherCutButtonViewModel : ISwitcherActButtonViewModel { }
+    public class SwitcherCutButtonViewModel : SwitcherActButtonViewModel, ISwitcherCutButtonViewModel
+    {
+        public SwitcherCutButtonViewModel(NewViewModelInfo info, IServiceSource source) : base(info, "Cut", source) { }
+    }
+
+    public interface ISwitcherAutoButtonViewModel : ISwitcherActButtonViewModel { }
+    public class SwitcherAutoButtonViewModel : SwitcherActButtonViewModel, ISwitcherAutoButtonViewModel
+    {
+        public SwitcherAutoButtonViewModel(NewViewModelInfo info, IServiceSource source) : base(info, "Auto", source) { }
     }
 }

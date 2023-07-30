@@ -101,20 +101,20 @@ namespace ABCo.Multicam.Tests.ViewModels.Features
         }
 
         [TestMethod]
-        public void FeatureVMCreation_Switcher() => TestFeatureVMCreation<ISwitcherRunningFeature, ISwitcherFeatureViewModel>();
+        public void FeatureVMCreation_Switcher() => TestFeatureVMCreation<ISwitcherRunningFeature, ISwitcherFeatureVM>();
 
         void TestFeatureVMCreation<TFeatureInterface, TExpectedVMType>() 
             where TFeatureInterface : class, IRunningFeature
             where TExpectedVMType : class, IFeatureViewModel
         {
             var servSourceMock = new Mock<IServiceSource>();
-            servSourceMock.Setup(m => m.GetWithParameter<TExpectedVMType, FeatureViewModelInfo>(It.IsAny<FeatureViewModelInfo>())).Returns(Mock.Of<TExpectedVMType>());
+            servSourceMock.Setup(m => m.GetVM<TExpectedVMType>(It.IsAny<NewViewModelInfo>())).Returns(Mock.Of<TExpectedVMType>());
 
             IFeatureManager model = Mock.Of<IFeatureManager>(m => m.Features == new List<IRunningFeature>() { Mock.Of<TFeatureInterface>() });
             var project = CreateWithCustomModelAndServSource(model, servSourceMock.Object);
 
             Assert.IsTrue(project.Items[0].GetType().IsAssignableTo(typeof(TExpectedVMType)));
-            servSourceMock.Verify(m => m.GetWithParameter<TExpectedVMType, FeatureViewModelInfo>(It.IsAny<FeatureViewModelInfo>()), Times.Once);
+            servSourceMock.Verify(m => m.GetVM<TExpectedVMType>(It.IsAny<NewViewModelInfo>()), Times.Once);
         }
 
         [TestMethod]

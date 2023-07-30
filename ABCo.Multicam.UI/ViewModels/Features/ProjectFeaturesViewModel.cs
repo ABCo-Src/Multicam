@@ -101,8 +101,8 @@ namespace ABCo.Multicam.UI.ViewModels.Features
 
         IFeatureViewModel CreateVMForFeature(IRunningFeature feature) => feature switch
         {
-            ISwitcherRunningFeature => _servSource.GetWithParameter<ISwitcherFeatureViewModel, FeatureViewModelInfo>(new FeatureViewModelInfo(feature, this)),
-            _ => new UnsupportedFeatureViewModel(new FeatureViewModelInfo(feature, this), _servSource),
+            ISwitcherRunningFeature => _servSource.GetVM<ISwitcherFeatureVM>(new(feature, this)),
+            _ => new UnsupportedFeatureViewModel(new(feature, this), _servSource),
         };
 
         public void CreateFeature()
@@ -118,6 +118,4 @@ namespace ABCo.Multicam.UI.ViewModels.Features
         public void MoveUp(IFeatureViewModel feature) => _manager.MoveUp(feature.BaseFeature);
         public void Delete(IFeatureViewModel feature) => _manager.Delete(feature.BaseFeature);
     }
-
-    public record struct FeatureViewModelInfo(IRunningFeature Feature, IProjectFeaturesViewModel Parent);
 }

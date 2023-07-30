@@ -16,29 +16,54 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
     [TestClass]
     public class SwitcherMixBlockViewModelTests
     {
-        private static SwitcherMixBlockViewModel CreateDefault(SwitcherMixBlock model) => new SwitcherMixBlockViewModel(model, Mock.Of<IServiceSource>(), Mock.Of<ISwitcherFeatureViewModel>());
-        private static SwitcherMixBlockViewModel CreateWithParent(SwitcherMixBlock model, ISwitcherFeatureViewModel parent) => new SwitcherMixBlockViewModel(model, Mock.Of<IServiceSource>(), parent);
+        public record struct Mocks(
+            Mock<IServiceSource> ServiceSource, 
+            Mock<ISwitcherFeatureVM> Parent,
+            Mock<ISwitcherCutButtonViewModel> Cut,
+            Mock<ISwitcherAutoButtonViewModel> Auto,
+            Mock<ISwitcherProgramInputViewModel>[] ProgInputs, 
+            Mock<ISwitcherPreviewInputViewModel>[] PrevInputs
+            );
 
-        [TestMethod]
-        public void Ctor_ThrowsWithNoServiceSource() => Assert.ThrowsException<ServiceSourceNotGivenException>(() => 
-            new SwitcherMixBlockViewModel(new SwitcherMixBlock(), null!, Mock.Of<ISwitcherFeatureViewModel>()));
+        int _progInputPos = 0;
+        int _prevInputPos = 0;
+        SwitcherMixBlock _model = new();
+        Mocks _mocks = new();
+
+        [TestInitialize]
+        public void InitMocks()
+        {
+            _mocks.Parent = new Mock<ISwitcherFeatureVM>();
+            _mocks.ProgInputs = new Mock<ISwitcherProgramInputViewModel>[] { new(), new(), new(), new() };
+            _mocks.PrevInputs = new Mock<ISwitcherPreviewInputViewModel>[] { new(), new(), new(), new() };
+            _mocks.Cut = new Mock<ISwitcherCutButtonViewModel>();
+            _mocks.Auto = new Mock<ISwitcherAutoButtonViewModel>();
+
+            _mocks.ServiceSource = new Mock<IServiceSource>();
+            _mocks.ServiceSource.Setup(m => m.GetVM<ISwitcherProgramInputViewModel>(It.IsAny<NewViewModelInfo>())).Returns(() => _mocks.ProgInputs[_progInputPos++].Object);
+            _mocks.ServiceSource.Setup(m => m.GetVM<ISwitcherPreviewInputViewModel>(It.IsAny<NewViewModelInfo>())).Returns(() => _mocks.PrevInputs[_prevInputPos++].Object);
+            _mocks.ServiceSource.Setup(m => m.GetVM<ISwitcherCutButtonViewModel>(It.IsAny<NewViewModelInfo>())).Returns(() => _mocks.Cut.Object);
+            _mocks.ServiceSource.Setup(m => m.GetVM<ISwitcherAutoButtonViewModel>(It.IsAny<NewViewModelInfo>())).Returns(() => _mocks.Auto.Object);
+        }
+
+        SwitcherMixBlockViewModel Create() => new(new(_model, _mocks.Parent.Object), _mocks.ServiceSource.Object);
 
         [TestMethod]
         public void Ctor_General()
         {
-            var model = new SwitcherMixBlock();
-            var parent = Mock.Of<ISwitcherFeatureViewModel>();
-            SwitcherMixBlockViewModel vm = CreateWithParent(model, parent);
+            var vm = Create();
 
-            Assert.AreEqual(parent, vm.Parent);
-            Assert.AreEqual(model, vm.BaseBlock);
+            Assert.AreEqual(_mocks.Parent.Object, vm.Parent);
+            Assert.AreEqual(_model, vm.BaseBlock);
+
             Assert.IsNotNull(vm.ProgramBus);
             Assert.IsNotNull(vm.PreviewBus);
 
-            Assert.AreEqual(SwitcherActButtonViewModel.Type.Cut, vm.CutButton.Action);
-            Assert.AreEqual(vm, vm.CutButton.Parent);
-            Assert.AreEqual(SwitcherActButtonViewModel.Type.Auto, vm.AutoButton.Action);
-            Assert.AreEqual(vm, vm.AutoButton.Parent);
+            _mocks.ServiceSource.Verify(m => m.GetVM<ISwitcherCutButtonViewModel>(new(null, vm)), Times.Once);
+            _mocks.ServiceSource.Verify(m => m.GetVM<ISwitcherAutoButtonViewModel>(new(null, vm)), Times.Once);
+
+            Assert.AreEqual(_mocks.Cut.Object, vm.CutButton);
+            Assert.AreEqual(_mocks.Auto.Object, vm.AutoButton);
         }
 
         [TestMethod]
@@ -46,27 +71,22 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
         {
             var busInput1 = new SwitcherBusInput(1, "Cam1");
             var busInput2 = new SwitcherBusInput(2, "Cam2");
-            var model = SwitcherMixBlock.NewCutBus(busInput1, busInput2);
+            _model = SwitcherMixBlock.NewCutBus(busInput1, busInput2);
 
-            var parent = Mock.Of<ISwitcherFeatureViewModel>();
-            SwitcherMixBlockViewModel vm = CreateWithParent(model, parent);
+            var vm = Create();
+            _mocks.ServiceSource.Verify(m => m.GetVM<ISwitcherProgramInputViewModel>(new(_model.ProgramInputs[0], vm)), Times.Once);
+            _mocks.ServiceSource.Verify(m => m.GetVM<ISwitcherProgramInputViewModel>(new(_model.ProgramInputs[1], vm)), Times.Once);
 
             Assert.AreEqual(2, vm.ProgramBus.Count);
-            Assert.AreEqual(busInput1, vm.ProgramBus[0].Base);
-            Assert.AreEqual(busInput2, vm.ProgramBus[1].Base);
-            Assert.AreEqual(vm, vm.ProgramBus[0].Parent);
-            Assert.AreEqual(vm, vm.ProgramBus[1].Parent);
-            Assert.IsTrue(vm.ProgramBus[0].IsProgram);
-            Assert.IsTrue(vm.ProgramBus[1].IsProgram);
+            Assert.AreEqual(_mocks.ProgInputs[0].Object, vm.ProgramBus[0]);
+            Assert.AreEqual(_mocks.ProgInputs[1].Object, vm.ProgramBus[1]);
         }
 
         [TestMethod]
         public void Ctor_NoPreview()
         {
-            var model = SwitcherMixBlock.NewCutBus();
-            var parent = Mock.Of<ISwitcherFeatureViewModel>();
-            SwitcherMixBlockViewModel vm = CreateWithParent(model, parent);
-
+            _model = SwitcherMixBlock.NewCutBus();
+            var vm = Create();
             Assert.AreEqual(0, vm.PreviewBus.Count);
         }
 
@@ -75,45 +95,43 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
         {
             var busInput1 = new SwitcherBusInput(1, "Cam1");
             var busInput2 = new SwitcherBusInput(2, "Cam2");
-            var model = SwitcherMixBlock.NewProgPrev(Array.Empty<SwitcherBusInput>(), new SwitcherBusInput[2] { busInput1, busInput2 });
-            var parent = Mock.Of<ISwitcherFeatureViewModel>();
-            SwitcherMixBlockViewModel vm = CreateWithParent(model, parent);
+            _model = SwitcherMixBlock.NewProgPrev(Array.Empty<SwitcherBusInput>(), new SwitcherBusInput[2] { busInput1, busInput2 });
+
+            var vm = Create();
+            _mocks.ServiceSource.Verify(m => m.GetVM<ISwitcherPreviewInputViewModel>(new(_model.PreviewInputs![0], vm)), Times.Once);
+            _mocks.ServiceSource.Verify(m => m.GetVM<ISwitcherPreviewInputViewModel>(new(_model.PreviewInputs![1], vm)), Times.Once);
 
             Assert.AreEqual(2, vm.PreviewBus.Count);
-            Assert.AreEqual(busInput1, vm.PreviewBus[0].Base);
-            Assert.AreEqual(busInput2, vm.PreviewBus[1].Base);
-            Assert.AreEqual(vm, vm.PreviewBus[0].Parent);
-            Assert.AreEqual(vm, vm.PreviewBus[1].Parent);
-            Assert.IsFalse(vm.PreviewBus[0].IsProgram);
-            Assert.IsFalse(vm.PreviewBus[1].IsProgram);
+            Assert.AreEqual(_mocks.PrevInputs[0].Object, vm.PreviewBus[0]);
+            Assert.AreEqual(_mocks.PrevInputs[1].Object, vm.PreviewBus[1]);
         }
 
         [TestMethod]
         public void MainLabel_ProgramPreview()
         {
-            SwitcherMixBlockViewModel vm = CreateDefault(SwitcherMixBlock.NewProgPrev());
-            Assert.AreEqual("Program", vm.MainLabel);
+            _model = SwitcherMixBlock.NewProgPrev();
+            Assert.AreEqual("Program", Create().MainLabel);
         }
 
         [TestMethod]
         public void MainLabel_CutBus()
         {
-            SwitcherMixBlockViewModel vm = CreateDefault(SwitcherMixBlock.NewCutBus());
-            Assert.AreEqual("Cut Bus", vm.MainLabel);
+            _model = SwitcherMixBlock.NewCutBus();
+            Assert.AreEqual("Cut Bus", Create().MainLabel);
         }
 
         [TestMethod]
         public void ShowPreview_ProgramPreview()
         {
-            SwitcherMixBlockViewModel vm = CreateDefault(SwitcherMixBlock.NewProgPrev());
-            Assert.IsTrue(vm.ShowPreview);
+            _model = SwitcherMixBlock.NewProgPrev();
+            Assert.IsTrue(Create().ShowPreview);
         }
 
         [TestMethod]
         public void ShowPreview_CutBus()
         {
-            SwitcherMixBlockViewModel vm = CreateDefault(SwitcherMixBlock.NewCutBus());
-            Assert.IsFalse(vm.ShowPreview);
+            _model = SwitcherMixBlock.NewCutBus();
+            Assert.IsFalse(Create().ShowPreview);
         }
     }
 }

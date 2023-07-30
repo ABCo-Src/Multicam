@@ -11,16 +11,28 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
-    public partial class SwitcherBusInputViewModel : SwitcherButtonViewModel
+    public interface ISwitcherBusInputViewModel { }
+    public abstract class SwitcherBusInputViewModel : SwitcherButtonViewModel, ISwitcherBusInputViewModel
     {
         public readonly SwitcherBusInput Base;
         public readonly bool IsProgram;
 
-        public SwitcherBusInputViewModel(SwitcherBusInput input, bool isProgram, IServiceSource source, ISwitcherMixBlockViewModel parent) : base(source, parent, input.Name)
+        public SwitcherBusInputViewModel(NewViewModelInfo info, bool isProgram, IServiceSource source) : base(source, (ISwitcherMixBlockVM)info.Parent, ((SwitcherBusInput)info.Model!).Name)
         {
-            Text = input.Name;
-            Base = input;
+            Base = (SwitcherBusInput)info.Model;
             IsProgram = isProgram;
         }
+    }
+
+    public interface ISwitcherProgramInputViewModel : ISwitcherBusInputViewModel { }
+    public partial class SwitcherProgramInputViewModel : SwitcherBusInputViewModel, ISwitcherProgramInputViewModel
+    {
+        public SwitcherProgramInputViewModel(NewViewModelInfo info, IServiceSource source) : base(info, true, source) { }
+    }
+
+    public interface ISwitcherPreviewInputViewModel : ISwitcherBusInputViewModel { }
+    public partial class SwitcherPreviewInputViewModel : SwitcherBusInputViewModel, ISwitcherPreviewInputViewModel
+    {
+        public SwitcherPreviewInputViewModel(NewViewModelInfo info, IServiceSource source) : base(info, false, source) { }
     }
 }

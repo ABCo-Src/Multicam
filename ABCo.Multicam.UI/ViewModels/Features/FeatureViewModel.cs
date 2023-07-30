@@ -59,8 +59,8 @@ namespace ABCo.Multicam.UI.ViewModels.Features
     {
         IRunningFeature _feature;
 
-        public UnsupportedFeatureViewModel(FeatureViewModelInfo info, IServiceSource serviceSource)
-            : base(serviceSource, info.Parent) => _feature = info.Feature;
+        public UnsupportedFeatureViewModel(NewViewModelInfo info, IServiceSource serviceSource)
+            : base(serviceSource, (IProjectFeaturesViewModel)info.Parent) => _feature = (IRunningFeature)info.Model;
 
         public override IRunningFeature BaseFeature => _feature;
         public override FeatureViewType ContentView => FeatureViewType.Unsupported;

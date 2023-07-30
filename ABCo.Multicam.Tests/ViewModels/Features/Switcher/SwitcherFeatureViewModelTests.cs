@@ -16,44 +16,70 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
     [TestClass]
     public class SwitcherFeatureViewModelTests
     {
-        public SwitcherFeatureViewModel CreateDefault() => new(new(Mock.Of<ISwitcherRunningFeature>(s => s.SwitcherSpecs == new SwitcherSpecs()), Mock.Of<IProjectFeaturesViewModel>()), Mock.Of<IServiceSource>());
-        public SwitcherFeatureViewModel CreateWithCustomModel(ISwitcherRunningFeature model) => new(new(model, Mock.Of<IProjectFeaturesViewModel>()), Mock.Of<IServiceSource>());
-        public SwitcherFeatureViewModel CreateWithCustomModelAndParent(ISwitcherRunningFeature model, IProjectFeaturesViewModel parent) => new(new(model, parent), Mock.Of<IServiceSource>());
+        public record struct Mocks(
+            Mock<ISwitcherRunningFeature> Feature,
+            Mock<IProjectFeaturesViewModel> Parent,
+            Mock<ISwitcherMixBlockVM>[] MixBlocks,
+            Mock<ISwitcherMixBlockVM> SecondMixBlockMock,
+            Mock<IServiceSource> ServiceSource);
+
+        int _currentMixBlockVM = 0;
+        SwitcherSpecs _featureSpecs = new();
+        Mocks _mocks = new();
+
+        [TestInitialize]
+        public void MakeMocks()
+        {
+            _mocks.Feature = new Mock<ISwitcherRunningFeature>();
+            _mocks.Feature.Setup(s => s.SwitcherSpecs).Returns(() => _featureSpecs);
+            _mocks.Parent = new Mock<IProjectFeaturesViewModel>();
+            _mocks.MixBlocks = new Mock<ISwitcherMixBlockVM>[] { new(), new() };
+            _mocks.ServiceSource = new Mock<IServiceSource>();
+            _mocks.ServiceSource
+                .Setup(s => s.GetVM<ISwitcherMixBlockVM>(It.IsAny<NewViewModelInfo>())).Returns(() => _mocks.MixBlocks[_currentMixBlockVM++].Object);
+        }
+
+        public SwitcherFeatureViewModel Create() => new(new(_mocks.Feature.Object, _mocks.Parent.Object), _mocks.ServiceSource.Object);
 
         [TestMethod]
         public void CtorAndRunningFeature()
         {
-            var model = Mock.Of<ISwitcherRunningFeature>(s => s.SwitcherSpecs == new SwitcherSpecs());
-            var parent = Mock.Of<IProjectFeaturesViewModel>();
-            var vm = CreateWithCustomModelAndParent(model, parent);
+            var vm = Create();
 
-            Assert.AreEqual(parent, vm.Parent);
-            Assert.AreEqual(model, vm.BaseFeature);
+            Assert.AreEqual(_mocks.Parent.Object, vm.Parent);
+            Assert.AreEqual(_mocks.Feature.Object, vm.BaseFeature);
             Assert.IsNotNull(vm.MixBlocks);
         }
 
         [TestMethod]
         public void Ctor_SetsVMToMatchSpecs()
         {
-            var testSpecs = new SwitcherSpecs(new SwitcherMixBlock[]
+            _featureSpecs = new SwitcherSpecs(new SwitcherMixBlock[]
             {
                 SwitcherMixBlock.NewCutBus(),
                 SwitcherMixBlock.NewProgPrev()
             });
 
-            var model = Mock.Of<ISwitcherRunningFeature>(s => s.SwitcherSpecs == testSpecs);
-            var vm = CreateWithCustomModel(model);
+            var vm = Create();
 
             Assert.AreEqual(2, vm.MixBlocks.Count);
-            Assert.AreEqual(testSpecs.MixBlocks[0], vm.MixBlocks[0].BaseBlock);
-            Assert.AreEqual(testSpecs.MixBlocks[1], vm.MixBlocks[1].BaseBlock);
-            Assert.AreEqual(vm, vm.MixBlocks[0].Parent);
+            _mocks.ServiceSource.Verify(m => m.GetVM<ISwitcherMixBlockVM>(new(_featureSpecs.MixBlocks[0], vm)), Times.Once);
+            _mocks.ServiceSource.Verify(m => m.GetVM<ISwitcherMixBlockVM>(new(_featureSpecs.MixBlocks[1], vm)), Times.Once);
+
+            Assert.AreEqual(_mocks.MixBlocks[0].Object, vm.MixBlocks[0]);
+            Assert.AreEqual(_mocks.MixBlocks[1].Object, vm.MixBlocks[1]);
+        }
+
+        [TestMethod]
+        public void Ctor_SetsCallback()
+        {
+
         }
 
         [TestMethod]
         public void ContentView()
         {
-            var vm = CreateDefault();
+            var vm = Create();
             Assert.AreEqual(FeatureViewType.Switcher, vm.ContentView);
         }
     }

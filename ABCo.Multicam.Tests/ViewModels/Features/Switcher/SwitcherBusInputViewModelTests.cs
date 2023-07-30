@@ -15,45 +15,50 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
     [TestClass]
     public class SwitcherBusInputViewModelTests
     {
-        public SwitcherBusInputViewModel CreateDefault() => new SwitcherBusInputViewModel(new SwitcherBusInput(), false, Mock.Of<IServiceSource>(), Mock.Of<ISwitcherMixBlockViewModel>());
-        public SwitcherBusInputViewModel CreateWithModel(SwitcherBusInput input, bool isProgram) =>
-            new SwitcherBusInputViewModel(input, isProgram, Mock.Of<IServiceSource>(), Mock.Of<ISwitcherMixBlockViewModel>());
-        public SwitcherBusInputViewModel CreateWithParent(SwitcherBusInput input, bool isProgram, ISwitcherMixBlockViewModel parent) => 
-            new SwitcherBusInputViewModel(input, isProgram, Mock.Of<IServiceSource>(), parent);
+        public record struct Mocks(Mock<ISwitcherMixBlockVM> Parent, Mock<IServiceSource> ServiceSource);
 
-        [TestMethod]
-        public void Ctor_ThrowsWithNoServiceSource() => Assert.ThrowsException<ServiceSourceNotGivenException>(() => new SwitcherBusInputViewModel(new SwitcherBusInput(), false, null!, Mock.Of<ISwitcherMixBlockViewModel>()));
+        SwitcherBusInput _model = new SwitcherBusInput(1, "Cam1");
+        Mocks _mocks = new();
+
+        [TestInitialize]
+        public void InitMocks()
+        {
+            _mocks.Parent = new Mock<ISwitcherMixBlockVM>();
+            _mocks.ServiceSource = new Mock<IServiceSource>();
+        }
+
+        public SwitcherBusInputViewModel Create(bool isProgram) => isProgram ? CreateProgram() : CreatePreview();
+        public SwitcherProgramInputViewModel CreateProgram() => new(new(_model, _mocks.Parent.Object), _mocks.ServiceSource.Object);
+        public SwitcherPreviewInputViewModel CreatePreview() => new(new(_model, _mocks.Parent.Object), _mocks.ServiceSource.Object);
 
         [TestMethod]
         public void Ctor_Program()
         {
-            var parent = Mock.Of<ISwitcherMixBlockViewModel>();
-            var baseModel = new SwitcherBusInput(1, "abc");
-            var vm = CreateWithParent(baseModel, true, parent);
+            var vm = CreateProgram();
 
-            Assert.AreEqual(parent, vm.Parent);
+            Assert.AreEqual(_mocks.Parent.Object, vm.Parent);
             Assert.IsTrue(vm.IsProgram);
-            Assert.AreEqual(baseModel, vm.Base);
+            Assert.AreEqual(_model, vm.Base);
             Assert.AreEqual(SwitcherButtonStatus.NeutralInactive, vm.Status);
         }
 
         [TestMethod]
         public void Ctor_Preview()
         {
-            var parent = Mock.Of<ISwitcherMixBlockViewModel>();
-            var baseModel = new SwitcherBusInput(4, "def");
-            var vm = CreateWithParent(baseModel, false, parent);
+            var vm = CreatePreview();
 
-            Assert.AreEqual(parent, vm.Parent);
+            Assert.AreEqual(_mocks.Parent.Object, vm.Parent);
             Assert.IsFalse(vm.IsProgram);
+            Assert.AreEqual(_model, vm.Base);
             Assert.AreEqual(SwitcherButtonStatus.NeutralInactive, vm.Status);
-            Assert.AreEqual(baseModel, vm.Base);            
         }
 
         [TestMethod]
-        public void Text()
+        [DataRow(false)]
+        [DataRow(true)]
+        public void Text(bool program)
         {
-            var vm = CreateWithModel(new SwitcherBusInput(1, "Cam1"), true);
+            var vm = Create(program);
             Assert.AreEqual("Cam1", vm.Text);
         }
     }

@@ -12,42 +12,48 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
-    public interface ISwitcherMixBlockViewModel { }
-    public partial class SwitcherMixBlockViewModel : ViewModelBase, ISwitcherMixBlockViewModel
+    public interface ISwitcherMixBlockVM 
+    {
+        
+    }
+
+    public partial class SwitcherMixBlockViewModel : ViewModelBase, ISwitcherMixBlockVM
     {
         public readonly SwitcherMixBlock BaseBlock;
-        public readonly ISwitcherFeatureViewModel Parent;
+        public readonly ISwitcherFeatureVM Parent;
 
         public bool ShowPreview => BaseBlock.NativeType == SwitcherMixBlockType.ProgramPreview;
         public string MainLabel => BaseBlock.NativeType == SwitcherMixBlockType.CutBus ? "Cut Bus" : "Program";
 
-        [ObservableProperty] ObservableCollection<SwitcherBusInputViewModel> _programBus;
-        [ObservableProperty] ObservableCollection<SwitcherBusInputViewModel> _previewBus;
+        [ObservableProperty] ObservableCollection<ISwitcherProgramInputViewModel> _programBus;
+        [ObservableProperty] ObservableCollection<ISwitcherPreviewInputViewModel> _previewBus;
 
-        [ObservableProperty] SwitcherActButtonViewModel _cutButton;
-        [ObservableProperty] SwitcherActButtonViewModel _autoButton;
+        [ObservableProperty] ISwitcherCutButtonViewModel _cutButton;
+        [ObservableProperty] ISwitcherAutoButtonViewModel _autoButton;
 
-        public SwitcherMixBlockViewModel(SwitcherMixBlock model, IServiceSource source, ISwitcherFeatureViewModel parent)
+        public SwitcherMixBlockViewModel(NewViewModelInfo info, IServiceSource source)
         {
             if (source == null) throw new ServiceSourceNotGivenException();
 
-            Parent = parent;
+            var model = (SwitcherMixBlock)info.Model!;
+
+            Parent = (ISwitcherFeatureVM)info.Parent;
             BaseBlock = model;
 
-            _programBus = new ObservableCollection<SwitcherBusInputViewModel>();
-            _previewBus = new ObservableCollection<SwitcherBusInputViewModel>();
+            _programBus = new();
+            _previewBus = new();
 
             // Add program bus inputs
             for (int i = 0; i < model.ProgramInputs.Count; i++)
-                _programBus.Add(new SwitcherBusInputViewModel(model.ProgramInputs[i], true, source, this));
+                _programBus.Add(source.GetVM<ISwitcherProgramInputViewModel>(new(model.ProgramInputs[i], this)));
 
             // Add preview bus inputs
             if (model.PreviewInputs != null)
                 for (int i = 0; i < model.PreviewInputs.Count; i++)
-                    _previewBus.Add(new SwitcherBusInputViewModel(model.PreviewInputs[i], false, source, this));
+                    _previewBus.Add(source.GetVM<ISwitcherPreviewInputViewModel>(new(model.PreviewInputs[i], this)));
 
-            _cutButton = new SwitcherActButtonViewModel(SwitcherActButtonViewModel.Type.Cut, source, this);
-            _autoButton = new SwitcherActButtonViewModel(SwitcherActButtonViewModel.Type.Auto, source, this);
+            _cutButton = source.GetVM<ISwitcherCutButtonViewModel>(new(null, this));
+            _autoButton = source.GetVM<ISwitcherAutoButtonViewModel>(new(null, this));
         }
     }
 }
