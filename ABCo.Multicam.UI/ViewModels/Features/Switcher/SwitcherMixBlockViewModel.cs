@@ -14,7 +14,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
     public interface ISwitcherMixBlockVM 
     {
-        
+        void UpdateValue(int program, int preview);
     }
 
     public partial class SwitcherMixBlockViewModel : ViewModelBase, ISwitcherMixBlockVM
@@ -54,6 +54,14 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 
             _cutButton = source.GetVM<ISwitcherCutButtonViewModel>(new(null, this));
             _autoButton = source.GetVM<ISwitcherAutoButtonViewModel>(new(null, this));
+        }
+
+        public void UpdateValue(int program, int preview) 
+        {
+            for (int i = 0; i < ProgramBus.Count; i++)
+                ProgramBus[i].SetHighlight(ProgramBus[i].Base.Id == program);
+            for (int i = 0; i < PreviewBus.Count; i++)
+                PreviewBus[i].SetHighlight(PreviewBus[i].Base.Id == preview);
         }
     }
 }

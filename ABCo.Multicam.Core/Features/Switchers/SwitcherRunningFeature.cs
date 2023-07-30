@@ -11,6 +11,8 @@ namespace ABCo.Multicam.Core.Features.Switchers
     public interface ISwitcherRunningFeature : IRunningFeature
     {
         SwitcherSpecs SwitcherSpecs { get; }
+        void SetOnBusChangeForVM(Action? callback);
+        int GetValue(int mixBlock, int bus);
     }
 
     public class SwitcherRunningFeature : ISwitcherRunningFeature

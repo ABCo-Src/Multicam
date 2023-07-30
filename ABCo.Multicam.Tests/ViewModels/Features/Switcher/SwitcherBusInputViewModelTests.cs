@@ -61,5 +61,41 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
             var vm = Create(program);
             Assert.AreEqual("Cam1", vm.Text);
         }
+
+        [TestMethod]
+        public void Preview_Highlight_True()
+        {
+            var vm = CreatePreview();
+            vm.SetHighlight(false);
+            vm.SetHighlight(true);
+            Assert.AreEqual(SwitcherButtonStatus.PreviewActive, vm.Status);
+        }
+
+        [TestMethod]
+        public void Preview_Highlight_False()
+        {
+            var vm = CreatePreview();
+            vm.SetHighlight(true);
+            vm.SetHighlight(false);
+            Assert.AreEqual(SwitcherButtonStatus.NeutralInactive, vm.Status);
+        }
+
+        [TestMethod]
+        public void Program_Highlight_True()
+        {
+            var vm = CreateProgram();
+            vm.SetHighlight(false);
+            vm.SetHighlight(true);
+            Assert.AreEqual(SwitcherButtonStatus.ProgramActive, vm.Status);
+        }
+
+        [TestMethod]
+        public void Program_Highlight_False()
+        {
+            var vm = CreateProgram();
+            vm.SetHighlight(true);
+            vm.SetHighlight(false);
+            Assert.AreEqual(SwitcherButtonStatus.NeutralInactive, vm.Status);
+        }
     }
 }

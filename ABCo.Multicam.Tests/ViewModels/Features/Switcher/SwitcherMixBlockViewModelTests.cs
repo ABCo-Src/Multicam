@@ -21,8 +21,9 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
             Mock<ISwitcherFeatureVM> Parent,
             Mock<ISwitcherCutButtonViewModel> Cut,
             Mock<ISwitcherAutoButtonViewModel> Auto,
-            Mock<ISwitcherProgramInputViewModel>[] ProgInputs, 
-            Mock<ISwitcherPreviewInputViewModel>[] PrevInputs
+            Mock<ISwitcherProgramInputViewModel>[] ProgInputs,
+            Mock<ISwitcherPreviewInputViewModel>[] PrevInputs,
+            SwitcherBusInput[] ModelInputs
             );
 
         int _progInputPos = 0;
@@ -38,8 +39,10 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
             _model = new();
 
             _mocks.Parent = new Mock<ISwitcherFeatureVM>();
-            _mocks.ProgInputs = new Mock<ISwitcherProgramInputViewModel>[] { new(), new(), new(), new() };
-            _mocks.PrevInputs = new Mock<ISwitcherPreviewInputViewModel>[] { new(), new(), new(), new() };
+
+            _mocks.ModelInputs = new SwitcherBusInput[] { new(2, "abc"), new(3, "ghi"), new(5, "def"), new(4, "kl") };
+            _mocks.ProgInputs = NewInputs<ISwitcherProgramInputViewModel>();
+            _mocks.PrevInputs = NewInputs<ISwitcherPreviewInputViewModel>();
             _mocks.Cut = new Mock<ISwitcherCutButtonViewModel>();
             _mocks.Auto = new Mock<ISwitcherAutoButtonViewModel>();
 
@@ -48,6 +51,18 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
             _mocks.ServiceSource.Setup(m => m.GetVM<ISwitcherPreviewInputViewModel>(It.IsAny<NewViewModelInfo>())).Returns(() => _mocks.PrevInputs[_prevInputPos++].Object);
             _mocks.ServiceSource.Setup(m => m.GetVM<ISwitcherCutButtonViewModel>(It.IsAny<NewViewModelInfo>())).Returns(() => _mocks.Cut.Object);
             _mocks.ServiceSource.Setup(m => m.GetVM<ISwitcherAutoButtonViewModel>(It.IsAny<NewViewModelInfo>())).Returns(() => _mocks.Auto.Object);
+
+            Mock<T>[] NewInputs<T>() where T : class, ISwitcherBusInputViewModel
+            {
+                var res = new Mock<T>[4];
+                for (int i = 0; i < 4; i++)
+                {
+                    var mock = new Mock<T>();
+                    mock.SetupGet(m => m.Base).Returns(_mocks.ModelInputs[i]);
+                    res[i] = mock;
+                }
+                return res;
+            }
         }
 
         SwitcherMixBlockViewModel Create() => new(new(_model, _mocks.Parent.Object), _mocks.ServiceSource.Object);
@@ -136,6 +151,46 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
         {
             _model = SwitcherMixBlock.NewCutBus();
             Assert.IsFalse(Create().ShowPreview);
+        }
+
+        [TestMethod]
+        public void UpdateValue_ProgPrev()
+        {
+            _model = SwitcherMixBlock.NewProgPrevSameInputs(_mocks.ModelInputs);
+            var vm = Create();
+            vm.UpdateValue(3, 4);
+
+            _mocks.ProgInputs[0].Verify(m => m.SetHighlight(false), Times.Once);
+            _mocks.ProgInputs[1].Verify(m => m.SetHighlight(false), Times.Never);
+            _mocks.ProgInputs[1].Verify(m => m.SetHighlight(true), Times.Once);
+            _mocks.ProgInputs[2].Verify(m => m.SetHighlight(false), Times.Once);
+            _mocks.ProgInputs[3].Verify(m => m.SetHighlight(false), Times.Once);
+
+            _mocks.PrevInputs[0].Verify(m => m.SetHighlight(false), Times.Once);
+            _mocks.PrevInputs[1].Verify(m => m.SetHighlight(false), Times.Once);
+            _mocks.PrevInputs[2].Verify(m => m.SetHighlight(false), Times.Once);
+            _mocks.PrevInputs[3].Verify(m => m.SetHighlight(false), Times.Never);
+            _mocks.PrevInputs[3].Verify(m => m.SetHighlight(true), Times.Once);
+        }
+
+        [TestMethod]
+        public void UpdateValue_CutBus()
+        {
+            _model = SwitcherMixBlock.NewCutBus(_mocks.ModelInputs);
+            var vm = Create();
+            vm.UpdateValue(3, 4);
+
+            _mocks.ProgInputs[0].Verify(m => m.SetHighlight(false), Times.Once);
+            _mocks.ProgInputs[1].Verify(m => m.SetHighlight(false), Times.Never);
+            _mocks.ProgInputs[1].Verify(m => m.SetHighlight(true), Times.Once);
+            _mocks.ProgInputs[2].Verify(m => m.SetHighlight(false), Times.Once);
+            _mocks.ProgInputs[3].Verify(m => m.SetHighlight(false), Times.Once);
+
+            _mocks.PrevInputs[0].Verify(m => m.SetHighlight(false), Times.Never);
+            _mocks.PrevInputs[1].Verify(m => m.SetHighlight(false), Times.Never);
+            _mocks.PrevInputs[2].Verify(m => m.SetHighlight(false), Times.Never);
+            _mocks.PrevInputs[3].Verify(m => m.SetHighlight(false), Times.Never);
+            _mocks.PrevInputs[3].Verify(m => m.SetHighlight(true), Times.Never);
         }
     }
 }

@@ -22,17 +22,28 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
         public SwitcherFeatureViewModel(NewViewModelInfo info, IServiceSource serviceSource) : base(serviceSource, (IProjectFeaturesViewModel)info.Parent)
         {
             _model = (ISwitcherRunningFeature)info.Model!;
+            _model.SetOnBusChangeForVM(OnBusChange);
 
             var targetSpecs = _model.SwitcherSpecs;
             _mixBlocks = new ObservableCollection<ISwitcherMixBlockVM>();
 
             for (int i = 0; i < targetSpecs.MixBlocks.Count; i++)
-                _mixBlocks.Add(serviceSource.GetVM<ISwitcherMixBlockVM>(new(targetSpecs.MixBlocks[i], this)));
+            {
+                var newVM = serviceSource.GetVM<ISwitcherMixBlockVM>(new(targetSpecs.MixBlocks[i], this));
+                _mixBlocks.Add(newVM);
+                newVM.UpdateValue(_model.GetValue(i, 0), _model.GetValue(i, 1));
+            }
         }
 
         public override IRunningFeature BaseFeature => _model;
         public override FeatureViewType ContentView => FeatureViewType.Switcher;
 
         [ObservableProperty] ObservableCollection<ISwitcherMixBlockVM> _mixBlocks;
+
+        public void OnBusChange()
+        {
+            for (int i = 0; i < MixBlocks.Count; i++)
+                MixBlocks[i].UpdateValue(_model.GetValue(i, 0), _model.GetValue(i, 1));
+        }
     }
 }

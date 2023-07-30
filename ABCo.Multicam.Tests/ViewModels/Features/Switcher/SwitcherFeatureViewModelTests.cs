@@ -23,6 +23,7 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
             Mock<ISwitcherMixBlockVM> SecondMixBlockMock,
             Mock<IServiceSource> ServiceSource);
 
+        Action _onBusChangeCallback = () => { };
         int _currentMixBlockVM = 0;
         SwitcherSpecs _featureSpecs = new();
         Mocks _mocks = new();
@@ -30,8 +31,20 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
         [TestInitialize]
         public void MakeMocks()
         {
+            _currentMixBlockVM = 0;
+            _featureSpecs = new SwitcherSpecs(new SwitcherMixBlock[]
+            {
+                SwitcherMixBlock.NewCutBus(),
+                SwitcherMixBlock.NewProgPrev()
+            });
+
             _mocks.Feature = new Mock<ISwitcherRunningFeature>();
             _mocks.Feature.Setup(s => s.SwitcherSpecs).Returns(() => _featureSpecs);
+            _mocks.Feature.Setup(f => f.SetOnBusChangeForVM(It.IsAny<Action>())).Callback<Action>(v => _onBusChangeCallback = v);
+            _mocks.Feature.Setup(f => f.GetValue(0, 0)).Returns(1);
+            _mocks.Feature.Setup(f => f.GetValue(0, 1)).Returns(2);
+            _mocks.Feature.Setup(f => f.GetValue(1, 0)).Returns(3);
+            _mocks.Feature.Setup(f => f.GetValue(1, 1)).Returns(4);
             _mocks.Parent = new Mock<IProjectFeaturesViewModel>();
             _mocks.MixBlocks = new Mock<ISwitcherMixBlockVM>[] { new(), new() };
             _mocks.ServiceSource = new Mock<IServiceSource>();
@@ -54,12 +67,6 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
         [TestMethod]
         public void Ctor_SetsVMToMatchSpecs()
         {
-            _featureSpecs = new SwitcherSpecs(new SwitcherMixBlock[]
-            {
-                SwitcherMixBlock.NewCutBus(),
-                SwitcherMixBlock.NewProgPrev()
-            });
-
             var vm = Create();
 
             Assert.AreEqual(2, vm.MixBlocks.Count);
@@ -71,9 +78,26 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
         }
 
         [TestMethod]
-        public void Ctor_SetsCallback()
+        public void Ctor_UpdatesMixBlocks()
         {
+            var vm = Create();
+            _mocks.MixBlocks[0].Verify(m => m.UpdateValue(1, 2));
+            _mocks.MixBlocks[1].Verify(m => m.UpdateValue(3, 4));
+        }
 
+        [TestMethod]
+        public void OnBusChange_UpdatesMixBlocks()
+        {
+            var vm = Create();
+
+            _mocks.Feature.Setup(f => f.GetValue(0, 0)).Returns(5);
+            _mocks.Feature.Setup(f => f.GetValue(0, 1)).Returns(6);
+            _mocks.Feature.Setup(f => f.GetValue(1, 0)).Returns(7);
+            _mocks.Feature.Setup(f => f.GetValue(1, 1)).Returns(8);
+            _onBusChangeCallback();
+
+            _mocks.MixBlocks[0].Verify(m => m.UpdateValue(5, 6));
+            _mocks.MixBlocks[1].Verify(m => m.UpdateValue(7, 8));
         }
 
         [TestMethod]
