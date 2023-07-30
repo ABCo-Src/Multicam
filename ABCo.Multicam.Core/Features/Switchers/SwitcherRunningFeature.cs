@@ -38,7 +38,7 @@ namespace ABCo.Multicam.Core.Features.Switchers
         public SwitcherRunningFeature(IDummySwitcher dummySwitcher, ISwitcherInteractionBufferFactory bufferFactory)
         {
             _bufferFactory = bufferFactory;
-            _buffer = bufferFactory.CreateDummy(dummySwitcher);
+            _buffer = bufferFactory.CreateSync(dummySwitcher);
             _buffer.SetOnBusChangeFinishCall(OnBusChange);
         }
 
@@ -49,12 +49,9 @@ namespace ABCo.Multicam.Core.Features.Switchers
         {
             var oldBuffer = _buffer;
 
-            if (switcher is IDummySwitcher dummy)
-                _buffer = _bufferFactory.CreateDummy(dummy);
-            else
-                _buffer = await _bufferFactory.CreateRealAsync(switcher);
-
+            _buffer = await _bufferFactory.CreateAsync(switcher);
             _buffer.SetOnBusChangeFinishCall(OnBusChange);
+
             oldBuffer.Dispose();
         }
 

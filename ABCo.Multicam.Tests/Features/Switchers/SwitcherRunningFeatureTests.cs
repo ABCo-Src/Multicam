@@ -21,56 +21,54 @@ namespace ABCo.Multicam.Tests.Features.Switchers
     {
         public record struct Mocks(Mock<IDummySwitcher> InitialDummy, 
             Mock<ISwitcherInteractionBufferFactory> Factory, 
-            Mock<ISwitcherInteractionBuffer> FactoryDummyBuffer, 
-            SwitcherSpecs FactoryDummyBufferSpecs,
-            Mock<ISwitcherInteractionBuffer> FactoryRealBuffer,
-            SwitcherSpecs FactoryRealBufferSpecs,
+            Mock<ISwitcherInteractionBuffer>[] Buffers,
+            SwitcherSpecs[] BufferSpecs,
             Mock<ISwitcher> NewISwitcher,
             Mock<IDummySwitcher> NewIDummySwitcher);
 
-        Action<RetrospectiveFadeInfo?> _factoryDummyBufferCallback = i => { };
-        Action<RetrospectiveFadeInfo?> _factoryRealBufferCallback = i => { };
+        Action<RetrospectiveFadeInfo?>[] _bufferCallbacks = Array.Empty<Action<RetrospectiveFadeInfo?>>();
         Mocks _mocks = new();
 
         [TestInitialize]
         public void MakeMocks()
         {
-            _mocks.InitialDummy = new Mock<IDummySwitcher>();
-            _mocks.NewISwitcher = new Mock<ISwitcher>();
-            _mocks.NewIDummySwitcher = new Mock<IDummySwitcher>();
+            _mocks.InitialDummy = new();
+            _mocks.NewISwitcher = new();
+            _mocks.NewIDummySwitcher = new();
 
-            _mocks.FactoryDummyBufferSpecs = new SwitcherSpecs();
-            _mocks.FactoryDummyBuffer = new Mock<ISwitcherInteractionBuffer>();
-            _mocks.FactoryDummyBuffer.SetupGet(m => m.Specs).Returns(_mocks.FactoryDummyBufferSpecs);
-            _mocks.FactoryDummyBuffer.SetupGet(m => m.IsConnected).Returns(true);
-            _mocks.FactoryDummyBuffer.Setup(m => m.SetOnBusChangeFinishCall(It.IsAny<Action<RetrospectiveFadeInfo?>>())).Callback<Action<RetrospectiveFadeInfo?>>(a => _factoryDummyBufferCallback = a);
+            _bufferCallbacks = new Action<RetrospectiveFadeInfo?>[] { i => { }, i => { } };
+            _mocks.BufferSpecs = new SwitcherSpecs[] { new(), new() };
+            _mocks.Buffers = new Mock<ISwitcherInteractionBuffer>[] { CreateBufferMock(0), CreateBufferMock(1) };
 
-            _mocks.FactoryRealBufferSpecs = new SwitcherSpecs();
-            _mocks.FactoryRealBuffer = new Mock<ISwitcherInteractionBuffer>();
-            _mocks.FactoryRealBuffer.SetupGet(m => m.Specs).Returns(_mocks.FactoryRealBufferSpecs);
-            _mocks.FactoryRealBuffer.Setup(m => m.SetOnBusChangeFinishCall(It.IsAny<Action<RetrospectiveFadeInfo?>>())).Callback<Action<RetrospectiveFadeInfo?>>(a => _factoryRealBufferCallback = a);
+            int currentBufferAccessIdx = 0;
+            _mocks.Factory = new();
+            _mocks.Factory.Setup(m => m.CreateSync(It.IsAny<ISwitcher>())).Returns(() => _mocks.Buffers[currentBufferAccessIdx++].Object);
+            _mocks.Factory.Setup(m => m.CreateAsync(It.IsAny<ISwitcher>())).ReturnsAsync(() => _mocks.Buffers[currentBufferAccessIdx++].Object);
 
-            _mocks.Factory = New<ISwitcherInteractionBufferFactory>(m =>
-                m.CreateDummy(It.IsAny<IDummySwitcher>()) == _mocks.FactoryDummyBuffer.Object && 
-                m.CreateRealAsync(It.IsAny<ISwitcher>()) == Task.FromResult(_mocks.FactoryRealBuffer.Object));
-
-            Mock<T> New<T>(Expression<Func<T, bool>> expr) where T : class => Mock.Get(Mock.Of(expr));
+            Mock<ISwitcherInteractionBuffer> CreateBufferMock(int idx)
+            {
+                var newMock = new Mock<ISwitcherInteractionBuffer>();
+                newMock.SetupGet(m => m.Specs).Returns(_mocks.BufferSpecs[idx]);
+                newMock.SetupGet(m => m.IsConnected).Returns(true);
+                newMock.Setup(m => m.SetOnBusChangeFinishCall(It.IsAny<Action<RetrospectiveFadeInfo?>>())).Callback<Action<RetrospectiveFadeInfo?>>(a => _bufferCallbacks[idx] = a);
+                return newMock;
+            }
         }
 
         public SwitcherRunningFeature Create() => new(_mocks.InitialDummy.Object, _mocks.Factory.Object);
 
         [TestMethod]
-        public void Ctor_NewDummyBuffer()
+        public void Ctor_CreatesSyncBuffer()
         {
             Create();
-            _mocks.Factory.Verify(m => m.CreateDummy(_mocks.InitialDummy.Object), Times.Once);
+            _mocks.Factory.Verify(m => m.CreateSync(_mocks.InitialDummy.Object), Times.Once);
         }
 
         [TestMethod]
-        public void GetValue_Dummy()
+        public void GetValue()
         {
             Create().GetValue(3, 8);
-            _mocks.FactoryDummyBuffer.Verify(m => m.GetValue(3, 8), Times.Once);
+            _mocks.Buffers[0].Verify(m => m.GetValue(3, 8), Times.Once);
         }
 
         [TestMethod]
@@ -79,7 +77,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers
             var feature = Create();
             await feature.ChangeSwitcherAsync(_mocks.NewISwitcher.Object);
             feature.GetValue(3, 7);
-            _mocks.FactoryRealBuffer.Verify(m => m.GetValue(3, 7), Times.Once);
+            _mocks.Buffers[1].Verify(m => m.GetValue(3, 7), Times.Once);
         }
 
         [TestMethod]
@@ -87,7 +85,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         {
             var feature = Create();
             feature.PostValue(3, 7, 34);
-            _mocks.FactoryDummyBuffer.Verify(m => m.PostValue(3, 7, 34), Times.Once);
+            _mocks.Buffers[0].Verify(m => m.PostValue(3, 7, 34), Times.Once);
         }
 
         [TestMethod]
@@ -98,15 +96,15 @@ namespace ABCo.Multicam.Tests.Features.Switchers
 
             feature.PostValue(3, 7, 34);
 
-            _mocks.FactoryRealBuffer.Verify(m => m.PostValue(3, 7, 34), Times.Once);
+            _mocks.Buffers[1].Verify(m => m.PostValue(3, 7, 34), Times.Once);
         }
 
         [TestMethod]
         public void SwitcherSpecs()
         {
             var feature = Create();
-            Assert.AreEqual(_mocks.FactoryDummyBufferSpecs, feature.SwitcherSpecs);
-            _mocks.FactoryDummyBuffer.VerifyGet(m => m.Specs, Times.Once);
+            Assert.AreEqual(_mocks.BufferSpecs[0], feature.SwitcherSpecs);
+            _mocks.Buffers[0].VerifyGet(m => m.Specs, Times.Once);
         }
 
         [TestMethod]
@@ -114,23 +112,15 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         {
             var feature = Create();
             Assert.IsTrue(feature.IsConnected);
-            _mocks.FactoryDummyBuffer.VerifyGet(m => m.IsConnected, Times.Once);
+            _mocks.Buffers[0].VerifyGet(m => m.IsConnected, Times.Once);
         }
 
         [TestMethod]
-        public async Task ChangeSwitcher_Real_GetsRealBuffer()
+        public async Task ChangeSwitcher_GetsNewBuffer()
         {
             var feature = Create();
             await feature.ChangeSwitcherAsync(_mocks.NewISwitcher.Object);
-            _mocks.Factory.Verify(m => m.CreateRealAsync(_mocks.NewISwitcher.Object), Times.Once);
-        }
-
-        [TestMethod]
-        public async Task ChangeSwitcher_Dummy_GetsDummyBuffer()
-        {
-            var feature = Create();
-            await feature.ChangeSwitcherAsync(_mocks.NewIDummySwitcher.Object);
-            _mocks.Factory.Verify(m => m.CreateDummy(_mocks.NewIDummySwitcher.Object), Times.Once);
+            _mocks.Factory.Verify(m => m.CreateAsync(_mocks.NewISwitcher.Object), Times.Once);
         }
 
         [TestMethod]
@@ -138,16 +128,16 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         {
             var feature = Create();
             await feature.ChangeSwitcherAsync(_mocks.NewISwitcher.Object);
-            _mocks.FactoryDummyBuffer.Verify(m => m.Dispose(), Times.Once);
+            _mocks.Buffers[0].Verify(m => m.Dispose(), Times.Once);
         }
 
         [TestMethod]
         public async Task ChangeSwitcher_OldNotDisposedDuringAwaits()
         {
-            _mocks.Factory.Setup(m => m.CreateRealAsync(It.IsAny<ISwitcher>())).ReturnsAsync(() =>
+            _mocks.Factory.Setup(m => m.CreateAsync(It.IsAny<ISwitcher>())).ReturnsAsync(() =>
             {
-                _mocks.FactoryDummyBuffer.Verify(m => m.Dispose(), Times.Never);
-                return _mocks.FactoryRealBuffer.Object;
+                _mocks.Buffers[0].Verify(m => m.Dispose(), Times.Never);
+                return _mocks.Buffers[1].Object;
             });
 
             var feature = Create();
@@ -155,9 +145,12 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         }
 
         [TestMethod]
-        public void OnBusChange_Dummy_TriggersVM()
+        [DataRow(false)]
+        [DataRow(true)]
+        public async Task OnBusChange_TriggersVM(bool postChange)
         {
             var feature = Create();
+            if (postChange) await feature.ChangeSwitcherAsync(_mocks.NewISwitcher.Object);
 
             bool ran = false;
             feature.SetOnBusChangeFinishForVM(i =>
@@ -166,24 +159,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers
                 ran = true;
             });
 
-            _factoryDummyBufferCallback(new RetrospectiveFadeInfo());
-            Assert.IsTrue(ran);
-        }
-
-        [TestMethod]
-        public async Task OnBusChange_Real_TriggersVM()
-        {
-            var feature = Create();
-            await feature.ChangeSwitcherAsync(_mocks.NewISwitcher.Object);
-
-            bool ran = false;
-            feature.SetOnBusChangeFinishForVM(i =>
-            {
-                Assert.AreEqual(new RetrospectiveFadeInfo(), i);
-                ran = true;
-            });
-
-            _factoryRealBufferCallback(new RetrospectiveFadeInfo());
+            _bufferCallbacks[postChange ? 1 : 0].Invoke(new RetrospectiveFadeInfo());
             Assert.IsTrue(ran);
         }
 
@@ -193,16 +169,15 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         public void Cut(int mixBlock)
         {
             Create().Cut(mixBlock);
-            _mocks.FactoryDummyBuffer.Verify(m => m.Cut(mixBlock));
+            _mocks.Buffers[0].Verify(m => m.Cut(mixBlock));
         }
 
         // TODO: Add test to verify that it also works when switcher is changed to dummy again?
-
         [TestMethod]
         public void Dispose()
         {
             Create().Dispose();
-            _mocks.FactoryDummyBuffer.Verify(m => m.Dispose(), Times.Once);
+            _mocks.Buffers[0].Verify(m => m.Dispose(), Times.Once);
         }
     }
 }

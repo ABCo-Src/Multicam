@@ -115,13 +115,13 @@ namespace ABCo.Multicam.Core.Features.Switchers
 
     public interface ISwitcherInteractionBufferFactory
     {
-        Task<ISwitcherInteractionBuffer> CreateRealAsync(ISwitcher switcher);
-        ISwitcherInteractionBuffer CreateDummy(IDummySwitcher switcher);
+        ISwitcherInteractionBuffer CreateSync(ISwitcher switcher);
+        Task<ISwitcherInteractionBuffer> CreateAsync(ISwitcher switcher);
     }
 
     public class SwitcherInteractionBufferFactory : ISwitcherInteractionBufferFactory
     {
-        public ISwitcherInteractionBuffer CreateDummy(IDummySwitcher switcher) => new DummySwitcherInteractionBuffer(switcher);
-        public async Task<ISwitcherInteractionBuffer> CreateRealAsync(ISwitcher switcher) => await SwitcherInteractionBuffer.CreateAsync(switcher);
+        public ISwitcherInteractionBuffer CreateSync(ISwitcher switcher) => SwitcherInteractionBuffer.Create(switcher);
+        public async Task<ISwitcherInteractionBuffer> CreateAsync(ISwitcher switcher) => await SwitcherInteractionBuffer.CreateAsync(switcher);
     }
 }

@@ -18,8 +18,8 @@ namespace ABCo.Multicam.Core
 
             // Features
             container.RegisterSingleton<IFeatureManager, FeatureManager>();
-            container.RegisterSingleton<IUnsupportedRunningFeature, UnsupportedRunningFeature>();
-            container.RegisterSingleton<ISwitcherRunningFeature, SwitcherRunningFeature>();
+            container.RegisterTransient<IUnsupportedRunningFeature, UnsupportedRunningFeature>();
+            container.RegisterTransient<ISwitcherRunningFeature, SwitcherRunningFeature>();
 
             // Switcher
             container.RegisterTransient<IDummySwitcher, DummySwitcher>();
