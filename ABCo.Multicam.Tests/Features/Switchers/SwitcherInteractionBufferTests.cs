@@ -1,4 +1,5 @@
 ﻿using ABCo.Multicam.Core.Features.Switchers;
+using ABCo.Multicam.Core.Features.Switchers.Fading;
 using ABCo.Multicam.Core.Features.Switchers.Types;
 using Moq;
 using System;
@@ -24,7 +25,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers
             _mocks.Switcher = Mock.Get(Mock.Of<ISwitcher>());
             _mocks.Switcher.Setup(m => m.IsConnected).Returns(true);
             _mocks.Switcher.Setup(m => m.ReceiveSpecs()).Returns(() => _switcherSpecs);
-            _mocks.Switcher.Setup(m => m.SetOnBusChangeCallback(It.IsAny<Action<SwitcherBusChangeInfo>>())).Callback<Action<SwitcherBusChangeInfo>>(v => _switcherBusChangeCallback = v);
+            _mocks.Switcher.Setup(m => m.SetOnBusChangeFinishCall(It.IsAny<Action<SwitcherBusChangeInfo>>())).Callback<Action<SwitcherBusChangeInfo>>(v => _switcherBusChangeCallback = v);
             _mocks.Switcher.Setup(m => m.ReceiveValue(0, 0)).Returns(2);
             _mocks.Switcher.Setup(m => m.ReceiveValue(0, 1)).Returns(4);
             _mocks.Switcher.Setup(m => m.ReceiveValue(1, 0)).Returns(6);
@@ -206,7 +207,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         {
             _switcherSpecs = new(SwitcherMixBlock.NewCutBus(new(1, ""), new(2, "")), SwitcherMixBlock.NewProgPrevSameInputs(new(1, ""), new(8, "")));
             var feature = await Create();
-            _switcherBusChangeCallback(new SwitcherBusChangeInfo(true, 1, 0, 13));
+            _switcherBusChangeCallback(new SwitcherBusChangeInfo(true, 1, 0, 13, null));
 
             Assert.AreEqual(2, feature.GetValue(0, 0));
             Assert.AreEqual(1, feature.GetValue(0, 1));
@@ -219,7 +220,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         {
             _switcherSpecs = new(SwitcherMixBlock.NewCutBus(new(1, ""), new(2, "")), SwitcherMixBlock.NewProgPrevSameInputs(new(8, ""), new(13, "")));
             var feature = await Create();
-            _switcherBusChangeCallback(new SwitcherBusChangeInfo(true, 1, 1, 13));
+            _switcherBusChangeCallback(new SwitcherBusChangeInfo(true, 1, 1, 13, null));
 
             Assert.AreEqual(2, feature.GetValue(0, 0));
             Assert.AreEqual(1, feature.GetValue(0, 1));
@@ -234,7 +235,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers
             var feature = await Create();
             _mocks.Switcher.Setup(m => m.ReceiveValue(0, 0)).Returns(1);
 
-            _switcherBusChangeCallback(new SwitcherBusChangeInfo(false, 0, 0, 0));
+            _switcherBusChangeCallback(new SwitcherBusChangeInfo(false, 0, 0, 0, null));
 
             Assert.AreEqual(1, feature.GetValue(0, 0));
             Assert.AreEqual(1, feature.GetValue(0, 1));
@@ -249,7 +250,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers
             var feature = await Create();
             _mocks.Switcher.Setup(m => m.ReceiveValue(1, 1)).Returns(1);
 
-            _switcherBusChangeCallback(new SwitcherBusChangeInfo(false, 0, 0, 0));
+            _switcherBusChangeCallback(new SwitcherBusChangeInfo(false, 0, 0, 0, null));
 
             Assert.AreEqual(2, feature.GetValue(0, 0));
             Assert.AreEqual(1, feature.GetValue(0, 1));
@@ -268,9 +269,13 @@ namespace ABCo.Multicam.Tests.Features.Switchers
             var feature = await Create();
 
             bool ran = false;
-            feature.SetOnBusChangeCallback(() => ran = true);
+            feature.SetOnBusChangeFinishCall(i => 
+            {
+                Assert.AreEqual(new RetrospectiveFadeInfo(), i);
+                ran = true;
+            });
 
-            _switcherBusChangeCallback(new SwitcherBusChangeInfo(isKnown, mixBlock, bus, 0));
+            _switcherBusChangeCallback(new SwitcherBusChangeInfo(isKnown, mixBlock, bus, 0, new RetrospectiveFadeInfo()));
 
             Assert.IsTrue(ran);
         }

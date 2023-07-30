@@ -1,4 +1,5 @@
 ﻿using ABCo.Multicam.Core.Features.Switchers;
+using ABCo.Multicam.Core.Features.Switchers.Fading;
 using ABCo.Multicam.Core.Features.Switchers.Types;
 using ABCo.Multicam.Tests.Helpers;
 using Moq;
@@ -27,8 +28,8 @@ namespace ABCo.Multicam.Tests.Features.Switchers
             Mock<ISwitcher> NewISwitcher,
             Mock<IDummySwitcher> NewIDummySwitcher);
 
-        Action _factoryDummyBufferCallback = () => { };
-        Action _factoryRealBufferCallback = () => { };
+        Action<RetrospectiveFadeInfo?> _factoryDummyBufferCallback = i => { };
+        Action<RetrospectiveFadeInfo?> _factoryRealBufferCallback = i => { };
         Mocks _mocks = new();
 
         [TestInitialize]
@@ -42,12 +43,12 @@ namespace ABCo.Multicam.Tests.Features.Switchers
             _mocks.FactoryDummyBuffer = new Mock<ISwitcherInteractionBuffer>();
             _mocks.FactoryDummyBuffer.SetupGet(m => m.Specs).Returns(_mocks.FactoryDummyBufferSpecs);
             _mocks.FactoryDummyBuffer.SetupGet(m => m.IsConnected).Returns(true);
-            _mocks.FactoryDummyBuffer.Setup(m => m.SetOnBusChangeCallback(It.IsAny<Action>())).Callback<Action>(a => _factoryDummyBufferCallback = a);
+            _mocks.FactoryDummyBuffer.Setup(m => m.SetOnBusChangeFinishCall(It.IsAny<Action<RetrospectiveFadeInfo?>>())).Callback<Action<RetrospectiveFadeInfo?>>(a => _factoryDummyBufferCallback = a);
 
             _mocks.FactoryRealBufferSpecs = new SwitcherSpecs();
             _mocks.FactoryRealBuffer = new Mock<ISwitcherInteractionBuffer>();
             _mocks.FactoryRealBuffer.SetupGet(m => m.Specs).Returns(_mocks.FactoryRealBufferSpecs);
-            _mocks.FactoryRealBuffer.Setup(m => m.SetOnBusChangeCallback(It.IsAny<Action>())).Callback<Action>(a => _factoryRealBufferCallback = a);
+            _mocks.FactoryRealBuffer.Setup(m => m.SetOnBusChangeFinishCall(It.IsAny<Action<RetrospectiveFadeInfo?>>())).Callback<Action<RetrospectiveFadeInfo?>>(a => _factoryRealBufferCallback = a);
 
             _mocks.Factory = New<ISwitcherInteractionBufferFactory>(m =>
                 m.CreateDummy(It.IsAny<IDummySwitcher>()) == _mocks.FactoryDummyBuffer.Object && 
@@ -159,9 +160,13 @@ namespace ABCo.Multicam.Tests.Features.Switchers
             var feature = Create();
 
             bool ran = false;
-            feature.SetOnBusChangeForVM(() => ran = true);
+            feature.SetOnBusChangeFinishForVM(i =>
+            {
+                Assert.AreEqual(new RetrospectiveFadeInfo(), i);
+                ran = true;
+            });
 
-            _factoryDummyBufferCallback();
+            _factoryDummyBufferCallback(new RetrospectiveFadeInfo());
             Assert.IsTrue(ran);
         }
 
@@ -172,9 +177,13 @@ namespace ABCo.Multicam.Tests.Features.Switchers
             await feature.ChangeSwitcherAsync(_mocks.NewISwitcher.Object);
 
             bool ran = false;
-            feature.SetOnBusChangeForVM(() => ran = true);
+            feature.SetOnBusChangeFinishForVM(i =>
+            {
+                Assert.AreEqual(new RetrospectiveFadeInfo(), i);
+                ran = true;
+            });
 
-            _factoryRealBufferCallback();
+            _factoryRealBufferCallback(new RetrospectiveFadeInfo());
             Assert.IsTrue(ran);
         }
 

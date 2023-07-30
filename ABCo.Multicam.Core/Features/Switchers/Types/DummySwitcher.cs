@@ -16,7 +16,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types
     {
         SwitcherSpecs _specs;
         MixBlockState[] _states;
-        Action<SwitcherBusChangeInfo>? _busChangeCallback;
+        Action<SwitcherBusChangeInfo>? _busChangeFinishCallback;
 
         public DummySwitcher()
         {
@@ -87,7 +87,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types
             else
                 _states[mixBlock].Preview = newValue;
 
-            _busChangeCallback?.Invoke(new SwitcherBusChangeInfo(true, 1, 1, 4));
+            _busChangeFinishCallback?.Invoke(new SwitcherBusChangeInfo(true, 1, 1, 4, null));
         }
 
         void ValidateMixBlockAndBus(int mixBlock, int bus)
@@ -111,7 +111,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types
             return dummy;
         }
 
-        public void SetOnBusChangeCallback(Action<SwitcherBusChangeInfo>? callback) => _busChangeCallback = callback;
+        public void SetOnBusChangeFinishCall(Action<SwitcherBusChangeInfo>? callback) => _busChangeFinishCallback = callback;
 
         struct MixBlockState
         {

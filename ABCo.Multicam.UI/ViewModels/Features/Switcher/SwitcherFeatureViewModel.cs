@@ -1,6 +1,7 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features;
 using ABCo.Multicam.Core.Features.Switchers;
+using ABCo.Multicam.Core.Features.Switchers.Fading;
 using ABCo.Multicam.Core.Features.Switchers.Types;
 using ABCo.Multicam.UI.Enumerations;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher;
@@ -22,7 +23,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
         public SwitcherFeatureViewModel(NewViewModelInfo info, IServiceSource serviceSource) : base(serviceSource, (IProjectFeaturesViewModel)info.Parent)
         {
             _model = (ISwitcherRunningFeature)info.Model!;
-            _model.SetOnBusChangeForVM(OnBusChange);
+            _model.SetOnBusChangeFinishForVM(OnBusChangeFinish);
 
             var targetSpecs = _model.SwitcherSpecs;
             _mixBlocks = new ObservableCollection<ISwitcherMixBlockVM>();
@@ -40,7 +41,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 
         [ObservableProperty] ObservableCollection<ISwitcherMixBlockVM> _mixBlocks;
 
-        public void OnBusChange()
+        public void OnBusChangeFinish(RetrospectiveFadeInfo? info)
         {
             for (int i = 0; i < MixBlocks.Count; i++)
                 MixBlocks[i].UpdateValue(_model.GetValue(i, 0), _model.GetValue(i, 1));

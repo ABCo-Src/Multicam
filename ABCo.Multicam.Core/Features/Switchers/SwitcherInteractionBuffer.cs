@@ -1,4 +1,5 @@
-﻿using ABCo.Multicam.Core.Features.Switchers.Types;
+﻿using ABCo.Multicam.Core.Features.Switchers.Fading;
+using ABCo.Multicam.Core.Features.Switchers.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,14 +14,14 @@ namespace ABCo.Multicam.Core.Features.Switchers
         SwitcherSpecs Specs { get; }
         int GetValue(int mixBlock, int bus);
         void PostValue(int mixBlock, int bus, int value);
-        void SetOnBusChangeCallback(Action? callback);
+        void SetOnBusChangeFinishCall(Action<RetrospectiveFadeInfo?>? callback);
     }
 
     public class SwitcherInteractionBuffer : ISwitcherInteractionBuffer
     {
         readonly ISwitcher _rawSwitcher;
         readonly MixBlockStore[] _store;
-        Action? _onBusChangeCallback;
+        Action<RetrospectiveFadeInfo?>? _onBusChangeFinishCall;
 
         public bool IsConnected { get; private set; }
         public SwitcherSpecs Specs { get; private set; }
@@ -35,7 +36,7 @@ namespace ABCo.Multicam.Core.Features.Switchers
             {
                 var specs = switcher.ReceiveSpecs();
                 var newBuffer = new SwitcherInteractionBuffer(switcher, true, CreateStore(switcher, specs), specs);
-                switcher.SetOnBusChangeCallback(newBuffer.OnBusChange);
+                switcher.SetOnBusChangeFinishCall(newBuffer.OnBusChange);
                 return newBuffer;
             }
             else
@@ -101,10 +102,10 @@ namespace ABCo.Multicam.Core.Features.Switchers
                 }
             }
 
-            _onBusChangeCallback?.Invoke();
+            _onBusChangeFinishCall?.Invoke(info.FadeInfo);
         }
 
-        public void SetOnBusChangeCallback(Action? callback) => _onBusChangeCallback = callback;
+        public void SetOnBusChangeFinishCall(Action<RetrospectiveFadeInfo?>? callback) => _onBusChangeFinishCall = callback;
 
         record struct MixBlockStore(int Program, int Preview);
     }

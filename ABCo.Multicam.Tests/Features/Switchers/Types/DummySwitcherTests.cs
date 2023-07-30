@@ -240,7 +240,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
             var dummy = Create();
             dummy.UpdateSpecs(new DummyMixBlock[] { new(4, SwitcherMixBlockType.CutBus), new(4, SwitcherMixBlockType.ProgramPreview) });
 
-            dummy.SetOnBusChangeCallback(i => info = i);
+            dummy.SetOnBusChangeFinishCall(i => info = i);
             dummy.PostValue(1, 1, 4);
 
             Assert.IsNotNull(info);

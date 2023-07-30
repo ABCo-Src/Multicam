@@ -1,4 +1,5 @@
-﻿using ABCo.Multicam.Core.Features.Switchers.Types;
+﻿using ABCo.Multicam.Core.Features.Switchers.Fading;
+using ABCo.Multicam.Core.Features.Switchers.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,12 +11,12 @@ namespace ABCo.Multicam.Core.Features.Switchers
     public class DummySwitcherInteractionBuffer : ISwitcherInteractionBuffer
     {
         IDummySwitcher _switcher;
-        Action? _onBusChangeCallback;
+        Action<RetrospectiveFadeInfo?>? _onBusChangeCallback;
 
         public DummySwitcherInteractionBuffer(IDummySwitcher switcher)
         {
             _switcher = switcher;
-            switcher.SetOnBusChangeCallback(OnBusChange);
+            switcher.SetOnBusChangeFinishCall(OnBusChange);
         }
 
         public bool IsConnected => true;
@@ -24,8 +25,8 @@ namespace ABCo.Multicam.Core.Features.Switchers
         public void PostValue(int mixBlock, int bus, int value) => _switcher.PostValue(mixBlock, bus, value);
         public void Dispose() => _switcher.Dispose();
 
-        void OnBusChange(SwitcherBusChangeInfo info) => _onBusChangeCallback?.Invoke();
+        void OnBusChange(SwitcherBusChangeInfo info) => _onBusChangeCallback?.Invoke(info.FadeInfo);
 
-        public void SetOnBusChangeCallback(Action? callback) => _onBusChangeCallback = callback;
+        public void SetOnBusChangeFinishCall(Action<RetrospectiveFadeInfo?>? callback) => _onBusChangeCallback = callback;
     }
 }

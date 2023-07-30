@@ -1,4 +1,5 @@
 ﻿using ABCo.Multicam.Core.Features.Switchers;
+using ABCo.Multicam.Core.Features.Switchers.Fading;
 using ABCo.Multicam.Core.Features.Switchers.Types;
 using Moq;
 using System;
@@ -23,7 +24,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers
             _mocks.DummySwitcherSpecs = new();
             _mocks.DummySwitcher = new Mock<IDummySwitcher>();
             _mocks.DummySwitcher.Setup(m => m.ReceiveSpecs()).Returns(_mocks.DummySwitcherSpecs);
-            _mocks.DummySwitcher.Setup(m => m.SetOnBusChangeCallback(It.IsAny<Action<SwitcherBusChangeInfo>>())).Callback<Action<SwitcherBusChangeInfo>>(v => _onBusChangeCallback = v);
+            _mocks.DummySwitcher.Setup(m => m.SetOnBusChangeFinishCall(It.IsAny<Action<SwitcherBusChangeInfo>>())).Callback<Action<SwitcherBusChangeInfo>>(v => _onBusChangeCallback = v);
         }
 
         public DummySwitcherInteractionBuffer Create() => new(_mocks.DummySwitcher.Object);
@@ -59,8 +60,13 @@ namespace ABCo.Multicam.Tests.Features.Switchers
             var buffer = Create();
 
             bool ran = false;
-            buffer.SetOnBusChangeCallback(() => ran = true);
-            _onBusChangeCallback(new SwitcherBusChangeInfo(isKnown, mixBlock, bus, 0));
+            buffer.SetOnBusChangeFinishCall(i =>
+            {
+                Assert.AreEqual(new RetrospectiveFadeInfo(), i);
+                ran = true;
+            });
+
+            _onBusChangeCallback(new SwitcherBusChangeInfo(isKnown, mixBlock, bus, 0, new RetrospectiveFadeInfo()));
 
             Assert.IsTrue(ran);
         }

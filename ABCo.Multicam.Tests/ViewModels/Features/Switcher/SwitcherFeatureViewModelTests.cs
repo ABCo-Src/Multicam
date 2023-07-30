@@ -1,5 +1,6 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features.Switchers;
+using ABCo.Multicam.Core.Features.Switchers.Fading;
 using ABCo.Multicam.Core.Features.Switchers.Types;
 using ABCo.Multicam.UI.Enumerations;
 using ABCo.Multicam.UI.ViewModels.Features;
@@ -23,7 +24,7 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
             Mock<ISwitcherMixBlockVM> SecondMixBlockMock,
             Mock<IServiceSource> ServiceSource);
 
-        Action _onBusChangeCallback = () => { };
+        Action<RetrospectiveFadeInfo?> _onBusChangeCallback = i => { };
         int _currentMixBlockVM = 0;
         SwitcherSpecs _featureSpecs = new();
         Mocks _mocks = new();
@@ -40,7 +41,7 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
 
             _mocks.Feature = new Mock<ISwitcherRunningFeature>();
             _mocks.Feature.Setup(s => s.SwitcherSpecs).Returns(() => _featureSpecs);
-            _mocks.Feature.Setup(f => f.SetOnBusChangeForVM(It.IsAny<Action>())).Callback<Action>(v => _onBusChangeCallback = v);
+            _mocks.Feature.Setup(f => f.SetOnBusChangeFinishForVM(It.IsAny<Action<RetrospectiveFadeInfo?>>())).Callback<Action<RetrospectiveFadeInfo?>>(v => _onBusChangeCallback = v);
             _mocks.Feature.Setup(f => f.GetValue(0, 0)).Returns(1);
             _mocks.Feature.Setup(f => f.GetValue(0, 1)).Returns(2);
             _mocks.Feature.Setup(f => f.GetValue(1, 0)).Returns(3);
@@ -94,7 +95,7 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
             _mocks.Feature.Setup(f => f.GetValue(0, 1)).Returns(6);
             _mocks.Feature.Setup(f => f.GetValue(1, 0)).Returns(7);
             _mocks.Feature.Setup(f => f.GetValue(1, 1)).Returns(8);
-            _onBusChangeCallback();
+            _onBusChangeCallback(null);
 
             _mocks.MixBlocks[0].Verify(m => m.UpdateValue(5, 6));
             _mocks.MixBlocks[1].Verify(m => m.UpdateValue(7, 8));

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ABCo.Multicam.Core.Features.Switchers.Fading;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -42,8 +43,8 @@ namespace ABCo.Multicam.Core.Features.Switchers
         /// <param name="bus">The bus within the block. 0 is always program, and 1 may be preview IF the switcher supports it natively.</param>
         void PostValue(int mixBlock, int bus, int id);
 
-        void SetOnBusChangeCallback(Action<SwitcherBusChangeInfo>? callback);
+        void SetOnBusChangeFinishCall(Action<SwitcherBusChangeInfo>? callback);
     }
 
-    public record struct SwitcherBusChangeInfo(bool IsBusKnown, int MixBlock, int Bus, int NewValue);
+    public record struct SwitcherBusChangeInfo(bool IsBusKnown, int MixBlock, int Bus, int NewValue, RetrospectiveFadeInfo? FadeInfo);
 }
