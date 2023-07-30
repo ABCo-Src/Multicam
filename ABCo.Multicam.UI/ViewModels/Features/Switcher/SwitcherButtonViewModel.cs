@@ -23,5 +23,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 
             (_text, Parent) = (text, parent);
         }
+
+        public abstract void Click();
     }
 }

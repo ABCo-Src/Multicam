@@ -14,12 +14,15 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
     public interface ISwitcherMixBlockVM 
     {
-        void UpdateValue(int program, int preview);
+        void RefreshBuses(int program, int preview);
+        void SetProgram(int value);
+        void SetPreview(int value);
     }
 
     public partial class SwitcherMixBlockViewModel : ViewModelBase, ISwitcherMixBlockVM
     {
         public readonly SwitcherMixBlock BaseBlock;
+        public readonly int Index;
         public readonly ISwitcherFeatureVM Parent;
 
         public bool ShowPreview => BaseBlock.NativeType == SwitcherMixBlockType.ProgramPreview;
@@ -35,7 +38,9 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
         {
             if (source == null) throw new ServiceSourceNotGivenException();
 
-            var model = (SwitcherMixBlock)info.Model!;
+            var modelInfo = (MixBlockViewModelInfo)info.Model!;
+            var model = modelInfo.Info;
+            Index = modelInfo.Index;
 
             Parent = (ISwitcherFeatureVM)info.Parent;
             BaseBlock = model;
@@ -56,12 +61,17 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
             _autoButton = source.GetVM<ISwitcherAutoButtonViewModel>(new(null, this));
         }
 
-        public void UpdateValue(int program, int preview) 
+        public void RefreshBuses(int program, int preview) 
         {
             for (int i = 0; i < ProgramBus.Count; i++)
                 ProgramBus[i].SetHighlight(ProgramBus[i].Base.Id == program);
             for (int i = 0; i < PreviewBus.Count; i++)
                 PreviewBus[i].SetHighlight(PreviewBus[i].Base.Id == preview);
         }
+
+        public void SetProgram(int value) => Parent.SetValue(Index, 0, value);
+        public void SetPreview(int value) => Parent.SetValue(Index, 1, value);
     }
+
+    public record struct MixBlockViewModelInfo(SwitcherMixBlock Info, int Index);
 }

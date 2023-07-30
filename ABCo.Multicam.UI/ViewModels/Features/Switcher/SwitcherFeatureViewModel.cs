@@ -15,7 +15,11 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
-    public interface ISwitcherFeatureVM : IFeatureViewModel { }
+    public interface ISwitcherFeatureVM : IFeatureViewModel 
+    {
+        void SetValue(int mixBlock, int bus, int value);
+    }
+
     public partial class SwitcherFeatureViewModel : FeatureViewModel, ISwitcherFeatureVM
     {
         ISwitcherRunningFeature _model;
@@ -30,9 +34,9 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 
             for (int i = 0; i < targetSpecs.MixBlocks.Count; i++)
             {
-                var newVM = serviceSource.GetVM<ISwitcherMixBlockVM>(new(targetSpecs.MixBlocks[i], this));
+                var newVM = serviceSource.GetVM<ISwitcherMixBlockVM>(new(new MixBlockViewModelInfo(targetSpecs.MixBlocks[i], i), this));
                 _mixBlocks.Add(newVM);
-                newVM.UpdateValue(_model.GetValue(i, 0), _model.GetValue(i, 1));
+                newVM.RefreshBuses(_model.GetValue(i, 0), _model.GetValue(i, 1));
             }
         }
 
@@ -44,7 +48,9 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
         public void OnBusChangeFinish(RetrospectiveFadeInfo? info)
         {
             for (int i = 0; i < MixBlocks.Count; i++)
-                MixBlocks[i].UpdateValue(_model.GetValue(i, 0), _model.GetValue(i, 1));
+                MixBlocks[i].RefreshBuses(_model.GetValue(i, 0), _model.GetValue(i, 1));
         }
+
+        public void SetValue(int mixBlock, int bus, int value) => _model.PostValue(mixBlock, bus, value);
     }
 }

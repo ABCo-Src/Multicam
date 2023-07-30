@@ -65,7 +65,7 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
             }
         }
 
-        SwitcherMixBlockViewModel Create() => new(new(_model, _mocks.Parent.Object), _mocks.ServiceSource.Object);
+        SwitcherMixBlockViewModel Create() => new(new(new MixBlockViewModelInfo(_model, 8), _mocks.Parent.Object), _mocks.ServiceSource.Object);
 
         [TestMethod]
         public void Ctor_General()
@@ -74,6 +74,7 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
 
             Assert.AreEqual(_mocks.Parent.Object, vm.Parent);
             Assert.AreEqual(_model, vm.BaseBlock);
+            Assert.AreEqual(8, vm.Index);
 
             Assert.IsNotNull(vm.ProgramBus);
             Assert.IsNotNull(vm.PreviewBus);
@@ -158,7 +159,7 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
         {
             _model = SwitcherMixBlock.NewProgPrevSameInputs(_mocks.ModelInputs);
             var vm = Create();
-            vm.UpdateValue(3, 4);
+            vm.RefreshBuses(3, 4);
 
             _mocks.ProgInputs[0].Verify(m => m.SetHighlight(false), Times.Once);
             _mocks.ProgInputs[1].Verify(m => m.SetHighlight(false), Times.Never);
@@ -178,7 +179,7 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
         {
             _model = SwitcherMixBlock.NewCutBus(_mocks.ModelInputs);
             var vm = Create();
-            vm.UpdateValue(3, 4);
+            vm.RefreshBuses(3, 4);
 
             _mocks.ProgInputs[0].Verify(m => m.SetHighlight(false), Times.Once);
             _mocks.ProgInputs[1].Verify(m => m.SetHighlight(false), Times.Never);
@@ -191,6 +192,20 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
             _mocks.PrevInputs[2].Verify(m => m.SetHighlight(false), Times.Never);
             _mocks.PrevInputs[3].Verify(m => m.SetHighlight(false), Times.Never);
             _mocks.PrevInputs[3].Verify(m => m.SetHighlight(true), Times.Never);
+        }
+
+        [TestMethod]
+        public void SetProgram()
+        {
+            Create().SetProgram(4);
+            _mocks.Parent.Verify(m => m.SetValue(8, 0, 4));
+        }
+
+        [TestMethod]
+        public void SetPreview()
+        {
+            Create().SetPreview(3);
+            _mocks.Parent.Verify(m => m.SetValue(8, 1, 3));
         }
     }
 }

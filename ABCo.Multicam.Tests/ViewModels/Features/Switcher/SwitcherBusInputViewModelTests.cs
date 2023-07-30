@@ -97,5 +97,19 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
             vm.SetHighlight(false);
             Assert.AreEqual(SwitcherButtonStatus.NeutralInactive, vm.Status);
         }
+
+        [TestMethod]
+        public void Program_Click()
+        {
+            CreateProgram().Click();
+            _mocks.Parent.Verify(m => m.SetProgram(1), Times.Once);
+        }
+
+        [TestMethod]
+        public void Preview_Click()
+        {
+            CreatePreview().Click();
+            _mocks.Parent.Verify(m => m.SetPreview(1), Times.Once);
+        }
     }
 }

@@ -71,8 +71,8 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
             var vm = Create();
 
             Assert.AreEqual(2, vm.MixBlocks.Count);
-            _mocks.ServiceSource.Verify(m => m.GetVM<ISwitcherMixBlockVM>(new(_featureSpecs.MixBlocks[0], vm)), Times.Once);
-            _mocks.ServiceSource.Verify(m => m.GetVM<ISwitcherMixBlockVM>(new(_featureSpecs.MixBlocks[1], vm)), Times.Once);
+            _mocks.ServiceSource.Verify(m => m.GetVM<ISwitcherMixBlockVM>(new(new MixBlockViewModelInfo(_featureSpecs.MixBlocks[0], 0), vm)), Times.Once);
+            _mocks.ServiceSource.Verify(m => m.GetVM<ISwitcherMixBlockVM>(new(new MixBlockViewModelInfo(_featureSpecs.MixBlocks[1], 1), vm)), Times.Once);
 
             Assert.AreEqual(_mocks.MixBlocks[0].Object, vm.MixBlocks[0]);
             Assert.AreEqual(_mocks.MixBlocks[1].Object, vm.MixBlocks[1]);
@@ -82,8 +82,8 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
         public void Ctor_UpdatesMixBlocks()
         {
             var vm = Create();
-            _mocks.MixBlocks[0].Verify(m => m.UpdateValue(1, 2));
-            _mocks.MixBlocks[1].Verify(m => m.UpdateValue(3, 4));
+            _mocks.MixBlocks[0].Verify(m => m.RefreshBuses(1, 2));
+            _mocks.MixBlocks[1].Verify(m => m.RefreshBuses(3, 4));
         }
 
         [TestMethod]
@@ -97,8 +97,8 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
             _mocks.Feature.Setup(f => f.GetValue(1, 1)).Returns(8);
             _onBusChangeCallback(null);
 
-            _mocks.MixBlocks[0].Verify(m => m.UpdateValue(5, 6));
-            _mocks.MixBlocks[1].Verify(m => m.UpdateValue(7, 8));
+            _mocks.MixBlocks[0].Verify(m => m.RefreshBuses(5, 6));
+            _mocks.MixBlocks[1].Verify(m => m.RefreshBuses(7, 8));
         }
 
         [TestMethod]
@@ -106,6 +106,13 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
         {
             var vm = Create();
             Assert.AreEqual(FeatureViewType.Switcher, vm.ContentView);
+        }
+
+        [TestMethod]
+        public void SetValue()
+        {
+            Create().SetValue(6, 1, 3);
+            _mocks.Feature.Verify(m => m.PostValue(6, 1, 3));
         }
     }
 }

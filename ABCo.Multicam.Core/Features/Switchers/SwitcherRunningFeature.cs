@@ -14,6 +14,7 @@ namespace ABCo.Multicam.Core.Features.Switchers
         SwitcherSpecs SwitcherSpecs { get; }
         void SetOnBusChangeFinishForVM(Action<RetrospectiveFadeInfo?>? callback);
         int GetValue(int mixBlock, int bus);
+        void PostValue(int mixBlock, int bus, int value);
     }
 
     public class SwitcherRunningFeature : ISwitcherRunningFeature

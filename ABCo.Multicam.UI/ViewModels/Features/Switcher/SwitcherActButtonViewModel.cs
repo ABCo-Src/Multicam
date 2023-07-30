@@ -17,11 +17,21 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
     public class SwitcherCutButtonViewModel : SwitcherActButtonViewModel, ISwitcherCutButtonViewModel
     {
         public SwitcherCutButtonViewModel(NewViewModelInfo info, IServiceSource source) : base(info, "Cut", source) { }
+
+        public override void Click()
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public interface ISwitcherAutoButtonViewModel : ISwitcherActButtonViewModel { }
     public class SwitcherAutoButtonViewModel : SwitcherActButtonViewModel, ISwitcherAutoButtonViewModel
     {
         public SwitcherAutoButtonViewModel(NewViewModelInfo info, IServiceSource source) : base(info, "Auto", source) { }
+
+        public override void Click()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

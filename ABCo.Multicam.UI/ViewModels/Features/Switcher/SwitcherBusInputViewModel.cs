@@ -43,6 +43,8 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
             else
                 Status = SwitcherButtonStatus.NeutralInactive;
         }
+
+        public override void Click() => Parent.SetProgram(Base.Id);
     }
 
     public interface ISwitcherPreviewInputViewModel : ISwitcherBusInputViewModel { }
@@ -57,5 +59,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
             else
                 Status = SwitcherButtonStatus.NeutralInactive;
         }
+
+        public override void Click() => Parent.SetPreview(Base.Id);
     }
 }
