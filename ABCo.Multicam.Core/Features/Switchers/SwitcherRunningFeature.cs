@@ -15,6 +15,7 @@ namespace ABCo.Multicam.Core.Features.Switchers
         void SetOnBusChangeFinishForVM(Action<RetrospectiveFadeInfo?>? callback);
         int GetValue(int mixBlock, int bus);
         void PostValue(int mixBlock, int bus, int value);
+        void Cut(int mixBlock);
     }
 
     public class SwitcherRunningFeature : ISwitcherRunningFeature
@@ -61,5 +62,7 @@ namespace ABCo.Multicam.Core.Features.Switchers
         public void SetOnBusChangeFinishForVM(Action<RetrospectiveFadeInfo?>? callback) => _busChangeFinishCallback = callback;
 
         public void Dispose() => _buffer.Dispose();
+
+        public void Cut(int mixBlock) => _buffer.Cut(mixBlock);
     }
 }

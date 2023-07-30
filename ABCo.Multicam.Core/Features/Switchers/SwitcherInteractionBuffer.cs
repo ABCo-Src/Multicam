@@ -14,6 +14,7 @@ namespace ABCo.Multicam.Core.Features.Switchers
         SwitcherSpecs Specs { get; }
         int GetValue(int mixBlock, int bus);
         void PostValue(int mixBlock, int bus, int value);
+        void Cut(int mixBlock);
         void SetOnBusChangeFinishCall(Action<RetrospectiveFadeInfo?>? callback);
     }
 
@@ -106,6 +107,8 @@ namespace ABCo.Multicam.Core.Features.Switchers
         }
 
         public void SetOnBusChangeFinishCall(Action<RetrospectiveFadeInfo?>? callback) => _onBusChangeFinishCall = callback;
+
+        public void Cut(int mixBlock) => _rawSwitcher.Cut(mixBlock);
 
         record struct MixBlockStore(int Program, int Preview);
     }

@@ -28,5 +28,7 @@ namespace ABCo.Multicam.Core.Features.Switchers
         void OnBusChange(SwitcherBusChangeInfo info) => _onBusChangeCallback?.Invoke(info.FadeInfo);
 
         public void SetOnBusChangeFinishCall(Action<RetrospectiveFadeInfo?>? callback) => _onBusChangeCallback = callback;
+
+        public void Cut(int mixBlock) => _switcher.Cut(mixBlock);
     }
 }

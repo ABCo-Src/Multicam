@@ -43,6 +43,11 @@ namespace ABCo.Multicam.Core.Features.Switchers
         /// <param name="bus">The bus within the block. 0 is always program, and 1 may be preview IF the switcher supports it natively.</param>
         void PostValue(int mixBlock, int bus, int id);
 
+        /// <summary>
+        /// Contacts the swither and asks it to perform an "immediate cut".
+        /// </summary>
+        void Cut(int mixBlock);
+
         void SetOnBusChangeFinishCall(Action<SwitcherBusChangeInfo>? callback);
     }
 

@@ -21,7 +21,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types
         public DummySwitcher()
         {
             (_specs, _states) = (null!, null!); // Assigned by UpdateSpecs
-            UpdateSpecs(new DummyMixBlock[] { new(4, SwitcherMixBlockType.ProgramPreview), new(4, SwitcherMixBlockType.ProgramPreview) });            
+            UpdateSpecs(new DummyMixBlock[] { new(4, SwitcherMixBlockType.ProgramPreview) });            
         }
 
         public SwitcherSpecs ReceiveSpecs() => _specs;
@@ -100,6 +100,13 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types
             if (bus == 1 && _specs.MixBlocks[mixBlock].NativeType == SwitcherMixBlockType.ProgramPreview) return;
 
             throw new ArgumentException("Invalid bus given to DummySwitcher");
+        }
+
+        public void Cut(int mixBlock)
+        {
+            if (_specs.MixBlocks[mixBlock].NativeType == SwitcherMixBlockType.CutBus) throw new NotSupportedException();
+
+            (_states[mixBlock].Program, _states[mixBlock].Preview) = (_states[mixBlock].Preview, _states[mixBlock].Program);
         }
 
         public void Dispose() { }

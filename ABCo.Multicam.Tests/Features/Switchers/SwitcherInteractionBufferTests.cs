@@ -280,6 +280,16 @@ namespace ABCo.Multicam.Tests.Features.Switchers
             Assert.IsTrue(ran);
         }
 
+        [TestMethod]
+        [DataRow(0)]
+        [DataRow(1)]
+        public async Task Cut(int mixBlock)
+        {
+            var feature = await Create();
+            feature.Cut(mixBlock);
+            _mocks.Switcher.Verify(m => m.Cut(mixBlock));
+        }
+
         async Task TestChangeAndGetValueNative(SwitcherMixBlock mixBlock, int bus)
         {
             _switcherSpecs = new(mixBlock, mixBlock);

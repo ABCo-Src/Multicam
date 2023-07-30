@@ -253,6 +253,43 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
         }
 
         [TestMethod]
+        public void Cut_Valid_MB1()
+        {
+            var dummy = Create();
+            dummy.UpdateSpecs(new DummyMixBlock[] { new(4, SwitcherMixBlockType.ProgramPreview), new(4, SwitcherMixBlockType.ProgramPreview) });
+
+            dummy.PostValue(0, 0, 3);
+            dummy.PostValue(0, 1, 4);
+            dummy.Cut(0);
+
+            Assert.AreEqual(4, dummy.ReceiveValue(0, 0));
+            Assert.AreEqual(3, dummy.ReceiveValue(0, 1));
+        }
+
+        [TestMethod]
+        public void Cut_Valid_MB2()
+        {
+            var dummy = Create();
+            dummy.UpdateSpecs(new DummyMixBlock[] { new(4, SwitcherMixBlockType.ProgramPreview), new(4, SwitcherMixBlockType.ProgramPreview) });
+
+            dummy.PostValue(1, 0, 1);
+            dummy.PostValue(1, 1, 2);
+            dummy.Cut(1);
+
+            Assert.AreEqual(2, dummy.ReceiveValue(1, 0));
+            Assert.AreEqual(1, dummy.ReceiveValue(1, 1));
+        }
+
+        [TestMethod]
+        public void Cut_Invalid()
+        {
+            var dummy = Create();
+            dummy.UpdateSpecs(new DummyMixBlock[] { new(4, SwitcherMixBlockType.ProgramPreview), new(4, SwitcherMixBlockType.CutBus) });
+            
+            Assert.ThrowsException<NotSupportedException>(() => dummy.Cut(1));
+        }
+
+        [TestMethod]
         public void Dispose_DoesNotThrow() => Create().Dispose();
 
         [TestMethod]

@@ -187,6 +187,15 @@ namespace ABCo.Multicam.Tests.Features.Switchers
             Assert.IsTrue(ran);
         }
 
+        [TestMethod]
+        [DataRow(0)]
+        [DataRow(1)]
+        public void Cut(int mixBlock)
+        {
+            Create().Cut(mixBlock);
+            _mocks.FactoryDummyBuffer.Verify(m => m.Cut(mixBlock));
+        }
+
         // TODO: Add test to verify that it also works when switcher is changed to dummy again?
 
         [TestMethod]
