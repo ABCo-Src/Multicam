@@ -21,7 +21,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types
         public DummySwitcher()
         {
             (_specs, _states) = (null!, null!); // Assigned by UpdateSpecs
-            UpdateSpecs(new DummyMixBlock[] { new(4, SwitcherMixBlockType.ProgramPreview) });            
+            UpdateSpecs(new DummyMixBlock[] { new(4, SwitcherMixBlockType.ProgramPreview), new(4, SwitcherMixBlockType.ProgramPreview) });            
         }
 
         public SwitcherSpecs ReceiveSpecs() => _specs;
@@ -87,7 +87,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types
             else
                 _states[mixBlock].Preview = newValue;
 
-            _busChangeFinishCallback?.Invoke(new SwitcherBusChangeInfo(true, 1, 1, 4, null));
+            _busChangeFinishCallback?.Invoke(new SwitcherBusChangeInfo(true, mixBlock, bus, newValue, null));
         }
 
         void ValidateMixBlockAndBus(int mixBlock, int bus)

@@ -233,7 +233,9 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
         }
 
         [TestMethod]
-        public void SendValue_TriggersBusChangeCallback()
+        [DataRow(1, 1, 4)]
+        [DataRow(0, 0, 2)]
+        public void SendValue_TriggersBusChangeCallback(int mixBlock, int bus, int newValue)
         {
             SwitcherBusChangeInfo? info = null;
 
@@ -241,13 +243,13 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
             dummy.UpdateSpecs(new DummyMixBlock[] { new(4, SwitcherMixBlockType.CutBus), new(4, SwitcherMixBlockType.ProgramPreview) });
 
             dummy.SetOnBusChangeFinishCall(i => info = i);
-            dummy.PostValue(1, 1, 4);
+            dummy.PostValue(mixBlock, bus, newValue);
 
             Assert.IsNotNull(info);
             Assert.IsTrue(info.Value.IsBusKnown);
-            Assert.AreEqual(1, info.Value.MixBlock);
-            Assert.AreEqual(1, info.Value.Bus);
-            Assert.AreEqual(4, info.Value.NewValue);
+            Assert.AreEqual(mixBlock, info.Value.MixBlock);
+            Assert.AreEqual(bus, info.Value.Bus);
+            Assert.AreEqual(newValue, info.Value.NewValue);
         }
 
         [TestMethod]
