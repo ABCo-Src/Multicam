@@ -33,6 +33,10 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
         [TestInitialize]
         public void InitMocks()
         {
+            _progInputPos = 0;
+            _prevInputPos = 0;
+            _model = new();
+
             _mocks.Parent = new Mock<ISwitcherFeatureVM>();
             _mocks.ProgInputs = new Mock<ISwitcherProgramInputViewModel>[] { new(), new(), new(), new() };
             _mocks.PrevInputs = new Mock<ISwitcherPreviewInputViewModel>[] { new(), new(), new(), new() };

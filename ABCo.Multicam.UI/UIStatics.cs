@@ -20,8 +20,8 @@ namespace ABCo.Multicam.UI
             container.RegisterSingleton<MainWindowViewModel>();
             //container.RegisterSingleton<IApplicationViewModel, ApplicationViewModel>();
             //container.RegisterSingleton<IProjectViewModel, ProjectViewModel>();
-            //container.RegisterSingleton<IProjectStripsViewModel, ProjectStripsViewModel>();
-            //container.RegisterSingleton<IStripViewModel, StripViewModel>();
+
+            //container.Register<NewViewModelInfo, IUnsupportedFeatureViewModel>((factory, info) => new UnsupportedFeatureViewModel(info, factory.GetInstance<IServiceSource>()));
             container.Register<NewViewModelInfo, ISwitcherFeatureVM>((factory, info) => new SwitcherFeatureViewModel(info, factory.GetInstance<IServiceSource>()));
             container.Register<NewViewModelInfo, ISwitcherMixBlockVM>((factory, info) => new SwitcherMixBlockViewModel(info, factory.GetInstance<IServiceSource>()));
             container.Register<NewViewModelInfo, ISwitcherPreviewInputViewModel>((factory, info) => new SwitcherPreviewInputViewModel(info, factory.GetInstance<IServiceSource>()));

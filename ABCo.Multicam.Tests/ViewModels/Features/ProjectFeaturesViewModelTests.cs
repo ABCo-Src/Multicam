@@ -21,52 +21,83 @@ namespace ABCo.Multicam.Tests.ViewModels.Features
     [TestClass]
     public class ProjectFeaturesViewModelTests
     {
-        static ProjectFeaturesViewModel CreateDefault() => new(CreateModelMockWithZeroFeatures().Object, CreateDefaultServiceSource());
-        static ProjectFeaturesViewModel CreateWithCustomModel(IFeatureManager manager) => new(manager, CreateDefaultServiceSource());
-        static ProjectFeaturesViewModel CreateWithCustomServSource(IServiceSource src) => new(CreateModelMockWithZeroFeatures().Object, src);
-        static ProjectFeaturesViewModel CreateWithCustomModelAndServSource(IFeatureManager manager, IServiceSource src) => new(manager, src);
+        public record struct Mocks(
+            Mock<IFeatureManager> Model,
+            Mock<IServiceSource> ServiceSource,
+            Mock<IUIDialogHandler> DialogHandler,
+            Mock<IRunningFeature>[] RunningFeatures,
+            Mock<ISwitcherFeatureVM> SwitcherVM,
+            Mock<ISwitcherRunningFeature> SwitcherRunning,
+            Mock<IUnsupportedFeatureViewModel> UnsupportedVM,
+            Mock<IUnsupportedRunningFeature> UnsupportedRunning
+        );
 
-        [TestMethod]
-        public void Ctor_ThrowsWithNoServiceSource() => Assert.ThrowsException<ServiceSourceNotGivenException>(() => new ProjectFeaturesViewModel(CreateModelMockWithZeroFeatures().Object, null!));
+        Action<FeatureTypes> _dialogHandlerCallback = d => { };
+        Action _stripsChangeCallback = () => { };
+        List<IRunningFeature> _modelFeatures = new();
+        Mocks _mocks = new();
+
+        [TestInitialize]
+        public void InitMocks()
+        {
+            _modelFeatures = new();
+
+            _mocks.Model = new();
+            _mocks.Model.SetupGet(m => m.Features).Returns(() => _modelFeatures);
+            _mocks.Model.Setup(m => m.SetOnFeaturesChangeForVM(It.IsAny<Action>())).Callback<Action>(v => _stripsChangeCallback = v);
+
+            _mocks.DialogHandler = new();
+            _mocks.DialogHandler
+                .Setup(a => a.OpenContextMenu(It.IsAny<ContextMenuDetails<FeatureTypes>>()))
+                .Callback<ContextMenuDetails<FeatureTypes>>((details) => _dialogHandlerCallback = details.OnSelect);
+
+            _mocks.RunningFeatures = new Mock<IRunningFeature>[] { new(), new() };
+            _mocks.SwitcherVM = new();
+            _mocks.UnsupportedVM = new();
+            _mocks.SwitcherRunning = new();
+            _mocks.UnsupportedRunning = new();
+
+            _mocks.ServiceSource = new();
+            _mocks.ServiceSource.Setup(m => m.Get<IUIDialogHandler>()).Returns(() => _mocks.DialogHandler.Object);
+            _mocks.ServiceSource.Setup(m => m.GetVM<ISwitcherFeatureVM>(It.IsAny<NewViewModelInfo>())).Returns(() => _mocks.SwitcherVM.Object);
+            _mocks.ServiceSource.Setup(m => m.GetVM<IUnsupportedFeatureViewModel>(It.IsAny<NewViewModelInfo>())).Returns(() => _mocks.UnsupportedVM.Object);
+        }
+
+        ProjectFeaturesViewModel Create() => new(_mocks.Model.Object, _mocks.ServiceSource.Object);
 
         [TestMethod]
         public void Ctor_InitializesLocal()
         {
-            var project = CreateDefault();
-            Assert.IsNotNull(project.Items);
-            Assert.IsNull(project.CurrentlyEditing);
-            Assert.AreEqual(0, project.Items.Count);
+            var vm = Create();
+            Assert.IsNotNull(vm.Items);
+            Assert.IsNull(vm.CurrentlyEditing);
+            Assert.AreEqual(0, vm.Items.Count);
         }
 
         [TestMethod]
         public void Ctor_InitializesEventHandler()
         {
-            var model = CreateModelMockWithZeroFeatures();
-            var project = CreateWithCustomModel(model.Object);
-            model.Verify(m => m.SetOnFeaturesChangeForVM(It.IsAny<Action>()), Times.Once);
+            Create();
+            _mocks.Model.Verify(m => m.SetOnFeaturesChangeForVM(It.IsAny<Action>()), Times.Once);
         }
 
         [TestMethod]
         public void Ctor_UpdatesItems()
         {
-            List<IRunningFeature> items = new() { Mock.Of<IRunningFeature>(), Mock.Of<IRunningFeature>() };
-            var model = Mock.Of<IFeatureManager>(m => m.Features == items);
-            var project = CreateWithCustomModel(model);
+            _modelFeatures = new() { Mock.Of<IRunningFeature>(), Mock.Of<IRunningFeature>() };
 
-            Assert.AreEqual(2, project.Items.Count);
-            Assert.AreEqual(items[0], project.Items[0].BaseFeature);
-            Assert.AreEqual(items[1], project.Items[1].BaseFeature);
+            var vm = Create();
+            Assert.AreEqual(2, vm.Items.Count);
+            Assert.AreEqual(_modelFeatures[0], vm.Items[0].BaseFeature);
+            Assert.AreEqual(_modelFeatures[1], vm.Items[1].BaseFeature);
         }
 
         [TestMethod]
         public void CreateFeature_OpensDialog()
         {
-            var dialogHandler = new Mock<IUIDialogHandler>();
-            var serviceSource = Mock.Of<IServiceSource>(m => m.Get<IUIDialogHandler>() == dialogHandler.Object);
-            var project = CreateWithCustomServSource(serviceSource);
-            project.CreateFeature();
+            Create().CreateFeature();
 
-            dialogHandler.Verify(a => a.OpenContextMenu(It.Is<ContextMenuDetails<FeatureTypes>>(d =>
+            _mocks.DialogHandler.Verify(a => a.OpenContextMenu(It.Is<ContextMenuDetails<FeatureTypes>>(d =>
                 d.Title == "Choose Type" &&
                 d.OnSelect != null &&
                 d.OnCancel == null &&
@@ -84,203 +115,157 @@ namespace ABCo.Multicam.Tests.ViewModels.Features
         [DataRow(FeatureTypes.Tally)]
         public void CreateFeature_OnChoose(FeatureTypes type)
         {
-            Action<FeatureTypes> callback = null!;
-
-            var dialogHandler = new Mock<IUIDialogHandler>();
-            dialogHandler
-                .Setup(a => a.OpenContextMenu(It.IsAny<ContextMenuDetails<FeatureTypes>>()))
-                .Callback<ContextMenuDetails<FeatureTypes>>((details) => callback = details.OnSelect);
-
-            var serviceSource = Mock.Of<IServiceSource>(m => m.Get<IUIDialogHandler>() == dialogHandler.Object);
-            var model = CreateModelMockWithZeroFeatures();
-            var project = CreateWithCustomModelAndServSource(model.Object, serviceSource);
-
-            project.CreateFeature();
-            callback(type);
-            model.Verify(m => m.CreateFeature(type), Times.Once);
+            Create().CreateFeature();
+            _dialogHandlerCallback(type);
+            _mocks.Model.Verify(m => m.CreateFeature(type), Times.Once);
         }
 
         [TestMethod]
-        public void FeatureVMCreation_Switcher() => TestFeatureVMCreation<ISwitcherRunningFeature, ISwitcherFeatureVM>();
-
-        void TestFeatureVMCreation<TFeatureInterface, TExpectedVMType>() 
-            where TFeatureInterface : class, IRunningFeature
-            where TExpectedVMType : class, IFeatureViewModel
+        public void FeatureVMCreation_Switcher()
         {
-            var servSourceMock = new Mock<IServiceSource>();
-            servSourceMock.Setup(m => m.GetVM<TExpectedVMType>(It.IsAny<NewViewModelInfo>())).Returns(Mock.Of<TExpectedVMType>());
+            _modelFeatures.Add(_mocks.SwitcherRunning.Object);
+            var vm = Create();
+            Assert.AreEqual(_mocks.SwitcherVM.Object, vm.Items[0]);
+            _mocks.ServiceSource.Verify(m => m.GetVM<ISwitcherFeatureVM>(new(_mocks.SwitcherRunning.Object, vm)));
+        }
 
-            IFeatureManager model = Mock.Of<IFeatureManager>(m => m.Features == new List<IRunningFeature>() { Mock.Of<TFeatureInterface>() });
-            var project = CreateWithCustomModelAndServSource(model, servSourceMock.Object);
-
-            Assert.IsTrue(project.Items[0].GetType().IsAssignableTo(typeof(TExpectedVMType)));
-            servSourceMock.Verify(m => m.GetVM<TExpectedVMType>(It.IsAny<NewViewModelInfo>()), Times.Once);
+        [TestMethod]
+        public void FeatureVMCreation_Unsupported()
+        {
+            _modelFeatures.Add(_mocks.UnsupportedRunning.Object);
+            var vm = Create();
+            Assert.IsInstanceOfType(vm.Items[0], typeof(UnsupportedFeatureViewModel));
         }
 
         [TestMethod]
         public void FeaturesChange_AddToEnd()
         {
-            SetupFeaturesChangeMockAndVM((project, changeTrigger, featuresList) =>
-            {
-                var addedItem = Mock.Of<IRunningFeature>();
-                featuresList.Add(addedItem);
-                changeTrigger();
+            var vm = Create();
+            _modelFeatures.Add(_mocks.RunningFeatures[0].Object);
+            _stripsChangeCallback();
 
-                Assert.AreEqual(1, project.Items.Count);
-                Assert.AreEqual(addedItem, project.Items[0].BaseFeature);
-            }, new());
+            Assert.AreEqual(1, vm.Items.Count);
+            Assert.AreEqual(_mocks.RunningFeatures[0].Object, vm.Items[0].BaseFeature);
         }
 
         [TestMethod]
         public void FeaturesChange_AddToStart()
         {
-            var firstItemMock = Mock.Of<IRunningFeature>();
-            SetupFeaturesChangeMockAndVM((project, changeTrigger, featuresList) =>
-            {
-                var addedItem = Mock.Of<IRunningFeature>();
-                featuresList.Insert(0, addedItem);
-                changeTrigger();
+            _modelFeatures.Add(_mocks.RunningFeatures[0].Object);
 
-                Assert.AreEqual(2, project.Items.Count);
-                Assert.AreEqual(addedItem, project.Items[0].BaseFeature);
-                Assert.AreEqual(firstItemMock, project.Items[1].BaseFeature);
-            }, new() { firstItemMock });
+            var vm = Create();
+            _modelFeatures.Insert(0, _mocks.RunningFeatures[1].Object);
+            _stripsChangeCallback();
+
+            Assert.AreEqual(2, vm.Items.Count);
+            Assert.AreEqual(_mocks.RunningFeatures[1].Object, vm.Items[0].BaseFeature);
+            Assert.AreEqual(_mocks.RunningFeatures[0].Object, vm.Items[1].BaseFeature);
         }
 
         [TestMethod]
         public void FeaturesChange_RemoveFromStart()
         {
-            var firstItemMock = Mock.Of<IRunningFeature>();
-            var secondItemMock = Mock.Of<IRunningFeature>();
-            SetupFeaturesChangeMockAndVM((project, changeTrigger, featuresList) =>
-            {
-                featuresList.Remove(firstItemMock);
-                changeTrigger();
+            _modelFeatures.Add(_mocks.RunningFeatures[0].Object);
+            _modelFeatures.Add(_mocks.RunningFeatures[1].Object);
 
-                Assert.AreEqual(1, project.Items.Count);
-                Assert.AreEqual(secondItemMock, project.Items[0].BaseFeature);
-            }, new() { firstItemMock, secondItemMock });
+            var vm = Create();
+            _modelFeatures.Remove(_mocks.RunningFeatures[0].Object);
+            _stripsChangeCallback();
+
+            Assert.AreEqual(1, vm.Items.Count);
+            Assert.AreEqual(_mocks.RunningFeatures[1].Object, vm.Items[0].BaseFeature);
         }
 
         [TestMethod]
         public void FeaturesChange_Remove_Editing()
         {
-            var firstItemMock = Mock.Of<IRunningFeature>();
-            SetupFeaturesChangeMockAndVM((project, changeTrigger, featuresList) =>
-            {
-                project.CurrentlyEditing = project.Items[0];
+            _modelFeatures.Add(_mocks.RunningFeatures[0].Object);
+            _modelFeatures.Add(_mocks.RunningFeatures[1].Object);
 
-                featuresList.Remove(firstItemMock);
-                changeTrigger();
+            var vm = Create();
+            vm.CurrentlyEditing = vm.Items[0];
+            _modelFeatures.Remove(_mocks.RunningFeatures[0].Object);
+            _stripsChangeCallback();
 
-                Assert.AreEqual(1, project.Items.Count);
-                Assert.IsNull(project.CurrentlyEditing);
-            }, new() { firstItemMock, Mock.Of<IRunningFeature>() });
-        }
-
-        private void SetupFeaturesChangeMockAndVM(Action<ProjectFeaturesViewModel, Action, List<IRunningFeature>> testCode, List<IRunningFeature> featuresList)
-        {
-            Action changeTrigger = null!;
-            var model = new Mock<IFeatureManager>();
-            model.Setup(e => e.SetOnFeaturesChangeForVM(It.IsAny<Action>())).Callback<Action>(a => changeTrigger = a);
-            model.SetupGet(e => e.Features).Returns(() => featuresList);
-
-            var project = CreateWithCustomModel(model.Object);
-            testCode(project, changeTrigger, featuresList);
+            Assert.AreEqual(1, vm.Items.Count);
+            Assert.IsNull(vm.CurrentlyEditing);
         }
 
         [TestMethod]
         public void MoveUp()
         {
-            var model = CreateModelMockWithOneFeature(out var initialFeature);
-            var project = CreateWithCustomModel(model.Object);
-            project.MoveUp(project.Items[0]);
-            model.Verify(v => v.MoveUp(initialFeature), Times.Once);
+            _modelFeatures.Add(_mocks.RunningFeatures[0].Object);
+            var vm = Create();
+            vm.MoveUp(vm.Items[0]);
+            _mocks.Model.Verify(v => v.MoveUp(_mocks.RunningFeatures[0].Object), Times.Once);
         }
 
         [TestMethod]
         public void MoveDown()
         {
-            var model = CreateModelMockWithOneFeature(out var initialFeature);
-            var project = CreateWithCustomModel(model.Object);
-            project.MoveDown(project.Items[0]);
-            model.Verify(v => v.MoveDown(initialFeature), Times.Once);
+            _modelFeatures.Add(_mocks.RunningFeatures[0].Object);
+            var vm = Create();
+            vm.MoveDown(vm.Items[0]);
+            _mocks.Model.Verify(v => v.MoveDown(_mocks.RunningFeatures[0].Object), Times.Once);
         }
 
         [TestMethod]
         public void Delete()
         {
-            var model = CreateModelMockWithOneFeature(out var initialFeature);
-            var project = CreateWithCustomModel(model.Object);
-            project.Delete(project.Items[0]);
-            model.Verify(v => v.Delete(initialFeature), Times.Once);
+            _modelFeatures.Add(_mocks.RunningFeatures[0].Object);
+            var vm = Create();
+            vm.Delete(vm.Items[0]);
+            _mocks.Model.Verify(v => v.Delete(_mocks.RunningFeatures[0].Object), Times.Once);
         }
 
         [TestMethod]
         public void CurrentlyEditing_NoPreviousItem()
         {
-            var project = CreateWithCustomModel(CreateModelMockWithOneFeature(out _).Object);
-            project.CurrentlyEditing = project.Items[0];
-            Assert.IsTrue(project.Items[0].IsEditing);
+            _modelFeatures.Add(_mocks.RunningFeatures[0].Object);
+            var vm = Create();
+            vm.CurrentlyEditing = vm.Items[0];
+            Assert.IsTrue(vm.Items[0].IsEditing);
         }
 
         [TestMethod]
         public void CurrentlyEditing_RemoveItem()
         {
-            var project = CreateWithCustomModel(CreateModelMockWithOneFeature(out _).Object);
+            _modelFeatures.Add(_mocks.RunningFeatures[0].Object);
 
-            project.CurrentlyEditing = project.Items[0];
-            project.CurrentlyEditing = null;
+            var vm = Create();
+            vm.CurrentlyEditing = vm.Items[0];
+            vm.CurrentlyEditing = null;
 
-            Assert.IsFalse(project.Items[0].IsEditing);
+            Assert.IsFalse(vm.Items[0].IsEditing);
         }
 
         [TestMethod]
         public void CurrentlyEditing_ReplaceItem()
         {
-            var model = Mock.Of<IFeatureManager>(m => m.Features == new List<IRunningFeature>() { Mock.Of<IRunningFeature>(), Mock.Of<IRunningFeature>() });
-            var project = CreateWithCustomModel(model);
+            _modelFeatures.Add(_mocks.RunningFeatures[0].Object);
+            _modelFeatures.Add(_mocks.RunningFeatures[1].Object);
 
+            var project = Create();
             project.CurrentlyEditing = project.Items[0];
             project.CurrentlyEditing = project.Items[1];
 
             Assert.IsFalse(project.Items[0].IsEditing);
             Assert.IsTrue(project.Items[1].IsEditing);
-
-            Assert.IsFalse(project.Items[0].IsEditing);
         }
 
         [TestMethod]
         public void ShowEditingPanel_NotEditing()
         {
-            var project = CreateWithCustomModel(CreateModelMockWithZeroFeatures().Object);
-            Assert.IsFalse(project.ShowEditingPanel);
+            Assert.IsFalse(Create().ShowEditingPanel);
         }
 
         [TestMethod]
         public void ShowEditingPanel_Editing()
         {
-            var project = CreateWithCustomModel(CreateModelMockWithOneFeature(out _).Object);
+            _modelFeatures.Add(_mocks.RunningFeatures[0].Object);
+            var project = Create();
             project.CurrentlyEditing = project.Items[0];
             Assert.IsTrue(project.ShowEditingPanel);
         }
-
-        // HELPERS:
-        static Mock<IFeatureManager> CreateModelMockWithZeroFeatures()
-        {
-            var model = new Mock<IFeatureManager>();
-            model.SetReturnsDefault<IReadOnlyList<IRunningFeature>>(new List<IRunningFeature>());
-            return model;
-        }
-
-        static Mock<IFeatureManager> CreateModelMockWithOneFeature(out IRunningFeature feature)
-        {
-            feature = Mock.Of<IRunningFeature>();
-            var model = new Mock<IFeatureManager>();
-            model.SetReturnsDefault<IReadOnlyList<IRunningFeature>>(new List<IRunningFeature>() { feature });
-            return model;
-        }
-
-        static IServiceSource CreateDefaultServiceSource() => Mock.Of<IServiceSource>();
     }
 }
