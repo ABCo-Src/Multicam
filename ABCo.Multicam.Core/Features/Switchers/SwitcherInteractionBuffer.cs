@@ -63,8 +63,6 @@ namespace ABCo.Multicam.Core.Features.Switchers
             return newStore;
         }
 
-        public void Dispose() => _rawSwitcher.Dispose();
-
         public int GetValue(int mixBlock, int bus) => bus == 0 ? _store[mixBlock].Program : _store[mixBlock].Preview;
         public void PostValue(int mixBlock, int bus, int value)
         {
@@ -109,6 +107,7 @@ namespace ABCo.Multicam.Core.Features.Switchers
         public void SetOnBusChangeFinishCall(Action<RetrospectiveFadeInfo?>? callback) => _onBusChangeFinishCall = callback;
 
         public void Cut(int mixBlock) => _rawSwitcher.Cut(mixBlock);
+        public void Dispose() => _rawSwitcher.Dispose();
 
         record struct MixBlockStore(int Program, int Preview);
     }

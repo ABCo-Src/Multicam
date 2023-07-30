@@ -114,5 +114,12 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
             Create().SetValue(6, 1, 3);
             _mocks.Feature.Verify(m => m.PostValue(6, 1, 3));
         }
+
+        [TestMethod]
+        public void Cut()
+        {
+            Create().Cut(5);
+            _mocks.Feature.Verify(m => m.Cut(5));
+        }
     }
 }

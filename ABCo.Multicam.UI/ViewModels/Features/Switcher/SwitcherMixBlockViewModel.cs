@@ -17,6 +17,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
         void RefreshBuses(int program, int preview);
         void SetProgram(int value);
         void SetPreview(int value);
+        void CutButtonPress();
     }
 
     public partial class SwitcherMixBlockViewModel : ViewModelBase, ISwitcherMixBlockVM
@@ -71,6 +72,8 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 
         public void SetProgram(int value) => Parent.SetValue(Index, 0, value);
         public void SetPreview(int value) => Parent.SetValue(Index, 1, value);
+        public void CutButtonPress() => Parent.Cut(Index);
+
     }
 
     public record struct MixBlockViewModelInfo(SwitcherMixBlock Info, int Index);

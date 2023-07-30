@@ -207,5 +207,12 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
             Create().SetPreview(3);
             _mocks.Parent.Verify(m => m.SetValue(8, 1, 3));
         }
+
+        [TestMethod]
+        public void CutButtonPress()
+        {
+            Create().CutButtonPress();
+            _mocks.Parent.Verify(m => m.Cut(8));
+        }
     }
 }

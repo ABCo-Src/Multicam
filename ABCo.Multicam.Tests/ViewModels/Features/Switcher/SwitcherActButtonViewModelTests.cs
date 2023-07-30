@@ -37,5 +37,12 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
             Assert.AreEqual(expectedText, vm.Text);
             Assert.AreEqual(_mocks.Parent.Object, vm.Parent);
         }
+
+        [TestMethod]
+        public void Click_Cut()
+        {
+            CreateCut().Click();
+            _mocks.Parent.Verify(m => m.CutButtonPress(), Times.Once);
+        }
     }
 }

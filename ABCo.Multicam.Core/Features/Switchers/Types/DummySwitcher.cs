@@ -102,11 +102,19 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types
             throw new ArgumentException("Invalid bus given to DummySwitcher");
         }
 
-        public void Cut(int mixBlock)
+        public void Cut(int mixBlockIdx)
         {
-            if (_specs.MixBlocks[mixBlock].NativeType == SwitcherMixBlockType.CutBus) throw new NotSupportedException();
+            // Validate mix block
+            if (mixBlockIdx < 0 || mixBlockIdx >= _specs.MixBlocks.Count) throw new ArgumentException("Invalid mix block given to DummySwitcher");
 
-            (_states[mixBlock].Program, _states[mixBlock].Preview) = (_states[mixBlock].Preview, _states[mixBlock].Program);
+            if (_specs.MixBlocks[mixBlockIdx].NativeType == SwitcherMixBlockType.CutBus) throw new NotSupportedException();
+
+            var mixBlockState = _states[mixBlockIdx];
+            (mixBlockState.Program, mixBlockState.Preview) = (mixBlockState.Preview, mixBlockState.Program);
+            _states[mixBlockIdx] = mixBlockState;
+
+            _busChangeFinishCallback?.Invoke(new(true, mixBlockIdx, 0, mixBlockState.Program, null));
+            _busChangeFinishCallback?.Invoke(new(true, mixBlockIdx, 1, mixBlockState.Preview, null));
         }
 
         public void Dispose() { }

@@ -18,10 +18,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
     {
         public SwitcherCutButtonViewModel(NewViewModelInfo info, IServiceSource source) : base(info, "Cut", source) { }
 
-        public override void Click()
-        {
-            throw new NotImplementedException();
-        }
+        public override void Click() => Parent.CutButtonPress();
     }
 
     public interface ISwitcherAutoButtonViewModel : ISwitcherActButtonViewModel { }

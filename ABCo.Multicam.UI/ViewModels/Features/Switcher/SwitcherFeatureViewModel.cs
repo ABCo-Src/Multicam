@@ -18,6 +18,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
     public interface ISwitcherFeatureVM : IFeatureViewModel 
     {
         void SetValue(int mixBlock, int bus, int value);
+        void Cut(int mixBlock);
     }
 
     public partial class SwitcherFeatureViewModel : FeatureViewModel, ISwitcherFeatureVM
@@ -52,5 +53,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
         }
 
         public void SetValue(int mixBlock, int bus, int value) => _model.PostValue(mixBlock, bus, value);
+
+        public void Cut(int mixBlock) => _model.Cut(mixBlock);
     }
 }
