@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ABCo.Multicam.Core.Features.Switchers
+namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 {
     public interface ISwitcherInteractionBuffer : IDisposable
     {
@@ -94,7 +94,7 @@ namespace ABCo.Multicam.Core.Features.Switchers
                 for (int i = 0; i < _store.Length; i++)
                 {
                     _store[i].Program = _rawSwitcher.ReceiveValue(i, 0);
-                    
+
                     // Only modify preview if not emulated
                     if (Specs.MixBlocks[i].NativeType == SwitcherMixBlockType.ProgramPreview)
                         _store[i].Preview = _rawSwitcher.ReceiveValue(i, 1);

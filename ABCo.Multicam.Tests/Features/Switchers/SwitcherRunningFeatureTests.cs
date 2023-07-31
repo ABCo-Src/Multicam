@@ -1,5 +1,6 @@
 ﻿using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.Core.Features.Switchers.Fading;
+using ABCo.Multicam.Core.Features.Switchers.Interaction;
 using ABCo.Multicam.Core.Features.Switchers.Types;
 using ABCo.Multicam.Tests.Helpers;
 using Moq;

@@ -1,5 +1,6 @@
 ﻿using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.Core.Features.Switchers.Fading;
+using ABCo.Multicam.Core.Features.Switchers.Interaction;
 using ABCo.Multicam.Core.Features.Switchers.Types;
 using Moq;
 using System;
@@ -8,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ABCo.Multicam.Tests.Features.Switchers
+namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
 {
     [TestClass]
     public class SwitcherInteractionBufferTests
@@ -269,7 +270,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers
             var feature = await Create();
 
             bool ran = false;
-            feature.SetOnBusChangeFinishCall(i => 
+            feature.SetOnBusChangeFinishCall(i =>
             {
                 Assert.AreEqual(new RetrospectiveFadeInfo(), i);
                 ran = true;
@@ -283,12 +284,24 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         [TestMethod]
         [DataRow(0)]
         [DataRow(1)]
-        public async Task Cut(int mixBlock)
+        public async Task Cut_Native(int mixBlock)
         {
             var feature = await Create();
             feature.Cut(mixBlock);
             _mocks.Switcher.Verify(m => m.Cut(mixBlock));
         }
+
+        //[TestMethod]
+        //[DataRow(0)]
+        //[DataRow(1)]
+        //public async Task Cut_Emulated(int mixBlock)
+        //{
+        //    _switcherSpecs = new(SwitcherMixBlock.NewCutBus(), SwitcherMixBlock.NewCutBus());
+
+        //    var feature = await Create();
+        //    feature.Cut(mixBlock);
+        //    _mocks.Switcher.Verify(m => m.Cut(mixBlock));
+        //}
 
         async Task TestChangeAndGetValueNative(SwitcherMixBlock mixBlock, int bus)
         {

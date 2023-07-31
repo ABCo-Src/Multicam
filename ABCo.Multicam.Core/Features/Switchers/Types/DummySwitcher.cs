@@ -21,7 +21,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types
         public DummySwitcher()
         {
             (_specs, _states) = (null!, null!); // Assigned by UpdateSpecs
-            UpdateSpecs(new DummyMixBlock[] { new(4, SwitcherMixBlockType.ProgramPreview) });            
+            UpdateSpecs(new DummyMixBlock[] { new(4, SwitcherMixBlockType.ProgramPreview), new(4, SwitcherMixBlockType.ProgramPreview) });            
         }
 
         public SwitcherSpecs ReceiveSpecs() => _specs;
