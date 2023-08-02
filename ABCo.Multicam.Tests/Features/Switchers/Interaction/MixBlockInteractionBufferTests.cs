@@ -14,7 +14,8 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
     {
         public record struct Mocks(
             Mock<ISwitcher> Switcher,
-            Mock<IMixBlockInteractionEmulator> Emulator
+            Mock<IMixBlockInteractionEmulator> Emulator,
+            Mock<ISwitcherInteractionBuffer> Parent
         );
 
         SwitcherMixBlock? _mixBlock = null;
@@ -22,14 +23,18 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
         int _mixBlockIndex;
         Mocks _mocks;
 
+        int? _singleUseCacheChangeVal;
+
         [TestInitialize]
         public void InitMocks()
         {
             _features = new SwitcherMixBlockFeatures();
+            _singleUseCacheChangeVal = null;
 
             _mixBlockIndex = 13;
             _mocks.Switcher = new();
             _mocks.Emulator = new();
+            _mocks.Parent = new();
 
             _mocks.Switcher.Setup(m => m.ReceiveValue(_mixBlockIndex, 0)).Returns(2);
             _mocks.Switcher.Setup(m => m.ReceiveValue(_mixBlockIndex, 1)).Returns(4);
@@ -41,7 +46,26 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
         MixBlockInteractionBuffer Create()
         {
             _mixBlock ??= SwitcherMixBlock.NewProgPrevSameInputs(_features, new SwitcherBusInput(3, ""), new(13, ""));
-            return new(_mixBlock, _mixBlockIndex, _mocks.Switcher.Object, _mocks.Emulator.Object);
+
+            var feature = new MixBlockInteractionBuffer(_mixBlock, _mixBlockIndex, _mocks.Switcher.Object, _mocks.Emulator.Object);
+            feature.SetCacheChangeCall(i => Assert.Fail("Cache change triggered")); // Default cache change handler throws unless specifically looked for
+            return feature;
+        }
+
+        MixBlockInteractionBuffer CreateWithOneTimeCacheChangeCall()
+        {
+            var buffer = Create();
+            buffer.SetCacheChangeCall(i =>
+            {
+                if (_singleUseCacheChangeVal != null) Assert.Fail("Cache change already triggered!");
+                _singleUseCacheChangeVal = i;
+            });
+            return buffer;
+        }
+
+        void VerifyCacheChangeCall()
+        {
+            Assert.AreEqual(_mixBlockIndex, _singleUseCacheChangeVal);
         }
 
         [TestMethod]
@@ -85,38 +109,41 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
         [TestMethod]
         public void RefreshCache_Program()
         {
-            var feature = Create();
+            var buffer = CreateWithOneTimeCacheChangeCall();
 
             _mocks.Switcher.Setup(m => m.ReceiveValue(_mixBlockIndex, 0)).Returns(8);
-            feature.RefreshCache();
+            buffer.RefreshCache();
 
+            VerifyCacheChangeCall();
             _mocks.Switcher.Verify(m => m.ReceiveValue(_mixBlockIndex, 0), Times.Exactly(2));
-            Assert.AreEqual(8, feature.Program);
+            Assert.AreEqual(8, buffer.Program);
         }
 
         [TestMethod]
         public void RefreshCache_PreviewNative()
         {
             _features = new SwitcherMixBlockFeatures(supportsDirectPreviewAccess: true);
-            var feature = Create();
+            var buffer = CreateWithOneTimeCacheChangeCall();
 
             _mocks.Switcher.Setup(m => m.ReceiveValue(_mixBlockIndex, 1)).Returns(17);
-            feature.RefreshCache();
+            buffer.RefreshCache();
 
+            VerifyCacheChangeCall();
             _mocks.Switcher.Verify(m => m.ReceiveValue(_mixBlockIndex, 1), Times.Exactly(2));
-            Assert.AreEqual(17, feature.Preview);
+            Assert.AreEqual(17, buffer.Preview);
         }
 
         [TestMethod]
         public void RefreshCache_PreviewEmulated()
         {
-            var feature = Create();
+            var buffer = CreateWithOneTimeCacheChangeCall();
 
             _mocks.Switcher.Setup(m => m.ReceiveValue(_mixBlockIndex, 1)).Returns(17);
-            feature.RefreshCache();
+            buffer.RefreshCache();
 
+            VerifyCacheChangeCall();
             _mocks.Switcher.Verify(m => m.ReceiveValue(_mixBlockIndex, 1), Times.Never);
-            Assert.AreEqual(3, feature.Preview);
+            Assert.AreEqual(3, buffer.Preview);
         }
 
         [TestMethod]
@@ -196,7 +223,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
         [TestMethod]
         public void SetProgram_CannotEmulate()
         {
-            var feature = Create();
+            var feature = CreateWithOneTimeCacheChangeCall();
             feature.SetProgram(24);
 
             _mocks.Switcher.Verify(m => m.PostValue(_mixBlockIndex, 0, 24), Times.Never);
@@ -204,6 +231,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusCutMode(24), Times.Once);
             _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusAutoMode(24), Times.Once);
 
+            VerifyCacheChangeCall();
             Assert.AreEqual(24, feature.Program);
         }
 
@@ -223,15 +251,12 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
         [TestMethod]
         public void SetPreview_CannotEmulate()
         {
-            var feature = Create();
-
+            var feature = CreateWithOneTimeCacheChangeCall();
             feature.SetPreview(13);
-            Assert.AreEqual(13, feature.Preview);
-            feature.SetPreview(4);
-            Assert.AreEqual(4, feature.Preview);
 
+            VerifyCacheChangeCall();
+            Assert.AreEqual(13, feature.Preview);
             _mocks.Switcher.Verify(m => m.PostValue(_mixBlockIndex, 1, 13), Times.Never);
-            _mocks.Switcher.Verify(m => m.PostValue(_mixBlockIndex, 1, 4), Times.Never);
         }
 
         //[TestMethod]

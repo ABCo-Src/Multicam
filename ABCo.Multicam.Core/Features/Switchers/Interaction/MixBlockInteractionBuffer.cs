@@ -10,6 +10,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
     {
         void SetProgram(int val);
         void SetPreview(int val);
+        void SetCacheChangeCall(Action<int> onCacheChange);
     }
 
     public class MixBlockInteractionBuffer : IMixBlockInteractionBuffer
@@ -18,6 +19,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
         int _mixBlockIdx;
         ISwitcher _switcher;
         IMixBlockInteractionEmulator _fallbackEmulator;
+        Action<int>? _onCacheChange;
 
         public int Program { get; set; }
         public int Preview { get; set; }
@@ -53,6 +55,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 
             // If neither works, just update the cache
             Program = val;
+            _onCacheChange?.Invoke(_mixBlockIdx);
         }
 
         public void SetPreview(int val)
@@ -60,7 +63,10 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
             if (_mixBlock.SupportedFeatures.SupportsDirectPreviewAccess)
                 _switcher.PostValue(_mixBlockIdx, 1, val);
             else
+            {
                 Preview = val;
+                _onCacheChange?.Invoke(_mixBlockIdx);
+            }
         }
 
         public void RefreshCache()
@@ -69,9 +75,13 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 
             if (_mixBlock.SupportedFeatures.SupportsDirectPreviewAccess)
                 Preview = _switcher.ReceiveValue(_mixBlockIdx, 1);
+
+            _onCacheChange?.Invoke(_mixBlockIdx);
         }
 
         public void RefreshWithKnownProg(int knownProg) => Program = knownProg;
         public void RefreshWithKnownPrev(int knownPrev) => Preview = knownPrev;
+
+        public void SetCacheChangeCall(Action<int>? cacheChange) => _onCacheChange = cacheChange;
     }
 }
