@@ -48,7 +48,23 @@ namespace ABCo.Multicam.Core.Features.Switchers
         /// </summary>
         void Cut(int mixBlock);
 
+        /// <summary>
+        /// Contacts the switcher and asks it perform a cut bus switch.
+        /// </summary>
+        void SetCutBus(int mixBlock, int newVal);
+
+        /// <summary>
+        /// Contacts the switcher and asks it perform a cut bus switch.
+        /// </summary>
+        void SetCutBusMode(CutBusMode mode);
+
         void SetOnBusChangeFinishCall(Action<SwitcherBusChangeInfo>? callback);
+    }
+
+    public enum CutBusMode
+    {
+        Cut,
+        Auto
     }
 
     public record struct SwitcherBusChangeInfo(bool IsBusKnown, int MixBlock, int Bus, int NewValue, RetrospectiveFadeInfo? FadeInfo);

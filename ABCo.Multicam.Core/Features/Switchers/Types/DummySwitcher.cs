@@ -126,7 +126,17 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types
             return dummy;
         }
 
+        public void SetCutBus(int mixBlock, int newVal)
+        {
+            throw new NotImplementedException();
+        }
+
         public void SetOnBusChangeFinishCall(Action<SwitcherBusChangeInfo>? callback) => _busChangeFinishCallback = callback;
+
+        public void SetCutBusMode(CutBusMode mode)
+        {
+            throw new NotImplementedException();
+        }
 
         struct MixBlockState
         {

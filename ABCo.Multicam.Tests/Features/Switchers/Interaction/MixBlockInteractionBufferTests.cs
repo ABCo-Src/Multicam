@@ -14,8 +14,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
     {
         public record struct Mocks(
             Mock<ISwitcher> Switcher,
-            Mock<IMixBlockInteractionEmulator> Emulator,
-            Mock<ISwitcherInteractionBuffer> Parent
+            Mock<IMixBlockInteractionEmulator> Emulator
         );
 
         SwitcherMixBlock? _mixBlock = null;
@@ -34,7 +33,6 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             _mixBlockIndex = 13;
             _mocks.Switcher = new();
             _mocks.Emulator = new();
-            _mocks.Parent = new();
 
             _mocks.Switcher.Setup(m => m.ReceiveValue(_mixBlockIndex, 0)).Returns(2);
             _mocks.Switcher.Setup(m => m.ReceiveValue(_mixBlockIndex, 1)).Returns(4);
