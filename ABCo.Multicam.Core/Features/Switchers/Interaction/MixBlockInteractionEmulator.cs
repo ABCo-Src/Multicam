@@ -8,9 +8,9 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 {
     public interface IMixBlockInteractionEmulator 
     {
-        bool TrySetProgWithPreviewThenCutAction(int val);
-        bool TrySetProgWithCutBusCutMode(int val);
-        bool TrySetProgWithCutBusAutoMode(int val);
+        bool TrySetProgWithPreviewThenCut(int val);
+        bool TrySetProgWithCutBusCut(int val);
+        bool TrySetProgWithCutBusAuto(int val);
     }
 
     public class MixBlockInteractionEmulator : IMixBlockInteractionEmulator
@@ -28,7 +28,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
             _parent = parent;
         }
 
-        public bool TrySetProgWithPreviewThenCutAction(int val)
+        public bool TrySetProgWithPreviewThenCut(int val)
         {
             if (_mixBlock.SupportedFeatures.SupportsDirectPreviewAccess && _mixBlock.SupportedFeatures.SupportsCutAction)
             {
@@ -40,7 +40,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
             return false;
         }
 
-        public bool TrySetProgWithCutBusCutMode(int val)
+        public bool TrySetProgWithCutBusCut(int val)
         {
             if (_mixBlock.SupportedFeatures.SupportsCutBusSwitching && _mixBlock.SupportedFeatures.SupportsCutBusCutMode)
                 return UseCutBusWithMode(CutBusMode.Cut, val);
@@ -48,7 +48,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
             return false;
         }
 
-        public bool TrySetProgWithCutBusAutoMode(int val)
+        public bool TrySetProgWithCutBusAuto(int val)
         {
             if (_mixBlock.SupportedFeatures.SupportsCutBusSwitching && _mixBlock.SupportedFeatures.SupportsCutBusAutoMode)            
                 return UseCutBusWithMode(CutBusMode.Auto, val);

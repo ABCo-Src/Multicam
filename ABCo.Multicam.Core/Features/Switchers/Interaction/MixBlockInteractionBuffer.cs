@@ -51,9 +51,9 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
             }
 
             // Otherwise, try to use a fallback method
-            if (_fallbackEmulator.TrySetProgWithPreviewThenCutAction(val)) return;
-            if (_fallbackEmulator.TrySetProgWithCutBusCutMode(val)) return;
-            if (_fallbackEmulator.TrySetProgWithCutBusAutoMode(val)) return;
+            if (_fallbackEmulator.TrySetProgWithPreviewThenCut(val)) return;
+            if (_fallbackEmulator.TrySetProgWithCutBusCut(val)) return;
+            if (_fallbackEmulator.TrySetProgWithCutBusAuto(val)) return;
 
             // If neither works, just update the cache
             Program = val;

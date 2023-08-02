@@ -116,48 +116,48 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             _mocks.Switcher.Verify(m => m.PostValue(_mixBlockIndex, 0, 13), Times.Once);
             _mocks.Switcher.Verify(m => m.PostValue(_mixBlockIndex, 0, 4), Times.Once);
 
-            _mocks.Emulator.Verify(m => m.TrySetProgWithPreviewThenCutAction(24), Times.Never);
-            _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusCutMode(24), Times.Never);
-            _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusAutoMode(24), Times.Never);
+            _mocks.Emulator.Verify(m => m.TrySetProgWithPreviewThenCut(24), Times.Never);
+            _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusCut(24), Times.Never);
+            _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusAuto(24), Times.Never);
         }
 
         [TestMethod]
         public void SetProgram_Emulated1()
         {
-            _mocks.Emulator.Setup(m => m.TrySetProgWithPreviewThenCutAction(24)).Returns(true);
+            _mocks.Emulator.Setup(m => m.TrySetProgWithPreviewThenCut(24)).Returns(true);
 
             Create().SetProgram(24);
 
             _mocks.Switcher.Verify(m => m.PostValue(_mixBlockIndex, 0, 24), Times.Never);
-            _mocks.Emulator.Verify(m => m.TrySetProgWithPreviewThenCutAction(24), Times.Once);
-            _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusCutMode(24), Times.Never);
-            _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusAutoMode(24), Times.Never);
+            _mocks.Emulator.Verify(m => m.TrySetProgWithPreviewThenCut(24), Times.Once);
+            _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusCut(24), Times.Never);
+            _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusAuto(24), Times.Never);
         }
 
         [TestMethod]
         public void SetProgram_Emulated2()
         {
-            _mocks.Emulator.Setup(m => m.TrySetProgWithCutBusCutMode(24)).Returns(true);
+            _mocks.Emulator.Setup(m => m.TrySetProgWithCutBusCut(24)).Returns(true);
 
             Create().SetProgram(24);
 
             _mocks.Switcher.Verify(m => m.PostValue(_mixBlockIndex, 0, 24), Times.Never);
-            _mocks.Emulator.Verify(m => m.TrySetProgWithPreviewThenCutAction(24), Times.Once);
-            _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusCutMode(24), Times.Once);
-            _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusAutoMode(24), Times.Never);
+            _mocks.Emulator.Verify(m => m.TrySetProgWithPreviewThenCut(24), Times.Once);
+            _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusCut(24), Times.Once);
+            _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusAuto(24), Times.Never);
         }
 
         [TestMethod]
         public void SetProgram_Emulated3()
         {
-            _mocks.Emulator.Setup(m => m.TrySetProgWithCutBusAutoMode(24)).Returns(true);
+            _mocks.Emulator.Setup(m => m.TrySetProgWithCutBusAuto(24)).Returns(true);
 
             Create().SetProgram(24);
 
             _mocks.Switcher.Verify(m => m.PostValue(_mixBlockIndex, 0, 24), Times.Never);
-            _mocks.Emulator.Verify(m => m.TrySetProgWithPreviewThenCutAction(24), Times.Once);
-            _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusCutMode(24), Times.Once);
-            _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusAutoMode(24), Times.Once);
+            _mocks.Emulator.Verify(m => m.TrySetProgWithPreviewThenCut(24), Times.Once);
+            _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusCut(24), Times.Once);
+            _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusAuto(24), Times.Once);
         }
 
         [TestMethod]
@@ -167,9 +167,9 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             feature.SetProgram(24);
 
             _mocks.Switcher.Verify(m => m.PostValue(_mixBlockIndex, 0, 24), Times.Never);
-            _mocks.Emulator.Verify(m => m.TrySetProgWithPreviewThenCutAction(24), Times.Once);
-            _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusCutMode(24), Times.Once);
-            _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusAutoMode(24), Times.Once);
+            _mocks.Emulator.Verify(m => m.TrySetProgWithPreviewThenCut(24), Times.Once);
+            _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusCut(24), Times.Once);
+            _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusAuto(24), Times.Once);
 
             VerifyCacheChangeCall();
             Assert.AreEqual(24, feature.Program);
