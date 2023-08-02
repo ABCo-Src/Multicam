@@ -91,7 +91,7 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
         {
             var busInput1 = new SwitcherBusInput(1, "Cam1");
             var busInput2 = new SwitcherBusInput(2, "Cam2");
-            _model = SwitcherMixBlock.NewCutBus(busInput1, busInput2);
+            _model = SwitcherMixBlock.NewCutBus(new(), busInput1, busInput2);
 
             var vm = Create();
             _mocks.ServiceSource.Verify(m => m.GetVM<ISwitcherProgramInputViewModel>(new(_model.ProgramInputs[0], vm)), Times.Once);
@@ -105,7 +105,7 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
         [TestMethod]
         public void Ctor_NoPreview()
         {
-            _model = SwitcherMixBlock.NewCutBus();
+            _model = SwitcherMixBlock.NewCutBus(new());
             var vm = Create();
             Assert.AreEqual(0, vm.PreviewBus.Count);
         }
@@ -115,7 +115,7 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
         {
             var busInput1 = new SwitcherBusInput(1, "Cam1");
             var busInput2 = new SwitcherBusInput(2, "Cam2");
-            _model = SwitcherMixBlock.NewProgPrev(Array.Empty<SwitcherBusInput>(), new SwitcherBusInput[2] { busInput1, busInput2 });
+            _model = SwitcherMixBlock.NewProgPrev(new(), Array.Empty<SwitcherBusInput>(), new SwitcherBusInput[2] { busInput1, busInput2 });
 
             var vm = Create();
             _mocks.ServiceSource.Verify(m => m.GetVM<ISwitcherPreviewInputViewModel>(new(_model.PreviewInputs![0], vm)), Times.Once);
@@ -129,35 +129,35 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
         [TestMethod]
         public void MainLabel_ProgramPreview()
         {
-            _model = SwitcherMixBlock.NewProgPrev();
+            _model = SwitcherMixBlock.NewProgPrev(new());
             Assert.AreEqual("Program", Create().MainLabel);
         }
 
         [TestMethod]
         public void MainLabel_CutBus()
         {
-            _model = SwitcherMixBlock.NewCutBus();
+            _model = SwitcherMixBlock.NewCutBus(new());
             Assert.AreEqual("Cut Bus", Create().MainLabel);
         }
 
         [TestMethod]
         public void ShowPreview_ProgramPreview()
         {
-            _model = SwitcherMixBlock.NewProgPrev();
+            _model = SwitcherMixBlock.NewProgPrev(new());
             Assert.IsTrue(Create().ShowPreview);
         }
 
         [TestMethod]
         public void ShowPreview_CutBus()
         {
-            _model = SwitcherMixBlock.NewCutBus();
+            _model = SwitcherMixBlock.NewCutBus(new());
             Assert.IsFalse(Create().ShowPreview);
         }
 
         [TestMethod]
         public void UpdateValue_ProgPrev()
         {
-            _model = SwitcherMixBlock.NewProgPrevSameInputs(_mocks.ModelInputs);
+            _model = SwitcherMixBlock.NewProgPrevSameInputs(new(), _mocks.ModelInputs);
             var vm = Create();
             vm.RefreshBuses(3, 4);
 
@@ -177,7 +177,7 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
         [TestMethod]
         public void UpdateValue_CutBus()
         {
-            _model = SwitcherMixBlock.NewCutBus(_mocks.ModelInputs);
+            _model = SwitcherMixBlock.NewCutBus(new(), _mocks.ModelInputs);
             var vm = Create();
             vm.RefreshBuses(3, 4);
 

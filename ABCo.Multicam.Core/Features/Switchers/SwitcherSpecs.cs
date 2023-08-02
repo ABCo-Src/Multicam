@@ -21,20 +21,70 @@ namespace ABCo.Multicam.Core.Features.Switchers
         public readonly IReadOnlyList<SwitcherBusInput> ProgramInputs;
         public readonly IReadOnlyList<SwitcherBusInput>? PreviewInputs;
 
-        public SwitcherMixBlockType NativeType;
+        public readonly SwitcherMixBlockType NativeType;
+        public readonly SwitcherMixBlockFeatures SupportedFeatures;
 
-        public SwitcherMixBlock() => (NativeType, ProgramInputs, PreviewInputs) = (SwitcherMixBlockType.Unknown, Array.Empty<SwitcherBusInput>(), null);
+        public SwitcherMixBlock() => (NativeType, ProgramInputs, PreviewInputs, SupportedFeatures) = (SwitcherMixBlockType.Unknown, Array.Empty<SwitcherBusInput>(), null, new());
 
-        private SwitcherMixBlock(SwitcherBusInput[] programInputs) =>
-            (NativeType, ProgramInputs, PreviewInputs) = (SwitcherMixBlockType.CutBus, programInputs, null);
+        private SwitcherMixBlock(SwitcherMixBlockFeatures features, SwitcherBusInput[] programInputs) =>
+            (NativeType, ProgramInputs, PreviewInputs, SupportedFeatures) = (SwitcherMixBlockType.CutBus, programInputs, null, features);
 
-        private SwitcherMixBlock(SwitcherBusInput[] programInputs, params SwitcherBusInput[] previewInputs) => 
-            (NativeType, ProgramInputs, PreviewInputs) = (SwitcherMixBlockType.ProgramPreview, programInputs, previewInputs);
+        private SwitcherMixBlock(SwitcherMixBlockFeatures features, SwitcherBusInput[] programInputs, params SwitcherBusInput[] previewInputs) => 
+            (NativeType, ProgramInputs, PreviewInputs, SupportedFeatures) = (SwitcherMixBlockType.ProgramPreview, programInputs, previewInputs, features);
 
-        public static SwitcherMixBlock NewCutBus(params SwitcherBusInput[] programInputs) => new(programInputs);
-        public static SwitcherMixBlock NewProgPrev() => new(Array.Empty<SwitcherBusInput>(), Array.Empty<SwitcherBusInput>());
-        public static SwitcherMixBlock NewProgPrev(SwitcherBusInput[] programInputs, params SwitcherBusInput[] previewInputs) => new(programInputs, previewInputs);
-        public static SwitcherMixBlock NewProgPrevSameInputs(params SwitcherBusInput[] inputs) => new(inputs, inputs);
+        public static SwitcherMixBlock NewCutBus(SwitcherMixBlockFeatures features, params SwitcherBusInput[] programInputs) => new(features, programInputs);
+        public static SwitcherMixBlock NewProgPrev(SwitcherMixBlockFeatures features) => new(features, Array.Empty<SwitcherBusInput>(), Array.Empty<SwitcherBusInput>());
+        public static SwitcherMixBlock NewProgPrev(SwitcherMixBlockFeatures features, SwitcherBusInput[] programInputs, params SwitcherBusInput[] previewInputs) => new(features, programInputs, previewInputs);
+        public static SwitcherMixBlock NewProgPrevSameInputs(SwitcherMixBlockFeatures features, params SwitcherBusInput[] inputs) => new(features, inputs, inputs);
+    }
+
+    public class SwitcherMixBlockFeatures
+    {
+        // States that the mix block currently supports changing the program bus directly (with **no** applied fade).
+        // (*Getting* the program bus should always be possible)
+        public bool SupportsDirectProgramModification { get; init; } = false;
+
+        // States that the mix block has a preview bus currently and it can be changed (presumably with no fade applied...)
+        public bool SupportsDirectPreviewAccess { get; init; } = false;
+
+        // States that the mix block currently supports the program-preview-swapping "Cut" operation.
+        public bool SupportsCutAction { get; init; } = false;
+
+        // States that the mix block currently supports the program-preview-swapping "Auto" operation.
+        public bool SupportsAutoAction { get; init; } = false;
+
+        // States that the mix block currently supports changing the cut bus mode (between Cut and Auto).
+        public bool SupportsCutBusModeChanging { get; init; } = false;
+
+        // States that the mix block currently supports the input being switched *with the cut bus mode applied to it*
+        public bool SupportsCutBusSwitching { get; init; } = false;
+
+        // States that the mix block currently supports the "Cut" mode of the cut bus.
+        public bool SupportsCutBusCutMode { get; init; } = false;
+
+        // States that the mix block currently supports the "Auto" mode of the cut bus.
+        public bool SupportsCutBusAutoMode { get; init; } = false;
+
+        public SwitcherMixBlockFeatures() { }
+        public SwitcherMixBlockFeatures(
+            bool supportsDirectProgramModification = false,
+            bool supportsDirectPreviewAccess = false,
+            bool supportsCutAction = false,
+            bool supportsAutoAction = false,
+            bool supportsCutBusModeChanging = false,
+            bool supportsCutBusSwitching = false,
+            bool supportsCutBusCutMode = false,
+            bool supportsCutBusAutoMode = false)
+        {
+            SupportsDirectProgramModification = supportsDirectProgramModification;
+            SupportsDirectPreviewAccess = supportsDirectPreviewAccess;
+            SupportsCutAction = supportsCutAction;
+            SupportsAutoAction = supportsAutoAction;
+            SupportsCutBusModeChanging = supportsCutBusModeChanging;
+            SupportsCutBusSwitching = supportsCutBusSwitching;
+            SupportsCutBusCutMode = supportsCutBusCutMode;
+            SupportsCutBusAutoMode = supportsCutBusAutoMode;
+        }
     }
 
     public class SwitcherBusInput

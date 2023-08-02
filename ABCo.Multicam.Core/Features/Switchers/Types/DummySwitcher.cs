@@ -48,9 +48,9 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types
 
                 // Create the mix block
                 if (mixBlocks[i].Type == SwitcherMixBlockType.ProgramPreview)
-                    mixBlocksArray[i] = SwitcherMixBlock.NewProgPrevSameInputs(programArray);
+                    mixBlocksArray[i] = SwitcherMixBlock.NewProgPrevSameInputs(null!, programArray);
                 else
-                    mixBlocksArray[i] = SwitcherMixBlock.NewCutBus(programArray);
+                    mixBlocksArray[i] = SwitcherMixBlock.NewCutBus(null!, programArray);
             }
 
             return new SwitcherSpecs(mixBlocksArray);

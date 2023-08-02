@@ -35,8 +35,8 @@ namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
             _currentMixBlockVM = 0;
             _featureSpecs = new SwitcherSpecs(new SwitcherMixBlock[]
             {
-                SwitcherMixBlock.NewCutBus(),
-                SwitcherMixBlock.NewProgPrev()
+                SwitcherMixBlock.NewCutBus(new()),
+                SwitcherMixBlock.NewProgPrev(new())
             });
 
             _mocks.Feature = new Mock<ISwitcherRunningFeature>();

@@ -1,0 +1,277 @@
+﻿using ABCo.Multicam.Core.Features.Switchers;
+using ABCo.Multicam.Core.Features.Switchers.Interaction;
+using Moq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
+{
+    [TestClass]
+    public class MixBlockInteractionBufferTests
+    {
+        public record struct Mocks(
+            Mock<ISwitcher> Switcher,
+            Mock<IMixBlockInteractionEmulator> Emulator
+        );
+
+        SwitcherMixBlock? _mixBlock = null;
+        SwitcherMixBlockFeatures _features = new();
+        int _mixBlockIndex;
+        Mocks _mocks;
+
+        [TestInitialize]
+        public void InitMocks()
+        {
+            _features = new SwitcherMixBlockFeatures();
+
+            _mixBlockIndex = 13;
+            _mocks.Switcher = new();
+            _mocks.Emulator = new();
+
+            _mocks.Switcher.Setup(m => m.ReceiveValue(_mixBlockIndex, 0)).Returns(2);
+            _mocks.Switcher.Setup(m => m.ReceiveValue(_mixBlockIndex, 1)).Returns(4);
+
+            //_mocks.Emulator.Setup(m => m.TrySetProgWithPreviewThenCutAction()).Returns(false);
+            //_mocks.Emulator.Setup(m => m.TrySetProgWithCutBusCutMode()).Returns(false);
+        }
+
+        MixBlockInteractionBuffer Create()
+        {
+            _mixBlock ??= SwitcherMixBlock.NewProgPrevSameInputs(_features, new SwitcherBusInput(3, ""), new(13, ""));
+            return new(_mixBlock, _mixBlockIndex, _mocks.Switcher.Object, _mocks.Emulator.Object);
+        }
+
+        [TestMethod]
+        public void Ctor_Program_Native()
+        {
+            _features = new SwitcherMixBlockFeatures();
+
+            var buffer = Create();
+            Assert.AreEqual(2, buffer.Program);
+            _mocks.Switcher.Verify(m => m.ReceiveValue(_mixBlockIndex, 0), Times.Once);
+        }
+
+        [TestMethod]
+        public void Ctor_Preview_Native()
+        {
+            _features = new SwitcherMixBlockFeatures(supportsDirectPreviewAccess: true);
+
+            var buffer = Create();
+            Assert.AreEqual(4, buffer.Preview);
+            _mocks.Switcher.Verify(m => m.ReceiveValue(_mixBlockIndex, 1), Times.Once);
+        }
+
+        [TestMethod]
+        public void Ctor_Preview_EmulatedWithInputs()
+        {
+            var buffer = Create();
+            Assert.AreEqual(3, buffer.Preview);
+            _mocks.Switcher.Verify(m => m.ReceiveValue(13, 1), Times.Never);
+        }
+
+        [TestMethod]
+        public void Ctor_Preview_EmulatedNoInputs()
+        {
+            _mixBlock = SwitcherMixBlock.NewProgPrevSameInputs(_features);
+
+            var buffer = Create();
+            Assert.AreEqual(0, buffer.Preview);
+            _mocks.Switcher.Verify(m => m.ReceiveValue(_mixBlockIndex, 1), Times.Never);
+        }
+
+        [TestMethod]
+        public void RefreshCache_Program()
+        {
+            var feature = Create();
+
+            _mocks.Switcher.Setup(m => m.ReceiveValue(_mixBlockIndex, 0)).Returns(8);
+            feature.RefreshCache();
+
+            _mocks.Switcher.Verify(m => m.ReceiveValue(_mixBlockIndex, 0), Times.Exactly(2));
+            Assert.AreEqual(8, feature.Program);
+        }
+
+        [TestMethod]
+        public void RefreshCache_PreviewNative()
+        {
+            _features = new SwitcherMixBlockFeatures(supportsDirectPreviewAccess: true);
+            var feature = Create();
+
+            _mocks.Switcher.Setup(m => m.ReceiveValue(_mixBlockIndex, 1)).Returns(17);
+            feature.RefreshCache();
+
+            _mocks.Switcher.Verify(m => m.ReceiveValue(_mixBlockIndex, 1), Times.Exactly(2));
+            Assert.AreEqual(17, feature.Preview);
+        }
+
+        [TestMethod]
+        public void RefreshCache_PreviewEmulated()
+        {
+            var feature = Create();
+
+            _mocks.Switcher.Setup(m => m.ReceiveValue(_mixBlockIndex, 1)).Returns(17);
+            feature.RefreshCache();
+
+            _mocks.Switcher.Verify(m => m.ReceiveValue(_mixBlockIndex, 1), Times.Never);
+            Assert.AreEqual(3, feature.Preview);
+        }
+
+        [TestMethod]
+        public void RefreshWithKnownProg()
+        {
+            var feature = Create();
+            feature.RefreshWithKnownProg(27);
+            Assert.AreEqual(27, feature.Program);
+            _mocks.Switcher.Verify(m => m.ReceiveValue(_mixBlockIndex, 0), Times.Once);
+        }
+
+        [TestMethod]
+        public void RefreshWithKnownPrev()
+        {
+            var feature = Create();
+            feature.RefreshWithKnownPrev(76);
+            Assert.AreEqual(76, feature.Preview);
+            _mocks.Switcher.Verify(m => m.ReceiveValue(_mixBlockIndex, 1), Times.Never);
+        }
+
+        [TestMethod]
+        public void SetProgram_Native()
+        {
+            _features = new(supportsDirectProgramModification: true);
+            var feature = Create();
+
+            feature.SetProgram(13);
+            feature.SetProgram(4);
+
+            _mocks.Switcher.Verify(m => m.PostValue(_mixBlockIndex, 0, 13), Times.Once);
+            _mocks.Switcher.Verify(m => m.PostValue(_mixBlockIndex, 0, 4), Times.Once);
+
+            _mocks.Emulator.Verify(m => m.TrySetProgWithPreviewThenCutAction(24), Times.Never);
+            _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusCutMode(24), Times.Never);
+            _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusAutoMode(24), Times.Never);
+        }
+
+        [TestMethod]
+        public void SetProgram_Emulated1()
+        {
+            _mocks.Emulator.Setup(m => m.TrySetProgWithPreviewThenCutAction(24)).Returns(true);
+
+            Create().SetProgram(24);
+
+            _mocks.Switcher.Verify(m => m.PostValue(_mixBlockIndex, 0, 24), Times.Never);
+            _mocks.Emulator.Verify(m => m.TrySetProgWithPreviewThenCutAction(24), Times.Once);
+            _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusCutMode(24), Times.Never);
+            _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusAutoMode(24), Times.Never);
+        }
+
+        [TestMethod]
+        public void SetProgram_Emulated2()
+        {
+            _mocks.Emulator.Setup(m => m.TrySetProgWithCutBusCutMode(24)).Returns(true);
+
+            Create().SetProgram(24);
+
+            _mocks.Switcher.Verify(m => m.PostValue(_mixBlockIndex, 0, 24), Times.Never);
+            _mocks.Emulator.Verify(m => m.TrySetProgWithPreviewThenCutAction(24), Times.Once);
+            _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusCutMode(24), Times.Once);
+            _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusAutoMode(24), Times.Never);
+        }
+
+        [TestMethod]
+        public void SetProgram_Emulated3()
+        {
+            _mocks.Emulator.Setup(m => m.TrySetProgWithCutBusAutoMode(24)).Returns(true);
+
+            Create().SetProgram(24);
+
+            _mocks.Switcher.Verify(m => m.PostValue(_mixBlockIndex, 0, 24), Times.Never);
+            _mocks.Emulator.Verify(m => m.TrySetProgWithPreviewThenCutAction(24), Times.Once);
+            _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusCutMode(24), Times.Once);
+            _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusAutoMode(24), Times.Once);
+        }
+
+        [TestMethod]
+        public void SetProgram_CannotEmulate()
+        {
+            var feature = Create();
+            feature.SetProgram(24);
+
+            _mocks.Switcher.Verify(m => m.PostValue(_mixBlockIndex, 0, 24), Times.Never);
+            _mocks.Emulator.Verify(m => m.TrySetProgWithPreviewThenCutAction(24), Times.Once);
+            _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusCutMode(24), Times.Once);
+            _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusAutoMode(24), Times.Once);
+
+            Assert.AreEqual(24, feature.Program);
+        }
+
+        [TestMethod]
+        public void SetPreview_Native()
+        {
+            _features = new(supportsDirectPreviewAccess: true);
+            var feature = Create();
+
+            feature.SetPreview(13);
+            feature.SetPreview(4);
+
+            _mocks.Switcher.Verify(m => m.PostValue(_mixBlockIndex, 1, 13), Times.Once);
+            _mocks.Switcher.Verify(m => m.PostValue(_mixBlockIndex, 1, 4), Times.Once);
+        }
+
+        [TestMethod]
+        public void SetPreview_CannotEmulate()
+        {
+            var feature = Create();
+
+            feature.SetPreview(13);
+            Assert.AreEqual(13, feature.Preview);
+            feature.SetPreview(4);
+            Assert.AreEqual(4, feature.Preview);
+
+            _mocks.Switcher.Verify(m => m.PostValue(_mixBlockIndex, 1, 13), Times.Never);
+            _mocks.Switcher.Verify(m => m.PostValue(_mixBlockIndex, 1, 4), Times.Never);
+        }
+
+        //[TestMethod]
+        //public void Refresh()
+        //{
+        //    var buffer = Create();
+        //    _mocks.Switcher.Setup(m => m.ReceiveValue(7, 0)).Returns(6);
+        //    buffer.Refresh();
+
+        //    Assert.AreEqual(6, buffer.GetValue(0));
+        //    Assert.AreEqual(0, buffer.GetValue(1));
+
+        //    _mocks.Switcher.Verify(m => m.ReceiveValue(7, 0), Times.Exactly(2));
+        //    _mocks.Switcher.Verify(m => m.ReceiveValue(7, 1), Times.Never);
+        //}
+
+        //[TestMethod]
+        //public void Refresh_Known_Program()
+        //{
+        //    var buffer = Create();
+        //    buffer.RefreshKnown(0, 13);
+
+        //    Assert.AreEqual(13, buffer.GetValue(0));
+        //    Assert.AreEqual(4, buffer.GetValue(1));
+
+        //    _mocks.Switcher.Verify(m => m.ReceiveValue(7, 0), Times.Once);
+        //    _mocks.Switcher.Verify(m => m.ReceiveValue(7, 1), Times.Once);
+        //}
+
+        //[TestMethod]
+        //public void Refresh_Known_Preview()
+        //{
+        //    var buffer = Create();
+        //    buffer.RefreshKnown(1, 13);
+
+        //    Assert.AreEqual(2, buffer.GetValue(0));
+        //    Assert.AreEqual(13, buffer.GetValue(1));
+
+        //    _mocks.Switcher.Verify(m => m.ReceiveValue(7, 0), Times.Once);
+        //    _mocks.Switcher.Verify(m => m.ReceiveValue(7, 1), Times.Once);
+        //}
+        }
+}

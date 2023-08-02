@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 {
-    public interface ICutBusInteractionBuffer : IMixBlockInteractionBuffer { }
-    public class CutBusInteractionBuffer : ICutBusInteractionBuffer
+    public class CutBusInteractionBuffer
     {
         ISwitcher _switcher;
         SwitcherMixBlock _mixBlock;
@@ -39,6 +38,16 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
         {
             // Swap program and preview and send the new bus value to the switcher
             throw new NotImplementedException();
+        }
+
+        public void Refresh()
+        {
+            _programValue = _switcher.ReceiveValue(_mixBlockIdx, 0);
+        }
+
+        public void RefreshKnown(int bus, int value)
+        {
+
         }
     }
 }
