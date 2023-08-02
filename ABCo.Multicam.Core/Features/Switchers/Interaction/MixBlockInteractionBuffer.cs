@@ -79,8 +79,17 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
             _onCacheChange?.Invoke(_mixBlockIdx);
         }
 
-        public void RefreshWithKnownProg(int knownProg) => Program = knownProg;
-        public void RefreshWithKnownPrev(int knownPrev) => Preview = knownPrev;
+        public void RefreshWithKnownProg(int knownProg)
+        {
+            Program = knownProg;
+            _onCacheChange?.Invoke(_mixBlockIdx);
+        }
+
+        public void RefreshWithKnownPrev(int knownPrev)
+        {
+            Preview = knownPrev;
+            _onCacheChange?.Invoke(_mixBlockIdx);
+        }
 
         public void SetCacheChangeCall(Action<int>? cacheChange) => _onCacheChange = cacheChange;
     }
