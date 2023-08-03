@@ -8,10 +8,16 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 {
     public interface IMixBlockInteractionBuffer 
     {
+        int Program { get; }
+        int Preview { get; }
+        CutBusMode CutBusMode { get; }
+
         void SetProgram(int val);
         void SetPreview(int val);
         void SetCacheChangeCall(Action<int> onCacheChange);
-        CutBusMode CutBusMode { get; }
+        void RefreshCache();
+        void RefreshWithKnownProg(int val);
+        void RefreshWithKnownPrev(int val);
     }
 
     public class MixBlockInteractionBuffer : IMixBlockInteractionBuffer
@@ -22,9 +28,9 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
         IMixBlockInteractionEmulator _fallbackEmulator;
         Action<int>? _onCacheChange;
 
-        public int Program { get; set; }
-        public int Preview { get; set; }
-        public CutBusMode CutBusMode { get; set; }
+        public int Program { get; private set; }
+        public int Preview { get; private set; }
+        public CutBusMode CutBusMode { get; private set; }
 
         public MixBlockInteractionBuffer(SwitcherMixBlock block, int mixBlockIdx, ISwitcher switcher, IMixBlockInteractionEmulator fallbackEmulator)
         {

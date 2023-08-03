@@ -1,321 +1,234 @@
-﻿//using ABCo.Multicam.Core.Features.Switchers;
-//using ABCo.Multicam.Core.Features.Switchers.Fading;
-//using ABCo.Multicam.Core.Features.Switchers.Interaction;
-//using ABCo.Multicam.Core.Features.Switchers.Types;
-//using Moq;
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
+﻿using ABCo.Multicam.Core.Features.Switchers;
+using ABCo.Multicam.Core.Features.Switchers.Fading;
+using ABCo.Multicam.Core.Features.Switchers.Interaction;
+using ABCo.Multicam.Core.Features.Switchers.Types;
+using Moq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-//namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
-//{
-//    [TestClass]
-//    public class SwitcherInteractionBufferTests
-//    {
-//        public record struct Mocks(Mock<ISwitcher> Switcher);
-//        Action<SwitcherBusChangeInfo> _switcherBusChangeCallback = v => { };
-//        SwitcherSpecs _switcherSpecs = new();
-//        Mocks _mocks = new();
+namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
+{
+    [TestClass]
+    public class SwitcherInteractionBufferTests
+    {
+        public record struct Mocks(
+            Mock<ISwitcher> Switcher,
+            Mock<ISwitcherInteractionBufferFactory> Factory,
+            Mock<IMixBlockInteractionBuffer>[] Buffers);
 
-//        [TestInitialize]
-//        public void MakeMocks()
-//        {
-//            _switcherSpecs = new();
-//            _mocks.Switcher = Mock.Get(Mock.Of<ISwitcher>());
-//            _mocks.Switcher.Setup(m => m.IsConnected).Returns(true);
-//            _mocks.Switcher.Setup(m => m.ReceiveSpecs()).Returns(() => _switcherSpecs);
-//            _mocks.Switcher.Setup(m => m.SetOnBusChangeFinishCall(It.IsAny<Action<SwitcherBusChangeInfo>>())).Callback<Action<SwitcherBusChangeInfo>>(v => _switcherBusChangeCallback = v);
-//            _mocks.Switcher.Setup(m => m.ReceiveValue(0, 0)).Returns(2);
-//            _mocks.Switcher.Setup(m => m.ReceiveValue(0, 1)).Returns(4);
-//            _mocks.Switcher.Setup(m => m.ReceiveValue(1, 0)).Returns(6);
-//            _mocks.Switcher.Setup(m => m.ReceiveValue(1, 1)).Returns(8);
-//        }
+        Action<SwitcherBusChangeInfo> _switcherBusChangeCallback = v => { };
+        SwitcherSpecs _switcherSpecs = new();
+        Mocks _mocks = new();
 
-//        public async Task<SwitcherInteractionBuffer> Create() => await SwitcherInteractionBuffer.CreateAsync(_mocks.Switcher.Object);
+        [TestInitialize]
+        public void MakeMocks()
+        {
+            _switcherSpecs = new(
+                SwitcherMixBlock.NewProgPrevSameInputs(new(), new SwitcherBusInput(2, ""), new SwitcherBusInput(4, "")),
+                SwitcherMixBlock.NewProgPrevSameInputs(new(), new SwitcherBusInput(6, ""), new SwitcherBusInput(8, ""))
+            );
 
-//        [TestMethod]
-//        public async Task Ctor_Disconnected()
-//        {
-//            _mocks.Switcher.Setup(m => m.IsConnected).Returns(false);
-//            var feature = await Create();
-//            Assert.AreEqual(0, feature.Specs.MixBlocks.Count);
-//            Assert.IsFalse(feature.IsConnected);
-//        }
+            _mocks.Switcher = new();
+            _mocks.Switcher.Setup(m => m.IsConnected).Returns(true);
+            _mocks.Switcher.Setup(m => m.ReceiveSpecs()).Returns(() => _switcherSpecs);
+            _mocks.Switcher.Setup(m => m.SetOnBusChangeFinishCall(It.IsAny<Action<SwitcherBusChangeInfo>>())).Callback<Action<SwitcherBusChangeInfo>>(v => _switcherBusChangeCallback = v);
 
-//        [TestMethod]
-//        public async Task Ctor_Disconnected_NoAccess()
-//        {
-//            _mocks.Switcher.Setup(m => m.IsConnected).Returns(false);
-//            var feature = await Create();
-//            _mocks.Switcher.Verify(m => m.ReceiveSpecs(), Times.Never);
-//            _mocks.Switcher.Verify(m => m.PostValue(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()), Times.Never);
-//        }
+            _mocks.Buffers = new Mock<IMixBlockInteractionBuffer>[] { new(), new() };
 
-//        [TestMethod]
-//        public async Task Ctor_Connected()
-//        {
-//            var feature = await Create();
-//            Assert.IsTrue(feature.IsConnected);
-//        }
+            _mocks.Factory = new();
+            _mocks.Factory.Setup(m => m.CreateMixBlock(It.IsAny<SwitcherMixBlock>(), 0, It.IsAny<ISwitcher>())).Returns(_mocks.Buffers[0].Object);
+            _mocks.Factory.Setup(m => m.CreateMixBlock(It.IsAny<SwitcherMixBlock>(), 1, It.IsAny<ISwitcher>())).Returns(_mocks.Buffers[1].Object);
+        }
 
-//        [TestMethod]
-//        public async Task IsConnected()
-//        {
-//            var feature = await Create();
-//            Assert.IsTrue(feature.IsConnected);
-//            Assert.IsTrue(feature.IsConnected);
+        public SwitcherInteractionBuffer Create() => new SwitcherInteractionBuffer(_mocks.Switcher.Object, _mocks.Factory.Object);
 
-//            // Verify it was only received once
-//            _mocks.Switcher.VerifyGet(m => m.IsConnected, Times.Once);
-//        }
+        [TestMethod]
+        public void Ctor_Disconnected()
+        {
+            _mocks.Switcher.Setup(m => m.IsConnected).Returns(false);
 
-//        [TestMethod]
-//        public async Task SwitcherSpecs()
-//        {
-//            var feature = await Create();
-//            Assert.AreEqual(_switcherSpecs, feature.Specs);
-//            Assert.AreEqual(_switcherSpecs, feature.Specs);
+            var feature = Create();
+            Assert.AreEqual(0, feature.Specs.MixBlocks.Count);
+            Assert.IsFalse(feature.IsConnected);
 
-//            // Verify it was only received once
-//            _mocks.Switcher.Verify(m => m.ReceiveSpecs(), Times.Once);
-//        }
+            _mocks.Switcher.Verify(m => m.ReceiveSpecs(), Times.Never);
+            _mocks.Factory.Verify(m => m.CreateMixBlock(It.IsAny<SwitcherMixBlock>(), It.IsAny<int>(), It.IsAny<ISwitcher>()), Times.Never);
+        }
 
-//        [TestMethod]
-//        [DataRow(SwitcherMixBlockType.CutBus)]
-//        [DataRow(SwitcherMixBlockType.ProgramPreview)]
-//        public async Task GetValue_Program(SwitcherMixBlockType type)
-//        {
-//            var inputs = new SwitcherBusInput[2] { new(), new() };
-//            var mixBlock = type == SwitcherMixBlockType.CutBus ? SwitcherMixBlock.NewCutBus(inputs) : SwitcherMixBlock.NewProgPrev(inputs);
-//            await TestChangeAndGetValueNative(mixBlock, 0);
-//        }
+        [TestMethod]
+        public void Ctor_Connected()
+        {
+            Assert.IsTrue(Create().IsConnected);
 
-//        [TestMethod]
-//        public async Task GetValue_NativePreview()
-//        {
-//            var mixBlock = SwitcherMixBlock.NewProgPrev(Array.Empty<SwitcherBusInput>(), new(), new());
-//            await TestChangeAndGetValueNative(mixBlock, 1);
-//        }
+            _mocks.Switcher.Verify(m => m.ReceiveSpecs(), Times.Once);
+            _mocks.Factory.Verify(m => m.CreateMixBlock(_switcherSpecs.MixBlocks[0], 0, _mocks.Switcher.Object));
+            _mocks.Factory.Verify(m => m.CreateMixBlock(_switcherSpecs.MixBlocks[1], 1, _mocks.Switcher.Object));
+        }
 
-//        [TestMethod]
-//        public async Task GetValue_EmulatedPreview_WithInputs()
-//        {
-//            var mixBlock = SwitcherMixBlock.NewCutBus(new(76, ""), new(35, ""));
-//            _switcherSpecs = new(mixBlock, mixBlock);
+        [TestMethod]
+        public void IsConnected()
+        {
+            var feature = Create();
+            Assert.IsTrue(feature.IsConnected);
+            Assert.IsTrue(feature.IsConnected);
 
-//            var feature = await Create();
-//            Assert.AreEqual(76, feature.GetValue(0, 1));
-//            Assert.AreEqual(76, feature.GetValue(0, 1));
-//            Assert.AreEqual(76, feature.GetValue(1, 1));
-//            Assert.AreEqual(76, feature.GetValue(1, 1));
+            // Verify it was only received once
+            _mocks.Switcher.VerifyGet(m => m.IsConnected, Times.Once);
+        }
 
-//            // Verify NO access to the switcher
-//            _mocks.Switcher.Verify(m => m.ReceiveValue(0, 1), Times.Never);
-//            _mocks.Switcher.Verify(m => m.ReceiveValue(1, 1), Times.Never);
-//        }
+        [TestMethod]
+        public void SwitcherSpecs()
+        {
+            var feature = Create();
+            Assert.AreEqual(_switcherSpecs, feature.Specs);
+            Assert.AreEqual(_switcherSpecs, feature.Specs);
 
-//        [TestMethod]
-//        public async Task GetValue_EmulatedPreview_NoInputs()
-//        {
-//            var mixBlock = SwitcherMixBlock.NewCutBus();
-//            _switcherSpecs = new(mixBlock, mixBlock);
+            // Verify it was only received once
+            _mocks.Switcher.Verify(m => m.ReceiveSpecs(), Times.Once);
+        }
 
-//            var feature = await Create();
-//            Assert.AreEqual(0, feature.GetValue(0, 1));
-//            Assert.AreEqual(0, feature.GetValue(0, 1));
-//            Assert.AreEqual(0, feature.GetValue(1, 1));
-//            Assert.AreEqual(0, feature.GetValue(1, 1));
+        void Verify1Success1Fail(int mixBlock, Action<Mock<IMixBlockInteractionBuffer>, Times> per)
+        {
+            per(_mocks.Buffers[mixBlock], Times.Once());
+            per(_mocks.Buffers[(~mixBlock & 1)], Times.Never());
+        }
 
-//            // Verify NO access to the switcher
-//            _mocks.Switcher.Verify(m => m.ReceiveValue(0, 1), Times.Never);
-//            _mocks.Switcher.Verify(m => m.ReceiveValue(1, 1), Times.Never);
-//        }
+        [TestMethod]
+        [DataRow(0)]
+        [DataRow(1)]
+        public void GetValue_Program(int mixBlock)
+        {
+            Create().GetValue(mixBlock, 0);
+            Verify1Success1Fail(mixBlock, (i, t) => i.VerifyGet(m => m.Program, t));
+        }
 
-//        [TestMethod]
-//        [DataRow(SwitcherMixBlockType.CutBus)]
-//        [DataRow(SwitcherMixBlockType.ProgramPreview)]
-//        public async Task SetValue_Program(SwitcherMixBlockType type)
-//        {
-//            var inputs = new SwitcherBusInput[2] { new(4, ""), new(13, "") };
-//            var mixBlock = type == SwitcherMixBlockType.CutBus ? SwitcherMixBlock.NewCutBus(inputs) : SwitcherMixBlock.NewProgPrev(inputs);
-//            _switcherSpecs = new(mixBlock, mixBlock);
+        [TestMethod]
+        [DataRow(0)]
+        [DataRow(1)]
+        public void GetValue_Preview(int mixBlock)
+        {
+            Create().GetValue(mixBlock, 1);
+            Verify1Success1Fail(mixBlock, (i, t) => i.VerifyGet(m => m.Preview, t));
+        }
 
-//            var feature = await Create();
-//            feature.PostValue(0, 0, 13);
-//            feature.PostValue(1, 0, 4);
+        [TestMethod]
+        [DataRow(0)]
+        [DataRow(1)]
+        public void SetBusValue_Program(int mixBlock)
+        {
+            Create().PostValue(mixBlock, 0, 198);
+            Verify1Success1Fail(mixBlock, (i, t) => i.Verify(m => m.SetProgram(198), t));
+        }
 
-//            _mocks.Switcher.Verify(m => m.PostValue(0, 0, 13), Times.Once);
-//            _mocks.Switcher.Verify(m => m.PostValue(1, 0, 4), Times.Once);
-//        }
+        [TestMethod]
+        [DataRow(0)]
+        [DataRow(1)]
+        public void SetBusValue_Preview(int mixBlock)
+        {
+            Create().PostValue(mixBlock, 1, 124);
+            Verify1Success1Fail(mixBlock, (i, t) => i.Verify(m => m.SetPreview(124), t));
+        }
 
-//        [TestMethod]
-//        public async Task SetValue_NativePreview()
-//        {
-//            var mixBlock = SwitcherMixBlock.NewProgPrev(Array.Empty<SwitcherBusInput>(), new(4, ""), new(13, ""));
-//            _switcherSpecs = new(mixBlock, mixBlock);
+        [TestMethod]
+        [DataRow(0)]
+        [DataRow(1)]
+        public void SetValue_Disconnected(int mixBlock)
+        {
+            _mocks.Switcher.Setup(m => m.IsConnected).Returns(false);
 
-//            var feature = await Create();
-//            feature.PostValue(0, 1, 13);
-//            feature.PostValue(1, 1, 4);
+            var feature = Create();
+            feature.PostValue(mixBlock, 0, 13);
+            feature.PostValue(mixBlock, 1, 19);
 
-//            _mocks.Switcher.Verify(m => m.PostValue(0, 1, 13), Times.Once);
-//            _mocks.Switcher.Verify(m => m.PostValue(1, 1, 4), Times.Once);
-//        }
+            _mocks.Buffers[0].Verify(m => m.SetProgram(13), Times.Never);
+            _mocks.Buffers[0].Verify(m => m.SetPreview(19), Times.Never);
+            _mocks.Buffers[1].Verify(m => m.SetProgram(13), Times.Never);
+            _mocks.Buffers[1].Verify(m => m.SetPreview(19), Times.Never);
+        }
 
-//        [TestMethod]
-//        public async Task SetValue_EmulatedPreview()
-//        {
-//            var mixBlock = SwitcherMixBlock.NewCutBus(new(4, ""), new(13, ""), new(28, ""));
-//            _switcherSpecs = new(mixBlock, mixBlock);
+        [TestMethod]
+        [DataRow(0)]
+        [DataRow(1)]
+        public void OnBusChange_KnownProgram(int mixBlock)
+        {
+            var feature = Create();
+            _switcherBusChangeCallback(new SwitcherBusChangeInfo(true, mixBlock, 0, 13, null));
 
-//            var feature = await Create();
-//            feature.PostValue(0, 1, 13);
-//            Assert.AreEqual(13, feature.GetValue(0, 1));
-//            feature.PostValue(1, 1, 28);
-//            Assert.AreEqual(28, feature.GetValue(1, 1));
+            Verify1Success1Fail(mixBlock, (i, t) => i.Verify(m => m.RefreshWithKnownProg(13), t));
 
-//            // Verify NO access to the switcher
-//            _mocks.Switcher.Verify(m => m.ReceiveValue(0, 1), Times.Never);
-//            _mocks.Switcher.Verify(m => m.ReceiveValue(1, 1), Times.Never);
-//            _mocks.Switcher.Verify(m => m.PostValue(0, 1, 13), Times.Never);
-//            _mocks.Switcher.Verify(m => m.PostValue(1, 1, 28), Times.Never);
-//        }
+            for (int i = 0; i < 1; i++)
+            {
+                _mocks.Buffers[i].Verify(m => m.RefreshWithKnownPrev(13), Times.Never);
+                _mocks.Buffers[i].Verify(m => m.RefreshCache(), Times.Never);
+            }
+        }
 
-//        [TestMethod]
-//        public async Task SetValue_Disconnected()
-//        {
-//            _switcherSpecs = new(SwitcherMixBlock.NewProgPrevSameInputs(new SwitcherBusInput(4, "")));
-//            _mocks.Switcher.Setup(m => m.IsConnected).Returns(false);
+        [TestMethod]
+        [DataRow(0)]
+        [DataRow(1)]
+        public void OnBusChange_KnownPreview(int mixBlock)
+        {
+            var feature = Create();
+            _switcherBusChangeCallback(new SwitcherBusChangeInfo(true, mixBlock, 1, 13, null));
 
-//            var feature = await Create();
-//            feature.PostValue(0, 0, 13);
+            Verify1Success1Fail(mixBlock, (i, t) => i.Verify(m => m.RefreshWithKnownPrev(13), t));
 
-//            _mocks.Switcher.Verify(m => m.PostValue(0, 0, 13), Times.Never);
-//        }
+            for (int i = 0; i < 1; i++)
+            {
+                _mocks.Buffers[i].Verify(m => m.RefreshWithKnownProg(13), Times.Never);
+                _mocks.Buffers[i].Verify(m => m.RefreshCache(), Times.Never);
+            }
+        }
 
-//        [TestMethod]
-//        public async Task Dispose()
-//        {
-//            var feature = await Create();
-//            feature.Dispose();
-//            _mocks.Switcher.Verify(m => m.Dispose(), Times.Once);
-//        }
+        [TestMethod]
+        public void OnBusChange_Unknown()
+        {
+            var feature = Create();
+            _switcherBusChangeCallback(new SwitcherBusChangeInfo(false, 0, 0, 0, null));
 
-//        [TestMethod]
-//        public async Task OnBusChange_KnownProgram_Updates()
-//        {
-//            _switcherSpecs = new(SwitcherMixBlock.NewCutBus(new(1, ""), new(2, "")), SwitcherMixBlock.NewProgPrevSameInputs(new(1, ""), new(8, "")));
-//            var feature = await Create();
-//            _switcherBusChangeCallback(new SwitcherBusChangeInfo(true, 1, 0, 13, null));
+            _mocks.Buffers[0].Verify(m => m.RefreshCache(), Times.Once);
+            _mocks.Buffers[1].Verify(m => m.RefreshCache(), Times.Once);
+        }
 
-//            Assert.AreEqual(2, feature.GetValue(0, 0));
-//            Assert.AreEqual(1, feature.GetValue(0, 1));
-//            Assert.AreEqual(13, feature.GetValue(1, 0));
-//            Assert.AreEqual(8, feature.GetValue(1, 1));
-//        }
+        [TestMethod]
+        [DataRow(false, 0, 0)]
+        [DataRow(false, 1, 1)]
+        [DataRow(true, 0, 0)]
+        [DataRow(true, 1, 1)]
+        public void OnBusChange_TriggersCallback(bool isKnown, int mixBlock, int bus)
+        {
+            var feature = Create();
 
-//        [TestMethod]
-//        public async Task OnBusChange_KnownPreview_Updates()
-//        {
-//            _switcherSpecs = new(SwitcherMixBlock.NewCutBus(new(1, ""), new(2, "")), SwitcherMixBlock.NewProgPrevSameInputs(new(8, ""), new(13, "")));
-//            var feature = await Create();
-//            _switcherBusChangeCallback(new SwitcherBusChangeInfo(true, 1, 1, 13, null));
+            bool ran = false;
+            feature.SetOnBusChangeFinishCall(i =>
+            {
+                Assert.AreEqual(new RetrospectiveFadeInfo(), i);
+                ran = true;
+            });
 
-//            Assert.AreEqual(2, feature.GetValue(0, 0));
-//            Assert.AreEqual(1, feature.GetValue(0, 1));
-//            Assert.AreEqual(6, feature.GetValue(1, 0));
-//            Assert.AreEqual(13, feature.GetValue(1, 1));
-//        }
+            _switcherBusChangeCallback(new SwitcherBusChangeInfo(isKnown, mixBlock, bus, 0, new RetrospectiveFadeInfo()));
 
-//        [TestMethod]
-//        public async Task OnBusChange_UnknownProgram_Updates()
-//        {
-//            _switcherSpecs = new(SwitcherMixBlock.NewCutBus(new(1, ""), new(2, "")), SwitcherMixBlock.NewProgPrevSameInputs(new(1, ""), new(8, "")));
-//            var feature = await Create();
-//            _mocks.Switcher.Setup(m => m.ReceiveValue(0, 0)).Returns(1);
+            Assert.IsTrue(ran);
+        }
 
-//            _switcherBusChangeCallback(new SwitcherBusChangeInfo(false, 0, 0, 0, null));
+        [TestMethod]
+        [DataRow(0)]
+        [DataRow(1)]
+        public void Cut(int mixBlock)
+        {            
+            //Create().Cut(mixBlock);
+            //Verify1Success1Fail(mixBlock, i => i.Verify(m => m.(mixBlock));
+        }
 
-//            Assert.AreEqual(1, feature.GetValue(0, 0));
-//            Assert.AreEqual(1, feature.GetValue(0, 1));
-//            Assert.AreEqual(6, feature.GetValue(1, 0));
-//            Assert.AreEqual(8, feature.GetValue(1, 1));
-//        }
-
-//        [TestMethod]
-//        public async Task OnBusChange_UnknownPreview_Updates()
-//        {
-//            _switcherSpecs = new(SwitcherMixBlock.NewCutBus(new(1, ""), new(2, "")), SwitcherMixBlock.NewProgPrevSameInputs(new(1, ""), new(8, "")));
-//            var feature = await Create();
-//            _mocks.Switcher.Setup(m => m.ReceiveValue(1, 1)).Returns(1);
-
-//            _switcherBusChangeCallback(new SwitcherBusChangeInfo(false, 0, 0, 0, null));
-
-//            Assert.AreEqual(2, feature.GetValue(0, 0));
-//            Assert.AreEqual(1, feature.GetValue(0, 1));
-//            Assert.AreEqual(6, feature.GetValue(1, 0));
-//            Assert.AreEqual(1, feature.GetValue(1, 1));
-//        }
-
-//        [TestMethod]
-//        [DataRow(false, 0, 0)]
-//        [DataRow(false, 1, 1)]
-//        [DataRow(true, 0, 0)]
-//        [DataRow(true, 1, 1)]
-//        public async Task OnBusChange_TriggersCallback(bool isKnown, int mixBlock, int bus)
-//        {
-//            _switcherSpecs = new(SwitcherMixBlock.NewCutBus(new(1, ""), new(2, "")), SwitcherMixBlock.NewProgPrevSameInputs(new(1, ""), new(8, "")));
-//            var feature = await Create();
-
-//            bool ran = false;
-//            feature.SetOnBusChangeFinishCall(i =>
-//            {
-//                Assert.AreEqual(new RetrospectiveFadeInfo(), i);
-//                ran = true;
-//            });
-
-//            _switcherBusChangeCallback(new SwitcherBusChangeInfo(isKnown, mixBlock, bus, 0, new RetrospectiveFadeInfo()));
-
-//            Assert.IsTrue(ran);
-//        }
-
-//        [TestMethod]
-//        [DataRow(0)]
-//        [DataRow(1)]
-//        public async Task Cut_Native(int mixBlock)
-//        {
-//            var feature = await Create();
-//            feature.Cut(mixBlock);
-//            _mocks.Switcher.Verify(m => m.Cut(mixBlock));
-//        }
-
-//        //[TestMethod]
-//        //[DataRow(0)]
-//        //[DataRow(1)]
-//        //public async Task Cut_Emulated(int mixBlock)
-//        //{
-//        //    _switcherSpecs = new(SwitcherMixBlock.NewCutBus(), SwitcherMixBlock.NewCutBus());
-
-//        //    var feature = await Create();
-//        //    feature.Cut(mixBlock);
-//        //    _mocks.Switcher.Verify(m => m.Cut(mixBlock));
-//        //}
-
-//        async Task TestChangeAndGetValueNative(SwitcherMixBlock mixBlock, int bus)
-//        {
-//            _switcherSpecs = new(mixBlock, mixBlock);
-//            var feature = await Create();
-
-//            Assert.AreEqual(bus == 0 ? 2 : 4, feature.GetValue(0, bus));
-//            Assert.AreEqual(bus == 0 ? 2 : 4, feature.GetValue(0, bus));
-//            Assert.AreEqual(bus == 0 ? 6 : 8, feature.GetValue(1, bus));
-//            Assert.AreEqual(bus == 0 ? 6 : 8, feature.GetValue(1, bus));
-
-//            // Verify it was received once
-//            _mocks.Switcher.Verify(m => m.ReceiveValue(0, bus), Times.Once);
-//            _mocks.Switcher.Verify(m => m.ReceiveValue(1, bus), Times.Once);
-//        }
-//    }
-//}
+        [TestMethod]
+        public void Dispose()
+        {
+            var feature = Create();
+            feature.Dispose();
+            _mocks.Switcher.Verify(m => m.Dispose(), Times.Once);
+        }
+    }
+}
