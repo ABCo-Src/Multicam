@@ -98,6 +98,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
         ISwitcherInteractionBuffer CreateSync(ISwitcher switcher);
         Task<ISwitcherInteractionBuffer> CreateAsync(ISwitcher switcher);
         IMixBlockInteractionBuffer CreateMixBlock(SwitcherMixBlock mixBlock, int mixBlockIdx, ISwitcher switcher);
+        IMixBlockInteractionEmulator CreateMixBlockEmulator(SwitcherMixBlock mixBlock, int mixBlockIdx, ISwitcher switcher, IMixBlockInteractionBuffer parentBuffer);
     }
 
     public class SwitcherInteractionBufferFactory : ISwitcherInteractionBufferFactory
@@ -105,9 +106,10 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
         public ISwitcherInteractionBuffer CreateSync(ISwitcher switcher) => new SwitcherInteractionBuffer(switcher, this);
         public async Task<ISwitcherInteractionBuffer> CreateAsync(ISwitcher switcher) => await Task.Run(() => CreateSync(switcher));
 
-        public IMixBlockInteractionBuffer CreateMixBlock(SwitcherMixBlock mixBlock, int mixBlockIdx, ISwitcher switcher)
-        {
-            throw new Exception();
-        }
+        public IMixBlockInteractionBuffer CreateMixBlock(SwitcherMixBlock mixBlock, int mixBlockIdx, ISwitcher switcher) =>
+            new MixBlockInteractionBuffer(mixBlock, mixBlockIdx, switcher, this);
+
+        public IMixBlockInteractionEmulator CreateMixBlockEmulator(SwitcherMixBlock mixBlock, int mixBlockIdx, ISwitcher switcher, IMixBlockInteractionBuffer parentBuffer) =>
+            new MixBlockInteractionEmulator(mixBlock, mixBlockIdx, switcher, parentBuffer);
     }
 }

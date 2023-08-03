@@ -33,12 +33,12 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
         public int Preview { get; private set; }
         public CutBusMode CutBusMode { get; private set; }
 
-        public MixBlockInteractionBuffer(SwitcherMixBlock block, int mixBlockIdx, ISwitcher switcher, IMixBlockInteractionEmulator fallbackEmulator)
+        public MixBlockInteractionBuffer(SwitcherMixBlock block, int mixBlockIdx, ISwitcher switcher, ISwitcherInteractionBufferFactory factory)
         {
             _mixBlock = block;
             _mixBlockIdx = mixBlockIdx;
             _switcher = switcher;
-            _fallbackEmulator = fallbackEmulator;
+            _fallbackEmulator = factory.CreateMixBlockEmulator(block, mixBlockIdx, switcher, this);
 
             Program = switcher.ReceiveValue(mixBlockIdx, 0);
 

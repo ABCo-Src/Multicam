@@ -15,7 +15,8 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
     {
         public record struct Mocks(
             Mock<ISwitcher> Switcher,
-            Mock<IMixBlockInteractionEmulator> Emulator
+            Mock<IMixBlockInteractionEmulator> Emulator,
+            Mock<ISwitcherInteractionBufferFactory> Factory
         );
 
         SwitcherMixBlock? _mixBlock = null;
@@ -35,6 +36,11 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             _mocks.Switcher = new();
             _mocks.Emulator = new();
 
+            _mocks.Factory = new();
+            _mocks.Factory
+                .Setup(m => m.CreateMixBlockEmulator(It.IsAny<SwitcherMixBlock>(), _mixBlockIndex, _mocks.Switcher.Object, It.IsAny<IMixBlockInteractionBuffer>()))
+                .Returns(_mocks.Emulator.Object);
+
             _mocks.Switcher.Setup(m => m.ReceiveValue(_mixBlockIndex, 0)).Returns(2);
             _mocks.Switcher.Setup(m => m.ReceiveValue(_mixBlockIndex, 1)).Returns(4);
 
@@ -46,7 +52,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
         {
             _mixBlock ??= SwitcherMixBlock.NewProgPrevSameInputs(_features, new SwitcherBusInput(3, ""), new(13, ""));
 
-            var feature = new MixBlockInteractionBuffer(_mixBlock, _mixBlockIndex, _mocks.Switcher.Object, _mocks.Emulator.Object);
+            var feature = new MixBlockInteractionBuffer(_mixBlock, _mixBlockIndex, _mocks.Switcher.Object, _mocks.Factory.Object);
             feature.SetCacheChangeExceptRefreshCall(i => Assert.Fail("Cache change triggered")); // Default cache change handler throws unless specifically looked for
             return feature;
         }
@@ -75,6 +81,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             var buffer = Create();
             Assert.AreEqual(2, buffer.Program);
             _mocks.Switcher.Verify(m => m.ReceiveValue(_mixBlockIndex, 0), Times.Once);
+            _mocks.Factory.Verify(m => m.CreateMixBlockEmulator(_mixBlock!, _mixBlockIndex, _mocks.Switcher.Object, buffer));
         }
 
         [TestMethod]
@@ -85,6 +92,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             var buffer = Create();
             Assert.AreEqual(4, buffer.Preview);
             _mocks.Switcher.Verify(m => m.ReceiveValue(_mixBlockIndex, 1), Times.Once);
+            _mocks.Factory.Verify(m => m.CreateMixBlockEmulator(_mixBlock!, _mixBlockIndex, _mocks.Switcher.Object, buffer));
         }
 
         [TestMethod]
@@ -93,6 +101,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             var buffer = Create();
             Assert.AreEqual(3, buffer.Preview);
             _mocks.Switcher.Verify(m => m.ReceiveValue(13, 1), Times.Never);
+            _mocks.Factory.Verify(m => m.CreateMixBlockEmulator(_mixBlock!, _mixBlockIndex, _mocks.Switcher.Object, buffer));
         }
 
         [TestMethod]
@@ -103,6 +112,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             var buffer = Create();
             Assert.AreEqual(0, buffer.Preview);
             _mocks.Switcher.Verify(m => m.ReceiveValue(_mixBlockIndex, 1), Times.Never);
+            _mocks.Factory.Verify(m => m.CreateMixBlockEmulator(_mixBlock!, _mixBlockIndex, _mocks.Switcher.Object, buffer));
         }
 
         [TestMethod]

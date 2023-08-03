@@ -20,7 +20,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
         ISwitcher _switcher;
         IMixBlockInteractionBuffer _parent;
 
-        public MixBlockInteractionEmulator(SwitcherMixBlock mixBlock, int mixBlockIdx, IMixBlockInteractionBuffer parent, ISwitcher switcher) 
+        public MixBlockInteractionEmulator(SwitcherMixBlock mixBlock, int mixBlockIdx, ISwitcher switcher, IMixBlockInteractionBuffer parent) 
         {
             _mixBlock = mixBlock;
             _mixBlockIdx = mixBlockIdx;

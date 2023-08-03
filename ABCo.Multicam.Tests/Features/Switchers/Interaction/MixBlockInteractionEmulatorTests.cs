@@ -40,7 +40,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
         MixBlockInteractionEmulator Create()
         {
             _mixBlock ??= SwitcherMixBlock.NewProgPrevSameInputs(_features, new SwitcherBusInput(3, ""), new(13, ""));
-            return new(_mixBlock, _mixBlockIndex, _mocks.Parent.Object, _mocks.Switcher.Object); 
+            return new(_mixBlock, _mixBlockIndex, _mocks.Switcher.Object, _mocks.Parent.Object); 
         }
 
         [TestMethod]
