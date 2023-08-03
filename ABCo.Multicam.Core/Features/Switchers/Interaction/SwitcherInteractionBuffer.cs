@@ -39,7 +39,10 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
                 // Create mix block buffers
                 _mixBlockBuffers = new IMixBlockInteractionBuffer[Specs.MixBlocks.Count];
                 for (int i = 0; i < Specs.MixBlocks.Count; i++)
+                {
                     _mixBlockBuffers[i] = factory.CreateMixBlock(Specs.MixBlocks[i], i, switcher);
+                    _mixBlockBuffers[i].SetCacheChangeExceptRefreshCall(OnCacheChange);
+                }
 
                 // Assign bus change event handler
                 _rawSwitcher.SetOnBusChangeFinishCall(OnBusChange);
@@ -81,6 +84,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
             _onBusChangeFinishCall?.Invoke(info.FadeInfo);
         }
 
+        void OnCacheChange(RetrospectiveFadeInfo info) => _onBusChangeFinishCall?.Invoke(info);
         public void SetOnBusChangeFinishCall(Action<RetrospectiveFadeInfo?>? callback) => _onBusChangeFinishCall = callback;
 
         public void Cut(int mixBlock) => _rawSwitcher.Cut(mixBlock);

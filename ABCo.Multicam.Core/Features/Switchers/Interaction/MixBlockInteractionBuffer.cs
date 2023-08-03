@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ABCo.Multicam.Core.Features.Switchers.Fading;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +15,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 
         void SetProgram(int val);
         void SetPreview(int val);
-        void SetCacheChangeCall(Action<int> onCacheChange);
+        void SetCacheChangeExceptRefreshCall(Action<RetrospectiveFadeInfo>? onCacheChange);
         void RefreshCache();
         void RefreshWithKnownProg(int val);
         void RefreshWithKnownPrev(int val);
@@ -26,7 +27,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
         int _mixBlockIdx;
         ISwitcher _switcher;
         IMixBlockInteractionEmulator _fallbackEmulator;
-        Action<int>? _onCacheChange;
+        Action<RetrospectiveFadeInfo>? _onCacheChangeExceptRefresh;
 
         public int Program { get; private set; }
         public int Preview { get; private set; }
@@ -63,7 +64,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 
             // If neither works, just update the cache
             Program = val;
-            _onCacheChange?.Invoke(_mixBlockIdx);
+            _onCacheChangeExceptRefresh?.Invoke(new());
         }
 
         public void SetPreview(int val)
@@ -73,7 +74,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
             else
             {
                 Preview = val;
-                _onCacheChange?.Invoke(_mixBlockIdx);
+                _onCacheChangeExceptRefresh?.Invoke(new());
             }
         }
 
@@ -83,22 +84,10 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 
             if (_mixBlock.SupportedFeatures.SupportsDirectPreviewAccess)
                 Preview = _switcher.ReceiveValue(_mixBlockIdx, 1);
-
-            _onCacheChange?.Invoke(_mixBlockIdx);
         }
 
-        public void RefreshWithKnownProg(int knownProg)
-        {
-            Program = knownProg;
-            _onCacheChange?.Invoke(_mixBlockIdx);
-        }
-
-        public void RefreshWithKnownPrev(int knownPrev)
-        {
-            Preview = knownPrev;
-            _onCacheChange?.Invoke(_mixBlockIdx);
-        }
-
-        public void SetCacheChangeCall(Action<int>? cacheChange) => _onCacheChange = cacheChange;
+        public void RefreshWithKnownProg(int knownProg) => Program = knownProg;
+        public void RefreshWithKnownPrev(int knownPrev) => Preview = knownPrev;
+        public void SetCacheChangeExceptRefreshCall(Action<RetrospectiveFadeInfo>? cacheChange) => _onCacheChangeExceptRefresh = cacheChange;
     }
 }

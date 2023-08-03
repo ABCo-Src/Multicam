@@ -17,7 +17,8 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
         public record struct Mocks(
             Mock<ISwitcher> Switcher,
             Mock<ISwitcherInteractionBufferFactory> Factory,
-            Mock<IMixBlockInteractionBuffer>[] Buffers);
+            Mock<IMixBlockInteractionBuffer>[] Buffers,
+            Action<RetrospectiveFadeInfo>?[] CacheChangeCallbacks);
 
         Action<SwitcherBusChangeInfo> _switcherBusChangeCallback = v => { };
         SwitcherSpecs _switcherSpecs = new();
@@ -36,7 +37,10 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             _mocks.Switcher.Setup(m => m.ReceiveSpecs()).Returns(() => _switcherSpecs);
             _mocks.Switcher.Setup(m => m.SetOnBusChangeFinishCall(It.IsAny<Action<SwitcherBusChangeInfo>>())).Callback<Action<SwitcherBusChangeInfo>>(v => _switcherBusChangeCallback = v);
 
+            _mocks.CacheChangeCallbacks = new Action<RetrospectiveFadeInfo>?[2];
             _mocks.Buffers = new Mock<IMixBlockInteractionBuffer>[] { new(), new() };
+            _mocks.Buffers[0].Setup(m => m.SetCacheChangeExceptRefreshCall(It.IsAny<Action<RetrospectiveFadeInfo>>())).Callback<Action<RetrospectiveFadeInfo>>(a => _mocks.CacheChangeCallbacks[0] = a);
+            _mocks.Buffers[1].Setup(m => m.SetCacheChangeExceptRefreshCall(It.IsAny<Action<RetrospectiveFadeInfo>>())).Callback<Action<RetrospectiveFadeInfo>>(a => _mocks.CacheChangeCallbacks[1] = a);
 
             _mocks.Factory = new();
             _mocks.Factory.Setup(m => m.CreateMixBlock(It.IsAny<SwitcherMixBlock>(), 0, It.IsAny<ISwitcher>())).Returns(_mocks.Buffers[0].Object);
@@ -217,8 +221,27 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
         [TestMethod]
         [DataRow(0)]
         [DataRow(1)]
+        public void OnCacheChange_TriggersCallback(int mixBlock)
+        {
+            var feature = Create();
+
+            bool ran = false;
+            feature.SetOnBusChangeFinishCall(i =>
+            {
+                Assert.AreEqual(new RetrospectiveFadeInfo(), i);
+                ran = true;
+            });
+
+            _mocks.CacheChangeCallbacks[mixBlock]?.Invoke(new RetrospectiveFadeInfo());
+
+            Assert.IsTrue(ran);
+        }
+
+        [TestMethod]
+        [DataRow(0)]
+        [DataRow(1)]
         public void Cut(int mixBlock)
-        {            
+        {
             //Create().Cut(mixBlock);
             //Verify1Success1Fail(mixBlock, i => i.Verify(m => m.(mixBlock));
         }
