@@ -271,25 +271,6 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
         }
 
         [TestMethod]
-        [DataRow(0)]
-        [DataRow(1)]
-        public void Cut_Valid_TriggersStateChange(int mixBlock)
-        {
-            int infoIdx = 0;
-            SwitcherBusChangeInfo[] info = new SwitcherBusChangeInfo[2];
-
-            var dummy = Create();
-            dummy.UpdateSpecs(new DummyMixBlock[] { new(4, SwitcherMixBlockType.ProgramPreview), new(4, SwitcherMixBlockType.ProgramPreview) });
-            dummy.PostValue(mixBlock, 0, 3);
-            dummy.PostValue(mixBlock, 1, 4);
-            dummy.SetOnBusChangeFinishCall(i => info[infoIdx++] = i);
-            dummy.Cut(mixBlock);
-
-            Assert.AreEqual(new SwitcherBusChangeInfo(true, mixBlock, 0, 4, null), info[0]);
-            Assert.AreEqual(new SwitcherBusChangeInfo(true, mixBlock, 1, 3, null), info[1]);
-        }
-
-        [TestMethod]
         public void Dispose_DoesNotThrow() => Create().Dispose();
 
         [TestMethod]

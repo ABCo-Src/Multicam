@@ -88,7 +88,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
         void OnCacheChange(RetrospectiveFadeInfo info) => _onBusChangeFinishCall?.Invoke(info);
         public void SetOnBusChangeFinishCall(Action<RetrospectiveFadeInfo?>? callback) => _onBusChangeFinishCall = callback;
 
-        public void Cut(int mixBlock) => _rawSwitcher.Cut(mixBlock);
+        public void Cut(int mixBlock) => _mixBlockBuffers[mixBlock].Cut();
         public void Dispose() => _rawSwitcher.Dispose();
 
         record struct MixBlockStore(int Program, int Preview);

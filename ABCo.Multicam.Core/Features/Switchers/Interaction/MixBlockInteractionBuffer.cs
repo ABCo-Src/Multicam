@@ -15,6 +15,8 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 
         void SetProgram(int val);
         void SetPreview(int val);
+        void Cut();
+
         void SetCacheChangeExceptRefreshCall(Action<RetrospectiveFadeInfo>? onCacheChange);
         void RefreshCache();
         void RefreshWithKnownProg(int val);
@@ -76,6 +78,14 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
                 Preview = val;
                 _onCacheChangeExceptRefresh?.Invoke(new());
             }
+        }
+
+        public void Cut()
+        {
+            if (_mixBlock.SupportedFeatures.SupportsCutAction)
+                _switcher.Cut(_mixBlockIdx);
+            else
+                _fallbackEmulator.CutWithSetProgAndPrev();
         }
 
         public void RefreshCache()

@@ -210,6 +210,22 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             _mocks.Switcher.Verify(m => m.PostValue(_mixBlockIndex, 1, 13), Times.Never);
         }
 
+        [TestMethod]
+        public void Cut_Native()
+        {
+            _features = new(supportsCutAction: true);
+            Create().Cut();
+            _mocks.Switcher.Verify(m => m.Cut(_mixBlockIndex), Times.Once);
+            _mocks.Emulator.Verify(m => m.CutWithSetProgAndPrev(), Times.Never);
+        }
+
+        [TestMethod]
+        public void Cut_Emulated()
+        {
+            Create().Cut();
+            _mocks.Switcher.Verify(m => m.Cut(_mixBlockIndex), Times.Never);
+            _mocks.Emulator.Verify(m => m.CutWithSetProgAndPrev(), Times.Once);
+        }
 
         [TestMethod]
         public void RefreshCache_Program()

@@ -242,8 +242,8 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
         [DataRow(1)]
         public void Cut(int mixBlock)
         {
-            //Create().Cut(mixBlock);
-            //Verify1Success1Fail(mixBlock, i => i.Verify(m => m.(mixBlock));
+            Create().Cut(mixBlock);
+            Verify1Success1Fail(mixBlock, (i, t) => i.Verify(m => m.Cut(), t));
         }
 
         [TestMethod]

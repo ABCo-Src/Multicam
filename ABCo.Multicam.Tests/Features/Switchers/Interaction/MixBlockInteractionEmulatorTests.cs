@@ -33,6 +33,9 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             _mocks.Parent = new();
             _mocks.Parent.SetupGet(m => m.CutBusMode).Returns(CutBusMode.Cut);
 
+            _mocks.Parent.SetupGet(m => m.Program).Returns(5);
+            _mocks.Parent.SetupGet(m => m.Preview).Returns(8);
+
             _mocks.Switcher.Setup(m => m.ReceiveValue(_mixBlockIndex, 0)).Returns(2);
             _mocks.Switcher.Setup(m => m.ReceiveValue(_mixBlockIndex, 1)).Returns(4);
         }
@@ -168,6 +171,22 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             );
 
             Assert.IsTrue(Create().TrySetProgWithCutBusAuto(13));
+            sequence.Verify();
+        }
+
+        [TestMethod]
+        public void Cut_PrevThenProg()
+        {
+            var sequence = _mocks.Parent.SetupSequenceTracker(
+                m => m.SetPreview(5),
+                m => m.SetProgram(8)
+            );
+
+            Create().CutWithSetProgAndPrev();
+
+            _mocks.Parent.VerifyGet(m => m.Program);
+            _mocks.Parent.VerifyGet(m => m.Preview);
+
             sequence.Verify();
         }
     }
