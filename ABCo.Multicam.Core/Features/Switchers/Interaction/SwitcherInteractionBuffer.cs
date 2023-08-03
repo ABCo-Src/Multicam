@@ -49,6 +49,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
             }
             else
             {
+                _mixBlockBuffers = Array.Empty<IMixBlockInteractionBuffer>();
                 Specs = new();
                 IsConnected = false;
             }

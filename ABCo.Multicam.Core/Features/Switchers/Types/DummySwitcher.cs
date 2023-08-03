@@ -15,13 +15,14 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types
     public class DummySwitcher : IDummySwitcher
     {
         SwitcherSpecs _specs;
+        int[] _programStates;
         MixBlockState[] _states;
         Action<SwitcherBusChangeInfo>? _busChangeFinishCallback;
 
         public DummySwitcher()
         {
             (_specs, _states) = (null!, null!); // Assigned by UpdateSpecs
-            UpdateSpecs(new DummyMixBlock[] { new(4, SwitcherMixBlockType.ProgramPreview), new(4, SwitcherMixBlockType.ProgramPreview) });            
+            UpdateSpecs(new DummyMixBlock[] { new(4, SwitcherMixBlockType.ProgramPreview), new(4, SwitcherMixBlockType.ProgramPreview) });
         }
 
         public SwitcherSpecs ReceiveSpecs() => _specs;
@@ -48,13 +49,25 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types
 
                 // Create the mix block
                 if (mixBlocks[i].Type == SwitcherMixBlockType.ProgramPreview)
-                    mixBlocksArray[i] = SwitcherMixBlock.NewProgPrevSameInputs(null!, programArray);
+                    mixBlocksArray[i] = SwitcherMixBlock.NewProgPrevSameInputs(CreateFeatures(), programArray);
                 else
-                    mixBlocksArray[i] = SwitcherMixBlock.NewCutBus(null!, programArray);
+                    mixBlocksArray[i] = SwitcherMixBlock.NewCutBus(CreateFeatures(), programArray);
             }
 
             return new SwitcherSpecs(mixBlocksArray);
         }
+
+        static SwitcherMixBlockFeatures CreateFeatures() => new()
+        {
+            SupportsDirectProgramModification = true,
+            SupportsDirectPreviewAccess = true,
+            SupportsCutAction = false,
+            SupportsAutoAction = true,
+            SupportsCutBusModeChanging = false,
+            SupportsCutBusSwitching = false,
+            SupportsCutBusCutMode = false,
+            SupportsCutBusAutoMode = false
+        };
 
         public bool IsConnected => true;
         public Task ConnectAsync() => Task.CompletedTask;
@@ -102,21 +115,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types
             throw new ArgumentException("Invalid bus given to DummySwitcher");
         }
 
-        public void Cut(int mixBlockIdx)
-        {
-            // Validate mix block
-            if (mixBlockIdx < 0 || mixBlockIdx >= _specs.MixBlocks.Count) throw new ArgumentException("Invalid mix block given to DummySwitcher");
-
-            if (_specs.MixBlocks[mixBlockIdx].NativeType == SwitcherMixBlockType.CutBus) throw new NotSupportedException();
-
-            var mixBlockState = _states[mixBlockIdx];
-            (mixBlockState.Program, mixBlockState.Preview) = (mixBlockState.Preview, mixBlockState.Program);
-            _states[mixBlockIdx] = mixBlockState;
-
-            _busChangeFinishCallback?.Invoke(new(true, mixBlockIdx, 0, mixBlockState.Program, null));
-            _busChangeFinishCallback?.Invoke(new(true, mixBlockIdx, 1, mixBlockState.Preview, null));
-        }
-
+        public void Cut(int mixBlockIdx) => throw new NotImplementedException();
         public void Dispose() { }
 
         public static DummySwitcher ForSpecs(params DummyMixBlock[] mixBlocks)

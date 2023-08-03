@@ -23,6 +23,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
             Assert.AreEqual(SwitcherMixBlockType.ProgramPreview, specs.MixBlocks[0].NativeType);
             Assert.AreEqual(4, specs.MixBlocks[0].ProgramInputs.Count);
             AssertInputsList(specs.MixBlocks[0].ProgramInputs);
+            AssertFeatures(specs.MixBlocks[0].SupportedFeatures);
             Assert.AreEqual(specs.MixBlocks[0].ProgramInputs, specs.MixBlocks[0].PreviewInputs);
         }
 
@@ -44,6 +45,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
             Assert.AreEqual(1, specs.MixBlocks.Count);
             Assert.AreEqual(SwitcherMixBlockType.ProgramPreview, specs.MixBlocks[0].NativeType);
             Assert.AreEqual(0, specs.MixBlocks[0].ProgramInputs.Count);
+            AssertFeatures(specs.MixBlocks[0].SupportedFeatures);
             Assert.AreEqual(specs.MixBlocks[0].ProgramInputs, specs.MixBlocks[0].PreviewInputs);
         }
 
@@ -58,6 +60,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
             Assert.AreEqual(SwitcherMixBlockType.ProgramPreview, specs.MixBlocks[0].NativeType);
             Assert.AreEqual(1, specs.MixBlocks[0].ProgramInputs.Count);
             AssertInputsList(specs.MixBlocks[0].ProgramInputs);
+            AssertFeatures(specs.MixBlocks[0].SupportedFeatures);
             Assert.AreEqual(specs.MixBlocks[0].ProgramInputs, specs.MixBlocks[0].PreviewInputs);
         }
 
@@ -72,6 +75,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
             Assert.AreEqual(SwitcherMixBlockType.CutBus, specs.MixBlocks[0].NativeType);
             Assert.AreEqual(1, specs.MixBlocks[0].ProgramInputs.Count);
             AssertInputsList(specs.MixBlocks[0].ProgramInputs);
+            AssertFeatures(specs.MixBlocks[0].SupportedFeatures);
             Assert.IsNull(specs.MixBlocks[0].PreviewInputs);
         }
 
@@ -95,11 +99,13 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
             // Mix Block 1
             Assert.AreEqual(2, specs.MixBlocks[0].ProgramInputs.Count);
             AssertInputsList(specs.MixBlocks[0].ProgramInputs);
+            AssertFeatures(specs.MixBlocks[0].SupportedFeatures);
             Assert.AreEqual(specs.MixBlocks[0].ProgramInputs, specs.MixBlocks[0].PreviewInputs);
 
             // Mix Block 2
             Assert.AreEqual(2, specs.MixBlocks[1].ProgramInputs.Count);
             AssertInputsList(specs.MixBlocks[1].ProgramInputs);
+            AssertFeatures(specs.MixBlocks[1].SupportedFeatures);
             Assert.AreEqual(specs.MixBlocks[1].ProgramInputs, specs.MixBlocks[1].PreviewInputs);
         }
 
@@ -110,6 +116,18 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
                 Assert.AreEqual(i + 1, inputs[i].Id);
                 Assert.AreEqual("Cam " + (i + 1), inputs[i].Name);
             }
+        }
+
+        void AssertFeatures(SwitcherMixBlockFeatures features)
+        {
+            Assert.IsTrue(features.SupportsDirectProgramModification);
+            Assert.IsTrue(features.SupportsDirectPreviewAccess);
+            Assert.IsFalse(features.SupportsCutAction);
+            Assert.IsTrue(features.SupportsAutoAction);
+            Assert.IsFalse(features.SupportsCutBusModeChanging);
+            Assert.IsFalse(features.SupportsCutBusSwitching);
+            Assert.IsFalse(features.SupportsCutBusCutMode);
+            Assert.IsFalse(features.SupportsCutBusAutoMode);
         }
 
         [TestMethod]
@@ -250,45 +268,6 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
             Assert.AreEqual(mixBlock, info.Value.MixBlock);
             Assert.AreEqual(bus, info.Value.Bus);
             Assert.AreEqual(newValue, info.Value.NewValue);
-        }
-
-        [TestMethod]
-        public void Cut_Valid_MB1()
-        {
-            var dummy = Create();
-            dummy.UpdateSpecs(new DummyMixBlock[] { new(4, SwitcherMixBlockType.ProgramPreview), new(4, SwitcherMixBlockType.ProgramPreview) });
-
-            dummy.PostValue(0, 0, 3);
-            dummy.PostValue(0, 1, 4);
-            dummy.Cut(0);
-
-            Assert.AreEqual(4, dummy.ReceiveValue(0, 0));
-            Assert.AreEqual(3, dummy.ReceiveValue(0, 1));
-        }
-
-        [TestMethod]
-        public void Cut_Valid_MB2()
-        {
-            var dummy = Create();
-            dummy.UpdateSpecs(new DummyMixBlock[] { new(4, SwitcherMixBlockType.ProgramPreview), new(4, SwitcherMixBlockType.ProgramPreview) });
-
-            dummy.PostValue(1, 0, 1);
-            dummy.PostValue(1, 1, 2);
-            dummy.Cut(1);
-
-            Assert.AreEqual(2, dummy.ReceiveValue(1, 0));
-            Assert.AreEqual(1, dummy.ReceiveValue(1, 1));
-        }
-
-        [TestMethod]
-        public void Cut_Invalid()
-        {
-            var dummy = Create();
-            dummy.UpdateSpecs(new DummyMixBlock[] { new(4, SwitcherMixBlockType.ProgramPreview), new(4, SwitcherMixBlockType.CutBus) });
-            
-            Assert.ThrowsException<ArgumentException>(() => dummy.Cut(-1));
-            Assert.ThrowsException<ArgumentException>(() => dummy.Cut(7));
-            Assert.ThrowsException<NotSupportedException>(() => dummy.Cut(1));
         }
 
         [TestMethod]
