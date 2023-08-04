@@ -16,6 +16,9 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
         void SetProgram(int val);
         void SetPreview(int val);
         void Cut();
+        void Auto();
+        void SetCutBus(int val);
+        void SetCutBusMode(CutBusMode val);
 
         void SetCacheChangeExceptRefreshCall(Action<RetrospectiveFadeInfo>? onCacheChange);
         void RefreshCache();
@@ -48,6 +51,8 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
                 Preview = switcher.ReceiveValue(mixBlockIdx, 1);
             else
                 Preview = block.ProgramInputs.Count == 0 ? 0 : block.ProgramInputs[0].Id;
+
+            CutBusMode = _mixBlock.SupportedFeatures.SupportsCutBusModeChanging ? _switcher.GetCutBusMode(_mixBlockIdx) : CutBusMode.Cut;
         }
 
         public void SetProgram(int val)
@@ -86,6 +91,28 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
                 _switcher.Cut(_mixBlockIdx);
             else
                 _fallbackEmulator.CutWithSetProgAndPrev();
+        }
+
+        public void Auto() => throw new NotImplementedException();
+
+        public void SetCutBus(int val)
+        {
+            if (_mixBlock.SupportedFeatures.SupportsCutBusSwitching)
+            {
+                _switcher.SetCutBus(_mixBlockIdx, val);
+                return;
+            }
+
+            if (CutBusMode == CutBusMode.Auto && _fallbackEmulator.TrySetCutBusWithPrevThenAuto(val)) return;
+            _fallbackEmulator.SetCutBusWithProgSet(val);
+        }
+
+        public void SetCutBusMode(CutBusMode val)
+        {
+            if (_mixBlock.SupportedFeatures.SupportsCutBusModeChanging)
+                _switcher.SetCutBusMode(_mixBlockIdx, val);
+            else
+                CutBusMode = val;
         }
 
         public void RefreshCache()

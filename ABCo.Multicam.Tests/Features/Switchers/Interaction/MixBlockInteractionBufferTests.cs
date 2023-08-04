@@ -43,6 +43,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
 
             _mocks.Switcher.Setup(m => m.ReceiveValue(_mixBlockIndex, 0)).Returns(2);
             _mocks.Switcher.Setup(m => m.ReceiveValue(_mixBlockIndex, 1)).Returns(4);
+            _mocks.Switcher.Setup(m => m.GetCutBusMode(_mixBlockIndex)).Returns(CutBusMode.Auto);
 
             //_mocks.Emulator.Setup(m => m.TrySetProgWithPreviewThenCutAction()).Returns(false);
             //_mocks.Emulator.Setup(m => m.TrySetProgWithCutBusCutMode()).Returns(false);
@@ -112,6 +113,28 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             var buffer = Create();
             Assert.AreEqual(0, buffer.Preview);
             _mocks.Switcher.Verify(m => m.ReceiveValue(_mixBlockIndex, 1), Times.Never);
+            _mocks.Factory.Verify(m => m.CreateMixBlockEmulator(_mixBlock!, _mixBlockIndex, _mocks.Switcher.Object, buffer));
+        }
+
+        [TestMethod]
+        public void Ctor_CutBusMode_Native()
+        {
+            _features = new(supportsCutBusModeChanging: true);
+
+            var buffer = Create();
+            Assert.AreEqual(CutBusMode.Auto, buffer.CutBusMode);
+            _mocks.Switcher.Verify(m => m.GetCutBusMode(_mixBlockIndex), Times.Once);
+            _mocks.Factory.Verify(m => m.CreateMixBlockEmulator(_mixBlock!, _mixBlockIndex, _mocks.Switcher.Object, buffer));
+        }
+
+        [TestMethod]
+        public void Ctor_CutBusMode_Emulated()
+        {
+            _mixBlock = SwitcherMixBlock.NewProgPrevSameInputs(_features);
+
+            var buffer = Create();
+            Assert.AreEqual(CutBusMode.Cut, buffer.CutBusMode);
+            _mocks.Switcher.Verify(m => m.GetCutBusMode(_mixBlockIndex), Times.Never);
             _mocks.Factory.Verify(m => m.CreateMixBlockEmulator(_mixBlock!, _mixBlockIndex, _mocks.Switcher.Object, buffer));
         }
 
@@ -225,6 +248,73 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             Create().Cut();
             _mocks.Switcher.Verify(m => m.Cut(_mixBlockIndex), Times.Never);
             _mocks.Emulator.Verify(m => m.CutWithSetProgAndPrev(), Times.Once);
+        }
+
+        [TestMethod]
+        [DataRow(CutBusMode.Cut)]
+        [DataRow(CutBusMode.Auto)]
+        public void SetCutBus_Native(CutBusMode mode)
+        {
+            _features = new(supportsCutBusSwitching: true);
+            var buffer = Create();
+            buffer.SetCutBusMode(mode);
+            buffer.SetCutBus(13);
+            _mocks.Switcher.Verify(m => m.SetCutBus(_mixBlockIndex, 13), Times.Once);
+            _mocks.Emulator.Verify(m => m.TrySetCutBusWithPrevThenAuto(13), Times.Never);
+            _mocks.Emulator.Verify(m => m.SetCutBusWithProgSet(13), Times.Never);
+        }
+
+        [TestMethod]
+        public void SetCutBus_Cut_Emulated()
+        {
+            Create().SetCutBus(13);
+            _mocks.Switcher.Verify(m => m.SetCutBus(_mixBlockIndex, 13), Times.Never);
+            _mocks.Emulator.Verify(m => m.TrySetCutBusWithPrevThenAuto(13), Times.Never);
+            _mocks.Emulator.Verify(m => m.SetCutBusWithProgSet(13), Times.Once);
+        }
+
+        [TestMethod]
+        public void SetCutBus_Auto_Emulated1()
+        {
+            _mocks.Emulator.Setup(m => m.TrySetCutBusWithPrevThenAuto(13)).Returns(true);
+            var buffer = Create();
+            buffer.SetCutBusMode(CutBusMode.Auto);
+            buffer.SetCutBus(13);
+            _mocks.Switcher.Verify(m => m.SetCutBus(_mixBlockIndex, 13), Times.Never);
+            _mocks.Emulator.Verify(m => m.TrySetCutBusWithPrevThenAuto(13), Times.Once);
+            _mocks.Emulator.Verify(m => m.SetCutBusWithProgSet(13), Times.Never);
+        }
+
+        [TestMethod]
+        public void SetCutBus_Auto_Emulated2()
+        {
+            var buffer = Create();
+            buffer.SetCutBusMode(CutBusMode.Auto);
+            buffer.SetCutBus(13);
+            _mocks.Switcher.Verify(m => m.SetCutBus(_mixBlockIndex, 13), Times.Never);
+            _mocks.Emulator.Verify(m => m.TrySetCutBusWithPrevThenAuto(13), Times.Once);
+            _mocks.Emulator.Verify(m => m.SetCutBusWithProgSet(13), Times.Once);
+        }
+
+        [TestMethod]
+        [DataRow(CutBusMode.Cut)]
+        [DataRow(CutBusMode.Auto)]
+        public void SetCutBusMode_Native(CutBusMode mode)
+        {
+            _features = new(supportsCutBusModeChanging: true);
+            Create().SetCutBusMode(mode);
+            _mocks.Switcher.Verify(m => m.SetCutBusMode(_mixBlockIndex, mode), Times.Once);
+        }
+
+        [TestMethod]
+        [DataRow(CutBusMode.Cut)]
+        [DataRow(CutBusMode.Auto)]
+        public void SetCutBusMode_Emulated(CutBusMode mode)
+        {
+            var buffer = Create();
+            buffer.SetCutBusMode(mode);
+            Assert.AreEqual(mode, buffer.CutBusMode);
+            _mocks.Switcher.Verify(m => m.SetCutBusMode(_mixBlockIndex, mode), Times.Never);
         }
 
         [TestMethod]

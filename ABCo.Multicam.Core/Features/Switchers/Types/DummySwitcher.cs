@@ -137,6 +137,16 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types
             throw new NotImplementedException();
         }
 
+        public CutBusMode GetCutBusMode(int mixBlock)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetCutBusMode(int mixBlock, CutBusMode mode)
+        {
+            throw new NotImplementedException();
+        }
+
         struct MixBlockState
         {
             public int Program;

@@ -53,10 +53,12 @@ namespace ABCo.Multicam.Core.Features.Switchers
         /// </summary>
         void SetCutBus(int mixBlock, int newVal);
 
+        CutBusMode GetCutBusMode(int mixBlock);
+
         /// <summary>
         /// Contacts the switcher and asks it perform a cut bus switch.
         /// </summary>
-        void SetCutBusMode(CutBusMode mode);
+        void SetCutBusMode(int mixBlock, CutBusMode mode);
 
         void SetOnBusChangeFinishCall(Action<SwitcherBusChangeInfo>? callback);
     }

@@ -79,7 +79,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             _features = new(supportsCutBusSwitching: canSetCutBus, supportsCutBusCutMode: canUseCutMode);
             Assert.IsFalse(Create().TrySetProgWithCutBusCut(13));
             _mocks.Switcher.Verify(m => m.SetCutBus(_mixBlockIndex, 13), Times.Never);
-            _mocks.Switcher.Verify(m => m.SetCutBusMode(CutBusMode.Cut), Times.Never);
+            _mocks.Switcher.Verify(m => m.SetCutBusMode(_mixBlockIndex, CutBusMode.Cut), Times.Never);
         }
 
         [TestMethod]
@@ -89,7 +89,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
 
             Assert.IsTrue(Create().TrySetProgWithCutBusCut(13));
             _mocks.Switcher.Verify(m => m.SetCutBus(_mixBlockIndex, 13), Times.Once);
-            _mocks.Switcher.Verify(m => m.SetCutBusMode(CutBusMode.Cut), Times.Never);
+            _mocks.Switcher.Verify(m => m.SetCutBusMode(_mixBlockIndex, CutBusMode.Cut), Times.Never);
         }
 
         [TestMethod]
@@ -104,7 +104,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
 
             Assert.IsFalse(Create().TrySetProgWithCutBusCut(13));
             _mocks.Switcher.Verify(m => m.SetCutBus(_mixBlockIndex, 13), Times.Never);
-            _mocks.Switcher.Verify(m => m.SetCutBusMode(CutBusMode.Cut), Times.Never);
+            _mocks.Switcher.Verify(m => m.SetCutBusMode(_mixBlockIndex, CutBusMode.Cut), Times.Never);
         }
 
         [TestMethod]
@@ -114,7 +114,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             _features = new(supportsCutBusSwitching: true, supportsCutBusCutMode: true, supportsCutBusModeChanging: true);
 
             var sequence = _mocks.Switcher.SetupSequenceTracker(
-                m => m.SetCutBusMode(CutBusMode.Cut),
+                m => m.SetCutBusMode(_mixBlockIndex, CutBusMode.Cut),
                 m => m.SetCutBus(_mixBlockIndex, 13)
             );
 
@@ -132,7 +132,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             _features = new(supportsCutBusSwitching: canSetCutBus, supportsCutBusAutoMode: canUseAutoMode);
             Assert.IsFalse(Create().TrySetProgWithCutBusAuto(13));
             _mocks.Switcher.Verify(m => m.SetCutBus(_mixBlockIndex, 13), Times.Never);
-            _mocks.Switcher.Verify(m => m.SetCutBusMode(CutBusMode.Auto), Times.Never);
+            _mocks.Switcher.Verify(m => m.SetCutBusMode(_mixBlockIndex, CutBusMode.Auto), Times.Never);
         }
 
         [TestMethod]
@@ -143,7 +143,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
 
             Assert.IsTrue(Create().TrySetProgWithCutBusAuto(13));
             _mocks.Switcher.Verify(m => m.SetCutBus(_mixBlockIndex, 13), Times.Once);
-            _mocks.Switcher.Verify(m => m.SetCutBusMode(CutBusMode.Auto), Times.Never);
+            _mocks.Switcher.Verify(m => m.SetCutBusMode(_mixBlockIndex, CutBusMode.Auto), Times.Never);
         }
 
         [TestMethod]
@@ -157,7 +157,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
 
             Assert.IsFalse(Create().TrySetProgWithCutBusAuto(13));
             _mocks.Switcher.Verify(m => m.SetCutBus(_mixBlockIndex, 13), Times.Never);
-            _mocks.Switcher.Verify(m => m.SetCutBusMode(CutBusMode.Auto), Times.Never);
+            _mocks.Switcher.Verify(m => m.SetCutBusMode(_mixBlockIndex, CutBusMode.Auto), Times.Never);
         }
 
         [TestMethod]
@@ -166,7 +166,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             _features = new(supportsCutBusSwitching: true, supportsCutBusAutoMode: true, supportsCutBusModeChanging: true);
 
             var sequence = _mocks.Switcher.SetupSequenceTracker(
-                m => m.SetCutBusMode(CutBusMode.Auto),
+                m => m.SetCutBusMode(_mixBlockIndex, CutBusMode.Auto),
                 m => m.SetCutBus(_mixBlockIndex, 13)
             );
 
@@ -188,6 +188,39 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             _mocks.Parent.VerifyGet(m => m.Preview);
 
             sequence.Verify();
+        }
+
+        [TestMethod]
+        public void SetCutBusWithProgSet()
+        {
+            Create().SetCutBusWithProgSet(27);
+            _mocks.Parent.Verify(m => m.SetProgram(27));
+        }
+
+        [TestMethod]
+        public void TrySetCutBus_PrevThenAuto_Possible()
+        {
+            _features = new(supportsDirectPreviewAccess: true, supportsAutoAction: true);
+
+            var sequence = _mocks.Parent.SetupSequenceTracker(
+                m => m.SetPreview(34),
+                m => m.Auto()
+            );
+
+            Assert.IsTrue(Create().TrySetCutBusWithPrevThenAuto(34));
+            sequence.Verify();
+        }
+
+        [TestMethod]
+        [DataRow(false, true)]
+        [DataRow(true, false)]
+        [DataRow(false, false)]
+        public void TrySetCutBus_PrevThenAuto_NotPossible(bool directPreviewAccess, bool autoAction)
+        {
+            _features = new(supportsDirectPreviewAccess: directPreviewAccess, supportsAutoAction: autoAction);
+            Assert.IsFalse(Create().TrySetCutBusWithPrevThenAuto(34));
+            _mocks.Parent.Verify(m => m.SetPreview(34), Times.Never);
+            _mocks.Parent.Verify(m => m.Auto(), Times.Never);
         }
     }
 }
