@@ -37,7 +37,11 @@ namespace ABCo.Multicam.Tests.UI.Bindings
             _mocks.Object = new();
 
             _mocks.VMs[0].SetupAdd(m => m.PropertyChanged += It.IsAny<PropertyChangedEventHandler>()).Callback<PropertyChangedEventHandler>(h => _mocks.VMEvents[0] = h);
+
             _mocks.VMs[1].SetupAdd(m => m.PropertyChanged += It.IsAny<PropertyChangedEventHandler>()).Callback<PropertyChangedEventHandler>(h => _mocks.VMEvents[1] = h);
+            _mocks.VMs[1].SetupRemove(m => m.PropertyChanged -= It.IsAny<PropertyChangedEventHandler>()).Callback<PropertyChangedEventHandler>(h => _mocks.VMEvents[1] = (s, e) => { });
+
+            _mocks.VMs[2].SetupAdd(m => m.PropertyChanged += It.IsAny<PropertyChangedEventHandler>()).Callback<PropertyChangedEventHandler>(h => _mocks.VMEvents[2] = h);
         }
 
         VMBinder<DummyVM> Create() => _mocks.Object.Object;
@@ -136,6 +140,40 @@ namespace ABCo.Multicam.Tests.UI.Bindings
             }, "def");
 
             Assert.AreEqual(2, state);
+        }
+
+        [TestMethod]
+        public void RemoveVM()
+        {
+            var binder = Create();
+            binder.AddVM(_mocks.VMs[0].Object);
+            binder.AddVM(_mocks.VMs[1].Object);
+            binder.AddVM(_mocks.VMs[2].Object);
+            binder.RemoveVM(_mocks.VMs[1].Object);
+
+            // Verify property changed no longer applies
+            _mocks.VMEvents[1](_mocks.VMs[1].Object, new PropertyChangedEventArgs("abc"));
+            _mocks.Object.Verify(m => m.OnVMChange(_mocks.VMs[1].Object, "abc"), Times.Never);
+
+            // Verify set no longer uses this object
+            int state = 0;
+            binder.SetVMProp(vm =>
+            {
+                state++;
+
+                if (state == 1) Assert.AreEqual(_mocks.VMs[0].Object, vm);
+                else if (state == 2) Assert.AreEqual(_mocks.VMs[2].Object, vm);
+            }, "def");
+            Assert.AreEqual(2, state);
+        }
+
+        [TestMethod]
+        public void RemoveVM_Doubled()
+        {
+            var binder = Create();
+            binder.AddVM(_mocks.VMs[0].Object);
+            binder.RemoveVM(_mocks.VMs[1].Object);
+            binder.RemoveVM(_mocks.VMs[1].Object);
         }
 
         [TestMethod]

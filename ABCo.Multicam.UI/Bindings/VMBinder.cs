@@ -7,10 +7,18 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.Bindings
 {
+    public interface IVMBinder<T> where T : IBindableVM
+    {
+        void AddVM(T targetVM); 
+        void RemoveVM(T targetVM); 
+        void DisableVM(T targetVM);
+        void EnableVMAndSendToModel(T targetVM, string[] propsToSend);
+    }
+
     /// <summary>
     /// Base class for the binders that link the view-models to the underlying models.
     /// </summary>
-    public abstract class VMBinder<T> where T : IBindableVM
+    public abstract class VMBinder<T> : IVMBinder<T> where T : IBindableVM
     {
         T[] _registeredVMs = Array.Empty<T>();
 
@@ -23,6 +31,20 @@ namespace ABCo.Multicam.UI.Bindings
             targetVM.PropertyChanged += VM_PropertyChanged;
 
             RefreshVMToModel(targetVM);
+        }
+
+        public void RemoveVM(T targetVM)
+        {
+            targetVM.PropertyChanged -= VM_PropertyChanged;
+
+            // Remove the vm from the array
+            int val = Array.IndexOf(_registeredVMs, targetVM);
+            if (val == -1) return;
+
+            T[] newArr = new T[_registeredVMs.Length - 1];
+            Array.Copy(_registeredVMs, newArr, val);
+            Array.Copy(_registeredVMs, val + 1, newArr, val, newArr.Length - val);
+            _registeredVMs = newArr;
         }
 
         public void DisableVM(T targetVM)

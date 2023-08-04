@@ -1,7 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using ABCo.Multicam.UI.Bindings;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace ABCo.Multicam.UI;
 
-public class ViewModelBase : ObservableObject
+public abstract class ViewModelBase : ObservableObject
 {
 }
