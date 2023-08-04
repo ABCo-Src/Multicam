@@ -16,7 +16,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ABCo.Multicam.Tests.ViewModels.Features
+namespace ABCo.Multicam.Tests.UI.ViewModels.Features
 {
     [TestClass]
     public class ProjectFeaturesViewModelTests

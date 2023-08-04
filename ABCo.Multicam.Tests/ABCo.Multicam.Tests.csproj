@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ViewModels\General\" />
+    <Folder Include="UI\ViewModels\General\" />
   </ItemGroup>
 
 </Project>

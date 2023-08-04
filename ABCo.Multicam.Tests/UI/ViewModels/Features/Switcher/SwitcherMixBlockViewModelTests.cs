@@ -11,13 +11,13 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
+namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
 {
     [TestClass]
     public class SwitcherMixBlockViewModelTests
     {
         public record struct Mocks(
-            Mock<IServiceSource> ServiceSource, 
+            Mock<IServiceSource> ServiceSource,
             Mock<ISwitcherFeatureVM> Parent,
             Mock<ISwitcherCutButtonViewModel> Cut,
             Mock<ISwitcherAutoButtonViewModel> Auto,

@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ABCo.Multicam.Tests.ViewModels.Features.Switcher
+namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
 {
     [TestClass]
     public class SwitcherActButtonViewModelTests
