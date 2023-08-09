@@ -23,5 +23,6 @@ namespace ABCo.Multicam.UI.Bindings
         public void Dispose() => _binder.RemoveVM((T)(object)this);
 
         public object? BindingInfoStore { get; set; }
+        public object Parent { get; set; } = null!;
     }
 }

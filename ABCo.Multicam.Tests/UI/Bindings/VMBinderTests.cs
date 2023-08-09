@@ -1,4 +1,5 @@
-﻿using ABCo.Multicam.Tests.Helpers;
+﻿using ABCo.Multicam.Core;
+using ABCo.Multicam.Tests.Helpers;
 using ABCo.Multicam.UI.Bindings;
 using Moq;
 using System;
@@ -14,17 +15,15 @@ namespace ABCo.Multicam.Tests.UI.Bindings
     [TestClass]
     public class VMBinderTests
     {
-        public abstract class DummyVM : IBindableVM
-        {
-            public object? BindingInfoStore { get; set; }
-            public abstract object Prop { get; set; }
-            public abstract event PropertyChangedEventHandler? PropertyChanged;
-        }
+        public interface IVMType1 : IVMForDummyBinder { }
+        public interface IVMType2 : IVMForDummyBinder { }
 
         record struct Mocks(
+            Mock<IVMType1> VMType1,
+            Mock<IVMType2> VMType2,
             Mock<DummyVM>[] VMs,
             PropertyChangedEventHandler[] VMEvents,
-            Mock<VMBinder<DummyVM>> Object
+            Mock<DummyBinder<IVMForDummyBinder>> Object
         );
 
         Mocks _mocks = new();
@@ -33,6 +32,15 @@ namespace ABCo.Multicam.Tests.UI.Bindings
         public void InitMocks()
         {
             _mocks.VMEvents = new PropertyChangedEventHandler[3] { (s, e) => { }, (s, e) => { }, (s, e) => { } };
+            _mocks.VMType1 = new();
+            _mocks.VMType1.SetupProperty(m => m.Parent);
+            _mocks.VMType2 = new();
+            _mocks.VMType2.SetupProperty(m => m.Parent);
+
+            ServSourceMock = new();
+            ServSourceMock.Setup(m => m.Get<IVMType1>()).Returns(_mocks.VMType1.Object);
+            ServSourceMock.Setup(m => m.Get<IVMType2>()).Returns(_mocks.VMType2.Object);
+
             _mocks.VMs = new Mock<DummyVM>[] { new(), new(), new() };
             _mocks.Object = new();
 
@@ -44,7 +52,55 @@ namespace ABCo.Multicam.Tests.UI.Bindings
             _mocks.VMs[2].SetupAdd(m => m.PropertyChanged += It.IsAny<PropertyChangedEventHandler>()).Callback<PropertyChangedEventHandler>(h => _mocks.VMEvents[2] = h);
         }
 
-        VMBinder<DummyVM> Create() => _mocks.Object.Object;
+        VMBinder<IVMForDummyBinder> Create() => _mocks.Object.Object;
+
+        [TestMethod]
+        public void GetVM_NotRegistered()
+        {
+            var binder = Create();
+            var vm = binder.GetVM<IVMType1>(new());
+            Assert.AreEqual(_mocks.VMType1.Object, vm);
+            ServSourceMock.Verify(m => m.Get<IVMType1>());
+        }
+
+        [TestMethod]
+        public void GetVM_RegWithDiffType()
+        {
+            var binder = Create();
+
+            object parent = new();
+            var vm = binder.GetVM<IVMType1>(parent);
+            var vm2 = binder.GetVM<IVMType2>(parent);
+
+            Assert.AreEqual(_mocks.VMType2.Object, vm2);
+            ServSourceMock.Verify(m => m.Get<IVMType1>(), Times.Once);
+            ServSourceMock.Verify(m => m.Get<IVMType2>(), Times.Once);
+        }
+
+        [TestMethod]
+        public void GetVM_RegWithDiffParent()
+        {
+            var binder = Create();
+
+            var vm = binder.GetVM<IVMType1>(new());
+            var vm2 = binder.GetVM<IVMType1>(new());
+
+            Assert.AreEqual(_mocks.VMType1.Object, vm2);
+            ServSourceMock.Verify(m => m.Get<IVMType1>(), Times.Exactly(2));
+        }
+
+        [TestMethod]
+        public void GetVM_AlreadyReg()
+        {
+            var binder = Create();
+
+            object parent = new();
+            var vm = binder.GetVM<IVMType1>(parent);
+            var vm2 = binder.GetVM<IVMType1>(parent);
+
+            Assert.AreEqual(_mocks.VMType1.Object, vm2);
+            ServSourceMock.Verify(m => m.Get<IVMType1>(), Times.Once);
+        }
 
         [TestMethod]
         public void AddVM()
@@ -193,6 +249,23 @@ namespace ABCo.Multicam.Tests.UI.Bindings
             binder.EnableVMAndSendToModel(_mocks.VMs[0].Object, new string[] { "abc", "def" });
 
             sequence.Verify();
+        }
+
+        public interface IVMForDummyBinder : IBindableVM { object Prop { get; set; } }
+        public abstract class DummyVM : IVMForDummyBinder
+        {
+            public object? BindingInfoStore { get; set; }
+            public object Parent { get; set; } = new();
+
+            public abstract object Prop { get; set; }
+            public abstract event PropertyChangedEventHandler? PropertyChanged;
+        }
+
+        public static Mock<IServiceSource> ServSourceMock = null!;
+
+        public abstract class DummyBinder<T> : VMBinder<T> where T : IBindableVM
+        {
+            public DummyBinder() : base(ServSourceMock.Object) { }
         }
     }
 }

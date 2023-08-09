@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ABCo.Multicam.Core;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace ABCo.Multicam.UI.Bindings
 {
     public interface IVMBinder<T> where T : IBindableVM
     {
+        TNew GetVM<TNew>(object parentVM) where TNew : class, T;
         void AddVM(T targetVM); 
         void RemoveVM(T targetVM); 
         void DisableVM(T targetVM);
@@ -20,7 +22,22 @@ namespace ABCo.Multicam.UI.Bindings
     /// </summary>
     public abstract class VMBinder<T> : IVMBinder<T> where T : IBindableVM
     {
+        IServiceSource _source;
         T[] _registeredVMs = Array.Empty<T>();
+
+        public VMBinder(IServiceSource source) => _source = source;
+
+        public TNew GetVM<TNew>(object parentVM) where TNew : class, T
+        {
+            for (int i = 0; i < _registeredVMs.Length; i++)
+                if (_registeredVMs[i].Parent == parentVM && _registeredVMs[i].GetType().IsAssignableTo(typeof(TNew)))
+                    return (TNew)(object)_registeredVMs[i];
+
+            var newVM = _source.Get<TNew>();
+            AddVM((T)(object)newVM);
+            newVM.Parent = parentVM;
+            return newVM;
+        }
 
         public void AddVM(T targetVM)
         {
@@ -110,5 +127,10 @@ namespace ABCo.Multicam.UI.Bindings
         // "" if binding is enabled and no property to suppress
         // "propdata" if binding is enabled and property is present
         object? BindingInfoStore { get; set; }
+
+        /// <summary>
+        /// The parent of this view-model.
+        /// </summary>
+        object Parent { get; set; }
     }
 }

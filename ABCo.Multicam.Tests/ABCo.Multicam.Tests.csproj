@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="UI\Bindings\Features\Switcher\" />
     <Folder Include="UI\ViewModels\General\" />
   </ItemGroup>
 

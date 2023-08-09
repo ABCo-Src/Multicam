@@ -21,6 +21,11 @@ namespace ABCo.Multicam.Core.Features
         void Delete(IRunningFeature feature);
     }
 
+    public interface IBinderForProjectFeatures
+    {
+        void ModelChange_FeaturesChange();
+    }
+
     public class FeatureManager : IFeatureManager
     {
         IServiceSource _servSource;
