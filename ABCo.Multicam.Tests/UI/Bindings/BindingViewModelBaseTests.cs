@@ -11,36 +11,51 @@ namespace ABCo.Multicam.Tests.UI.Bindings
     [TestClass]
     public class BindingViewModelBaseTests
     {
-        class Sub : BindingViewModelBase<IBindableVM>, IBindableVM
+        public class Sub : BindingViewModelBase<Sub>, IBindableVM<Sub>
         {
-            public Sub(IVMBinder<IBindableVM> binder) : base(binder) { }
+            public Sub() { }
         }
 
-        record struct Mocks(Mock<IVMBinder<IBindableVM>> Binder);
+        record struct Mocks(Mock<IVMBinder<Sub>> Binder);
 
         Mocks _mocks = new();
 
-        Sub Create() => new Sub(_mocks.Binder.Object);
+        Sub Create()
+        {
+            var vm = new Sub();
+            vm.InitBinding(_mocks.Binder.Object);
+            return vm;
+        }
 
         [TestInitialize]
         public void InitMocks()
         {
             _mocks.Binder = new();
-
         }
 
         [TestMethod]
-        public void Ctor_AddsToBinding()
+        public void EnableBinding_PreInit()
         {
-            var vm = Create();
-            _mocks.Binder.Verify(m => m.AddVM(vm));
+            Assert.ThrowsException<Exception>(() => new Sub().ReenableModelBindingAndSend());
+        }
+
+        [TestMethod]
+        public void DisableBinding_PreInit()
+        {
+            Assert.ThrowsException<Exception>(() => new Sub().DisableModelBinding());
+        }
+
+        [TestMethod]
+        public void Dispose_PreInit()
+        {
+            new Sub().Dispose();
         }
 
         [TestMethod]
         public void EnableBinding()
         {
             var vm = Create();
-            vm.ReenableBindingAndSendToModel("ghi", "abc");
+            vm.ReenableModelBindingAndSend("ghi", "abc");
             _mocks.Binder.Verify(m => m.EnableVMAndSendToModel(vm, new string[] { "ghi", "abc" }));
         }
 
@@ -48,7 +63,7 @@ namespace ABCo.Multicam.Tests.UI.Bindings
         public void DisableBinding()
         {
             var vm = Create();
-            vm.DisableBinding();
+            vm.DisableModelBinding();
             _mocks.Binder.Verify(m => m.DisableVM(vm));
         }
 

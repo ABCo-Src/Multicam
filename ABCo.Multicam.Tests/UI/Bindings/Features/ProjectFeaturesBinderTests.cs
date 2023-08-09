@@ -12,11 +12,12 @@ using System.Threading.Tasks;
 namespace ABCo.Multicam.Tests.UI.Bindings.Features
 {
     [TestClass]
-    public class ProjectFeaturesBinderTest : VMBinderBaseTest<ProjectFeaturesVMBinder, IVMForProjectFeaturesBinder, IFeatureManager>
+    public class ProjectFeaturesBinderTests : VMBinderBaseTest<ProjectFeaturesVMBinder, IVMForProjectFeaturesBinder, IFeatureManager>
     {
         public override VMTestProperty[] Props => new VMTestProperty[]
         {
-            new(nameof(IVMForProjectFeaturesBinder.RawFeatures), model => model.ModelChange_FeaturesChange(), null, vm => vm.RawFeatures = It.IsAny<IFeatureVMBinder[]>())
+            new(nameof(IVMForProjectFeaturesBinder.RawFeatures), model => model.ModelChange_FeaturesChange(), null, vm => vm.RawFeatures = It.IsAny<IFeatureVMBinder[]>()),
+            new(nameof(IVMForProjectFeaturesBinder.RawManager), null, null, vm => vm.RawManager = It.IsAny<IFeatureManager>())
         };
 
         public override void SetupModel(Mock<IFeatureManager> model) => model.Setup(m => m.Features).Returns(new IRunningFeature[2]);

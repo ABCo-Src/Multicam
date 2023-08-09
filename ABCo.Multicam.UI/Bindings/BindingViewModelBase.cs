@@ -7,22 +7,28 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.Bindings
 {
-    public abstract class BindingViewModelBase<T> : ObservableObject, IBindableVM, IDisposable 
-        where T : IBindableVM
+    public abstract class BindingViewModelBase<T> : ObservableObject, IBindableVM<T>, IDisposable 
+        where T : IBindableVM<T>
     {
-        IVMBinder<T> _binder;
-
-        public BindingViewModelBase(IVMBinder<T> binder)
+        public void ReenableModelBindingAndSend(params string[] toSend)
         {
-            _binder = binder;
-            binder.AddVM((T)(object)this);
+            if (Binder == null) throw new Exception("Changing binding config during construction is not currently supported.");
+            Binder.EnableVMAndSendToModel((T)(object)this, toSend);
         }
 
-        public void ReenableBindingAndSendToModel(params string[] toSend) => _binder.EnableVMAndSendToModel((T)(object)this, toSend);
-        public void DisableBinding() => _binder.DisableVM((T)(object)this);
-        public void Dispose() => _binder.RemoveVM((T)(object)this);
+        public void DisableModelBinding()
+        {
+            if (Binder == null) throw new Exception("Changing binding config during construction is not currently supported.");
+            Binder.DisableVM((T)(object)this);
+        }
 
+        public void Dispose() => Binder?.RemoveVM((T)(object)this);
+
+        public void InitBinding(IVMBinder<T> binder) => Binder = binder;
+
+        // Stored data for the binder
         public object? BindingInfoStore { get; set; }
         public object Parent { get; set; } = null!;
+        public IVMBinder<T>? Binder { get; set; }
     }
 }

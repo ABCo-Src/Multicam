@@ -15,7 +15,7 @@ namespace ABCo.Multicam.Tests.UI.Bindings
     public abstract class VMBinderBaseTest<TType, TVMType, TModel> 
         where TType : VMBinder<TVMType>
         where TModel : class
-        where TVMType : class, IBindableVM
+        where TVMType : class, IBindableVM<TVMType>
     {
         public record struct Mocks(
             Mock<TVMType> VM,
@@ -54,6 +54,8 @@ namespace ABCo.Multicam.Tests.UI.Bindings
 
             for (int i = 0; i < Props.Length; i++)
             {
+                if (Props[i].ModelTrigger == null) continue; 
+
                 // Reset the VM
                 _mocks.VM.Reset();
                 _mocks.VM.SetupGet(m => m.BindingInfoStore).Returns("");
@@ -87,6 +89,6 @@ namespace ABCo.Multicam.Tests.UI.Bindings
             }
         }
 
-        public record class VMTestProperty(string Name, Action<TType> ModelTrigger, Expression<Action<TModel>>? ModelVerify, Action<TVMType> VMVerify);
+        public record class VMTestProperty(string Name, Action<TType>? ModelTrigger, Expression<Action<TModel>>? ModelVerify, Action<TVMType> VMVerify);
     }
 }

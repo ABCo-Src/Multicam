@@ -8,9 +8,10 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.Bindings.Features
 {
-    public interface IVMForProjectFeaturesBinder : IBindableVM
+    public interface IVMForProjectFeaturesBinder : IBindableVM<IVMForProjectFeaturesBinder>
     {
         IFeatureVMBinder[] RawFeatures { get; set; }
+        IFeatureManager RawManager { get; set; }
     }
 
     public interface IFeatureVMBinder { }
@@ -41,6 +42,7 @@ namespace ABCo.Multicam.UI.Bindings.Features
 
         public override void RefreshVMToModel(IVMForProjectFeaturesBinder vm)
         {
+            vm.RawManager = _model;
             ModelChange_FeaturesChange();
         }
     }

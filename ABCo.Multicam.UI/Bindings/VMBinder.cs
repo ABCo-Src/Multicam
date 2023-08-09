@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.Bindings
 {
-    public interface IVMBinder<T> where T : IBindableVM
+    public interface IVMBinder<T> where T : IBindableVM<T>
     {
         TNew GetVM<TNew>(object parentVM) where TNew : class, T;
         void AddVM(T targetVM); 
@@ -20,7 +20,7 @@ namespace ABCo.Multicam.UI.Bindings
     /// <summary>
     /// Base class for the binders that link the view-models to the underlying models.
     /// </summary>
-    public abstract class VMBinder<T> : IVMBinder<T> where T : IBindableVM
+    public abstract class VMBinder<T> : IVMBinder<T> where T : IBindableVM<T>
     {
         IServiceSource _source;
         T[] _registeredVMs = Array.Empty<T>();
@@ -36,6 +36,7 @@ namespace ABCo.Multicam.UI.Bindings
             var newVM = _source.Get<TNew>();
             AddVM((T)(object)newVM);
             newVM.Parent = parentVM;
+            newVM.Binder = this;
             return newVM;
         }
 
@@ -118,7 +119,7 @@ namespace ABCo.Multicam.UI.Bindings
         public abstract void OnVMChange(T vm, string? prop);
     }
 
-    public interface IBindableVM : INotifyPropertyChanged
+    public interface IBindableVM<T> : INotifyPropertyChanged where T : IBindableVM<T>
     {
         /// <summary>
         /// Space used by the binding system to store information about the VM's config.
@@ -132,5 +133,7 @@ namespace ABCo.Multicam.UI.Bindings
         /// The parent of this view-model.
         /// </summary>
         object Parent { get; set; }
+
+        IVMBinder<T>? Binder { get; set; }
     }
 }
