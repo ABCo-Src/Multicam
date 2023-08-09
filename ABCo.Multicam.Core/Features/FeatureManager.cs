@@ -13,9 +13,9 @@ namespace ABCo.Multicam.Core.Features
     public interface IFeatureManager : IDisposable
     {
         IReadOnlyList<IRunningFeature> Features { get; }
+        IBinderForProjectFeatures VMBinder { get; }
 
         void CreateFeature(FeatureTypes type);
-        void SetOnFeaturesChangeForVM(Action act);
         void MoveUp(IRunningFeature feature);
         void MoveDown(IRunningFeature feature);
         void Delete(IRunningFeature feature);
@@ -24,24 +24,29 @@ namespace ABCo.Multicam.Core.Features
     public interface IBinderForProjectFeatures
     {
         void ModelChange_FeaturesChange();
+        void FinishConstruction(IFeatureManager model);
     }
 
     public class FeatureManager : IFeatureManager
     {
         IServiceSource _servSource;
-        Action? _onFeaturesChange;
         List<IRunningFeature> _runningFeatures = new();
 
         public IReadOnlyList<IRunningFeature> Features => _runningFeatures;
+        public IBinderForProjectFeatures VMBinder { get; private set; }
 
-        public FeatureManager(IServiceSource source) => _servSource = source;
+        public FeatureManager(IServiceSource source, IBinderForProjectFeatures binder)
+        {
+            VMBinder = binder;
+            binder.FinishConstruction(this);
 
-        public void SetOnFeaturesChangeForVM(Action act) => _onFeaturesChange = act;
+            _servSource = source;
+        }
 
         public void CreateFeature(FeatureTypes type)
         {
             _runningFeatures.Add(GetFeatureFromType(type));
-            _onFeaturesChange?.Invoke();
+            VMBinder.ModelChange_FeaturesChange();
         }
 
         IRunningFeature GetFeatureFromType(FeatureTypes type)
@@ -62,7 +67,7 @@ namespace ABCo.Multicam.Core.Features
 
             (_runningFeatures[indexOfFeature], _runningFeatures[indexOfFeature - 1]) = (_runningFeatures[indexOfFeature - 1], _runningFeatures[indexOfFeature]);
 
-            _onFeaturesChange?.Invoke();
+            VMBinder.ModelChange_FeaturesChange();
         }
 
         public void MoveDown(IRunningFeature feature)
@@ -74,14 +79,15 @@ namespace ABCo.Multicam.Core.Features
 
             (_runningFeatures[indexOfFeature], _runningFeatures[indexOfFeature + 1]) = (_runningFeatures[indexOfFeature + 1], _runningFeatures[indexOfFeature]);
 
-            _onFeaturesChange?.Invoke();
+            VMBinder.ModelChange_FeaturesChange();
         }
 
         public void Delete(IRunningFeature feature)
         {
             _runningFeatures.Remove(feature);
             feature.Dispose();
-            _onFeaturesChange?.Invoke();
+
+            VMBinder.ModelChange_FeaturesChange();
         }
 
         public void Dispose()

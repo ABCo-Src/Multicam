@@ -256,7 +256,7 @@ namespace ABCo.Multicam.Tests.UI.Bindings
             sequence.Verify();
         }
 
-        public interface IVMForDummyBinder : IBindableVM<IVMForDummyBinder> { object Prop { get; set; } }
+        public interface IVMForDummyBinder : IVMForBinder<IVMForDummyBinder> { object Prop { get; set; } }
         public abstract class DummyVM : IVMForDummyBinder
         {
             public object? BindingInfoStore { get; set; }

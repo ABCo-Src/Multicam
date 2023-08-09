@@ -11,7 +11,7 @@ namespace ABCo.Multicam.Tests.UI.Bindings
     [TestClass]
     public class BindingViewModelBaseTests
     {
-        public class Sub : BindingViewModelBase<Sub>, IBindableVM<Sub>
+        public class Sub : BindingViewModelBase<Sub>, IVMForBinder<Sub>
         {
             public Sub() { }
         }

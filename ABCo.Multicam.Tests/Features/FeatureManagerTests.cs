@@ -15,6 +15,7 @@ namespace ABCo.Multicam.Tests.Features
     {
         public record struct Mocks(
             Mock<IServiceSource> ServiceSource,
+            Mock<IBinderForProjectFeatures> VMBinder,
             Mock<IUnsupportedRunningFeature> UnsupportedFeature1,
             Mock<IUnsupportedRunningFeature>[] UnsupportedFeatures,
             Mock<ISwitcherRunningFeature> SwitcherFeature
@@ -31,16 +32,23 @@ namespace ABCo.Multicam.Tests.Features
             _mocks.UnsupportedFeature1 = new();
             _mocks.UnsupportedFeatures = new Mock<IUnsupportedRunningFeature>[] { _mocks.UnsupportedFeature1, new(), new() };
             _mocks.SwitcherFeature = new();
+            _mocks.VMBinder = new();
 
             _mocks.ServiceSource = new();
             _mocks.ServiceSource.Setup(m => m.Get<IUnsupportedRunningFeature>()).Returns(() => _mocks.UnsupportedFeatures[_unsupposedFeaturePos++].Object);
             _mocks.ServiceSource.Setup(m => m.Get<ISwitcherRunningFeature>()).Returns(() => _mocks.SwitcherFeature.Object);
         }
 
-        FeatureManager Create() => new(_mocks.ServiceSource.Object);
+        FeatureManager Create() => new(_mocks.ServiceSource.Object, _mocks.VMBinder.Object);
 
         [TestMethod]
-        public void Ctor() => Assert.IsNotNull(Create().Features);
+        public void Ctor()
+        {
+            var model = Create();
+            Assert.IsNotNull(model.Features);
+            Assert.AreEqual(_mocks.VMBinder.Object, model.VMBinder);
+            _mocks.VMBinder.Verify(m => m.FinishConstruction(model));
+        }
 
         [TestMethod]
         public void CreateFeature_AddsFeature()
@@ -219,13 +227,8 @@ namespace ABCo.Multicam.Tests.Features
         [TestMethod]
         public void CreateFeature_Trigger()
         {
-            bool triggered = false;
-
-            var manager = Create();
-            manager.SetOnFeaturesChangeForVM(() => triggered = true);
-            manager.CreateFeature(FeatureTypes.Unsupported);
-
-            Assert.IsTrue(triggered);
+            Create().CreateFeature(FeatureTypes.Unsupported);
+            _mocks.VMBinder.Verify(m => m.ModelChange_FeaturesChange());
         }
 
         [TestMethod]
@@ -243,14 +246,10 @@ namespace ABCo.Multicam.Tests.Features
         [TestMethod]
         public void Delete_Trigger()
         {
-            bool triggered = false;
-
             var manager = Create();
             manager.CreateFeature(FeatureTypes.Unsupported);
-            manager.SetOnFeaturesChangeForVM(() => triggered = true);
             manager.Delete(manager.Features[0]);
-
-            Assert.IsTrue(triggered);
+            _mocks.VMBinder.Verify(m => m.ModelChange_FeaturesChange(), Times.Exactly(2));
         }
 
         [TestMethod]
@@ -269,16 +268,15 @@ namespace ABCo.Multicam.Tests.Features
         // TODO: Add a sanity check to this function that verifies something *did* change
         void TestTriggerForSingleOperation(Action<FeatureManager> op, bool needed)
         {
-            bool triggered = false;
             var manager = Create();
 
             manager.CreateFeature(FeatureTypes.Unsupported);
             manager.CreateFeature(FeatureTypes.Unsupported);
-            manager.SetOnFeaturesChangeForVM(() => triggered = true);
+            _mocks.VMBinder.Reset();
 
             op(manager);
 
-            Assert.AreEqual(needed, triggered);
+            _mocks.VMBinder.Verify(m => m.ModelChange_FeaturesChange(), needed ? Times.Once : Times.Never);
         }
     }
 }

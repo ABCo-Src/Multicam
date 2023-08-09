@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.Bindings
 {
-    public interface IVMBinder<T> where T : IBindableVM<T>
+    public interface IVMBinder<T> where T : IVMForBinder<T>
     {
         TNew GetVM<TNew>(object parentVM) where TNew : class, T;
         void AddVM(T targetVM); 
@@ -17,15 +17,16 @@ namespace ABCo.Multicam.UI.Bindings
         void EnableVMAndSendToModel(T targetVM, string[] propsToSend);
     }
 
+    // TODO: Add dispose control over this...
     /// <summary>
     /// Base class for the binders that link the view-models to the underlying models.
     /// </summary>
-    public abstract class VMBinder<T> : IVMBinder<T> where T : IBindableVM<T>
+    public abstract class VMBinder<T> : IVMBinder<T> where T : IVMForBinder<T>
     {
-        IServiceSource _source;
+        protected IServiceSource _servSource;
         T[] _registeredVMs = Array.Empty<T>();
 
-        public VMBinder(IServiceSource source) => _source = source;
+        public VMBinder(IServiceSource source) => _servSource = source;
 
         public TNew GetVM<TNew>(object parentVM) where TNew : class, T
         {
@@ -33,7 +34,7 @@ namespace ABCo.Multicam.UI.Bindings
                 if (_registeredVMs[i].Parent == parentVM && _registeredVMs[i].GetType().IsAssignableTo(typeof(TNew)))
                     return (TNew)(object)_registeredVMs[i];
 
-            var newVM = _source.Get<TNew>();
+            var newVM = _servSource.Get<TNew>();
             AddVM((T)(object)newVM);
             newVM.Parent = parentVM;
             newVM.Binder = this;
@@ -119,7 +120,7 @@ namespace ABCo.Multicam.UI.Bindings
         public abstract void OnVMChange(T vm, string? prop);
     }
 
-    public interface IBindableVM<T> : INotifyPropertyChanged where T : IBindableVM<T>
+    public interface IVMForBinder<T> : INotifyPropertyChanged where T : IVMForBinder<T>
     {
         /// <summary>
         /// Space used by the binding system to store information about the VM's config.

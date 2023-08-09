@@ -1,5 +1,7 @@
 ﻿using ABCo.Multicam.Core;
+using ABCo.Multicam.Core.Features;
 using ABCo.Multicam.Tests;
+using ABCo.Multicam.UI.Bindings.Features;
 using ABCo.Multicam.UI.ViewModels;
 using ABCo.Multicam.UI.ViewModels.Features;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher;
@@ -20,6 +22,8 @@ namespace ABCo.Multicam.UI
             container.RegisterSingleton<MainWindowViewModel>();
             //container.RegisterSingleton<IApplicationViewModel, ApplicationViewModel>();
             //container.RegisterSingleton<IProjectViewModel, ProjectViewModel>();
+            container.RegisterTransient<IProjectFeaturesViewModel, ProjectFeaturesViewModel>();
+            container.RegisterTransient<IBinderForProjectFeatures, ProjectFeaturesVMBinder>();
 
             //container.Register<NewViewModelInfo, IUnsupportedFeatureViewModel>((factory, info) => new UnsupportedFeatureViewModel(info, factory.GetInstance<IServiceSource>()));
             container.Register<NewViewModelInfo, ISwitcherFeatureVM>((factory, info) => new SwitcherFeatureViewModel(info, factory.GetInstance<IServiceSource>()));

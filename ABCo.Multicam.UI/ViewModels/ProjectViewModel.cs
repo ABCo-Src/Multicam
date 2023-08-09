@@ -1,5 +1,7 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features;
+using ABCo.Multicam.UI.Bindings;
+using ABCo.Multicam.UI.Bindings.Features;
 using ABCo.Multicam.UI.Helpers;
 using ABCo.Multicam.UI.ViewModels.Features;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -15,12 +17,14 @@ namespace ABCo.Multicam.UI.ViewModels
     public interface IProjectViewModel { }
     public partial class ProjectViewModel : ViewModelBase, IProjectViewModel
     {
-        [ObservableProperty] ProjectFeaturesViewModel _features;
+        [ObservableProperty] IProjectFeaturesViewModel _features;
 
-        public ProjectViewModel(IServiceSource manager)
+        public ProjectViewModel(IServiceSource servSource)
         {
-            if (manager == null) throw new ServiceSourceNotGivenException();
-            _features = new ProjectFeaturesViewModel(manager.Get<IFeatureManager>(), manager);
+            if (servSource == null) throw new ServiceSourceNotGivenException();
+
+            var binder = (IVMBinder<IVMForProjectFeaturesBinder>)servSource.Get<IFeatureManager>().VMBinder;
+            _features = binder.GetVM<IProjectFeaturesViewModel>(this);
         }
     }
 }

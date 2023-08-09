@@ -15,7 +15,7 @@ namespace ABCo.Multicam.Tests.UI.Bindings
     public abstract class VMBinderBaseTest<TType, TVMType, TModel> 
         where TType : VMBinder<TVMType>
         where TModel : class
-        where TVMType : class, IBindableVM<TVMType>
+        where TVMType : class, IVMForBinder<TVMType>
     {
         public record struct Mocks(
             Mock<TVMType> VM,

@@ -2,6 +2,8 @@
 using ABCo.Multicam.Core.Features;
 using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.Tests;
+using ABCo.Multicam.UI.Bindings;
+using ABCo.Multicam.UI.Bindings.Features;
 using ABCo.Multicam.UI.Helpers;
 using ABCo.Multicam.UI.Services;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher;
@@ -19,7 +21,7 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.ViewModels.Features
 {
-    public interface IProjectFeaturesViewModel 
+    public interface IProjectFeaturesViewModel : IVMForProjectFeaturesBinder
     {
         IFeatureViewModel? CurrentlyEditing { get; set; }
         void MoveDown(IFeatureViewModel feature);
@@ -27,25 +29,40 @@ namespace ABCo.Multicam.UI.ViewModels.Features
         void Delete(IFeatureViewModel feature);
     }
 
-    public partial class ProjectFeaturesViewModel : ViewModelBase, IProjectFeaturesViewModel
+    public partial class ProjectFeaturesViewModel : BindingViewModelBase<IVMForProjectFeaturesBinder>, IProjectFeaturesViewModel
     {
-        IFeatureManager _manager;
         IServiceSource _servSource;
         IUIDialogHandler _dialogHandler;
 
-        [ObservableProperty] ObservableCollection<IFeatureViewModel> _items;
+        // Raw data synced to the model:
+        IFeatureVMBinder[] _rawFeatures;
+        public IFeatureVMBinder[] RawFeatures
+        {
+            get => _rawFeatures;
+            set
+            {
+                // Update the property
+                if (SetProperty(ref _rawFeatures, value, nameof(RawFeatures)))
+                    OnPropertyChanged(nameof(Items));
 
-        public ProjectFeaturesViewModel(IFeatureManager manager, IServiceSource servSource)
+                // Update "CurrentlyEditing" if needed
+                EnsureCurrentlyEditingExists();
+            }
+        }
+
+        [ObservableProperty] IFeatureManager _rawManager = null!;
+
+        public IEnumerable<IFeatureViewModel> Items => RawFeatures.Select(f => f.GetVM<IFeatureViewModel>(this));
+
+        public ProjectFeaturesViewModel(IServiceSource servSource)
         {
             if (servSource == null) throw new ServiceSourceNotGivenException();
 
-            _manager = manager;
             _servSource = servSource;
-            _items = new ObservableCollection<IFeatureViewModel>();
             _dialogHandler = servSource.Get<IUIDialogHandler>();
 
-            manager.SetOnFeaturesChangeForVM(OnFeaturesChange);
-            OnFeaturesChange();
+            _rawFeatures = Array.Empty<IFeatureVMBinder>();
+            _rawManager = null!;
         }
 
         IFeatureViewModel? _currentlyEditing;
@@ -71,51 +88,52 @@ namespace ABCo.Multicam.UI.ViewModels.Features
 
         public bool ShowEditingPanel => CurrentlyEditing != null;
 
-        void OnFeaturesChange()
+        void EnsureCurrentlyEditingExists()
         {
-            // Clear the old features
-            var oldItems = new List<IFeatureViewModel>(Items);
-            Items.Clear();
-            
-            // Re-add them
-            var baseItems = _manager.Features;
-            for (int i = 0; i < baseItems.Count; i++)
-            {
-                // Re-use or create a new vm
-                int vm = oldItems.FindIndex(s => s.BaseFeature == baseItems[i]);
+            if (CurrentlyEditing == null) return;
+            var currentlyEditingBinder = CurrentlyEditing.Binder;
 
-                if (vm == -1)
-                    Items.Add(CreateVMForFeature(baseItems[i]));
-                else
-                {
-                    Items.Add(oldItems[vm]);
-                    oldItems.RemoveAt(vm);
-                }
-            }
+            // Stop if this feature is still present in the new list
+            for (int i = 0; i < RawFeatures.Length; i++)
+                if (RawFeatures[i] == currentlyEditingBinder)
+                    return;
 
-            // If we were editing a removed vm, deselect it
-            for (int i = 0; i < oldItems.Count; i++)
-                if (oldItems[i] == CurrentlyEditing)
-                    CurrentlyEditing = null;
+            // Stop editing if we weren't stopped
+            CurrentlyEditing = null;
         }
 
         IFeatureViewModel CreateVMForFeature(IRunningFeature feature) => feature switch
         {
             ISwitcherRunningFeature => _servSource.GetVM<ISwitcherFeatureVM>(new(feature, this)),
-            _ => new UnsupportedFeatureViewModel(new(feature, this), _servSource),
+            _ => new UnsupportedFeatureViewModel(new(feature, this), _servSource)
         };
 
         public void CreateFeature()
         {
-            _dialogHandler.OpenContextMenu(new ContextMenuDetails<FeatureTypes>("Choose Type", _manager.CreateFeature, null, new ContextMenuItem<FeatureTypes>[]
+            _dialogHandler.OpenContextMenu(new ContextMenuDetails<FeatureTypes>("Choose Type", RawManager.CreateFeature, null, new ContextMenuItem<FeatureTypes>[]
             {
                 new("Switcher", FeatureTypes.Switcher),
                 new("Tally", FeatureTypes.Tally)
             }));
         }
 
-        public void MoveDown(IFeatureViewModel feature) => _manager.MoveDown(feature.BaseFeature);
-        public void MoveUp(IFeatureViewModel feature) => _manager.MoveUp(feature.BaseFeature);
-        public void Delete(IFeatureViewModel feature) => _manager.Delete(feature.BaseFeature);
+        public void MoveDown(IFeatureViewModel feature)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void MoveUp(IFeatureViewModel feature)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Delete(IFeatureViewModel feature)
+        {
+            throw new NotImplementedException();
+        }
+
+        //public void MoveDown(IFeatureViewModel feature) => _manager.MoveDown(feature.BaseFeature);
+        //public void MoveUp(IFeatureViewModel feature) => _manager.MoveUp(feature.BaseFeature);
+        //public void Delete(IFeatureViewModel feature) => _manager.Delete(feature.BaseFeature);
     }
 }

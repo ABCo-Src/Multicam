@@ -1,5 +1,7 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features;
+using ABCo.Multicam.UI.Bindings;
+using ABCo.Multicam.UI.Bindings.Features;
 using ABCo.Multicam.UI.Enumerations;
 using ABCo.Multicam.UI.Helpers;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -12,13 +14,13 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.ViewModels.Features
 {
-    public interface IFeatureViewModel 
+    public interface IFeatureViewModel : IVMForFeatureBinder
     {
         public abstract IRunningFeature BaseFeature { get; }
         public bool IsEditing { get; set; }
     }
 
-    public abstract partial class FeatureViewModel : ViewModelBase, IFeatureViewModel
+    public abstract partial class FeatureViewModel : BindingViewModelBase<IVMForFeatureBinder>, IFeatureViewModel
     {
         protected IServiceSource _serviceSource;
         public readonly IProjectFeaturesViewModel Parent;

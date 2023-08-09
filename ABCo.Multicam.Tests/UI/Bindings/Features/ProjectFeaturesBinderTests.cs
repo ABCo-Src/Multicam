@@ -21,6 +21,11 @@ namespace ABCo.Multicam.Tests.UI.Bindings.Features
         };
 
         public override void SetupModel(Mock<IFeatureManager> model) => model.Setup(m => m.Features).Returns(new IRunningFeature[2]);
-        public override ProjectFeaturesVMBinder Create() => new ProjectFeaturesVMBinder(_mocks.Model.Object, Mock.Of<IServiceSource>());
+        public override ProjectFeaturesVMBinder Create()
+        {
+            var vm = new ProjectFeaturesVMBinder(Mock.Of<IServiceSource>());
+            vm.FinishConstruction(_mocks.Model.Object);
+            return vm;
+        }
     }
 }

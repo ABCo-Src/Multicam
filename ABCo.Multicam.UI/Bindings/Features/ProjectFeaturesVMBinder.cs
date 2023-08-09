@@ -8,25 +8,22 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.Bindings.Features
 {
-    public interface IVMForProjectFeaturesBinder : IBindableVM<IVMForProjectFeaturesBinder>
+    public interface IVMForProjectFeaturesBinder : IVMForBinder<IVMForProjectFeaturesBinder>
     {
         IFeatureVMBinder[] RawFeatures { get; set; }
         IFeatureManager RawManager { get; set; }
     }
 
-    public interface IFeatureVMBinder { }
+    public interface IVMForFeatureBinder : IVMForBinder<IVMForFeatureBinder> { }
+    public interface IFeatureVMBinder : IVMBinder<IVMForFeatureBinder> { }
 
     public class ProjectFeaturesVMBinder : VMBinder<IVMForProjectFeaturesBinder>, IBinderForProjectFeatures
     {
-        IFeatureManager _model;
-        IServiceSource _servSource;
+        IFeatureManager _model = null!;
         IFeatureVMBinder[] _rawFeatures = Array.Empty<IFeatureVMBinder>();
 
-        public ProjectFeaturesVMBinder(IFeatureManager model, IServiceSource source) : base(source)
-        {
-            _model = model;
-            _servSource = source;
-        }
+        public ProjectFeaturesVMBinder(IServiceSource source) : base(source) { }
+        public void FinishConstruction(IFeatureManager model) => _model = model;
 
         public void ModelChange_FeaturesChange()
         {
