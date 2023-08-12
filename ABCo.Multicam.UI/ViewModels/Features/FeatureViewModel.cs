@@ -16,14 +16,17 @@ namespace ABCo.Multicam.UI.ViewModels.Features
 {
     public interface IFeatureViewModel : IVMForFeatureBinder
     {
-        public abstract IRunningFeature BaseFeature { get; }
+        public abstract IFeatureContainer BaseFeature { get; }
         public bool IsEditing { get; set; }
     }
 
-    public abstract partial class FeatureViewModel : BindingViewModelBase<IVMForFeatureBinder>, IFeatureViewModel
+    public partial class FeatureViewModel : BindingViewModelBase<IVMForFeatureBinder>, IVMForFeatureBinder, IFeatureViewModel
     {
         protected IServiceSource _serviceSource;
-        public readonly IProjectFeaturesViewModel Parent;
+
+        // Synced to the model:
+        [ObservableProperty] IFeatureManager _rawManager;
+        [ObservableProperty] IFeatureContainer _rawFeature;
 
         [ObservableProperty][NotifyPropertyChangedFor(nameof(EditPanelTitle))] string _featureTitle;
         [ObservableProperty][NotifyPropertyChangedFor(nameof(EditBtnText))] bool _isEditing;
@@ -31,40 +34,34 @@ namespace ABCo.Multicam.UI.ViewModels.Features
         public string EditBtnText => IsEditing ? "Finish" : "Edit";
         public string EditPanelTitle => $"Editing '{FeatureTitle}'";
 
-        public abstract IRunningFeature BaseFeature { get; }
-        public abstract FeatureViewType ContentView { get; }
+        public IFeatureContainer BaseFeature { get; }
+        public FeatureViewType ContentView { get; }
 
-        public FeatureViewModel(IServiceSource serviceSource, IProjectFeaturesViewModel parent)
+        public FeatureViewModel(IServiceSource serviceSource)
         {
             if (serviceSource == null) throw new ServiceSourceNotGivenException();
 
             FeatureTitle = "New Feature";
             _serviceSource = serviceSource;
-            Parent = parent;
         }
 
-        public void ToggleEdit()
-        {
-            if (IsEditing)
-                Parent.CurrentlyEditing = null;
-            else
-                Parent.CurrentlyEditing = this; // Will update our editing indicator
-        }
+        public void ToggleEdit() => 
+            ((IProjectFeaturesViewModel)Parent).CurrentlyEditing = IsEditing ? null : this; // Will update our editing indicator
 
-        public void MoveDown() => Parent.MoveDown(this);
-        public void MoveUp() => Parent.MoveUp(this);
-        public void Delete() => Parent.Delete(this);
+        public void MoveDown() => RawManager.MoveDown(RawFeature);
+        public void MoveUp() => RawManager.MoveUp(RawFeature);
+        public void Delete() => RawManager.Delete(RawFeature);
     }
 
     public interface IUnsupportedFeatureViewModel : IFeatureViewModel { }
-    public class UnsupportedFeatureViewModel : FeatureViewModel, IUnsupportedFeatureViewModel
+    public class UnsupportedFeatureViewModel : ViewModelBase
     {
-        IRunningFeature _feature;
+        ILiveFeature _feature;
 
-        public UnsupportedFeatureViewModel(NewViewModelInfo info, IServiceSource serviceSource)
-            : base(serviceSource, (IProjectFeaturesViewModel)info.Parent) => _feature = (IRunningFeature)info.Model;
+        public UnsupportedFeatureViewModel(NewViewModelInfo info, IServiceSource serviceSource)// : base(serviceSource, (IProjectFeaturesViewModel)info.Parent) 
+            => _feature = (ILiveFeature)info.Model;
 
-        public override IRunningFeature BaseFeature => _feature;
-        public override FeatureViewType ContentView => FeatureViewType.Unsupported;
+        //public override IRunningFeature BaseFeature => _feature;
+        //public override FeatureViewType ContentView => FeatureViewType.Unsupported;
     }
 }

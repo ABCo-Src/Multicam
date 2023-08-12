@@ -12,13 +12,13 @@ namespace ABCo.Multicam.Core.Features
     /// </summary>
     public interface IFeatureManager : IDisposable
     {
-        IReadOnlyList<IRunningFeature> Features { get; }
-        IBinderForProjectFeatures VMBinder { get; }
+        IReadOnlyList<IFeatureContainer> Features { get; }
+        IBinderForProjectFeatures UIBinder { get; }
 
         void CreateFeature(FeatureTypes type);
-        void MoveUp(IRunningFeature feature);
-        void MoveDown(IRunningFeature feature);
-        void Delete(IRunningFeature feature);
+        void MoveUp(IFeatureContainer feature);
+        void MoveDown(IFeatureContainer feature);
+        void Delete(IFeatureContainer feature);
     }
 
     public interface IBinderForProjectFeatures
@@ -30,14 +30,14 @@ namespace ABCo.Multicam.Core.Features
     public class FeatureManager : IFeatureManager
     {
         IServiceSource _servSource;
-        List<IRunningFeature> _runningFeatures = new();
+        List<IFeatureContainer> _runningFeatures = new();
 
-        public IReadOnlyList<IRunningFeature> Features => _runningFeatures;
-        public IBinderForProjectFeatures VMBinder { get; private set; }
+        public IReadOnlyList<IFeatureContainer> Features => _runningFeatures;
+        public IBinderForProjectFeatures UIBinder { get; private set; }
 
         public FeatureManager(IServiceSource source, IBinderForProjectFeatures binder)
         {
-            VMBinder = binder;
+            UIBinder = binder;
             binder.FinishConstruction(this);
 
             _servSource = source;
@@ -45,20 +45,14 @@ namespace ABCo.Multicam.Core.Features
 
         public void CreateFeature(FeatureTypes type)
         {
-            _runningFeatures.Add(GetFeatureFromType(type));
-            VMBinder.ModelChange_FeaturesChange();
+            var newContainer = _servSource.Get<IFeatureContainer>();
+            newContainer.FinishConstruction(type);
+            _runningFeatures.Add(newContainer);
+
+            UIBinder.ModelChange_FeaturesChange();
         }
 
-        IRunningFeature GetFeatureFromType(FeatureTypes type)
-        {
-            return type switch
-            {
-                FeatureTypes.Switcher => _servSource.Get<ISwitcherRunningFeature>(),
-                _ => _servSource.Get<IUnsupportedRunningFeature>()
-            };
-        }
-
-        public void MoveUp(IRunningFeature feature)
+        public void MoveUp(IFeatureContainer feature)
         {
             int indexOfFeature = _runningFeatures.IndexOf(feature);
 
@@ -67,10 +61,10 @@ namespace ABCo.Multicam.Core.Features
 
             (_runningFeatures[indexOfFeature], _runningFeatures[indexOfFeature - 1]) = (_runningFeatures[indexOfFeature - 1], _runningFeatures[indexOfFeature]);
 
-            VMBinder.ModelChange_FeaturesChange();
+            UIBinder.ModelChange_FeaturesChange();
         }
 
-        public void MoveDown(IRunningFeature feature)
+        public void MoveDown(IFeatureContainer feature)
         {
             int indexOfFeature = _runningFeatures.IndexOf(feature);
 
@@ -79,15 +73,15 @@ namespace ABCo.Multicam.Core.Features
 
             (_runningFeatures[indexOfFeature], _runningFeatures[indexOfFeature + 1]) = (_runningFeatures[indexOfFeature + 1], _runningFeatures[indexOfFeature]);
 
-            VMBinder.ModelChange_FeaturesChange();
+            UIBinder.ModelChange_FeaturesChange();
         }
 
-        public void Delete(IRunningFeature feature)
+        public void Delete(IFeatureContainer feature)
         {
             _runningFeatures.Remove(feature);
             feature.Dispose();
 
-            VMBinder.ModelChange_FeaturesChange();
+            UIBinder.ModelChange_FeaturesChange();
         }
 
         public void Dispose()

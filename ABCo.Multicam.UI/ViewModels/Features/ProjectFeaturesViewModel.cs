@@ -35,8 +35,8 @@ namespace ABCo.Multicam.UI.ViewModels.Features
         IUIDialogHandler _dialogHandler;
 
         // Raw data synced to the model:
-        IFeatureVMBinder[] _rawFeatures;
-        public IFeatureVMBinder[] RawFeatures
+        IBinderForFeature[] _rawFeatures;
+        public IBinderForFeature[] RawFeatures
         {
             get => _rawFeatures;
             set
@@ -61,7 +61,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features
             _servSource = servSource;
             _dialogHandler = servSource.Get<IUIDialogHandler>();
 
-            _rawFeatures = Array.Empty<IFeatureVMBinder>();
+            _rawFeatures = Array.Empty<IBinderForFeature>();
             _rawManager = null!;
         }
 
@@ -102,11 +102,11 @@ namespace ABCo.Multicam.UI.ViewModels.Features
             CurrentlyEditing = null;
         }
 
-        IFeatureViewModel CreateVMForFeature(IRunningFeature feature) => feature switch
-        {
-            ISwitcherRunningFeature => _servSource.GetVM<ISwitcherFeatureVM>(new(feature, this)),
-            _ => new UnsupportedFeatureViewModel(new(feature, this), _servSource)
-        };
+        //IFeatureViewModel CreateVMForFeature(IRunningFeature feature) => feature switch
+        //{
+        //    ISwitcherRunningFeature => _servSource.GetVM<ISwitcherFeatureVM>(new(feature, this)),
+        //    _ => throw new Exception()
+        //};
 
         public void CreateFeature()
         {

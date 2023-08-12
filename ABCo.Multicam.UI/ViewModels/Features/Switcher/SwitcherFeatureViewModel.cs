@@ -21,11 +21,11 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
         void Cut(int mixBlock);
     }
 
-    public partial class SwitcherFeatureViewModel : FeatureViewModel, ISwitcherFeatureVM
+    public partial class SwitcherFeatureViewModel : ViewModelBase
     {
         ISwitcherRunningFeature _model;
 
-        public SwitcherFeatureViewModel(NewViewModelInfo info, IServiceSource serviceSource) : base(serviceSource, (IProjectFeaturesViewModel)info.Parent)
+        public SwitcherFeatureViewModel(NewViewModelInfo info, IServiceSource serviceSource)// : base(serviceSource, (IProjectFeaturesViewModel)info.Parent)
         {
             _model = (ISwitcherRunningFeature)info.Model!;
             _model.SetOnBusChangeFinishForVM(OnBusChangeFinish);
@@ -41,8 +41,8 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
             }
         }
 
-        public override IRunningFeature BaseFeature => _model;
-        public override FeatureViewType ContentView => FeatureViewType.Switcher;
+        //public override IRunningFeature BaseFeature => _model;
+        //public override FeatureViewType ContentView => FeatureViewType.Switcher;
 
         [ObservableProperty] ObservableCollection<ISwitcherMixBlockVM> _mixBlocks;
 

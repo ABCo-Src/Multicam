@@ -59,9 +59,6 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
         public void CtorAndRunningFeature()
         {
             var vm = Create();
-
-            Assert.AreEqual(_mocks.Parent.Object, vm.Parent);
-            Assert.AreEqual(_mocks.Feature.Object, vm.BaseFeature);
             Assert.IsNotNull(vm.MixBlocks);
         }
 
@@ -101,12 +98,12 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
             _mocks.MixBlocks[1].Verify(m => m.RefreshBuses(7, 8));
         }
 
-        [TestMethod]
-        public void ContentView()
-        {
-            var vm = Create();
-            Assert.AreEqual(FeatureViewType.Switcher, vm.ContentView);
-        }
+        //[TestMethod]
+        //public void ContentView()
+        //{
+        //    var vm = Create();
+        //    Assert.AreEqual(FeatureViewType.Switcher, vm.ContentView);
+        //}
 
         [TestMethod]
         public void SetValue()

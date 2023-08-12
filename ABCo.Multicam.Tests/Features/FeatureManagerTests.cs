@@ -16,27 +16,20 @@ namespace ABCo.Multicam.Tests.Features
         public record struct Mocks(
             Mock<IServiceSource> ServiceSource,
             Mock<IBinderForProjectFeatures> VMBinder,
-            Mock<IUnsupportedRunningFeature> UnsupportedFeature1,
-            Mock<IUnsupportedRunningFeature>[] UnsupportedFeatures,
-            Mock<ISwitcherRunningFeature> SwitcherFeature
+            Mock<IFeatureContainer>[] Features
         );
 
-        int _unsupposedFeaturePos = 0;
         Mocks _mocks = new();
 
         [TestInitialize]
         public void InitMocks()
         {
-            _unsupposedFeaturePos = 0;
-
-            _mocks.UnsupportedFeature1 = new();
-            _mocks.UnsupportedFeatures = new Mock<IUnsupportedRunningFeature>[] { _mocks.UnsupportedFeature1, new(), new() };
-            _mocks.SwitcherFeature = new();
+            _mocks.Features = new Mock<IFeatureContainer>[] { new(), new(), new() };
             _mocks.VMBinder = new();
 
             _mocks.ServiceSource = new();
-            _mocks.ServiceSource.Setup(m => m.Get<IUnsupportedRunningFeature>()).Returns(() => _mocks.UnsupportedFeatures[_unsupposedFeaturePos++].Object);
-            _mocks.ServiceSource.Setup(m => m.Get<ISwitcherRunningFeature>()).Returns(() => _mocks.SwitcherFeature.Object);
+            _mocks.ServiceSource.SetupSequence(m => m.Get<IFeatureContainer>())
+                .Returns(_mocks.Features[0].Object).Returns(_mocks.Features[1].Object).Returns(_mocks.Features[2].Object);
         }
 
         FeatureManager Create() => new(_mocks.ServiceSource.Object, _mocks.VMBinder.Object);
@@ -46,34 +39,21 @@ namespace ABCo.Multicam.Tests.Features
         {
             var model = Create();
             Assert.IsNotNull(model.Features);
-            Assert.AreEqual(_mocks.VMBinder.Object, model.VMBinder);
+            Assert.AreEqual(_mocks.VMBinder.Object, model.UIBinder);
             _mocks.VMBinder.Verify(m => m.FinishConstruction(model));
         }
 
         [TestMethod]
-        public void CreateFeature_AddsFeature()
+        public void CreateFeature()
         {
             var manager = Create();
             manager.CreateFeature(FeatureTypes.Unsupported);
+
+            _mocks.ServiceSource.Verify(m => m.Get<IFeatureContainer>());
+            _mocks.Features[0].Verify(m => m.FinishConstruction(FeatureTypes.Unsupported));
+
+            Assert.AreEqual(_mocks.Features[0].Object, manager.Features[0]);
             Assert.AreEqual(1, manager.Features.Count);
-        }
-
-        [TestMethod]
-        public void CreateFeature_Switcher()
-        {
-            var manager = Create();
-            manager.CreateFeature(FeatureTypes.Switcher);
-            _mocks.ServiceSource.Verify(m => m.Get<ISwitcherRunningFeature>(), Times.Once);
-            Assert.AreEqual(_mocks.SwitcherFeature.Object, manager.Features[0]);
-        }
-
-        [TestMethod]
-        public void CreateFeature_Unsupported()
-        {
-            var manager = Create();
-            manager.CreateFeature(FeatureTypes.Tally);
-            _mocks.ServiceSource.Verify(m => m.Get<IUnsupportedRunningFeature>(), Times.Once);
-            Assert.AreEqual(_mocks.UnsupportedFeature1.Object, manager.Features[0]);
         }
 
         [TestMethod]
@@ -219,9 +199,9 @@ namespace ABCo.Multicam.Tests.Features
             var manager = Create();
 
             manager.CreateFeature(FeatureTypes.Unsupported);
-            manager.Delete(_mocks.UnsupportedFeature1.Object);
+            manager.Delete(_mocks.Features[0].Object);
 
-            _mocks.UnsupportedFeature1.Verify(m => m.Dispose());
+            _mocks.Features[0].Verify(m => m.Dispose());
         }
 
         [TestMethod]
@@ -261,8 +241,8 @@ namespace ABCo.Multicam.Tests.Features
             manager.CreateFeature(FeatureTypes.Switcher);
             manager.Dispose();
 
-            _mocks.SwitcherFeature.Verify(m => m.Dispose());
-            _mocks.UnsupportedFeature1.Verify(m => m.Dispose());
+            _mocks.Features[0].Verify(m => m.Dispose());
+            _mocks.Features[1].Verify(m => m.Dispose());
         }
 
         // TODO: Add a sanity check to this function that verifies something *did* change

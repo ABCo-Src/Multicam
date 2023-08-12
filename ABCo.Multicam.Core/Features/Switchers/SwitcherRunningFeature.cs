@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Core.Features.Switchers
 {
-    public interface ISwitcherRunningFeature : IRunningFeature
+    public interface ISwitcherRunningFeature : Features.ILiveFeature
     {
         SwitcherSpecs SwitcherSpecs { get; }
         void SetOnBusChangeFinishForVM(Action<RetrospectiveFadeInfo?>? callback);
@@ -62,5 +62,10 @@ namespace ABCo.Multicam.Core.Features.Switchers
         public void Dispose() => _buffer.Dispose();
 
         public void Cut(int mixBlock) => _buffer.Cut(mixBlock);
+
+        public void FinishConstruction(FeatureTypes featureType)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
