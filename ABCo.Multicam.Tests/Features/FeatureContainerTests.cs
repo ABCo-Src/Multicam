@@ -40,6 +40,7 @@ namespace ABCo.Multicam.Tests.Features
         public FeatureContainer Create()
         {
             var container = new FeatureContainer(_mocks.UIBinder.Object, _mocks.ServSource.Object, _mocks.FeatureManager.Object);
+            _mocks.UIBinder.Verify(m => m.FinishConstruction(_mocks.FeatureManager.Object, container), Times.Never); // Fail if inner things were finished before this.
             container.FinishConstruction(_type);
             return container;
         }
@@ -75,15 +76,6 @@ namespace ABCo.Multicam.Tests.Features
             var manager = Create();
             Assert.AreEqual(_mocks.UIBinder.Object, manager.UIBinder);
         }
-
-        //[TestMethod]
-        //[DataRow(FeatureTypes.Switcher)]
-        //[DataRow(FeatureTypes.Unsupported)]
-        //public void FeatureType(FeatureTypes type)
-        //{
-        //    _type = type;
-        //    Assert.AreEqual(type, Create().Type);
-        //}
 
         [TestMethod]
         public void Dispose()

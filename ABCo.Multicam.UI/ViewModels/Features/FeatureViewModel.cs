@@ -42,7 +42,12 @@ namespace ABCo.Multicam.UI.ViewModels.Features
         public string EditPanelTitle => $"Editing '{FeatureTitle}'";
 
         public FeatureTypes InnerType => RawInnerFeature.FeatureType;
-        public ILiveFeatureViewModel InnerVM => ((IVMBinder<IVMForSwitcherFeature>)RawInnerFeature.UIBinder).GetVM<ISwitcherFeatureVM>(this);
+
+        public ILiveFeatureViewModel InnerVM => InnerType switch 
+        {
+            FeatureTypes.Switcher => ((IVMBinder<IVMForSwitcherFeature>)RawInnerFeature.UIBinder).GetVM<ISwitcherFeatureVM>(this),
+            _ => new UnsupportedFeatureViewModel()
+        };
 
         public FeatureViewModel()
         {
@@ -55,17 +60,5 @@ namespace ABCo.Multicam.UI.ViewModels.Features
         public void MoveDown() => RawManager.MoveDown(RawContainer);
         public void MoveUp() => RawManager.MoveUp(RawContainer);
         public void Delete() => RawManager.Delete(RawContainer);
-    }
-
-    public interface IUnsupportedFeatureViewModel : IFeatureViewModel { }
-    public class UnsupportedFeatureViewModel : ViewModelBase
-    {
-        ILiveFeature _feature;
-
-        public UnsupportedFeatureViewModel(NewViewModelInfo info, IServiceSource serviceSource)// : base(serviceSource, (IProjectFeaturesViewModel)info.Parent) 
-            => _feature = (ILiveFeature)info.Model;
-
-        //public override IRunningFeature BaseFeature => _feature;
-        //public override FeatureViewType ContentView => FeatureViewType.Unsupported;
     }
 }

@@ -19,11 +19,9 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
     public interface ISwitcherFeatureVM : IVMForSwitcherFeature, ILiveFeatureViewModel
     {
-        void SetValue(int mixBlock, int bus, int value);
-        void Cut(int mixBlock);
     }
 
-    public partial class SwitcherFeatureViewModel : BindingViewModelBase<SwitcherFeatureViewModel>
+    public partial class SwitcherFeatureViewModel : BindingViewModelBase<IVMForSwitcherFeature>, ISwitcherFeatureVM
     {
         // Synced to the model:
         [ObservableProperty][NotifyPropertyChangedFor(nameof(MixBlocks))] IVMBinder<IVMForSwitcherMixBlock>[] _rawMixBlocks = null!;

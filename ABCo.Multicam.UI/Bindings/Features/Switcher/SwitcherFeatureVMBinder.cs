@@ -24,7 +24,7 @@ namespace ABCo.Multicam.UI.Bindings.Features.Switcher
         void FinishConstruction(ISwitcherRunningFeature feature, SwitcherMixBlock block, int index);
     }
 
-    public class SwitcherFeatureVMBinder : VMBinder<IVMForSwitcherFeature>
+    public class SwitcherFeatureVMBinder : VMBinder<IVMForSwitcherFeature>, IBinderForSwitcherFeature
     {
         ISwitcherRunningFeature _feature = null!;
 
@@ -57,5 +57,7 @@ namespace ABCo.Multicam.UI.Bindings.Features.Switcher
 
             return arr;
         }
+
+        public void ModelChange_Specs() => ReportModelChange(Properties[0]);
     }
 }

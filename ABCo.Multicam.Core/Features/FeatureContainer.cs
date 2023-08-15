@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,43 +27,29 @@ namespace ABCo.Multicam.Core.Features
     public class FeatureContainer : IFeatureContainer
     {
         IServiceSource _servSource;
-        ILiveFeature _feature = null!;
+        IFeatureManager _manager;
 
         public IBinderForFeatureContainer UIBinder { get; }
-        public ILiveFeature CurrentFeature { get; private set;  } = null!;
+        public ILiveFeature CurrentFeature { get; private set; } = null!;
 
         public FeatureContainer(IBinderForFeatureContainer binder, IServiceSource servSource, IFeatureManager manager)
         {
             _servSource = servSource;
+            _manager = manager;
             UIBinder = binder;
-
-            binder.FinishConstruction(manager, this);
         }
 
         public void FinishConstruction(FeatureTypes featureType)
         {
-            _feature = featureType switch
+            CurrentFeature = featureType switch
             {
                 FeatureTypes.Switcher => _servSource.Get<ISwitcherRunningFeature>(),
                 _ => _servSource.Get<IUnsupportedRunningFeature>(),
             };
+
+            UIBinder.FinishConstruction(_manager, this);
         }
 
-        public void Dispose() => _feature.Dispose();
-    }
-
-    public interface IUnsupportedRunningFeature : ILiveFeature { }
-
-    public class UnsupportedRunningFeature : IUnsupportedRunningFeature
-    {
-        public ILiveFeatureBinder UIBinder => throw new NotImplementedException();
-        public FeatureTypes FeatureType => throw new NotImplementedException();
-
-        public void Dispose() { }
-
-        public void FinishConstruction(FeatureTypes featureType)
-        {
-            throw new NotImplementedException();
-        }
+        public void Dispose() => CurrentFeature.Dispose();
     }
 }

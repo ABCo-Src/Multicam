@@ -1,7 +1,9 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features;
+using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.Tests;
 using ABCo.Multicam.UI.Bindings.Features;
+using ABCo.Multicam.UI.Bindings.Features.Switcher;
 using ABCo.Multicam.UI.ViewModels;
 using ABCo.Multicam.UI.ViewModels.Features;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher;
@@ -18,15 +20,18 @@ namespace ABCo.Multicam.UI
     {
         public static void Initialize(ServiceContainer container)
         {
-            // Register view-models
             container.RegisterSingleton<MainWindowViewModel>();
-            //container.RegisterSingleton<IApplicationViewModel, ApplicationViewModel>();
-            //container.RegisterSingleton<IProjectViewModel, ProjectViewModel>();
+
+            // Register binders
             container.RegisterTransient<IProjectFeaturesViewModel, ProjectFeaturesViewModel>();
             container.RegisterTransient<IBinderForProjectFeatures, ProjectFeaturesVMBinder>();
             container.RegisterTransient<IBinderForFeatureContainer, FeatureVMBinder>();
+            container.RegisterTransient<IBinderForSwitcherFeature, SwitcherFeatureVMBinder>();
+            container.RegisterTransient<IBinderForUnsupportedFeature, UnsupportedFeatureVMBinder>();
 
+            // Register view-models
             container.RegisterTransient<IFeatureViewModel, FeatureViewModel>();
+            container.RegisterTransient<ISwitcherFeatureVM, SwitcherFeatureViewModel>();
             //container.Register<NewViewModelInfo, IUnsupportedFeatureViewModel>((factory, info) => new UnsupportedFeatureViewModel(info, factory.GetInstance<IServiceSource>()));
             //container.Register<NewViewModelInfo, ISwitcherFeatureVM>((factory, info) => new SwitcherFeatureViewModel(info, factory.GetInstance<IServiceSource>()));
             container.Register<NewViewModelInfo, ISwitcherMixBlockVM>((factory, info) => new SwitcherMixBlockViewModel(info, factory.GetInstance<IServiceSource>()));

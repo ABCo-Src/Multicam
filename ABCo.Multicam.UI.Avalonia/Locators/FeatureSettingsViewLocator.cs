@@ -1,4 +1,5 @@
-﻿using ABCo.Multicam.UI.Avalonia.Views.Features.Switcher;
+﻿using ABCo.Multicam.Core.Features;
+using ABCo.Multicam.UI.Avalonia.Views.Features.Switcher;
 using ABCo.Multicam.UI.Enumerations;
 using Avalonia.Controls;
 using Avalonia.Data;
@@ -18,13 +19,13 @@ namespace ABCo.Multicam.UI.Avalonia.Locators
 
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            if (value is not FeatureViewType) return new BindingNotification(new InvalidCastException(), BindingErrorType.Error);
+            if (value is not FeatureTypes) return new BindingNotification(new InvalidCastException(), BindingErrorType.Error);
 
-            FeatureViewType type = (FeatureViewType)value;
+            FeatureTypes type = (FeatureTypes)value;
             return type switch
             {
-                FeatureViewType.Switcher => new SwitcherFeatureSettingsView(),
-                FeatureViewType.Unsupported => new TextBlock { Text = "Unsupported feature." },
+                FeatureTypes.Switcher => new SwitcherFeatureSettingsView(),
+                FeatureTypes.Unsupported => new TextBlock { Text = "Unsupported feature." },
                 _ => new BindingNotification(new Exception("Unimplemented FeatureViewType value in the locator."), BindingErrorType.Error),
             };
         }

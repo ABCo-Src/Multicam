@@ -72,9 +72,9 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
                 PreviewBus[i].SetHighlight(PreviewBus[i].Base.Id == preview);
         }
 
-        public void SetProgram(int value) => Parent.SetValue(Index, 0, value);
-        public void SetPreview(int value) => Parent.SetValue(Index, 1, value);
-        public void CutButtonPress() => Parent.Cut(Index);
+        public void SetProgram(int value) => throw new NotImplementedException();
+        public void SetPreview(int value) => throw new NotImplementedException();
+        public void CutButtonPress() => throw new NotImplementedException();
 
     }
 

@@ -1,5 +1,6 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features;
+using ABCo.Multicam.UI.ViewModels.Features;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +35,7 @@ namespace ABCo.Multicam.UI.Bindings.Features
                 ModelChange = new(() => _feature, v => v.VM.RawContainer = v.NewVal)
             },
 
-            // FeatureType
+            // InnerFeature
             new PropertyBinding<ILiveFeature>()
             {
                 ModelChange = new(() => _feature.CurrentFeature, v => v.VM.RawInnerFeature = v.NewVal)
@@ -49,4 +50,6 @@ namespace ABCo.Multicam.UI.Bindings.Features
             Init();
         }
     }
+
+    public class UnsupportedFeatureVMBinder : IBinderForUnsupportedFeature { }
 }

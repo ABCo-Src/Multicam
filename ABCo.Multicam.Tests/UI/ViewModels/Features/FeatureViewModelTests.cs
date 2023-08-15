@@ -27,7 +27,8 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features
             Mock<IProjectFeaturesViewModel> Parent,
             Mock<ILiveFeature> InnerFeature,
             Mock<ISwitcherBinder> InnerFeatureBinder,
-            Mock<ISwitcherFeatureVM> SwitcherVM);
+            Mock<ISwitcherFeatureVM> SwitcherVM,
+            Mock<ISwitcherFeatureVM> UnsupportedVM);
 
         FeatureTypes _type;
         Mocks _mocks = new();
@@ -37,6 +38,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features
         {
             _mocks.FeatureManager = new();
             _mocks.SwitcherVM = new();
+            _mocks.UnsupportedVM = new();
 
             _mocks.InnerFeatureBinder = new();
             _mocks.InnerFeatureBinder.Setup(m => m.GetVM<ISwitcherFeatureVM>(It.IsAny<object>())).Returns(_mocks.SwitcherVM.Object);
@@ -72,6 +74,14 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features
             var vm = Create();
             Assert.AreEqual(_mocks.SwitcherVM.Object, vm.InnerVM);
             _mocks.InnerFeatureBinder.Verify(m => m.GetVM<ISwitcherFeatureVM>(vm), Times.Once);
+        }
+
+        [TestMethod]
+        public void Content_Unsupported()
+        {
+            _type = FeatureTypes.Unsupported;
+            var vm = Create();
+            Assert.IsInstanceOfType(vm.InnerVM, typeof(UnsupportedFeatureViewModel));
         }
 
         [TestMethod]
