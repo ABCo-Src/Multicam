@@ -10,33 +10,46 @@ namespace ABCo.Multicam.UI.Bindings.Features
 {
     public interface IVMForProjectFeaturesBinder : IVMForBinder<IVMForProjectFeaturesBinder>
     {
-        IBinderForFeature[] RawFeatures { get; set; }
+        IVMBinder<IVMForFeatureBinder>[] RawFeatures { get; set; }
         IFeatureManager RawManager { get; set; }
     }
 
     public class ProjectFeaturesVMBinder : VMBinder<IVMForProjectFeaturesBinder>, IBinderForProjectFeatures
     {
         IFeatureManager _model = null!;
-        IBinderForFeature[] _rawFeatures = Array.Empty<IBinderForFeature>();
 
-        public ProjectFeaturesVMBinder(IServiceSource source) : base(source) { }
-        public void FinishConstruction(IFeatureManager model) => _model = model;
-
-        public void ModelChange_FeaturesChange()
+        public override PropertyBinding[] CreateProperties() => new PropertyBinding[]
         {
-            _rawFeatures = new IBinderForFeature[_model.Features.Count];
-            for (int i = 0; i < _model.Features.Count; i++)
-                _rawFeatures[i] = _servSource.GetWithParameter<IBinderForFeature, IFeatureContainer>(_model.Features[i]);
+            // RawManager
+            new PropertyBinding<IFeatureManager>()
+            {
+                ModelChange = new(() => _model, v => v.VM.RawManager = v.NewVal)
+            },
 
-            SetVMProp(vm => vm.RawFeatures = _rawFeatures, nameof(IVMForProjectFeaturesBinder.RawFeatures));
+            // RawFeatures
+            new PropertyBinding<IVMBinder<IVMForFeatureBinder>[]>()
+            {
+                ModelChange = new(GetFeatureBinders, v => v.VM.RawFeatures = v.NewVal)
+            }
+        };
+
+        public IVMBinder<IVMForFeatureBinder>[] GetFeatureBinders()
+        {
+            var arr = new IVMBinder<IVMForFeatureBinder>[_model.Features.Count];
+
+            for (int i = 0; i < arr.Length; i++)
+                arr[i] = (IVMBinder<IVMForFeatureBinder>)_model.Features[i].UIBinder;
+
+            return arr;
         }
 
-        public override void OnVMChange(IVMForProjectFeaturesBinder vm, string? prop) { }
+        public void ModelChange_FeaturesChange() => ReportModelChange(Properties[1]);
 
-        public override void RefreshVMToModel(IVMForProjectFeaturesBinder vm)
+        public ProjectFeaturesVMBinder(IServiceSource source) : base(source) { }
+        public void FinishConstruction(IFeatureManager model)
         {
-            vm.RawManager = _model;
-            ModelChange_FeaturesChange();
+            _model = model;
+            Init();
         }
     }
 }

@@ -24,9 +24,6 @@ namespace ABCo.Multicam.UI.ViewModels.Features
     public interface IProjectFeaturesViewModel : IVMForProjectFeaturesBinder
     {
         IFeatureViewModel? CurrentlyEditing { get; set; }
-        void MoveDown(IFeatureViewModel feature);
-        void MoveUp(IFeatureViewModel feature);
-        void Delete(IFeatureViewModel feature);
     }
 
     public partial class ProjectFeaturesViewModel : BindingViewModelBase<IVMForProjectFeaturesBinder>, IProjectFeaturesViewModel
@@ -35,8 +32,8 @@ namespace ABCo.Multicam.UI.ViewModels.Features
         IUIDialogHandler _dialogHandler;
 
         // Raw data synced to the model:
-        IBinderForFeature[] _rawFeatures;
-        public IBinderForFeature[] RawFeatures
+        IVMBinder<IVMForFeatureBinder>[] _rawFeatures;
+        public IVMBinder<IVMForFeatureBinder>[] RawFeatures
         {
             get => _rawFeatures;
             set
@@ -61,7 +58,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features
             _servSource = servSource;
             _dialogHandler = servSource.Get<IUIDialogHandler>();
 
-            _rawFeatures = Array.Empty<IBinderForFeature>();
+            _rawFeatures = Array.Empty<IVMBinder<IVMForFeatureBinder>>();
             _rawManager = null!;
         }
 
@@ -116,24 +113,5 @@ namespace ABCo.Multicam.UI.ViewModels.Features
                 new("Tally", FeatureTypes.Tally)
             }));
         }
-
-        public void MoveDown(IFeatureViewModel feature)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void MoveUp(IFeatureViewModel feature)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Delete(IFeatureViewModel feature)
-        {
-            throw new NotImplementedException();
-        }
-
-        //public void MoveDown(IFeatureViewModel feature) => _manager.MoveDown(feature.BaseFeature);
-        //public void MoveUp(IFeatureViewModel feature) => _manager.MoveUp(feature.BaseFeature);
-        //public void Delete(IFeatureViewModel feature) => _manager.Delete(feature.BaseFeature);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features;
+using ABCo.Multicam.UI.Bindings;
 using ABCo.Multicam.UI.Bindings.Features;
 using ABCo.Multicam.UI.ViewModels.Features;
 using Moq;
@@ -12,20 +13,42 @@ using System.Threading.Tasks;
 namespace ABCo.Multicam.Tests.UI.Bindings.Features
 {
     [TestClass]
-    public class ProjectFeaturesBinderTests : VMBinderBaseTest<ProjectFeaturesVMBinder, IVMForProjectFeaturesBinder, IFeatureManager>
+    public class ProjectFeaturesBinderTests
     {
-        public override VMTestProperty[] Props => new VMTestProperty[]
-        {
-            new(nameof(IVMForProjectFeaturesBinder.RawFeatures), model => model.ModelChange_FeaturesChange(), null, vm => vm.RawFeatures = It.IsAny<IBinderForFeature[]>()),
-            new(nameof(IVMForProjectFeaturesBinder.RawManager), null, null, vm => vm.RawManager = It.IsAny<IFeatureManager>())
-        };
+        public interface SubBinder : IBinderForFeatureContainer, IVMBinder<IVMForFeatureBinder> { }
 
-        public override void SetupModel(Mock<IFeatureManager> model) => model.Setup(m => m.Features).Returns(new IFeatureContainer[2]);
-        public override ProjectFeaturesVMBinder Create()
+        record struct Mocks(Mock<IFeatureManager> FeatureManager, Mock<SubBinder>[] Binders);
+        Mocks _mocks = new();
+
+        [TestInitialize]
+        public void SetupMocks()
+        {
+            _mocks.Binders = new Mock<SubBinder>[] { new(), new() };
+
+            _mocks.FeatureManager = new();
+            _mocks.FeatureManager.Setup(m => m.Features).Returns(new IFeatureContainer[] 
+            { 
+                Mock.Of<IFeatureContainer>(m => m.UIBinder == _mocks.Binders[0].Object), 
+                Mock.Of<IFeatureContainer>(m => m.UIBinder == _mocks.Binders[1].Object) 
+            });
+        }
+
+        public ProjectFeaturesVMBinder Create()
         {
             var vm = new ProjectFeaturesVMBinder(Mock.Of<IServiceSource>());
-            vm.FinishConstruction(_mocks.Model.Object);
+            vm.FinishConstruction(_mocks.FeatureManager.Object);
             return vm;
         }
+
+        [TestMethod]
+        public void GetFeatureBinders()
+        {
+            var arr = Create().GetFeatureBinders();
+            Assert.AreEqual(2, arr.Length);
+            Assert.AreEqual(_mocks.Binders[0].Object, arr[0]);
+            Assert.AreEqual(_mocks.Binders[1].Object, arr[1]);
+        }
+
+        // TODO: Test ModelChanges somehow?
     }
 }

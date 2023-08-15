@@ -19,15 +19,15 @@ namespace ABCo.Multicam.Tests.Helpers
             public void Verify() => Assert.AreEqual(ExpectedEnd, Progress, "Sequence not executed fully.");
         }
 
-        public static SequenceAssert SetupSequenceTracker<T>(this Mock<T> a, params Expression<Action<T>>[] classes) where T : class
+        public static SequenceAssert SetupSequenceTracker<T>(this Mock<T> a, params Expression<Action<T>>[] methods) where T : class
         {
-            var progress = new SequenceAssert(classes.Length);
+            var progress = new SequenceAssert(methods.Length);
             
             // Setup sequence
-            for (int i = 0; i < classes.Length; i++)
+            for (int i = 0; i < methods.Length; i++)
             {
                 int val = i;
-                a.When(() => progress.Progress == val).Setup(classes[i]).Callback(() => progress.Progress++);
+                a.When(() => progress.Progress == val).Setup(methods[i]).Callback(() => progress.Progress++);
             }
 
             return progress;

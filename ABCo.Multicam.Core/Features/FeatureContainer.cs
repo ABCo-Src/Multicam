@@ -7,12 +7,18 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Core.Features
 {
+    public interface IBinderForFeatureContainer // IVMBinder<IVMForFeatureBinder>
+    {
+        void FinishConstruction(IFeatureManager manager, IFeatureContainer feature);
+    }
+
     /// <summary>
     /// Represents a feature currently loaded, either on this system or another system.
     /// Introduces properties shared across all features, such as titles or machine switching.
     /// </summary>
     public interface IFeatureContainer : IDisposable
     {
+        IBinderForFeatureContainer UIBinder { get; }
         void FinishConstruction(FeatureTypes featureType);
     }
 
@@ -21,7 +27,16 @@ namespace ABCo.Multicam.Core.Features
         IServiceSource _servSource;
         ILiveFeature _feature = null!;
 
-        public FeatureContainer(IServiceSource servSource) => _servSource = servSource;
+        public IBinderForFeatureContainer UIBinder { get; }
+
+        public FeatureContainer(IBinderForFeatureContainer binder, IServiceSource servSource, IFeatureManager manager)
+        {
+            _servSource = servSource;
+            UIBinder = binder;
+
+            binder.FinishConstruction(manager, this);
+        }
+
         public void FinishConstruction(FeatureTypes featureType)
         {
             _feature = featureType switch
@@ -31,11 +46,7 @@ namespace ABCo.Multicam.Core.Features
             };
         }
 
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
+        public void Dispose() => _feature.Dispose();
     }
 
     public interface IUnsupportedRunningFeature : ILiveFeature { }

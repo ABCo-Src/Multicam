@@ -12,63 +12,64 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Tests.UI.Bindings
 {
-    public abstract class VMBinderBaseTest<TType, TVMType, TModel> 
-        where TType : VMBinder<TVMType>
+    public abstract class VMBinderBaseTest<TType, TVM, TModel> 
+        where TType : VMBinder<TVM>
         where TModel : class
-        where TVMType : class, IVMForBinder<TVMType>
+        where TVM : class, IVMForBinder<TVM>
     {
-        public record struct Mocks(
-            Mock<TVMType> VM,
+        public record struct BaseMocks(
+            Mock<TVM> VM,
             Mock<TModel> Model
         );
 
         TType _binder = null!;
-        protected Mocks _mocks = new();
+        protected BaseMocks _baseMocks = new();
 
         public abstract VMTestProperty[] Props { get; }
         public abstract TType Create();
         public abstract void SetupModel(Mock<TModel> model);
+        public abstract void ChangeModelInSomeWay(Mock<TModel> model);
+        public abstract void SetupVM(Mock<TVM> model);
 
         [TestInitialize]
         public void InitInfo()
         {
-            _mocks.VM = new();
-            _mocks.Model = new();
-            SetupModel(_mocks.Model);
+            _baseMocks.VM = new();
+            SetupVM(_baseMocks.VM);
+            _baseMocks.Model = new();
+            SetupModel(_baseMocks.Model);
             _binder = Create();
         }
 
         [TestMethod]
         public void Initial()
         {
-            _mocks.VM.SetupGet(m => m.BindingInfoStore).Returns("");
-            _binder.AddVM(_mocks.VM.Object);
+            _baseMocks.VM.SetupGet(m => m.BindingInfoStore).Returns("");
+            _binder.AddVM(_baseMocks.VM.Object);
             for (int i = 0; i < Props.Length; i++)
-                _mocks.VM.VerifySet(Props[i].VMVerify);
+                if (!Props[i].VMVerify(_baseMocks.VM.Object)) Assert.Fail("Failed VM verify!");
         }
 
         [TestMethod]
         public void ModelChange()
         {
-            _binder.AddVM(_mocks.VM.Object);
+            _binder.AddVM(_baseMocks.VM.Object);
+            ChangeModelInSomeWay(_baseMocks.Model);
 
             for (int i = 0; i < Props.Length; i++)
             {
-                if (Props[i].ModelTrigger == null) continue; 
+                if (Props[i].ModelTrigger == null) continue;
 
                 // Reset the VM
-                _mocks.VM.Reset();
-                _mocks.VM.SetupGet(m => m.BindingInfoStore).Returns("");
+                _baseMocks.VM.Reset();
+                _baseMocks.VM.SetupGet(m => m.BindingInfoStore).Returns("");
+                SetupVM(_baseMocks.VM);
 
                 // Call the trigger
                 Props[i].ModelTrigger?.Invoke(_binder);
 
-                // Verify that only this property was set
-                _mocks.VM.VerifySet(Props[i].VMVerify);
-
-                for (int j = 0; j < Props.Length; j++)
-                    if (i != j)
-                        _mocks.VM.VerifySet(Props[j].VMVerify, Times.Never);
+                // Verify this property was set correctly
+                if (!Props[i].VMVerify(_baseMocks.VM.Object)) Assert.Fail("Property not set correctly!");
             }
         }
 
@@ -76,19 +77,19 @@ namespace ABCo.Multicam.Tests.UI.Bindings
         public void VMChange()
         {
             PropertyChangedEventHandler _propChangeCallback = null!;
-            _mocks.VM.SetupAdd(m => m.PropertyChanged += (s, e) => { }).Callback<PropertyChangedEventHandler>(m => _propChangeCallback = m);
+            _baseMocks.VM.SetupAdd(m => m.PropertyChanged += (s, e) => { }).Callback<PropertyChangedEventHandler>(m => _propChangeCallback = m);
 
-            _binder.AddVM(_mocks.VM.Object);
+            _binder.AddVM(_baseMocks.VM.Object);
 
             for (int i = 0; i < Props.Length; i++)
             {
                 if (Props[i].ModelVerify == null) continue;
 
-                _propChangeCallback(_mocks.VM.Object, new PropertyChangedEventArgs(Props[i].Name));
-                _mocks.Model.Verify(Props[i].ModelVerify);
+                _propChangeCallback(_baseMocks.VM.Object, new PropertyChangedEventArgs(Props[i].Name));
+                _baseMocks.Model.Verify(Props[i].ModelVerify);
             }
         }
 
-        public record class VMTestProperty(string Name, Action<TType>? ModelTrigger, Expression<Action<TModel>>? ModelVerify, Action<TVMType> VMVerify);
+        public record class VMTestProperty(string Name, Action<TType>? ModelTrigger, Expression<Action<TModel>>? ModelVerify, Func<TVM, bool> VMVerify);
     }
 }

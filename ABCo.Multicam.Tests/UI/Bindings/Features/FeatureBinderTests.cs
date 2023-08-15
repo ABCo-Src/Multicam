@@ -1,5 +1,6 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features;
+using ABCo.Multicam.UI.Bindings;
 using ABCo.Multicam.UI.Bindings.Features;
 using ABCo.Multicam.UI.ViewModels.Features;
 using Moq;
@@ -12,22 +13,26 @@ using System.Threading.Tasks;
 namespace ABCo.Multicam.Tests.UI.Bindings.Features
 {
     [TestClass]
-    public class FeatureBinderTests : VMBinderBaseTest<FeatureVMBinder, IVMForFeatureBinder, IFeatureContainer>
+    public class FeatureBinderTests
     {
-        Mock<IFeatureManager> _manager = new();
+        record struct Mocks(Mock<IFeatureManager> Manager, Mock<IFeatureContainer> Container);
+        Mocks _mocks = new();
 
-        public override VMTestProperty[] Props => new VMTestProperty[]
+        [TestInitialize]
+        public void SetupMocks()
         {
-            new(nameof(IVMForFeatureBinder.RawManager), null, null, vm => vm.RawManager = _manager.Object),
-            new(nameof(IVMForFeatureBinder.RawFeature), null, null, vm => vm.RawFeature = _mocks.Model.Object)
-        };
+            _mocks.Manager = new();
+            _mocks.Container = new();
+        }
 
-        public override void SetupModel(Mock<IFeatureContainer> model) { }
-        public override FeatureVMBinder Create()
+        public FeatureVMBinder Create()
         {
             var vm = new FeatureVMBinder(Mock.Of<IServiceSource>());
-            vm.FinishConstruction(_manager.Object, _mocks.Model.Object);
+            vm.FinishConstruction(_mocks.Manager.Object, _mocks.Container.Object);
             return vm;
         }
+
+        [TestMethod]
+        public void Init_NoException() => Create();
     }
 }

@@ -14,29 +14,32 @@ namespace ABCo.Multicam.UI.Bindings.Features
         IFeatureContainer RawFeature { get; set; }
     }
 
-    public interface IBinderForFeature : IVMBinder<IVMForFeatureBinder> 
-    {
-        void FinishConstruction(IFeatureManager manager, IFeatureContainer feature);
-    }
-
-    public class FeatureVMBinder : VMBinder<IVMForFeatureBinder>, IBinderForFeature
+    public class FeatureVMBinder : VMBinder<IVMForFeatureBinder>, IBinderForFeatureContainer
     {
         IFeatureManager _manager = null!;
         IFeatureContainer _feature = null!;
+
+        public override PropertyBinding[] CreateProperties() => new PropertyBinding[]
+        {
+            // RawManager
+            new PropertyBinding<IFeatureManager>()
+            {
+                ModelChange = new(() => _manager, v => v.VM.RawManager = v.NewVal)
+            },
+
+            // RawFeature
+            new PropertyBinding<IFeatureContainer>()
+            {
+                ModelChange = new(() => _feature, v => v.VM.RawFeature = v.NewVal)
+            },
+        };
 
         public FeatureVMBinder(IServiceSource source) : base(source) { }
         public void FinishConstruction(IFeatureManager manager, IFeatureContainer feature)
         {
             _manager = manager;
             _feature = feature;
-        }
-
-        public override void OnVMChange(IVMForFeatureBinder vm, string? prop) { }
-
-        public override void RefreshVMToModel(IVMForFeatureBinder vm)
-        {
-            vm.RawManager = _manager;
-            vm.RawFeature = _feature;
+            Init();
         }
     }
 }

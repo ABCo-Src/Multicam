@@ -23,7 +23,9 @@ namespace ABCo.Multicam.Tests.UI.Bindings
             Mock<IVMType2> VMType2,
             Mock<DummyVM>[] VMs,
             PropertyChangedEventHandler[] VMEvents,
-            Mock<DummyBinder> Object
+            Mock<IServiceSource> ServSource,
+            Mock<IVMBinderOperationLogger> OpLogger,
+            object Model
         );
 
         Mocks _mocks = new();
@@ -37,12 +39,17 @@ namespace ABCo.Multicam.Tests.UI.Bindings
             _mocks.VMType2 = new();
             _mocks.VMType2.SetupProperty(m => m.Parent);
 
-            ServSourceMock = new();
-            ServSourceMock.Setup(m => m.Get<IVMType1>()).Returns(_mocks.VMType1.Object);
-            ServSourceMock.Setup(m => m.Get<IVMType2>()).Returns(_mocks.VMType2.Object);
+            _mocks.ServSource = new();
+            _mocks.ServSource.Setup(m => m.Get<IVMType1>()).Returns(_mocks.VMType1.Object);
+            _mocks.ServSource.Setup(m => m.Get<IVMType2>()).Returns(_mocks.VMType2.Object);
 
+            _mocks.OpLogger = new();
+            _mocks.OpLogger.Setup(m => m.UpdateCache<string>(0)).Returns("abc");
+            _mocks.OpLogger.Setup(m => m.UpdateCache<int>(1)).Returns(5);
+            _mocks.OpLogger.Setup(m => m.UpdateCache<bool>(2)).Returns(true);
+
+            _mocks.Model = new();
             _mocks.VMs = new Mock<DummyVM>[] { new(), new(), new() };
-            _mocks.Object = new();
 
             _mocks.VMs[0].SetupAdd(m => m.PropertyChanged += It.IsAny<PropertyChangedEventHandler>()).Callback<PropertyChangedEventHandler>(h => _mocks.VMEvents[0] = h);
 
@@ -52,7 +59,12 @@ namespace ABCo.Multicam.Tests.UI.Bindings
             _mocks.VMs[2].SetupAdd(m => m.PropertyChanged += It.IsAny<PropertyChangedEventHandler>()).Callback<PropertyChangedEventHandler>(h => _mocks.VMEvents[2] = h);
         }
 
-        VMBinder<IVMForDummyBinder> Create() => _mocks.Object.Object;
+        VMBinder<IVMForDummyBinder> Create()
+        {
+            var binder = new DummyBinder(_mocks.OpLogger.Object, _mocks.ServSource.Object);
+            binder.Init();
+            return binder;
+        }
 
         [TestMethod]
         public void GetVM_NotRegistered()
@@ -63,7 +75,7 @@ namespace ABCo.Multicam.Tests.UI.Bindings
             var vm = binder.GetVM<IVMType1>(parent);
 
             Assert.AreEqual(_mocks.VMType1.Object, vm);
-            ServSourceMock.Verify(m => m.Get<IVMType1>());
+            _mocks.ServSource.Verify(m => m.Get<IVMType1>());
             _mocks.VMType1.VerifySet(m => m.Parent = parent);
             _mocks.VMType1.VerifySet(m => m.Binder = binder);
         }
@@ -78,8 +90,8 @@ namespace ABCo.Multicam.Tests.UI.Bindings
             var vm2 = binder.GetVM<IVMType2>(parent);
 
             Assert.AreEqual(_mocks.VMType2.Object, vm2);
-            ServSourceMock.Verify(m => m.Get<IVMType1>(), Times.Once);
-            ServSourceMock.Verify(m => m.Get<IVMType2>(), Times.Once);
+            _mocks.ServSource.Verify(m => m.Get<IVMType1>(), Times.Once);
+            _mocks.ServSource.Verify(m => m.Get<IVMType2>(), Times.Once);
         }
 
         [TestMethod]
@@ -91,7 +103,7 @@ namespace ABCo.Multicam.Tests.UI.Bindings
             var vm2 = binder.GetVM<IVMType1>(new());
 
             Assert.AreEqual(_mocks.VMType1.Object, vm2);
-            ServSourceMock.Verify(m => m.Get<IVMType1>(), Times.Exactly(2));
+            _mocks.ServSource.Verify(m => m.Get<IVMType1>(), Times.Exactly(2));
         }
 
         [TestMethod]
@@ -104,7 +116,7 @@ namespace ABCo.Multicam.Tests.UI.Bindings
             var vm2 = binder.GetVM<IVMType1>(parent);
 
             Assert.AreEqual(_mocks.VMType1.Object, vm2);
-            ServSourceMock.Verify(m => m.Get<IVMType1>(), Times.Once);
+            _mocks.ServSource.Verify(m => m.Get<IVMType1>(), Times.Once);
         }
 
         [TestMethod]
@@ -115,93 +127,186 @@ namespace ABCo.Multicam.Tests.UI.Bindings
             binder.AddVM(_mocks.VMs[0].Object);
             binder.AddVM(_mocks.VMs[1].Object);
 
-            _mocks.Object.Verify(m => m.RefreshVMToModel(_mocks.VMs[0].Object), Times.Once);
-            _mocks.Object.Verify(m => m.RefreshVMToModel(_mocks.VMs[1].Object), Times.Once);
+            // Verify it refreshed
+            for (int i = 0; i < 2; i++)
+            {
+                _mocks.OpLogger.Verify(m => m.UpdateVM(0, _mocks.VMs[i].Object, "abc"), Times.Once);
+                _mocks.OpLogger.Verify(m => m.UpdateVM(1, _mocks.VMs[i].Object, 5), Times.Once);
+                _mocks.OpLogger.Verify(m => m.UpdateVM(2, _mocks.VMs[i].Object, true), Times.Once);
+            }
+            
             _mocks.VMs[0].VerifyAdd(m => m.PropertyChanged += It.IsAny<PropertyChangedEventHandler>(), Times.Once);
             _mocks.VMs[1].VerifyAdd(m => m.PropertyChanged += It.IsAny<PropertyChangedEventHandler>(), Times.Once);
         }
 
         [TestMethod]
-        public void PropertyChanged()
+        [DataRow("Prop1", 0)]
+        [DataRow("Prop2", 1)]
+        [DataRow("Prop3", 2)]
+        [DataRow("", -1)]
+        [DataRow(null, -1)]
+        public void VMChange(string? prop, int idx)
         {
             var binder = Create();
             binder.AddVM(_mocks.VMs[0].Object);
             binder.AddVM(_mocks.VMs[1].Object);
 
-            _mocks.VMEvents[0](_mocks.VMs[0].Object, new PropertyChangedEventArgs("abc"));
-            _mocks.VMEvents[0](_mocks.VMs[0].Object, new PropertyChangedEventArgs(""));
-            _mocks.VMEvents[1](_mocks.VMs[1].Object, new PropertyChangedEventArgs(null));
+            // First VM
+            _mocks.OpLogger.Reset();
+            _mocks.VMEvents[0](_mocks.VMs[0].Object, new PropertyChangedEventArgs(prop));
+            VerifyUpdateModelCalls(0, idx);
 
-            _mocks.Object.Verify(m => m.OnVMChange(_mocks.VMs[0].Object, "abc"));
-            _mocks.Object.Verify(m => m.OnVMChange(_mocks.VMs[0].Object, ""));
-            _mocks.Object.Verify(m => m.OnVMChange(_mocks.VMs[1].Object, null));
+            // Second VM
+            _mocks.OpLogger.Reset();
+            _mocks.VMEvents[1](_mocks.VMs[1].Object, new PropertyChangedEventArgs(prop));
+            VerifyUpdateModelCalls(1, idx);
         }
 
         [TestMethod]
-        public void PropertyChanged_Disabled()
+        public void VMChange_Null()
         {
             var binder = Create();
             binder.AddVM(_mocks.VMs[0].Object);
+            binder.AddVM(_mocks.VMs[1].Object);
+
+            // First VM
+            _mocks.OpLogger.Reset();
+            _mocks.VMEvents[0](_mocks.VMs[0].Object, new PropertyChangedEventArgs(null));
+            VerifyUpdateModelCalls(0, -1);
+
+            // Second VM
+            _mocks.OpLogger.Reset();
+            _mocks.VMEvents[1](_mocks.VMs[1].Object, new PropertyChangedEventArgs(null));
+            VerifyUpdateModelCalls(1, -1);
+        }
+
+        [TestMethod]
+        [DataRow("Prop1", 0)]
+        [DataRow("Prop2", 1)]
+        [DataRow("Prop3", 2)]
+        [DataRow("", -1)]
+        [DataRow(null, -1)]
+        public void VMChange_Disabled(string prop, int idx)
+        {
+            var binder = Create();
+            binder.AddVM(_mocks.VMs[0].Object);
+            binder.AddVM(_mocks.VMs[1].Object);
             binder.DisableVM(_mocks.VMs[0].Object);
 
-            _mocks.VMEvents[0](_mocks.VMs[0].Object, new PropertyChangedEventArgs("abc"));
-            _mocks.Object.Verify(m => m.OnVMChange(_mocks.VMs[0].Object, "abc"), Times.Never);
-        }
+            // First VM
+            _mocks.OpLogger.Reset();
+            _mocks.VMEvents[0](_mocks.VMs[0].Object, new PropertyChangedEventArgs(prop));
 
-        [TestMethod]
-        public void PropertyChanged_SameAsSet()
-        {
-            var binder = Create();
-            binder.AddVM(_mocks.VMs[0].Object);
-            binder.AddVM(_mocks.VMs[1].Object);
-            binder.SetVMProp(vm => vm.Prop = "abc", nameof(DummyVM.Prop));
-
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < 3; i++)
             {
-                _mocks.VMEvents[i](_mocks.VMs[i].Object, new PropertyChangedEventArgs(nameof(DummyVM.Prop)));
-                _mocks.Object.Verify(m => m.OnVMChange(_mocks.VMs[i].Object, nameof(DummyVM.Prop)), Times.Never);
-
-                _mocks.VMEvents[i](_mocks.VMs[i].Object, new PropertyChangedEventArgs(nameof(DummyVM.Prop)));
-                _mocks.Object.Verify(m => m.OnVMChange(_mocks.VMs[i].Object, nameof(DummyVM.Prop)), Times.Once);
+                _mocks.OpLogger.Verify(m => m.UpdateModel(i, _mocks.VMs[0].Object), Times.Never);
+                _mocks.OpLogger.Verify(m => m.UpdateModel(i, _mocks.VMs[1].Object), Times.Never);
             }
+
+            // Second VM
+            _mocks.OpLogger.Reset();
+            _mocks.VMEvents[1](_mocks.VMs[1].Object, new PropertyChangedEventArgs(prop));
+            VerifyUpdateModelCalls(1, idx);
+        }
+
+        void VerifyUpdateModelCalls(int vm, int idx)
+        {
+            for (int i = 0; i < 3; i++)
+                _mocks.OpLogger.Verify(m => m.UpdateModel(0, _mocks.VMs[vm == 0 ? 1 : 0].Object), Times.Never);
+
+            _mocks.OpLogger.Verify(m => m.UpdateModel(0, _mocks.VMs[vm].Object), idx == 0 ? Times.Once : Times.Never);
+            _mocks.OpLogger.Verify(m => m.UpdateModel(1, _mocks.VMs[vm].Object), Times.Never);
+            _mocks.OpLogger.Verify(m => m.UpdateModel(2, _mocks.VMs[vm].Object), idx == 2 ? Times.Once : Times.Never);
         }
 
         [TestMethod]
-        public void PropertyChanged_DifferentThanSet()
+        public void ModelChange_CorrectCalls()
+        {
+            var binder = Create();
+            binder.AddVM(_mocks.VMs[0].Object);
+
+            _mocks.OpLogger.Reset();
+            _mocks.OpLogger.Setup(m => m.UpdateCache<string>(0)).Returns("def");
+            binder.ReportModelChange(binder.Properties[0]);
+
+            _mocks.OpLogger.Verify(m => m.UpdateCache<string>(0), Times.Once);
+            _mocks.OpLogger.Verify(m => m.UpdateVM(0, _mocks.VMs[0].Object, "def"), Times.Once);
+        }
+
+        [TestMethod]
+        public void ModelChange_CorrectOrder()
+        {
+            var binder = Create();
+            binder.AddVM(_mocks.VMs[0].Object);
+
+            _mocks.OpLogger.Reset();
+            var seq = _mocks.OpLogger.SetupSequenceTracker(
+                m => m.UpdateCache<string>(0),
+                m => m.UpdateVM(0, _mocks.VMs[0].Object, It.IsAny<object>())
+            );
+
+            binder.ReportModelChange(binder.Properties[0]);
+            seq.Verify();
+        }
+
+        [TestMethod]
+        public void ModelChange_DisabledVM()
         {
             var binder = Create();
             binder.AddVM(_mocks.VMs[0].Object);
             binder.AddVM(_mocks.VMs[1].Object);
-            binder.SetVMProp(vm => { }, "def");
 
-            for (int i = 0; i < 2; i++)
-            {
-                _mocks.VMEvents[i](_mocks.VMs[i].Object, new PropertyChangedEventArgs(nameof(DummyVM.Prop)));
-                _mocks.Object.Verify(m => m.OnVMChange(_mocks.VMs[i].Object, nameof(DummyVM.Prop)), Times.Once);
-            }
+            _mocks.OpLogger.Reset();
+            binder.DisableVM(_mocks.VMs[0].Object);
+            binder.ReportModelChange(binder.Properties[0]);
+            _mocks.OpLogger.Verify(m => m.UpdateVM(0, _mocks.VMs[0].Object, It.IsAny<object>()), Times.Never);
         }
 
         [TestMethod]
-        public void SetVMProp()
+        public void ModelChange_SuppressChangedEvents()
         {
             var binder = Create();
             binder.AddVM(_mocks.VMs[0].Object);
             binder.AddVM(_mocks.VMs[1].Object);
-            binder.AddVM(_mocks.VMs[2].Object);
+            binder.ReportModelChange(binder.Properties[0]);
+
+            // Report the property change for VM #1
+            TriggerEvent(0, "Prop1");
+            _mocks.OpLogger.Verify(m => m.UpdateModel(0, _mocks.VMs[0].Object), Times.Never);
+
+            // Report the property change for VM #1 again
+            TriggerEvent(0, "Prop1");
+            _mocks.OpLogger.Verify(m => m.UpdateModel(0, _mocks.VMs[0].Object), Times.Once);
+
+            // Report a different property
+            TriggerEvent(0, "Prop3");
+            _mocks.OpLogger.Verify(m => m.UpdateModel(2, _mocks.VMs[0].Object), Times.Once);
+
+            // Report the property change for VM #2
+            TriggerEvent(1, "Prop1");
+            _mocks.OpLogger.Verify(m => m.UpdateModel(0, _mocks.VMs[1].Object), Times.Never);
+
+            // Report a different property
+            TriggerEvent(1, "Prop3");
+            _mocks.OpLogger.Verify(m => m.UpdateModel(2, _mocks.VMs[1].Object), Times.Once);
+
+            // Report the property change for VM #2 again
+            TriggerEvent(1, "Prop1");
+            _mocks.OpLogger.Verify(m => m.UpdateModel(0, _mocks.VMs[1].Object), Times.Once);
+        }
+
+        [TestMethod]
+        public void ModelChange_SuppressionDoesNotEnable()
+        {
+            var binder = Create();
+            binder.AddVM(_mocks.VMs[0].Object);
+            binder.AddVM(_mocks.VMs[1].Object);
             binder.DisableVM(_mocks.VMs[1].Object);
-
-            int state = 0;
-
-            binder.SetVMProp(vm =>
-            {
-                state++;
-
-                if (state == 1) Assert.AreEqual(_mocks.VMs[0].Object, vm);
-                else if (state == 2) Assert.AreEqual(_mocks.VMs[2].Object, vm);
-            }, "def");
-
-            Assert.AreEqual(2, state);
+            binder.ReportModelChange(binder.Properties[0]);
+            Assert.AreEqual(null, _mocks.VMs[1].Object.BindingInfoStore);
         }
+
+        void TriggerEvent(int vm, string val) => _mocks.VMEvents[vm](_mocks.VMs[vm].Object, new PropertyChangedEventArgs(val));
 
         [TestMethod]
         public void RemoveVM()
@@ -214,18 +319,7 @@ namespace ABCo.Multicam.Tests.UI.Bindings
 
             // Verify property changed no longer applies
             _mocks.VMEvents[1](_mocks.VMs[1].Object, new PropertyChangedEventArgs("abc"));
-            _mocks.Object.Verify(m => m.OnVMChange(_mocks.VMs[1].Object, "abc"), Times.Never);
-
-            // Verify set no longer uses this object
-            int state = 0;
-            binder.SetVMProp(vm =>
-            {
-                state++;
-
-                if (state == 1) Assert.AreEqual(_mocks.VMs[0].Object, vm);
-                else if (state == 2) Assert.AreEqual(_mocks.VMs[2].Object, vm);
-            }, "def");
-            Assert.AreEqual(2, state);
+            _mocks.OpLogger.Verify(m => m.UpdateModel(0, _mocks.VMs[1].Object), Times.Never);
         }
 
         [TestMethod]
@@ -242,18 +336,23 @@ namespace ABCo.Multicam.Tests.UI.Bindings
         {
             var binder = Create();
 
-            var sequence = _mocks.Object.SetupSequenceTracker(
-                m => m.OnVMChange(_mocks.VMs[0].Object, "abc"),
-                m => m.OnVMChange(_mocks.VMs[0].Object, "def"),
-                m => m.RefreshVMToModel(_mocks.VMs[0].Object)
-            );
-
             binder.AddVM(_mocks.VMs[0].Object);
             binder.AddVM(_mocks.VMs[1].Object);
-            binder.DisableVM(_mocks.VMs[0].Object);
-            binder.EnableVMAndSendToModel(_mocks.VMs[0].Object, new string[] { "abc", "def" });
 
-            sequence.Verify();
+            var seq = _mocks.OpLogger.SetupSequenceTracker(
+                m => m.UpdateModel(0, _mocks.VMs[0].Object),
+                m => m.UpdateModel(2, _mocks.VMs[0].Object),
+                m => m.UpdateVM(0, _mocks.VMs[0].Object, "abc"),
+                m => m.UpdateVM(1, _mocks.VMs[0].Object, 5),
+                m => m.UpdateVM(2, _mocks.VMs[0].Object, true),
+                m => m.UpdateVM(3, _mocks.VMs[0].Object, false)
+            );
+
+            binder.DisableVM(_mocks.VMs[0].Object);
+            binder.EnableVMAndSendToModel(_mocks.VMs[0].Object, new string[] { "Prop1", "Prop3" });
+
+            seq.Verify();
+            _mocks.OpLogger.Verify(m => m.UpdateModel(3, _mocks.VMs[0].Object), Times.Never);
         }
 
         public interface IVMForDummyBinder : IVMForBinder<IVMForDummyBinder> { object Prop { get; set; } }
@@ -270,9 +369,48 @@ namespace ABCo.Multicam.Tests.UI.Bindings
 
         public static Mock<IServiceSource> ServSourceMock = null!;
 
-        public abstract class DummyBinder : VMBinder<IVMForDummyBinder>
+        public class DummyBinder : VMBinder<IVMForDummyBinder>
         {
-            public DummyBinder() : base(ServSourceMock.Object) { }
+            IVMBinderOperationLogger _logger;
+
+            public override PropertyBinding[] CreateProperties() => new PropertyBinding[] 
+            {
+                // Prop1
+                new PropertyBinding<string>()
+                {
+                    ModelChange = new(() => _logger.UpdateCache<string>(0), v => _logger.UpdateVM(0, v.VM, v.NewVal)),
+                    VMChange = new(v => _logger.UpdateModel(0, v), "Prop1")
+                },
+
+                // Prop2
+                new PropertyBinding<int>()
+                {
+                    ModelChange = new(() => _logger.UpdateCache<int>(1), v => _logger.UpdateVM(1, v.VM, v.NewVal))
+                },
+
+                // Prop3
+                new PropertyBinding<bool>()
+                {
+                    ModelChange = new(() => _logger.UpdateCache<bool>(2), v => _logger.UpdateVM(2, v.VM, v.NewVal)),
+                    VMChange = new(v => _logger.UpdateModel(2, v), "Prop3")
+                },
+
+                // Prop4
+                new PropertyBinding<bool>()
+                {
+                    ModelChange = new(() => _logger.UpdateCache<bool>(3), v => _logger.UpdateVM(3, v.VM, v.NewVal)),
+                    VMChange = new(v => _logger.UpdateModel(3, v), "Prop4")
+                }
+            };
+
+            public DummyBinder(IVMBinderOperationLogger logger, IServiceSource servSource) : base(servSource) => _logger = logger;
+        }
+
+        public interface IVMBinderOperationLogger
+        {
+            T UpdateCache<T>(int propNo);
+            void UpdateVM(int propNo, object vm, object newVal);
+            void UpdateModel(int propNo, object vm);
         }
     }
 }

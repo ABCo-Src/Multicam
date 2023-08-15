@@ -21,27 +21,58 @@ namespace ABCo.Multicam.UI.Bindings
     /// <summary>
     /// Base class for the binders that link the view-models to the underlying models.
     /// </summary>
-    public abstract class VMBinder<T> : IVMBinder<T> where T : IVMForBinder<T>
+    public abstract class VMBinder<TVM> : IVMBinder<TVM> where TVM : IVMForBinder<TVM>
     {
         protected IServiceSource _servSource;
-        T[] _registeredVMs = Array.Empty<T>();
+        TVM[] _registeredVMs = Array.Empty<TVM>();
+
+        public abstract class PropertyBinding
+        {
+            public record struct VMInfo(Action<TVM> UpdateModel, string PropertyName);
+            public VMInfo? VMChange;
+
+            public abstract void UpdateCache();
+            public abstract void UpdateVM(TVM vm);
+        }
+
+        public class PropertyBinding<TItem> : PropertyBinding
+        {
+            public record struct ModelInfo(Func<TItem> UpdateCache, Action<(TVM VM, TItem NewVal)> UpdateVM);
+            public ModelInfo ModelChange;
+
+            TItem? _valueCache = default!;
+
+            public override void UpdateCache() => _valueCache = ModelChange.UpdateCache();
+            public override void UpdateVM(TVM vm) => ModelChange.UpdateVM((vm, _valueCache!));
+        }
+
+        public PropertyBinding[] Properties { get; private set; } = null!;
+
+        public virtual PropertyBinding[] CreateProperties() => Array.Empty<PropertyBinding>();
 
         public VMBinder(IServiceSource source) => _servSource = source;
 
-        public TNew GetVM<TNew>(object parentVM) where TNew : class, T
+        public void Init()
+        {
+            Properties = CreateProperties();
+            for (int i = 0; i < Properties.Length; i++)
+                Properties[i].UpdateCache();
+        }
+
+        public TNew GetVM<TNew>(object parentVM) where TNew : class, TVM
         {
             for (int i = 0; i < _registeredVMs.Length; i++)
                 if (_registeredVMs[i].Parent == parentVM && _registeredVMs[i].GetType().IsAssignableTo(typeof(TNew)))
                     return (TNew)(object)_registeredVMs[i];
 
             var newVM = _servSource.Get<TNew>();
-            AddVM((T)(object)newVM);
+            AddVM((TVM)(object)newVM);
             newVM.Parent = parentVM;
             newVM.Binder = this;
             return newVM;
         }
 
-        public void AddVM(T targetVM)
+        public void AddVM(TVM targetVM)
         {
             Array.Resize(ref _registeredVMs, _registeredVMs.Length + 1);
             _registeredVMs[^1] = targetVM;
@@ -49,10 +80,11 @@ namespace ABCo.Multicam.UI.Bindings
             targetVM.BindingInfoStore = "";
             targetVM.PropertyChanged += VM_PropertyChanged;
 
-            RefreshVMToModel(targetVM);
+            for (int i = 0; i < Properties.Length; i++)
+                Properties[i].UpdateVM(targetVM);
         }
 
-        public void RemoveVM(T targetVM)
+        public void RemoveVM(TVM targetVM)
         {
             targetVM.PropertyChanged -= VM_PropertyChanged;
 
@@ -60,30 +92,39 @@ namespace ABCo.Multicam.UI.Bindings
             int val = Array.IndexOf(_registeredVMs, targetVM);
             if (val == -1) return;
 
-            T[] newArr = new T[_registeredVMs.Length - 1];
+            TVM[] newArr = new TVM[_registeredVMs.Length - 1];
             Array.Copy(_registeredVMs, newArr, val);
             Array.Copy(_registeredVMs, val + 1, newArr, val, newArr.Length - val);
             _registeredVMs = newArr;
         }
 
-        public void DisableVM(T targetVM)
+        public void DisableVM(TVM targetVM)
         {
             targetVM.BindingInfoStore = null;
         }
 
-        public void EnableVMAndSendToModel(T targetVM, string[] propsToSend)
+        public void EnableVMAndSendToModel(TVM targetVM, string[] propsToSend)
         {
             targetVM.BindingInfoStore = "";
 
-            for (int i = 0; i < propsToSend.Length; i++)
-                OnVMChange(targetVM, propsToSend[i]);
+            // Update the model for properties we're sending
+            for (int i = 0; i < Properties.Length; i++)
+            {
+                if (Properties[i].VMChange == null) continue;
 
-            RefreshVMToModel(targetVM);
+                for (int j = 0; j < propsToSend.Length; j++)
+                    if (Properties[i].VMChange!.Value.PropertyName == propsToSend[j])
+                        Properties[i].VMChange!.Value.UpdateModel(targetVM);
+            }
+
+            // Update the VM
+            for (int i = 0; i < Properties.Length; i++)
+                Properties[i].UpdateVM(targetVM);
         }
 
         private void VM_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            var vm = (T)sender!;
+            var vm = (TVM)sender!;
             var store = (string?)vm.BindingInfoStore;
 
             // Stop if syncing is disabled.
@@ -99,25 +140,38 @@ namespace ABCo.Multicam.UI.Bindings
                 }
             }
 
-            OnVMChange((T)sender!, e.PropertyName);
+            // Update the model
+            for (int i = 0; i < Properties.Length; i++)
+            {
+                if (Properties[i].VMChange == null) continue;
+
+                if (Properties[i].VMChange!.Value.PropertyName == e.PropertyName)
+                {
+                    Properties[i].VMChange!.Value.UpdateModel(vm);
+                    break;
+                }
+            } 
         }
 
-        public void SetVMProp(Action<T> setVMValue, string propName)
+        public void ReportModelChange(PropertyBinding prop)
         {
-            if (propName == "") throw new Exception("Property name must be given.");
-            
+            // Update the cache
+            prop.UpdateCache();
+
+            // Update the VMs
             for (int i = 0; i < _registeredVMs.Length; i++)
             {
-                // If binding is disabled on this VM, don't try.
+                // If the VM is disabled, don't do anything
                 if (_registeredVMs[i].BindingInfoStore == null) continue;
 
-                _registeredVMs[i].BindingInfoStore = propName;
-                setVMValue(_registeredVMs[i]);
-            }
-        }
+                // If there's a VM change associated with this property, suppress the property change that'll come from this.
+                if (prop.VMChange != null)
+                    _registeredVMs[i].BindingInfoStore = prop.VMChange.Value.PropertyName;
 
-        public abstract void RefreshVMToModel(T vm);
-        public abstract void OnVMChange(T vm, string? prop);
+                // Update the VM 
+                prop.UpdateVM(_registeredVMs[i]);
+            } 
+        }
     }
 
     public interface IVMForBinder<T> : INotifyPropertyChanged where T : IVMForBinder<T>

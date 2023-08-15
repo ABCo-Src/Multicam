@@ -1,6 +1,7 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features;
 using ABCo.Multicam.Core.Features.Switchers;
+using ABCo.Multicam.UI.Bindings;
 using ABCo.Multicam.UI.Bindings.Features;
 using ABCo.Multicam.UI.Helpers;
 using ABCo.Multicam.UI.Services;
@@ -26,12 +27,12 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features
             Mock<IFeatureManager> Model,
             Mock<IServiceSource> ServiceSource,
             Mock<IUIDialogHandler> DialogHandler,
-            Mock<IBinderForFeature>[] RunningFeatures,
+            Mock<IVMBinder<IVMForFeatureBinder>>[] RunningFeatures,
             Mock<IFeatureViewModel>[] FeatureVMs
         );
 
         Action<FeatureTypes> _dialogHandlerCallback = d => { };
-        IBinderForFeature[] _modelFeatures = Array.Empty<IBinderForFeature>();
+        IVMBinder<IVMForFeatureBinder>[] _modelFeatures = Array.Empty<IVMBinder<IVMForFeatureBinder>>();
         Mocks _mocks = new();
 
         [TestInitialize]
@@ -44,9 +45,9 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features
                 .Setup(a => a.OpenContextMenu(It.IsAny<ContextMenuDetails<FeatureTypes>>()))
                 .Callback<ContextMenuDetails<FeatureTypes>>((details) => _dialogHandlerCallback = details.OnSelect);
 
-            _mocks.RunningFeatures = new Mock<IBinderForFeature>[] { new(), new(), new() };
+            _mocks.RunningFeatures = new Mock<IVMBinder<IVMForFeatureBinder>>[] { new(), new(), new() };
             _mocks.FeatureVMs = new Mock<IFeatureViewModel>[] { new(), new(), new() };
-            _modelFeatures = new IBinderForFeature[] { _mocks.RunningFeatures[0].Object, _mocks.RunningFeatures[1].Object, _mocks.RunningFeatures[2].Object };
+            _modelFeatures = new IVMBinder<IVMForFeatureBinder>[] { _mocks.RunningFeatures[0].Object, _mocks.RunningFeatures[1].Object, _mocks.RunningFeatures[2].Object };
 
             for (int i = 0; i < 3; i++)
             {
@@ -177,7 +178,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features
             var vm = Create();
             vm.RawFeatures = _modelFeatures;
             vm.CurrentlyEditing = vm.Items.First();
-            vm.RawFeatures = new IBinderForFeature[] { _mocks.RunningFeatures[0].Object, _mocks.RunningFeatures[2].Object };
+            vm.RawFeatures = new IVMBinder<IVMForFeatureBinder>[] { _mocks.RunningFeatures[0].Object, _mocks.RunningFeatures[2].Object };
             Assert.IsNotNull(vm.CurrentlyEditing);
         }
 
@@ -187,7 +188,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features
             var vm = Create();
             vm.RawFeatures = _modelFeatures;
             vm.CurrentlyEditing = vm.Items.ToArray()[1];
-            vm.RawFeatures = new IBinderForFeature[] { _mocks.RunningFeatures[0].Object, _mocks.RunningFeatures[2].Object };
+            vm.RawFeatures = new IVMBinder<IVMForFeatureBinder>[] { _mocks.RunningFeatures[0].Object, _mocks.RunningFeatures[2].Object };
             Assert.IsNull(vm.CurrentlyEditing);
         }
 

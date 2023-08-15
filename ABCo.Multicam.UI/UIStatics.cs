@@ -24,7 +24,9 @@ namespace ABCo.Multicam.UI
             //container.RegisterSingleton<IProjectViewModel, ProjectViewModel>();
             container.RegisterTransient<IProjectFeaturesViewModel, ProjectFeaturesViewModel>();
             container.RegisterTransient<IBinderForProjectFeatures, ProjectFeaturesVMBinder>();
+            container.RegisterTransient<IBinderForFeatureContainer, FeatureVMBinder>();
 
+            container.RegisterTransient<IFeatureViewModel, FeatureViewModel>();
             //container.Register<NewViewModelInfo, IUnsupportedFeatureViewModel>((factory, info) => new UnsupportedFeatureViewModel(info, factory.GetInstance<IServiceSource>()));
             //container.Register<NewViewModelInfo, ISwitcherFeatureVM>((factory, info) => new SwitcherFeatureViewModel(info, factory.GetInstance<IServiceSource>()));
             container.Register<NewViewModelInfo, ISwitcherMixBlockVM>((factory, info) => new SwitcherMixBlockViewModel(info, factory.GetInstance<IServiceSource>()));
