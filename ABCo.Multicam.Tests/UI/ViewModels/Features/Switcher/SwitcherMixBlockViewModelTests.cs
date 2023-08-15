@@ -24,7 +24,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
             Mock<ISwitcherProgramInputViewModel>[] ProgInputs,
             Mock<ISwitcherPreviewInputViewModel>[] PrevInputs,
             SwitcherBusInput[] ModelInputs
-            );
+        );
 
         int _progInputPos = 0;
         int _prevInputPos = 0;

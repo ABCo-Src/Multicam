@@ -53,6 +53,8 @@ namespace ABCo.Multicam.Core.Features
 
     public class UnsupportedRunningFeature : IUnsupportedRunningFeature
     {
+        public ILiveFeatureBinder UIBinder => throw new NotImplementedException();
+
         public void Dispose() { }
 
         public void FinishConstruction(FeatureTypes featureType)

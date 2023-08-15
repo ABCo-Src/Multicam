@@ -24,7 +24,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features
     public class ProjectFeaturesViewModelTests
     {
         public record struct Mocks(
-            Mock<IFeatureManager> Model,
+            Mock<IFeatureManager> Manager,
             Mock<IServiceSource> ServiceSource,
             Mock<IUIDialogHandler> DialogHandler,
             Mock<IVMBinder<IVMForFeatureBinder>>[] RunningFeatures,
@@ -38,7 +38,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features
         [TestInitialize]
         public void InitMocks()
         {
-            _mocks.Model = new();
+            _mocks.Manager = new();
             
             _mocks.DialogHandler = new();
             _mocks.DialogHandler
@@ -59,7 +59,10 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features
             _mocks.ServiceSource.Setup(m => m.Get<IUIDialogHandler>()).Returns(() => _mocks.DialogHandler.Object);
         }
 
-        ProjectFeaturesViewModel Create() => new(_mocks.ServiceSource.Object);
+        ProjectFeaturesViewModel Create() => new(_mocks.ServiceSource.Object)
+        {
+            RawManager = _mocks.Manager.Object
+        };
 
         [TestMethod]
         public void Ctor_InitializesLocal()
@@ -94,7 +97,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features
         {
             Create().CreateFeature();
             _dialogHandlerCallback(type);
-            _mocks.Model.Verify(m => m.CreateFeature(type), Times.Once);
+            _mocks.Manager.Verify(m => m.CreateFeature(type), Times.Once);
         }
 
         //[TestMethod]

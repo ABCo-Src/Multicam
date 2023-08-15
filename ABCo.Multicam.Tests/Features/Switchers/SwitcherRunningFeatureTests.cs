@@ -23,6 +23,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         public record struct Mocks(Mock<IDummySwitcher> InitialDummy, 
             Mock<ISwitcherInteractionBufferFactory> Factory, 
             Mock<ISwitcherInteractionBuffer>[] Buffers,
+            Mock<IBinderForSwitcherFeature> UIBinder,
             SwitcherSpecs[] BufferSpecs,
             Mock<ISwitcher> NewISwitcher,
             Mock<IDummySwitcher> NewIDummySwitcher);
@@ -34,6 +35,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         public void MakeMocks()
         {
             _mocks.InitialDummy = new();
+            _mocks.UIBinder = new();
             _mocks.NewISwitcher = new();
             _mocks.NewIDummySwitcher = new();
 
@@ -56,7 +58,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers
             }
         }
 
-        public SwitcherRunningFeature Create() => new(_mocks.InitialDummy.Object, _mocks.Factory.Object);
+        public SwitcherRunningFeature Create() => new(_mocks.InitialDummy.Object, _mocks.Factory.Object, _mocks.UIBinder.Object);
 
         [TestMethod]
         public void Ctor_CreatesSyncBuffer()
@@ -64,6 +66,9 @@ namespace ABCo.Multicam.Tests.Features.Switchers
             Create();
             _mocks.Factory.Verify(m => m.CreateSync(_mocks.InitialDummy.Object), Times.Once);
         }
+
+        [TestMethod]
+        public void UIBinder() => Assert.AreEqual(_mocks.UIBinder.Object, Create().UIBinder);
 
         [TestMethod]
         public void GetValue()
@@ -152,16 +157,8 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         {
             var feature = Create();
             if (postChange) await feature.ChangeSwitcherAsync(_mocks.NewISwitcher.Object);
-
-            bool ran = false;
-            feature.SetOnBusChangeFinishForVM(i =>
-            {
-                Assert.AreEqual(new RetrospectiveFadeInfo(), i);
-                ran = true;
-            });
-
             _bufferCallbacks[postChange ? 1 : 0].Invoke(new RetrospectiveFadeInfo());
-            Assert.IsTrue(ran);
+            _mocks.UIBinder.Verify(m => m.ModelChange_Specs());
         }
 
         [TestMethod]
