@@ -57,6 +57,7 @@ namespace ABCo.Multicam.Tests.Features
             _type = FeatureTypes.Switcher;
             var manager = Create();
             _mocks.ServSource.Verify(m => m.Get<ISwitcherRunningFeature>(), Times.Once);
+            Assert.AreEqual(_mocks.SwitcherFeature.Object, manager.CurrentFeature);
         }
 
         [TestMethod]
@@ -65,6 +66,7 @@ namespace ABCo.Multicam.Tests.Features
             _type = FeatureTypes.Unsupported;
             var manager = Create();
             _mocks.ServSource.Verify(m => m.Get<IUnsupportedRunningFeature>(), Times.Once);
+            Assert.AreEqual(_mocks.UnsupportedFeature.Object, manager.CurrentFeature);
         }
 
         [TestMethod]
@@ -73,6 +75,15 @@ namespace ABCo.Multicam.Tests.Features
             var manager = Create();
             Assert.AreEqual(_mocks.UIBinder.Object, manager.UIBinder);
         }
+
+        //[TestMethod]
+        //[DataRow(FeatureTypes.Switcher)]
+        //[DataRow(FeatureTypes.Unsupported)]
+        //public void FeatureType(FeatureTypes type)
+        //{
+        //    _type = type;
+        //    Assert.AreEqual(type, Create().Type);
+        //}
 
         [TestMethod]
         public void Dispose()

@@ -99,12 +99,6 @@ namespace ABCo.Multicam.UI.ViewModels.Features
             CurrentlyEditing = null;
         }
 
-        //IFeatureViewModel CreateVMForFeature(IRunningFeature feature) => feature switch
-        //{
-        //    ISwitcherRunningFeature => _servSource.GetVM<ISwitcherFeatureVM>(new(feature, this)),
-        //    _ => throw new Exception()
-        //};
-
         public void CreateFeature()
         {
             _dialogHandler.OpenContextMenu(new ContextMenuDetails<FeatureTypes>("Choose Type", RawManager.CreateFeature, null, new ContextMenuItem<FeatureTypes>[]

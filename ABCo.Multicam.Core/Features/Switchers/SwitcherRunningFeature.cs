@@ -42,6 +42,8 @@ namespace ABCo.Multicam.Core.Features.Switchers
         IBinderForSwitcherFeature _uiBinder;
         public ILiveFeatureBinder UIBinder => _uiBinder;
 
+        public FeatureTypes FeatureType => FeatureTypes.Switcher;
+
         public SwitcherRunningFeature(IDummySwitcher dummySwitcher, ISwitcherInteractionBufferFactory bufferFactory, IBinderForSwitcherFeature uiBinder)
         {
             _bufferFactory = bufferFactory;

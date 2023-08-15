@@ -19,6 +19,7 @@ namespace ABCo.Multicam.Core.Features
     public interface IFeatureContainer : IDisposable
     {
         IBinderForFeatureContainer UIBinder { get; }
+        ILiveFeature CurrentFeature { get; }
         void FinishConstruction(FeatureTypes featureType);
     }
 
@@ -28,6 +29,7 @@ namespace ABCo.Multicam.Core.Features
         ILiveFeature _feature = null!;
 
         public IBinderForFeatureContainer UIBinder { get; }
+        public ILiveFeature CurrentFeature { get; private set;  } = null!;
 
         public FeatureContainer(IBinderForFeatureContainer binder, IServiceSource servSource, IFeatureManager manager)
         {
@@ -54,6 +56,7 @@ namespace ABCo.Multicam.Core.Features
     public class UnsupportedRunningFeature : IUnsupportedRunningFeature
     {
         public ILiveFeatureBinder UIBinder => throw new NotImplementedException();
+        public FeatureTypes FeatureType => throw new NotImplementedException();
 
         public void Dispose() { }
 

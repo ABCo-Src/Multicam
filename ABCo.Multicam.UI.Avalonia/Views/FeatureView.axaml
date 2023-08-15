@@ -53,7 +53,7 @@
 									<Rectangle Grid.Column="1" Grid.RowSpan="2" Width="5" Fill="{DynamicResource AccentColor}"></Rectangle>
 
 									<!-- Content -->
-									<ContentControl Grid.Column="2" Margin="10 0" Content="{Binding ContentView, Converter={x:Static locators:FeatureViewLocator.Instance}}" />
+									<ContentControl Grid.Column="2" Margin="10 0" Content="{Binding InnerType, Converter={x:Static locators:FeatureViewLocator.Instance}}" />
 									<!--<TextBlock Grid.Column="2" Margin="10 0" VerticalAlignment="Center">Content</TextBlock>-->
 								</Grid>
 							</DataTemplate>
@@ -144,7 +144,7 @@
 
 						<!-- Panel-specific items -->
 						<Rectangle Classes="PanelContentSeparator" />
-						<ContentControl Margin="10 0" Content="{Binding ContentView, Converter={x:Static locators:FeatureSettingsViewLocator.Instance}}" />
+						<ContentControl Margin="10 0" Content="{Binding InnerType, Converter={x:Static locators:FeatureSettingsViewLocator.Instance}}" />
 					</StackPanel>
 				</Grid>
 			</DockPanel>

@@ -1,4 +1,5 @@
-﻿using ABCo.Multicam.Core.Features.Switchers;
+﻿using ABCo.Multicam.Core.Features;
+using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.Core.Features.Switchers.Fading;
 using ABCo.Multicam.Core.Features.Switchers.Interaction;
 using ABCo.Multicam.Core.Features.Switchers.Types;
@@ -66,6 +67,9 @@ namespace ABCo.Multicam.Tests.Features.Switchers
             Create();
             _mocks.Factory.Verify(m => m.CreateSync(_mocks.InitialDummy.Object), Times.Once);
         }
+
+        [TestMethod]
+        public void FeatureType() => Assert.AreEqual(FeatureTypes.Switcher, Create().FeatureType);
 
         [TestMethod]
         public void UIBinder() => Assert.AreEqual(_mocks.UIBinder.Object, Create().UIBinder);

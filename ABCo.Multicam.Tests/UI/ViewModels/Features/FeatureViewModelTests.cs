@@ -1,11 +1,15 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features;
+using ABCo.Multicam.UI.Bindings;
+using ABCo.Multicam.UI.Bindings.Features.Switcher;
 using ABCo.Multicam.UI.Enumerations;
 using ABCo.Multicam.UI.Helpers;
 using ABCo.Multicam.UI.ViewModels.Features;
+using ABCo.Multicam.UI.ViewModels.Features.Switcher;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,14 +19,32 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features
     [TestClass]
     public class FeatureViewModelTests
     {
-        public record struct Mocks(Mock<IFeatureManager> FeatureManager, Mock<IFeatureContainer> RawFeature, Mock<IProjectFeaturesViewModel> Parent);
+        public interface ISwitcherBinder : IVMBinder<IVMForSwitcherFeature>, ILiveFeatureBinder { }
 
+        public record struct Mocks(
+            Mock<IFeatureManager> FeatureManager, 
+            Mock<IFeatureContainer> RawFeature, 
+            Mock<IProjectFeaturesViewModel> Parent,
+            Mock<ILiveFeature> InnerFeature,
+            Mock<ISwitcherBinder> InnerFeatureBinder,
+            Mock<ISwitcherFeatureVM> SwitcherVM);
+
+        FeatureTypes _type;
         Mocks _mocks = new();
 
         [TestInitialize]
         public void InitMocks()
         {
             _mocks.FeatureManager = new();
+            _mocks.SwitcherVM = new();
+
+            _mocks.InnerFeatureBinder = new();
+            _mocks.InnerFeatureBinder.Setup(m => m.GetVM<ISwitcherFeatureVM>(It.IsAny<object>())).Returns(_mocks.SwitcherVM.Object);
+
+            _mocks.InnerFeature = new();
+            _mocks.InnerFeature.SetupGet(m => m.UIBinder).Returns(_mocks.InnerFeatureBinder.Object);
+            _mocks.InnerFeature.SetupGet(m => m.FeatureType).Returns(() => _type);
+
             _mocks.RawFeature = new();
             _mocks.Parent = new();
         }
@@ -31,7 +53,8 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features
         {
             Parent = _mocks.Parent.Object,
             RawManager = _mocks.FeatureManager.Object,
-            RawFeature = _mocks.RawFeature.Object
+            RawContainer = _mocks.RawFeature.Object,
+            RawInnerFeature = _mocks.InnerFeature.Object
         };
 
         [TestMethod]
@@ -40,6 +63,24 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features
             var vm = Create();
             Assert.AreEqual("New Feature", vm.FeatureTitle);
             Assert.AreEqual(false, vm.IsEditing);
+        }
+
+        [TestMethod]
+        public void Content_Switcher()
+        {
+            _type = FeatureTypes.Switcher;
+            var vm = Create();
+            Assert.AreEqual(_mocks.SwitcherVM.Object, vm.InnerVM);
+            _mocks.InnerFeatureBinder.Verify(m => m.GetVM<ISwitcherFeatureVM>(vm), Times.Once);
+        }
+
+        [TestMethod]
+        [DataRow(FeatureTypes.Switcher)]
+        [DataRow(FeatureTypes.Unsupported)]
+        public void ContentType(FeatureTypes type)
+        {
+            _type = type;
+            Assert.AreEqual(type, Create().InnerType);
         }
 
         [TestMethod]

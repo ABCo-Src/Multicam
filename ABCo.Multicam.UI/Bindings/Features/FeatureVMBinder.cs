@@ -11,7 +11,8 @@ namespace ABCo.Multicam.UI.Bindings.Features
     public interface IVMForFeatureBinder : IVMForBinder<IVMForFeatureBinder> 
     { 
         IFeatureManager RawManager { get; set; }
-        IFeatureContainer RawFeature { get; set; }
+        IFeatureContainer RawContainer { get; set; }
+        ILiveFeature RawInnerFeature { get; set; }
     }
 
     public class FeatureVMBinder : VMBinder<IVMForFeatureBinder>, IBinderForFeatureContainer
@@ -30,8 +31,14 @@ namespace ABCo.Multicam.UI.Bindings.Features
             // RawFeature
             new PropertyBinding<IFeatureContainer>()
             {
-                ModelChange = new(() => _feature, v => v.VM.RawFeature = v.NewVal)
+                ModelChange = new(() => _feature, v => v.VM.RawContainer = v.NewVal)
             },
+
+            // FeatureType
+            new PropertyBinding<ILiveFeature>()
+            {
+                ModelChange = new(() => _feature.CurrentFeature, v => v.VM.RawInnerFeature = v.NewVal)
+            }
         };
 
         public FeatureVMBinder(IServiceSource source) : base(source) { }

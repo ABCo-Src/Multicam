@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
-    public interface ISwitcherFeatureVM : IFeatureViewModel 
+    public interface ISwitcherFeatureVM : IVMForSwitcherFeature, ILiveFeatureViewModel
     {
         void SetValue(int mixBlock, int bus, int value);
         void Cut(int mixBlock);
