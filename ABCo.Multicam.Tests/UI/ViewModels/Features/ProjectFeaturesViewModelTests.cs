@@ -59,10 +59,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features
             _mocks.ServiceSource.Setup(m => m.Get<IUIDialogHandler>()).Returns(() => _mocks.DialogHandler.Object);
         }
 
-        ProjectFeaturesViewModel Create() => new(_mocks.ServiceSource.Object)
-        {
-            RawManager = _mocks.Model.Object
-        };
+        ProjectFeaturesViewModel Create() => new(_mocks.ServiceSource.Object);
 
         [TestMethod]
         public void Ctor_InitializesLocal()
