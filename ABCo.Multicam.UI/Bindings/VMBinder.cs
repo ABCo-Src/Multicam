@@ -174,7 +174,7 @@ namespace ABCo.Multicam.UI.Bindings
         }
     }
 
-    public interface IVMForBinder<T> : INotifyPropertyChanged where T : IVMForBinder<T>
+    public interface IVMForBinder<TVM> : INotifyPropertyChanged where TVM : IVMForBinder<TVM>
     {
         /// <summary>
         /// Space used by the binding system to store information about the VM's config.
@@ -189,6 +189,6 @@ namespace ABCo.Multicam.UI.Bindings
         /// </summary>
         object Parent { get; set; }
 
-        IVMBinder<T>? Binder { get; set; }
+        IVMBinder<TVM>? Binder { get; set; }
     }
 }

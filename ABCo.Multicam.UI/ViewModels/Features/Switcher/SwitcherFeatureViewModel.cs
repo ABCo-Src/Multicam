@@ -3,6 +3,8 @@ using ABCo.Multicam.Core.Features;
 using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.Core.Features.Switchers.Fading;
 using ABCo.Multicam.Core.Features.Switchers.Types;
+using ABCo.Multicam.UI.Bindings;
+using ABCo.Multicam.UI.Bindings.Features.Switcher;
 using ABCo.Multicam.UI.Enumerations;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -21,39 +23,12 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
         void Cut(int mixBlock);
     }
 
-    public partial class SwitcherFeatureViewModel : ViewModelBase
+    public partial class SwitcherFeatureViewModel : BindingViewModelBase<SwitcherFeatureViewModel>
     {
-        ISwitcherRunningFeature _model;
+        // Synced to the model:
+        [ObservableProperty] ISwitcherRunningFeature _rawFeature = null!;
+        [ObservableProperty][NotifyPropertyChangedFor(nameof(MixBlocks))] IVMBinder<IVMForSwitcherMixBlock>[] _rawMixBlocks = null!;
 
-        public SwitcherFeatureViewModel(NewViewModelInfo info, IServiceSource serviceSource)// : base(serviceSource, (IProjectFeaturesViewModel)info.Parent)
-        {
-            _model = (ISwitcherRunningFeature)info.Model!;
-            _model.SetOnBusChangeFinishForVM(OnBusChangeFinish);
-
-            var targetSpecs = _model.SwitcherSpecs;
-            _mixBlocks = new ObservableCollection<ISwitcherMixBlockVM>();
-
-            for (int i = 0; i < targetSpecs.MixBlocks.Count; i++)
-            {
-                var newVM = serviceSource.GetVM<ISwitcherMixBlockVM>(new(new MixBlockViewModelInfo(targetSpecs.MixBlocks[i], i), this));
-                _mixBlocks.Add(newVM);
-                newVM.RefreshBuses(_model.GetValue(i, 0), _model.GetValue(i, 1));
-            }
-        }
-
-        //public override IRunningFeature BaseFeature => _model;
-        //public override FeatureViewType ContentView => FeatureViewType.Switcher;
-
-        [ObservableProperty] ObservableCollection<ISwitcherMixBlockVM> _mixBlocks;
-
-        public void OnBusChangeFinish(RetrospectiveFadeInfo? info)
-        {
-            for (int i = 0; i < MixBlocks.Count; i++)
-                MixBlocks[i].RefreshBuses(_model.GetValue(i, 0), _model.GetValue(i, 1));
-        }
-
-        public void SetValue(int mixBlock, int bus, int value) => _model.PostValue(mixBlock, bus, value);
-
-        public void Cut(int mixBlock) => _model.Cut(mixBlock);
+        public IEnumerable<ISwitcherMixBlockVM> MixBlocks => RawMixBlocks.Select(m => m.GetVM<ISwitcherMixBlockVM>(this));
     }
 }

@@ -22,8 +22,6 @@ namespace ABCo.Multicam.UI.ViewModels.Features
 
     public partial class FeatureViewModel : BindingViewModelBase<IVMForFeatureBinder>, IVMForFeatureBinder, IFeatureViewModel
     {
-        protected IServiceSource _serviceSource;
-
         // Synced to the model:
         [ObservableProperty] IFeatureManager _rawManager;
         [ObservableProperty] IFeatureContainer _rawFeature;
@@ -37,12 +35,9 @@ namespace ABCo.Multicam.UI.ViewModels.Features
         public IFeatureContainer BaseFeature { get; }
         public FeatureViewType ContentView { get; }
 
-        public FeatureViewModel(IServiceSource serviceSource)
+        public FeatureViewModel()
         {
-            if (serviceSource == null) throw new ServiceSourceNotGivenException();
-
             FeatureTitle = "New Feature";
-            _serviceSource = serviceSource;
         }
 
         public void ToggleEdit() => 

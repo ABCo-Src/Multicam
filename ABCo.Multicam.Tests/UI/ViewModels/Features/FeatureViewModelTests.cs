@@ -15,20 +15,19 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features
     [TestClass]
     public class FeatureViewModelTests
     {
-        public record struct Mocks(Mock<IServiceSource> ServSource, Mock<IFeatureManager> FeatureManager, Mock<IFeatureContainer> RawFeature, Mock<IProjectFeaturesViewModel> Parent);
+        public record struct Mocks(Mock<IFeatureManager> FeatureManager, Mock<IFeatureContainer> RawFeature, Mock<IProjectFeaturesViewModel> Parent);
 
         Mocks _mocks = new();
 
         [TestInitialize]
         public void InitMocks()
         {
-            _mocks.ServSource = new();
             _mocks.FeatureManager = new();
             _mocks.RawFeature = new();
             _mocks.Parent = new();
         }
 
-        public FeatureViewModel Create() => new(_mocks.ServSource.Object)
+        public FeatureViewModel Create() => new()
         {
             Parent = _mocks.Parent.Object,
             RawManager = _mocks.FeatureManager.Object,

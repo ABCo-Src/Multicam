@@ -1,5 +1,7 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features.Switchers;
+using ABCo.Multicam.UI.Bindings;
+using ABCo.Multicam.UI.Bindings.Features.Switcher;
 using ABCo.Multicam.UI.Enumerations;
 using ABCo.Multicam.UI.Helpers;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -12,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
-    public interface ISwitcherMixBlockVM 
+    public interface ISwitcherMixBlockVM : IVMForSwitcherMixBlock
     {
         void RefreshBuses(int program, int preview);
         void SetProgram(int value);
@@ -20,7 +22,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
         void CutButtonPress();
     }
 
-    public partial class SwitcherMixBlockViewModel : ViewModelBase, ISwitcherMixBlockVM
+    public partial class SwitcherMixBlockViewModel : BindingViewModelBase<IVMForSwitcherMixBlock>, ISwitcherMixBlockVM
     {
         public readonly SwitcherMixBlock BaseBlock;
         public readonly int Index;
