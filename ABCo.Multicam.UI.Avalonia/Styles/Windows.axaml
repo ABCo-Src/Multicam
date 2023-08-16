@@ -4,7 +4,7 @@
 		xmlns:viewmodels="using:ABCo.Multicam.UI.ViewModels"
         xmlns:templates="using:ABCo.Multicam.UI.Avalonia.Templates">
 
-	<Style Selector="Window.BorderlessWindowWithDefaultTitlebarHeight" x:DataType="viewmodels:MainWindowViewModel">
+	<Style Selector="Window.BorderlessWindowWithDefaultTitlebarHeight" x:DataType="viewmodels:MainWindowVM">
 
 		<Setter Property="ExtendClientAreaToDecorationsHint" Value="True" />
 		<Setter Property="ExtendClientAreaChromeHints" Value="NoChrome" />

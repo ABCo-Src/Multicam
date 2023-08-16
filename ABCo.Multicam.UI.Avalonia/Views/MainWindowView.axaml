@@ -9,7 +9,7 @@
 
 	<Panel>
 		<!-- General UI -->
-		<Grid x:DataType="viewmodels:MainWindowViewModel">
+		<Grid x:DataType="viewmodels:MainWindowVM">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="*" />

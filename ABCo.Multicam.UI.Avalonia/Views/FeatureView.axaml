@@ -7,7 +7,7 @@
 			 xmlns:fviewmodels="using:ABCo.Multicam.UI.ViewModels.Features"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="ABCo.Multicam.UI.Avalonia.Views.FeatureView"
-			 x:DataType="viewmodels:ProjectViewModel">
+			 x:DataType="viewmodels:ProjectVM">
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" />
@@ -31,12 +31,12 @@
 				</Grid>
 
 				<!-- Features -->
-				<StackPanel Margin="10 0" DataContext="{Binding Features}" x:DataType="fviewmodels:ProjectFeaturesViewModel">
+				<StackPanel Margin="10 0" DataContext="{Binding Features}" x:DataType="fviewmodels:ProjectFeaturesVM">
 					
 					<!-- List of Features -->
 					<ItemsControl Margin="0 5" ItemsSource="{Binding Items}">
 						<ItemsControl.ItemTemplate>
-							<DataTemplate x:DataType="fviewmodels:FeatureViewModel">
+							<DataTemplate x:DataType="fviewmodels:FeatureVM">
 								<Grid Margin="0 5" MinHeight="60">
 									<Grid.ColumnDefinitions>
 										<ColumnDefinition Width="55" />
@@ -80,14 +80,14 @@
 		
 		<!-- Edit Panel -->
 		<Border Width="400" Grid.Column="0" IsVisible="{Binding ShowEditingPanel}" Background="{DynamicResource PanelBack}"
-				DataContext="{Binding Features}" x:DataType="fviewmodels:ProjectFeaturesViewModel">
+				DataContext="{Binding Features}" x:DataType="fviewmodels:ProjectFeaturesVM">
 
 			<DockPanel>
 
 				<!-- Border -->
 				<Rectangle DockPanel.Dock="Right" Fill="{DynamicResource PanelSeparator}" Grid.Column="1" Width="2" />
 			
-				<Grid DataContext="{Binding CurrentlyEditing}" x:DataType="fviewmodels:FeatureViewModel">
+				<Grid DataContext="{Binding CurrentlyEditing}" x:DataType="fviewmodels:FeatureVM">
 					<Grid.RowDefinitions>
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="*" />

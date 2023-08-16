@@ -25,7 +25,7 @@ namespace ABCo.Multicam.UI
             //container.Initialize(registration => true,
             //    (f, i) => ServiceSource.N += $"Service requested: {i.GetType().Name}.   Thread: {Thread.CurrentThread.ManagedThreadId}\n"
             //);
-            container.RegisterSingleton<MainWindowViewModel>();
+            container.RegisterSingleton<MainWindowVM>();
 
             // Register binders
             container.RegisterTransient<IBinderForProjectFeatures, ProjectFeaturesVMBinder>();

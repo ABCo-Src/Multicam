@@ -7,7 +7,7 @@
 			 xmlns:switcherviews="using:ABCo.Multicam.UI.Avalonia.Views.Features.Switcher"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="ABCo.Multicam.UI.Avalonia.Views.Features.Switcher.SwitcherFeatureView"
-			 x:DataType="viewmodels:FeatureViewModel">
+			 x:DataType="viewmodels:FeatureVM">
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
@@ -21,7 +21,7 @@
 		</StackPanel>
 
 		<!-- Buses -->
-		<Grid Grid.Row="1" DataContext="{Binding InnerVM}" x:DataType="sviewmodels:SwitcherFeatureViewModel">
+		<Grid Grid.Row="1" DataContext="{Binding InnerVM}" x:DataType="sviewmodels:SwitcherFeatureVM">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="*" />
@@ -31,7 +31,7 @@
 			<!-- Buses -->
 			<ItemsControl Grid.Column="1" ItemsSource="{Binding MixBlocks}">
 				<ItemsControl.ItemTemplate>
-					<DataTemplate x:DataType="sviewmodels:SwitcherMixBlockViewModel">
+					<DataTemplate x:DataType="sviewmodels:SwitcherMixBlockVM">
 						<Grid Margin="0 0 0 10">
 
 							<Grid.RowDefinitions>
