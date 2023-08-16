@@ -20,6 +20,7 @@ namespace ABCo.Multicam.Core.Features.Switchers
 
     public interface IBinderForSwitcherFeature : ILiveFeatureBinder
     {
+        void FinishConstruction(ISwitcherRunningFeature feature);
         void ModelChange_Specs();
     }
 
@@ -50,6 +51,8 @@ namespace ABCo.Multicam.Core.Features.Switchers
             _uiBinder = uiBinder;
             _buffer = bufferFactory.CreateSync(dummySwitcher);
             _buffer.SetOnBusChangeFinishCall(OnBusChange);
+
+            _uiBinder.FinishConstruction(this);
         }
 
         public int GetValue(int mixBlock, int bus) => _buffer.GetValue(mixBlock, bus);
@@ -68,12 +71,6 @@ namespace ABCo.Multicam.Core.Features.Switchers
         void OnBusChange(RetrospectiveFadeInfo? info) => _uiBinder.ModelChange_Specs();
 
         public void Dispose() => _buffer.Dispose();
-
         public void Cut(int mixBlock) => _buffer.Cut(mixBlock);
-
-        public void FinishConstruction(FeatureTypes featureType)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

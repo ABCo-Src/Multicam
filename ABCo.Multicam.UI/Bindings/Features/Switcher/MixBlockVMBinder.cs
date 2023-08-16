@@ -10,6 +10,7 @@ namespace ABCo.Multicam.UI.Bindings.Features.Switcher
 {
     public interface IBinderForSwitcherMixBlock
     {
+        void ModelChange_Bus();
         void FinishConstruction(ISwitcherRunningFeature feature, SwitcherMixBlock block, int index);
     }
 
@@ -24,8 +25,8 @@ namespace ABCo.Multicam.UI.Bindings.Features.Switcher
 
     public class MixBlockVMBinder : VMBinder<IVMForSwitcherMixBlock>, IBinderForSwitcherMixBlock
     {
-        ISwitcherRunningFeature _feature;
-        SwitcherMixBlock _mixBlock;
+        ISwitcherRunningFeature _feature = null!;
+        SwitcherMixBlock _mixBlock = null!;
         int _index;
 
         public override PropertyBinding[] CreateProperties() => new PropertyBinding[]
@@ -67,6 +68,12 @@ namespace ABCo.Multicam.UI.Bindings.Features.Switcher
             _feature = feature;
             _mixBlock = block;
             _index = index;
+            Init();
+        }
+
+        public void ModelChange_Bus()
+        {
+            
         }
     }
 }

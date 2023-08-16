@@ -69,6 +69,13 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         }
 
         [TestMethod]
+        public void Ctor_FinishesBinderConstruction()
+        {
+            var feature = Create();
+            _mocks.UIBinder.Verify(m => m.FinishConstruction(feature));
+        }
+
+        [TestMethod]
         public void FeatureType() => Assert.AreEqual(FeatureTypes.Switcher, Create().FeatureType);
 
         [TestMethod]

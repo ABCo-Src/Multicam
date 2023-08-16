@@ -19,6 +19,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
         public record struct Mocks(
             Mock<IServiceSource> ServiceSource,
             Mock<ISwitcherFeatureVM> Parent,
+            Mock<ISwitcherRunningFeature> RawFeature,
             Mock<ISwitcherCutButtonViewModel> Cut,
             Mock<ISwitcherAutoButtonViewModel> Auto,
             Mock<ISwitcherProgramInputViewModel>[] ProgInputs,
@@ -39,6 +40,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
             _model = new();
 
             _mocks.Parent = new Mock<ISwitcherFeatureVM>();
+            _mocks.RawFeature = new Mock<ISwitcherRunningFeature>();
 
             _mocks.ModelInputs = new SwitcherBusInput[] { new(2, "abc"), new(3, "ghi"), new(5, "def"), new(4, "kl") };
             _mocks.ProgInputs = NewInputs<ISwitcherProgramInputViewModel>();
@@ -69,6 +71,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
         {
             RawMixBlock = _model,
             RawMixBlockIndex = 8,
+            RawFeature = _mocks.RawFeature.Object,
             Parent = _mocks.Parent.Object
         };
 
@@ -198,25 +201,25 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
             _mocks.PrevInputs[3].Verify(m => m.SetHighlight(true), Times.Once);
         }
 
-        //[TestMethod]
-        //public void SetProgram()
-        //{
-        //    Create().SetProgram(4);
-        //    _mocks.Parent.Verify(m => m.SetValue(8, 0, 4));
-        //}
+        [TestMethod]
+        public void SetProgram()
+        {
+            Create().SetProgram(4);
+            _mocks.RawFeature.Verify(m => m.PostValue(8, 0, 4));
+        }
 
-        //[TestMethod]
-        //public void SetPreview()
-        //{
-        //    Create().SetPreview(3);
-        //    _mocks.Parent.Verify(m => m.SetValue(8, 1, 3));
-        //}
+        [TestMethod]
+        public void SetPreview()
+        {
+            Create().SetPreview(3);
+            _mocks.RawFeature.Verify(m => m.PostValue(8, 1, 3));
+        }
 
-        //[TestMethod]
-        //public void CutButtonPress()
-        //{
-        //    Create().CutButtonPress();
-        //    _mocks.Parent.Verify(m => m.Cut(8));
-        //}
+        [TestMethod]
+        public void CutButtonPress()
+        {
+            Create().CutButtonPress();
+            _mocks.RawFeature.Verify(m => m.Cut(8));
+        }
     }
 }

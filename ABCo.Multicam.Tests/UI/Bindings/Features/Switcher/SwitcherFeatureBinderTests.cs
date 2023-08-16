@@ -18,7 +18,7 @@ namespace ABCo.Multicam.Tests.UI.Bindings.Features.Switcher
 
         public record struct Mocks(
             Mock<IServiceSource> ServSource, 
-            Mock<IMB>[] Binders, 
+            Mock<IMB>[] Binders,
             Mock<ISwitcherRunningFeature> Model, 
             SwitcherSpecs Specs
         );
@@ -65,6 +65,24 @@ namespace ABCo.Multicam.Tests.UI.Bindings.Features.Switcher
             for (int i = 0; i < 3; i++)
             {
                 _mocks.Binders[i].Verify(m => m.FinishConstruction(_mocks.Model.Object, _mocks.Specs.MixBlocks[i], i));
+                Assert.AreEqual(_mocks.Binders[i].Object, mixBlocks[i]);
+            }
+        }
+
+        [TestMethod]
+        public void ModelChange_Bus()
+        {
+            var buffer = Create();
+            _mocks.Model.SetupGet(m => m.SwitcherSpecs).Returns(_mocks.Specs);
+
+            var mixBlocks = buffer.GetMixBlocks();
+            buffer.ModelChange_Bus();
+
+            Assert.AreEqual(3, mixBlocks.Length);
+            for (int i = 0; i < 3; i++)
+            {
+                _mocks.Binders[i].Verify(m => m.FinishConstruction(_mocks.Model.Object, _mocks.Specs.MixBlocks[i], i), Times.Once);
+                _mocks.Binders[i].Verify(m => m.ModelChange_Bus());
                 Assert.AreEqual(_mocks.Binders[i].Object, mixBlocks[i]);
             }
         }

@@ -35,6 +35,7 @@ namespace ABCo.Multicam.UI.Bindings.Features.Switcher
             Init();
         }
 
+        IVMBinder<IVMForSwitcherMixBlock>[] _currentMixBlocks;
         public IVMBinder<IVMForSwitcherMixBlock>[] GetMixBlocks()
         {
             var arr = new IVMBinder<IVMForSwitcherMixBlock>[_feature.SwitcherSpecs.MixBlocks.Count];
@@ -46,9 +47,15 @@ namespace ABCo.Multicam.UI.Bindings.Features.Switcher
                 arr[i] = (IVMBinder<IVMForSwitcherMixBlock>)newVal;
             }
 
+            _currentMixBlocks = arr;
             return arr;
         }
 
         public void ModelChange_Specs() => ReportModelChange(Properties[0]);
+        public void ModelChange_Bus()
+        {
+            for (int i = 0; i < _currentMixBlocks.Length; i++)
+                ((IBinderForSwitcherMixBlock)_currentMixBlocks[i]).ModelChange_Bus();
+        }
     }
 }
