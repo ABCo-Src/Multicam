@@ -4,27 +4,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
-    public interface ISwitcherActButtonViewModel { }
-    public abstract class SwitcherActButtonViewModel : SwitcherButtonViewModel, ISwitcherActButtonViewModel
+    public interface ISwitcherActButtonViewModel : ISwitcherButtonViewModel
     {
-        public SwitcherActButtonViewModel(NewViewModelInfo info, string text, IServiceSource source) : base(source, (ISwitcherMixBlockVM)info.Parent, text) { }
+        void FinishConstruction(ISwitcherMixBlockVM parent);
+        void Click();
     }
 
     public interface ISwitcherCutButtonViewModel : ISwitcherActButtonViewModel { }
-    public class SwitcherCutButtonViewModel : SwitcherActButtonViewModel, ISwitcherCutButtonViewModel
+    public class SwitcherCutButtonViewModel : SwitcherButtonViewModel, ISwitcherCutButtonViewModel
     {
-        public SwitcherCutButtonViewModel(NewViewModelInfo info, IServiceSource source) : base(info, "Cut", source) { }
-
-        public override void Click() => Parent.CutButtonPress();
+        public SwitcherCutButtonViewModel() => Text = "Cut";
+        public void FinishConstruction(ISwitcherMixBlockVM parent) => _parent = parent;
+        public override void Click() => _parent.CutButtonPress();
     }
 
     public interface ISwitcherAutoButtonViewModel : ISwitcherActButtonViewModel { }
-    public class SwitcherAutoButtonViewModel : SwitcherActButtonViewModel, ISwitcherAutoButtonViewModel
+    public class SwitcherAutoButtonViewModel : SwitcherButtonViewModel, ISwitcherAutoButtonViewModel
     {
-        public SwitcherAutoButtonViewModel(NewViewModelInfo info, IServiceSource source) : base(info, "Auto", source) { }
+        public SwitcherAutoButtonViewModel() => Text = "Auto";
+        public void FinishConstruction(ISwitcherMixBlockVM parent) => _parent = parent;
 
         public override void Click()
         {

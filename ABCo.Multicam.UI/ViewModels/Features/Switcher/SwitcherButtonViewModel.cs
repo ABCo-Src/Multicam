@@ -10,19 +10,18 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
-    public abstract partial class SwitcherButtonViewModel : ViewModelBase
+    public interface ISwitcherButtonViewModel
     {
-        public readonly ISwitcherMixBlockVM Parent;
+        string Text { get; set; }
+        SwitcherButtonStatus Status { get; set; }
+    }
 
-        [ObservableProperty] string _text;
+    public abstract partial class SwitcherButtonViewModel : ViewModelBase, ISwitcherButtonViewModel
+    {
+        protected ISwitcherMixBlockVM _parent = null!;
+
+        [ObservableProperty] string _text = "";
         [ObservableProperty] SwitcherButtonStatus _status;
-
-        public SwitcherButtonViewModel(IServiceSource source, ISwitcherMixBlockVM parent, string text)
-        {
-            if (source == null) throw new ServiceSourceNotGivenException();
-
-            (_text, Parent) = (text, parent);
-        }
 
         public abstract void Click();
     }

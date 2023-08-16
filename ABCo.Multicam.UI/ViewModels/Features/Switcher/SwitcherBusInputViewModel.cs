@@ -14,18 +14,19 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
     public interface ISwitcherBusInputViewModel 
     {
         SwitcherBusInput Base { get; }
+        void FinishConstruction(SwitcherBusInput busInput, ISwitcherMixBlockVM parent);
         void SetHighlight(bool visible);
     }
 
     public abstract class SwitcherBusInputViewModel : SwitcherButtonViewModel, ISwitcherBusInputViewModel
     {
-        public SwitcherBusInput Base { get; }
-        public readonly bool IsProgram;
+        public SwitcherBusInput Base { get; private set; } = null!;
 
-        public SwitcherBusInputViewModel(NewViewModelInfo info, bool isProgram, IServiceSource source) : base(source, (ISwitcherMixBlockVM)info.Parent, ((SwitcherBusInput)info.Model!).Name)
+        public void FinishConstruction(SwitcherBusInput busInput, ISwitcherMixBlockVM parent)
         {
-            Base = (SwitcherBusInput)info.Model;
-            IsProgram = isProgram;
+            Base = busInput;
+            Text = busInput.Name;
+            _parent = parent;
         }
 
         public abstract void SetHighlight(bool visible);
@@ -34,8 +35,6 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
     public interface ISwitcherProgramInputViewModel : ISwitcherBusInputViewModel { }
     public partial class SwitcherProgramInputViewModel : SwitcherBusInputViewModel, ISwitcherProgramInputViewModel
     {
-        public SwitcherProgramInputViewModel(NewViewModelInfo info, IServiceSource source) : base(info, true, source) { }
-
         public override void SetHighlight(bool visible)
         {
             if (visible)
@@ -44,14 +43,12 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
                 Status = SwitcherButtonStatus.NeutralInactive;
         }
 
-        public override void Click() => Parent.SetProgram(Base.Id);
+        public override void Click() => _parent.SetProgram(Base.Id);
     }
 
     public interface ISwitcherPreviewInputViewModel : ISwitcherBusInputViewModel { }
     public partial class SwitcherPreviewInputViewModel : SwitcherBusInputViewModel, ISwitcherPreviewInputViewModel
     {
-        public SwitcherPreviewInputViewModel(NewViewModelInfo info, IServiceSource source) : base(info, false, source) { }
-
         public override void SetHighlight(bool visible)
         {
             if (visible)
@@ -60,6 +57,6 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
                 Status = SwitcherButtonStatus.NeutralInactive;
         }
 
-        public override void Click() => Parent.SetPreview(Base.Id);
+        public override void Click() => _parent.SetPreview(Base.Id);
     }
 }

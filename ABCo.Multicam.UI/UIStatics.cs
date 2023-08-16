@@ -32,13 +32,6 @@ namespace ABCo.Multicam.UI
             // Register view-models
             container.RegisterTransient<IFeatureViewModel, FeatureViewModel>();
             container.RegisterTransient<ISwitcherFeatureVM, SwitcherFeatureViewModel>();
-            //container.Register<NewViewModelInfo, IUnsupportedFeatureViewModel>((factory, info) => new UnsupportedFeatureViewModel(info, factory.GetInstance<IServiceSource>()));
-            //container.Register<NewViewModelInfo, ISwitcherFeatureVM>((factory, info) => new SwitcherFeatureViewModel(info, factory.GetInstance<IServiceSource>()));
-            container.Register<NewViewModelInfo, ISwitcherMixBlockVM>((factory, info) => new SwitcherMixBlockViewModel(info, factory.GetInstance<IServiceSource>()));
-            container.Register<NewViewModelInfo, ISwitcherPreviewInputViewModel>((factory, info) => new SwitcherPreviewInputViewModel(info, factory.GetInstance<IServiceSource>()));
-            container.Register<NewViewModelInfo, ISwitcherProgramInputViewModel>((factory, info) => new SwitcherProgramInputViewModel(info, factory.GetInstance<IServiceSource>()));
-            container.Register<NewViewModelInfo, ISwitcherCutButtonViewModel>((factory, info) => new SwitcherCutButtonViewModel(info, factory.GetInstance<IServiceSource>()));
-            container.Register<NewViewModelInfo, ISwitcherAutoButtonViewModel>((factory, info) => new SwitcherAutoButtonViewModel(info, factory.GetInstance<IServiceSource>()));
 
             CoreStatics.Initialize(container);
         }

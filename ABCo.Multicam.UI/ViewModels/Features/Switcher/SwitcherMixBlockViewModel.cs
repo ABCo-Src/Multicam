@@ -16,7 +16,6 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
     public interface ISwitcherMixBlockVM : IVMForSwitcherMixBlock
     {
-        void RefreshBuses(int program, int preview);
         void SetProgram(int value);
         void SetPreview(int value);
         void CutButtonPress();
@@ -24,12 +23,50 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 
     public partial class SwitcherMixBlockViewModel : BindingViewModelBase<IVMForSwitcherMixBlock>, ISwitcherMixBlockVM
     {
-        public readonly SwitcherMixBlock BaseBlock;
-        public readonly int Index;
-        public readonly ISwitcherFeatureVM Parent;
+        IServiceSource _servSource;
 
-        public bool ShowPreview => BaseBlock.NativeType == SwitcherMixBlockType.ProgramPreview;
-        public string MainLabel => BaseBlock.NativeType == SwitcherMixBlockType.CutBus ? "Cut Bus" : "Program";
+        // Synced to the model: 
+        [ObservableProperty] int _rawMixBlockIndex;
+        [ObservableProperty] ISwitcherRunningFeature _rawFeature = null!;
+        SwitcherMixBlock _rawMixBlock = null!;
+        int _rawProgram;
+        int _rawPreview;
+
+        public SwitcherMixBlock RawMixBlock
+        {
+            get => _rawMixBlock;
+            set
+            {
+                if (SetProperty(ref _rawMixBlock, value))
+                {
+                    InvalidateProgramBus();
+                    InvalidatePreviewBus();
+                }
+            }
+        }
+
+        public int RawProgram
+        {
+            get => _rawProgram;
+            set
+            {
+                if (SetProperty(ref _rawProgram, value))
+                    RefreshProgram();
+            }
+        }
+
+        public int RawPreview
+        {
+            get => _rawPreview;
+            set
+            {
+                if (SetProperty(ref _rawPreview, value))
+                    RefreshPreview();
+            }
+        }
+
+        public bool ShowPreview => RawMixBlock.NativeType == SwitcherMixBlockType.ProgramPreview;
+        public string MainLabel => RawMixBlock.NativeType == SwitcherMixBlockType.CutBus ? "Cut Bus" : "Program";
 
         [ObservableProperty] ObservableCollection<ISwitcherProgramInputViewModel> _programBus;
         [ObservableProperty] ObservableCollection<ISwitcherPreviewInputViewModel> _previewBus;
@@ -37,39 +74,52 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
         [ObservableProperty] ISwitcherCutButtonViewModel _cutButton;
         [ObservableProperty] ISwitcherAutoButtonViewModel _autoButton;
 
-        public SwitcherMixBlockViewModel(NewViewModelInfo info, IServiceSource source)
+        public SwitcherMixBlockViewModel(IServiceSource source)
         {
-            if (source == null) throw new ServiceSourceNotGivenException();
-
-            var modelInfo = (MixBlockViewModelInfo)info.Model!;
-            var model = modelInfo.Info;
-            Index = modelInfo.Index;
-
-            Parent = (ISwitcherFeatureVM)info.Parent;
-            BaseBlock = model;
-
+            _servSource = source;
             _programBus = new();
             _previewBus = new();
 
-            // Add program bus inputs
-            for (int i = 0; i < model.ProgramInputs.Count; i++)
-                _programBus.Add(source.GetVM<ISwitcherProgramInputViewModel>(new(model.ProgramInputs[i], this)));
-
-            // Add preview bus inputs
-            if (model.PreviewInputs != null)
-                for (int i = 0; i < model.PreviewInputs.Count; i++)
-                    _previewBus.Add(source.GetVM<ISwitcherPreviewInputViewModel>(new(model.PreviewInputs[i], this)));
-
-            _cutButton = source.GetVM<ISwitcherCutButtonViewModel>(new(null, this));
-            _autoButton = source.GetVM<ISwitcherAutoButtonViewModel>(new(null, this));
+            _cutButton = source.Get<ISwitcherCutButtonViewModel>();
+            _cutButton.FinishConstruction(this);
+            _autoButton = source.Get<ISwitcherAutoButtonViewModel>();
+            _autoButton.FinishConstruction(this);
         }
 
-        public void RefreshBuses(int program, int preview) 
+        void InvalidateProgramBus()
+        {
+            ProgramBus.Clear();
+            for (int i = 0; i < _rawMixBlock.ProgramInputs.Count; i++)
+            {
+                var newVM = _servSource.Get<ISwitcherProgramInputViewModel>();
+                newVM.FinishConstruction(_rawMixBlock.ProgramInputs[i], this);
+                ProgramBus.Add(newVM);
+            }
+        }
+
+        void InvalidatePreviewBus()
+        {
+            PreviewBus.Clear();
+            if (_rawMixBlock.PreviewInputs == null) return;
+
+            for (int i = 0; i < _rawMixBlock.PreviewInputs.Count; i++)
+            {
+                var newVM = _servSource.Get<ISwitcherPreviewInputViewModel>();
+                newVM.FinishConstruction(_rawMixBlock.PreviewInputs[i], this);
+                PreviewBus.Add(newVM);
+            }
+        }
+
+        void RefreshProgram()
         {
             for (int i = 0; i < ProgramBus.Count; i++)
-                ProgramBus[i].SetHighlight(ProgramBus[i].Base.Id == program);
+                ProgramBus[i].SetHighlight(ProgramBus[i].Base.Id == RawProgram);
+        }
+
+        void RefreshPreview()
+        {
             for (int i = 0; i < PreviewBus.Count; i++)
-                PreviewBus[i].SetHighlight(PreviewBus[i].Base.Id == preview);
+                PreviewBus[i].SetHighlight(PreviewBus[i].Base.Id == RawPreview);
         }
 
         public void SetProgram(int value) => throw new NotImplementedException();

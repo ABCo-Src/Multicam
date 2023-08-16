@@ -27,17 +27,21 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
             _mocks.ServiceSource = new Mock<IServiceSource>();
         }
 
-        public SwitcherBusInputViewModel Create(bool isProgram) => isProgram ? CreateProgram() : CreatePreview();
-        public SwitcherProgramInputViewModel CreateProgram() => new(new(_model, _mocks.Parent.Object), _mocks.ServiceSource.Object);
-        public SwitcherPreviewInputViewModel CreatePreview() => new(new(_model, _mocks.Parent.Object), _mocks.ServiceSource.Object);
+        public SwitcherBusInputViewModel Create(bool isProgram)
+        {
+            SwitcherBusInputViewModel input = isProgram ? CreateProgram() : CreatePreview();
+            input.FinishConstruction(_model, _mocks.Parent.Object);
+            return input;
+
+            SwitcherProgramInputViewModel CreateProgram() => new();
+            SwitcherPreviewInputViewModel CreatePreview() => new();
+        }
 
         [TestMethod]
         public void Ctor_Program()
         {
-            var vm = CreateProgram();
+            var vm = Create(true);
 
-            Assert.AreEqual(_mocks.Parent.Object, vm.Parent);
-            Assert.IsTrue(vm.IsProgram);
             Assert.AreEqual(_model, vm.Base);
             Assert.AreEqual(SwitcherButtonStatus.NeutralInactive, vm.Status);
         }
@@ -45,10 +49,8 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
         [TestMethod]
         public void Ctor_Preview()
         {
-            var vm = CreatePreview();
+            var vm = Create(false);
 
-            Assert.AreEqual(_mocks.Parent.Object, vm.Parent);
-            Assert.IsFalse(vm.IsProgram);
             Assert.AreEqual(_model, vm.Base);
             Assert.AreEqual(SwitcherButtonStatus.NeutralInactive, vm.Status);
         }
@@ -65,8 +67,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
         [TestMethod]
         public void Preview_Highlight_True()
         {
-            var vm = CreatePreview();
-            vm.SetHighlight(false);
+            var vm = Create(false);
             vm.SetHighlight(true);
             Assert.AreEqual(SwitcherButtonStatus.PreviewActive, vm.Status);
         }
@@ -74,8 +75,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
         [TestMethod]
         public void Preview_Highlight_False()
         {
-            var vm = CreatePreview();
-            vm.SetHighlight(true);
+            var vm = Create(false);
             vm.SetHighlight(false);
             Assert.AreEqual(SwitcherButtonStatus.NeutralInactive, vm.Status);
         }
@@ -83,8 +83,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
         [TestMethod]
         public void Program_Highlight_True()
         {
-            var vm = CreateProgram();
-            vm.SetHighlight(false);
+            var vm = Create(true);
             vm.SetHighlight(true);
             Assert.AreEqual(SwitcherButtonStatus.ProgramActive, vm.Status);
         }
@@ -92,8 +91,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
         [TestMethod]
         public void Program_Highlight_False()
         {
-            var vm = CreateProgram();
-            vm.SetHighlight(true);
+            var vm = Create(true);
             vm.SetHighlight(false);
             Assert.AreEqual(SwitcherButtonStatus.NeutralInactive, vm.Status);
         }
@@ -101,14 +99,14 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
         [TestMethod]
         public void Program_Click()
         {
-            CreateProgram().Click();
+            Create(true).Click();
             _mocks.Parent.Verify(m => m.SetProgram(1), Times.Once);
         }
 
         [TestMethod]
         public void Preview_Click()
         {
-            CreatePreview().Click();
+            Create(false).Click();
             _mocks.Parent.Verify(m => m.SetPreview(1), Times.Once);
         }
     }

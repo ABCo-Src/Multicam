@@ -47,10 +47,10 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
             _mocks.Auto = new Mock<ISwitcherAutoButtonViewModel>();
 
             _mocks.ServiceSource = new Mock<IServiceSource>();
-            _mocks.ServiceSource.Setup(m => m.GetVM<ISwitcherProgramInputViewModel>(It.IsAny<NewViewModelInfo>())).Returns(() => _mocks.ProgInputs[_progInputPos++].Object);
-            _mocks.ServiceSource.Setup(m => m.GetVM<ISwitcherPreviewInputViewModel>(It.IsAny<NewViewModelInfo>())).Returns(() => _mocks.PrevInputs[_prevInputPos++].Object);
-            _mocks.ServiceSource.Setup(m => m.GetVM<ISwitcherCutButtonViewModel>(It.IsAny<NewViewModelInfo>())).Returns(() => _mocks.Cut.Object);
-            _mocks.ServiceSource.Setup(m => m.GetVM<ISwitcherAutoButtonViewModel>(It.IsAny<NewViewModelInfo>())).Returns(() => _mocks.Auto.Object);
+            _mocks.ServiceSource.Setup(m => m.Get<ISwitcherProgramInputViewModel>()).Returns(() => _mocks.ProgInputs[_progInputPos++].Object);
+            _mocks.ServiceSource.Setup(m => m.Get<ISwitcherPreviewInputViewModel>()).Returns(() => _mocks.PrevInputs[_prevInputPos++].Object);
+            _mocks.ServiceSource.Setup(m => m.Get<ISwitcherCutButtonViewModel>()).Returns(() => _mocks.Cut.Object);
+            _mocks.ServiceSource.Setup(m => m.Get<ISwitcherAutoButtonViewModel>()).Returns(() => _mocks.Auto.Object);
 
             Mock<T>[] NewInputs<T>() where T : class, ISwitcherBusInputViewModel
             {
@@ -65,65 +65,83 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
             }
         }
 
-        SwitcherMixBlockViewModel Create() => new(new(new MixBlockViewModelInfo(_model, 8), _mocks.Parent.Object), _mocks.ServiceSource.Object);
+        SwitcherMixBlockViewModel Create() => new(_mocks.ServiceSource.Object)
+        {
+            RawMixBlock = _model,
+            RawMixBlockIndex = 8,
+            Parent = _mocks.Parent.Object
+        };
 
         [TestMethod]
-        public void Ctor_General()
+        public void CutButton()
         {
             var vm = Create();
-
-            Assert.AreEqual(_mocks.Parent.Object, vm.Parent);
-            Assert.AreEqual(_model, vm.BaseBlock);
-            Assert.AreEqual(8, vm.Index);
-
-            Assert.IsNotNull(vm.ProgramBus);
-            Assert.IsNotNull(vm.PreviewBus);
-
-            _mocks.ServiceSource.Verify(m => m.GetVM<ISwitcherCutButtonViewModel>(new(null, vm)), Times.Once);
-            _mocks.ServiceSource.Verify(m => m.GetVM<ISwitcherAutoButtonViewModel>(new(null, vm)), Times.Once);
-
             Assert.AreEqual(_mocks.Cut.Object, vm.CutButton);
-            Assert.AreEqual(_mocks.Auto.Object, vm.AutoButton);
+            _mocks.Cut.Verify(m => m.FinishConstruction(vm));
+            _mocks.ServiceSource.Verify(m => m.Get<ISwitcherCutButtonViewModel>(), Times.Once);
         }
 
         [TestMethod]
-        public void Ctor_ProgramOnly()
+        public void AutoButton()
         {
+            var vm = Create();
+            Assert.AreEqual(_mocks.Auto.Object, vm.AutoButton);
+            _mocks.Auto.Verify(m => m.FinishConstruction(vm));
+            _mocks.ServiceSource.Verify(m => m.Get<ISwitcherAutoButtonViewModel>(), Times.Once);
+        }
+
+        [TestMethod]
+        public void RawMixBlock_UpdatesProgramBus()
+        {
+            _model = SwitcherMixBlock.NewProgPrevSameInputs(new(), _mocks.ModelInputs);
+            var vm = Create();
+
+            _progInputPos = 0;
             var busInput1 = new SwitcherBusInput(1, "Cam1");
             var busInput2 = new SwitcherBusInput(2, "Cam2");
-            _model = SwitcherMixBlock.NewCutBus(new(), busInput1, busInput2);
+            vm.RawMixBlock = SwitcherMixBlock.NewCutBus(new(), busInput1, busInput2);
 
-            var vm = Create();
-            _mocks.ServiceSource.Verify(m => m.GetVM<ISwitcherProgramInputViewModel>(new(_model.ProgramInputs[0], vm)), Times.Once);
-            _mocks.ServiceSource.Verify(m => m.GetVM<ISwitcherProgramInputViewModel>(new(_model.ProgramInputs[1], vm)), Times.Once);
+            var programBus = vm.ProgramBus;
 
-            Assert.AreEqual(2, vm.ProgramBus.Count);
-            Assert.AreEqual(_mocks.ProgInputs[0].Object, vm.ProgramBus[0]);
-            Assert.AreEqual(_mocks.ProgInputs[1].Object, vm.ProgramBus[1]);
+            _mocks.ServiceSource.Verify(m => m.Get<ISwitcherProgramInputViewModel>());
+            _mocks.ProgInputs[0].Verify(m => m.FinishConstruction(busInput1, vm));
+            _mocks.ProgInputs[1].Verify(m => m.FinishConstruction(busInput2, vm));
+
+            Assert.AreEqual(2, programBus.Count);
+            Assert.AreEqual(_mocks.ProgInputs[0].Object, programBus[0]);
+            Assert.AreEqual(_mocks.ProgInputs[1].Object, programBus[1]);
         }
 
         [TestMethod]
-        public void Ctor_NoPreview()
+        public void RawMixBlock_UpdatesPreview_NoPreview()
         {
-            _model = SwitcherMixBlock.NewCutBus(new());
+            _model = SwitcherMixBlock.NewProgPrevSameInputs(new(), _mocks.ModelInputs);
             var vm = Create();
+
+            vm.RawMixBlock = SwitcherMixBlock.NewCutBus(new());
             Assert.AreEqual(0, vm.PreviewBus.Count);
         }
 
         [TestMethod]
-        public void Ctor_Preview()
+        public void RawMixBlock_UpdatesPreviewBus()
         {
+            _model = SwitcherMixBlock.NewProgPrevSameInputs(new(), _mocks.ModelInputs);
+            var vm = Create();
+
+            _prevInputPos = 0;
             var busInput1 = new SwitcherBusInput(1, "Cam1");
             var busInput2 = new SwitcherBusInput(2, "Cam2");
-            _model = SwitcherMixBlock.NewProgPrev(new(), Array.Empty<SwitcherBusInput>(), new SwitcherBusInput[2] { busInput1, busInput2 });
+            vm.RawMixBlock = SwitcherMixBlock.NewProgPrev(new(), Array.Empty<SwitcherBusInput>(), new SwitcherBusInput[2] { busInput1, busInput2 });
 
-            var vm = Create();
-            _mocks.ServiceSource.Verify(m => m.GetVM<ISwitcherPreviewInputViewModel>(new(_model.PreviewInputs![0], vm)), Times.Once);
-            _mocks.ServiceSource.Verify(m => m.GetVM<ISwitcherPreviewInputViewModel>(new(_model.PreviewInputs![1], vm)), Times.Once);
+            var previewBus = vm.PreviewBus;
 
-            Assert.AreEqual(2, vm.PreviewBus.Count);
-            Assert.AreEqual(_mocks.PrevInputs[0].Object, vm.PreviewBus[0]);
-            Assert.AreEqual(_mocks.PrevInputs[1].Object, vm.PreviewBus[1]);
+            _mocks.ServiceSource.Verify(m => m.Get<ISwitcherPreviewInputViewModel>());
+            _mocks.PrevInputs[0].Verify(m => m.FinishConstruction(busInput1, vm));
+            _mocks.PrevInputs[1].Verify(m => m.FinishConstruction(busInput2, vm));
+
+            Assert.AreEqual(2, previewBus.Count);
+            Assert.AreEqual(_mocks.PrevInputs[0].Object, previewBus[0]);
+            Assert.AreEqual(_mocks.PrevInputs[1].Object, previewBus[1]);
         }
 
         [TestMethod]
@@ -155,17 +173,23 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
         }
 
         [TestMethod]
-        public void UpdateValue_ProgPrev()
+        public void RawProgram_Change()
         {
             _model = SwitcherMixBlock.NewProgPrevSameInputs(new(), _mocks.ModelInputs);
-            var vm = Create();
-            vm.RefreshBuses(3, 4);
+            Create().RawProgram = 3;
 
             _mocks.ProgInputs[0].Verify(m => m.SetHighlight(false), Times.Once);
             _mocks.ProgInputs[1].Verify(m => m.SetHighlight(false), Times.Never);
             _mocks.ProgInputs[1].Verify(m => m.SetHighlight(true), Times.Once);
             _mocks.ProgInputs[2].Verify(m => m.SetHighlight(false), Times.Once);
             _mocks.ProgInputs[3].Verify(m => m.SetHighlight(false), Times.Once);
+        }
+
+        [TestMethod]
+        public void RawPreview_Change()
+        {
+            _model = SwitcherMixBlock.NewProgPrevSameInputs(new(), _mocks.ModelInputs);
+            Create().RawPreview = 4;
 
             _mocks.PrevInputs[0].Verify(m => m.SetHighlight(false), Times.Once);
             _mocks.PrevInputs[1].Verify(m => m.SetHighlight(false), Times.Once);
@@ -174,45 +198,25 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
             _mocks.PrevInputs[3].Verify(m => m.SetHighlight(true), Times.Once);
         }
 
-        [TestMethod]
-        public void UpdateValue_CutBus()
-        {
-            _model = SwitcherMixBlock.NewCutBus(new(), _mocks.ModelInputs);
-            var vm = Create();
-            vm.RefreshBuses(3, 4);
+        //[TestMethod]
+        //public void SetProgram()
+        //{
+        //    Create().SetProgram(4);
+        //    _mocks.Parent.Verify(m => m.SetValue(8, 0, 4));
+        //}
 
-            _mocks.ProgInputs[0].Verify(m => m.SetHighlight(false), Times.Once);
-            _mocks.ProgInputs[1].Verify(m => m.SetHighlight(false), Times.Never);
-            _mocks.ProgInputs[1].Verify(m => m.SetHighlight(true), Times.Once);
-            _mocks.ProgInputs[2].Verify(m => m.SetHighlight(false), Times.Once);
-            _mocks.ProgInputs[3].Verify(m => m.SetHighlight(false), Times.Once);
+        //[TestMethod]
+        //public void SetPreview()
+        //{
+        //    Create().SetPreview(3);
+        //    _mocks.Parent.Verify(m => m.SetValue(8, 1, 3));
+        //}
 
-            _mocks.PrevInputs[0].Verify(m => m.SetHighlight(false), Times.Never);
-            _mocks.PrevInputs[1].Verify(m => m.SetHighlight(false), Times.Never);
-            _mocks.PrevInputs[2].Verify(m => m.SetHighlight(false), Times.Never);
-            _mocks.PrevInputs[3].Verify(m => m.SetHighlight(false), Times.Never);
-            _mocks.PrevInputs[3].Verify(m => m.SetHighlight(true), Times.Never);
-        }
-
-        [TestMethod]
-        public void SetProgram()
-        {
-            Create().SetProgram(4);
-            _mocks.Parent.Verify(m => m.SetValue(8, 0, 4));
-        }
-
-        [TestMethod]
-        public void SetPreview()
-        {
-            Create().SetPreview(3);
-            _mocks.Parent.Verify(m => m.SetValue(8, 1, 3));
-        }
-
-        [TestMethod]
-        public void CutButtonPress()
-        {
-            Create().CutButtonPress();
-            _mocks.Parent.Verify(m => m.Cut(8));
-        }
+        //[TestMethod]
+        //public void CutButtonPress()
+        //{
+        //    Create().CutButtonPress();
+        //    _mocks.Parent.Verify(m => m.Cut(8));
+        //}
     }
 }

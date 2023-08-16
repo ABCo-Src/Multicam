@@ -1,6 +1,7 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher;
+using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,23 +15,13 @@ namespace ABCo.Multicam.UI.Bindings.Features.Switcher
         IVMBinder<IVMForSwitcherMixBlock>[] RawMixBlocks { get; set; }
     }
 
-    public interface IVMForSwitcherMixBlock : IVMForBinder<IVMForSwitcherMixBlock>
-    {
-
-    }
-
-    public interface IBinderForSwitcherMixBlock
-    {
-        void FinishConstruction(ISwitcherRunningFeature feature, SwitcherMixBlock block, int index);
-    }
-
     public class SwitcherFeatureVMBinder : VMBinder<IVMForSwitcherFeature>, IBinderForSwitcherFeature
     {
         ISwitcherRunningFeature _feature = null!;
 
         public override PropertyBinding[] CreateProperties() => new PropertyBinding[]
         {
-            // RawMixBlocks
+            // RawMixBlock
             new PropertyBinding<IVMBinder<IVMForSwitcherMixBlock>[]>()
             {
                 ModelChange = new(GetMixBlocks, v => v.VM.RawMixBlocks = v.NewVal)

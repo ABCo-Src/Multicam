@@ -23,9 +23,15 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
             _mocks.Parent = new Mock<ISwitcherMixBlockVM>();
         }
 
-        public SwitcherActButtonViewModel Create(bool isAuto) => isAuto ? CreateAuto() : CreateCut();
-        public SwitcherCutButtonViewModel CreateCut() => new(new(null, _mocks.Parent.Object), _mocks.ServiceSource.Object);
-        public SwitcherAutoButtonViewModel CreateAuto() => new(new(null, _mocks.Parent.Object), _mocks.ServiceSource.Object);
+        public ISwitcherActButtonViewModel Create(bool isAuto)
+        {
+            ISwitcherActButtonViewModel btn = isAuto ? CreateAuto() : CreateCut();
+            btn.FinishConstruction(_mocks.Parent.Object);
+            return btn;
+
+            SwitcherCutButtonViewModel CreateCut() => new();
+            SwitcherAutoButtonViewModel CreateAuto() => new();
+        }
 
         [TestMethod]
         [DataRow(false, "Cut")]
@@ -33,15 +39,13 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
         public void Ctor(bool isAuto, string expectedText)
         {
             var vm = Create(isAuto);
-
             Assert.AreEqual(expectedText, vm.Text);
-            Assert.AreEqual(_mocks.Parent.Object, vm.Parent);
         }
 
         [TestMethod]
         public void Click_Cut()
         {
-            CreateCut().Click();
+            Create(false).Click();
             _mocks.Parent.Verify(m => m.CutButtonPress(), Times.Once);
         }
     }
