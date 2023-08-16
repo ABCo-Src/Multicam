@@ -3,17 +3,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33424.131
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ABCo.Multicam.UI.Avalonia", "ABCo.Multicam.UI.Avalonia\ABCo.Multicam.UI.Avalonia.csproj", "{0590DBA2-8B33-49AF-948C-A6451115E60D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ABCo.Multicam.UI.Avalonia", "src\ABCo.Multicam.UI.Avalonia\ABCo.Multicam.UI.Avalonia.csproj", "{0590DBA2-8B33-49AF-948C-A6451115E60D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ABCo.Multicam.UI.Avalonia.Desktop", "ABCo.Multicam.UI.Avalonia.Desktop\ABCo.Multicam.UI.Avalonia.Desktop.csproj", "{EC609ACA-CF09-4ADA-BA16-5BF215296F40}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ABCo.Multicam.UI.Avalonia.Desktop", "src\ABCo.Multicam.UI.Avalonia.Desktop\ABCo.Multicam.UI.Avalonia.Desktop.csproj", "{EC609ACA-CF09-4ADA-BA16-5BF215296F40}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ABCo.Multicam.UI.Avalonia.Browser", "ABCo.Multicam.UI.Avalonia.Browser\ABCo.Multicam.UI.Avalonia.Browser.csproj", "{5AD778D2-24A4-44E8-AB2F-15DDD029763B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ABCo.Multicam.UI.Avalonia.Browser", "src\ABCo.Multicam.UI.Avalonia.Browser\ABCo.Multicam.UI.Avalonia.Browser.csproj", "{5AD778D2-24A4-44E8-AB2F-15DDD029763B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ABCo.Multicam.UI", "ABCo.Multicam.UI\ABCo.Multicam.UI.csproj", "{A203C95F-5EB5-40E4-87AA-70FCA2E70177}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ABCo.Multicam.UI", "src\ABCo.Multicam.UI\ABCo.Multicam.UI.csproj", "{A203C95F-5EB5-40E4-87AA-70FCA2E70177}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ABCo.Multicam.Core", "ABCo.Multicam.Core\ABCo.Multicam.Core.csproj", "{9B24EC47-6D83-46C6-83BF-80B0D44B3ED1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ABCo.Multicam.Core", "src\ABCo.Multicam.Core\ABCo.Multicam.Core.csproj", "{9B24EC47-6D83-46C6-83BF-80B0D44B3ED1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ABCo.Multicam.Tests", "ABCo.Multicam.Tests\ABCo.Multicam.Tests.csproj", "{EF650F4A-0685-45EB-A06A-2BE2D8B59975}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ABCo.Multicam.Tests", "tests\ABCo.Multicam.Tests\ABCo.Multicam.Tests.csproj", "{EF650F4A-0685-45EB-A06A-2BE2D8B59975}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ABCo.Multicam.Tests.UI.Bindings", "tests\ABCo.Multicam.Tests.UI.Bindings\ABCo.Multicam.Tests.UI.Bindings.csproj", "{1C10BC73-68CA-4764-8CFD-FBF4965B646C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ABCo.Multicam.Tests.UI.ViewModels", "tests\ABCo.Multicam.Tests.UI.ViewModels\ABCo.Multicam.Tests.UI.ViewModels.csproj", "{8AC2FDC9-C0E4-45F7-B3CF-B5ADBD4BBCBA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Main", "Main", "{0C266115-A33F-4EE7-AF76-F003D6E68A99}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{EFA095D1-AE36-456F-A781-6B883626457B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,9 +53,27 @@ Global
 		{EF650F4A-0685-45EB-A06A-2BE2D8B59975}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF650F4A-0685-45EB-A06A-2BE2D8B59975}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF650F4A-0685-45EB-A06A-2BE2D8B59975}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C10BC73-68CA-4764-8CFD-FBF4965B646C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C10BC73-68CA-4764-8CFD-FBF4965B646C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C10BC73-68CA-4764-8CFD-FBF4965B646C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C10BC73-68CA-4764-8CFD-FBF4965B646C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AC2FDC9-C0E4-45F7-B3CF-B5ADBD4BBCBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AC2FDC9-C0E4-45F7-B3CF-B5ADBD4BBCBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AC2FDC9-C0E4-45F7-B3CF-B5ADBD4BBCBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AC2FDC9-C0E4-45F7-B3CF-B5ADBD4BBCBA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0590DBA2-8B33-49AF-948C-A6451115E60D} = {0C266115-A33F-4EE7-AF76-F003D6E68A99}
+		{EC609ACA-CF09-4ADA-BA16-5BF215296F40} = {0C266115-A33F-4EE7-AF76-F003D6E68A99}
+		{5AD778D2-24A4-44E8-AB2F-15DDD029763B} = {0C266115-A33F-4EE7-AF76-F003D6E68A99}
+		{A203C95F-5EB5-40E4-87AA-70FCA2E70177} = {0C266115-A33F-4EE7-AF76-F003D6E68A99}
+		{9B24EC47-6D83-46C6-83BF-80B0D44B3ED1} = {0C266115-A33F-4EE7-AF76-F003D6E68A99}
+		{EF650F4A-0685-45EB-A06A-2BE2D8B59975} = {EFA095D1-AE36-456F-A781-6B883626457B}
+		{1C10BC73-68CA-4764-8CFD-FBF4965B646C} = {EFA095D1-AE36-456F-A781-6B883626457B}
+		{8AC2FDC9-C0E4-45F7-B3CF-B5ADBD4BBCBA} = {EFA095D1-AE36-456F-A781-6B883626457B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D17BE21B-856B-4BDC-99AE-3922EDA80103}
