@@ -28,42 +28,18 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
         // Synced to the model: 
         [ObservableProperty] int _rawMixBlockIndex;
         [ObservableProperty] ISwitcherRunningFeature _rawFeature = null!;
-        SwitcherMixBlock _rawMixBlock = null!;
-        int _rawProgram;
-        int _rawPreview;
+        [ObservableProperty] SwitcherMixBlock _rawMixBlock = null!;
+        [ObservableProperty] int _rawProgram;
+        [ObservableProperty] int _rawPreview;
 
-        public SwitcherMixBlock RawMixBlock
+        partial void OnRawMixBlockChanged(SwitcherMixBlock value)
         {
-            get => _rawMixBlock;
-            set
-            {
-                if (SetProperty(ref _rawMixBlock, value))
-                {
-                    InvalidateProgramBus();
-                    InvalidatePreviewBus();
-                }
-            }
+            InvalidateProgramBus();
+            InvalidatePreviewBus();
         }
 
-        public int RawProgram
-        {
-            get => _rawProgram;
-            set
-            {
-                if (SetProperty(ref _rawProgram, value))
-                    RefreshProgram();
-            }
-        }
-
-        public int RawPreview
-        {
-            get => _rawPreview;
-            set
-            {
-                if (SetProperty(ref _rawPreview, value))
-                    RefreshPreview();
-            }
-        }
+        partial void OnRawProgramChanged(int value) => RefreshProgram();
+        partial void OnRawPreviewChanged(int value) => RefreshPreview();
 
         public bool ShowPreview => RawMixBlock.NativeType == SwitcherMixBlockType.ProgramPreview;
         public string MainLabel => RawMixBlock.NativeType == SwitcherMixBlockType.CutBus ? "Cut Bus" : "Program";
@@ -89,10 +65,10 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
         void InvalidateProgramBus()
         {
             ProgramBus.Clear();
-            for (int i = 0; i < _rawMixBlock.ProgramInputs.Count; i++)
+            for (int i = 0; i < RawMixBlock.ProgramInputs.Count; i++)
             {
                 var newVM = _servSource.Get<ISwitcherProgramInputViewModel>();
-                newVM.FinishConstruction(_rawMixBlock.ProgramInputs[i], this);
+                newVM.FinishConstruction(RawMixBlock.ProgramInputs[i], this);
                 ProgramBus.Add(newVM);
             }
         }
@@ -100,12 +76,12 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
         void InvalidatePreviewBus()
         {
             PreviewBus.Clear();
-            if (_rawMixBlock.PreviewInputs == null) return;
+            if (RawMixBlock.PreviewInputs == null) return;
 
-            for (int i = 0; i < _rawMixBlock.PreviewInputs.Count; i++)
+            for (int i = 0; i < RawMixBlock.PreviewInputs.Count; i++)
             {
                 var newVM = _servSource.Get<ISwitcherPreviewInputViewModel>();
-                newVM.FinishConstruction(_rawMixBlock.PreviewInputs[i], this);
+                newVM.FinishConstruction(RawMixBlock.PreviewInputs[i], this);
                 PreviewBus.Add(newVM);
             }
         }

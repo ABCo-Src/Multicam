@@ -41,14 +41,14 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
         };
 
         [TestMethod]
-        public void MixBlocks()
+        public void RawMixBlocks_UpdatesMixBlocks()
         {
             var vm = Create();
-            var mixBlocks = vm.MixBlocks.ToArray();
+            var mixBlocks = vm.MixBlocks!;
 
             Assert.AreEqual(2, mixBlocks.Length);
             _mocks.RawMixBlocks[0].Verify(m => m.GetVM<ISwitcherMixBlockVM>(vm), Times.Once);
-            _mocks.RawMixBlocks[0].Verify(m => m.GetVM<ISwitcherMixBlockVM>(vm), Times.Once);
+            _mocks.RawMixBlocks[1].Verify(m => m.GetVM<ISwitcherMixBlockVM>(vm), Times.Once);
 
             Assert.AreEqual(_mocks.VMs[0].Object, mixBlocks[0]);
             Assert.AreEqual(_mocks.VMs[1].Object, mixBlocks[1]);

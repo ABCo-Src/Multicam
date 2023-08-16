@@ -68,7 +68,6 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features
         public void Ctor_InitializesLocal()
         {
             var vm = Create();
-            Assert.IsNotNull(vm.Items);
             Assert.IsNull(vm.CurrentlyEditing);
         }
 
@@ -100,30 +99,14 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features
             _mocks.Manager.Verify(m => m.CreateFeature(type), Times.Once);
         }
 
-        //[TestMethod]
-        //public void FeatureVMCreation_Switcher()
-        //{
-        //    _modelFeatures.Add(_mocks.SwitcherRunning.Object);
-        //    var vm = Create();
-        //    Assert.AreEqual(_mocks.SwitcherVM.Object, vm.Items[0]);
-        //    _mocks.ServiceSource.Verify(m => m.GetVM<ISwitcherFeatureVM>(new(_mocks.SwitcherRunning.Object, vm)));
-        //}
-
-        //[TestMethod]
-        //public void FeatureVMCreation_Unsupported()
-        //{
-        //    _modelFeatures.Add(_mocks.UnsupportedRunning.Object);
-        //    var vm = Create();
-        //    Assert.IsInstanceOfType(vm.Items[0], typeof(UnsupportedFeatureViewModel));
-        //}
-
         [TestMethod]
-        public void Features()
+        public void RawFeatures_UpdatesFeatures()
         {
             var vm = Create();
+
             vm.RawFeatures = _modelFeatures.ToArray();
 
-            var features = vm.Items.ToArray();
+            var features = vm.Items!;
             Assert.AreEqual(3, features.Length);
 
             for (int i = 0; i < 3; i++)
@@ -133,51 +116,12 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features
             }
         }
 
-        //[TestMethod]
-        //public void RawFeaturesChange_AddToEnd()
-        //{
-        //    var vm = Create();
-        //    _modelFeatures.Add(_mocks.RunningFeatures[0].Object);
-
-
-        //    Assert.AreEqual(1, vm.Items.Count);
-        //    Assert.AreEqual(_mocks.RunningFeatures[0].Object, vm.Items[0].BaseFeature);
-        //}
-
-        //[TestMethod]
-        //public void FeaturesChange_AddToStart()
-        //{
-        //    _modelFeatures.Add(_mocks.RunningFeatures[0].Object);
-
-        //    var vm = Create();
-        //    _modelFeatures.Insert(0, _mocks.RunningFeatures[1].Object);
-        //    _stripsChangeCallback();
-
-        //    Assert.AreEqual(2, vm.Items.Count);
-        //    Assert.AreEqual(_mocks.RunningFeatures[1].Object, vm.Items[0].BaseFeature);
-        //    Assert.AreEqual(_mocks.RunningFeatures[0].Object, vm.Items[1].BaseFeature);
-        //}
-
-        //[TestMethod]
-        //public void FeaturesChange_RemoveFromStart()
-        //{
-        //    _modelFeatures.Add(_mocks.RunningFeatures[0].Object);
-        //    _modelFeatures.Add(_mocks.RunningFeatures[1].Object);
-
-        //    var vm = Create();
-        //    _modelFeatures.Remove(_mocks.RunningFeatures[0].Object);
-        //    _stripsChangeCallback();
-
-        //    Assert.AreEqual(1, vm.Items.Count);
-        //    Assert.AreEqual(_mocks.RunningFeatures[1].Object, vm.Items[0].BaseFeature);
-        //}
-
         [TestMethod]
         public void CurrentlyEditing_RemoveNonEditing()
         {
             var vm = Create();
             vm.RawFeatures = _modelFeatures;
-            vm.CurrentlyEditing = vm.Items.First();
+            vm.CurrentlyEditing = vm.Items!.First();
             vm.RawFeatures = new IVMBinder<IVMForFeatureBinder>[] { _mocks.RunningFeatures[0].Object, _mocks.RunningFeatures[2].Object };
             Assert.IsNotNull(vm.CurrentlyEditing);
         }
@@ -187,44 +131,17 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features
         {
             var vm = Create();
             vm.RawFeatures = _modelFeatures;
-            vm.CurrentlyEditing = vm.Items.ToArray()[1];
+            vm.CurrentlyEditing = vm.Items!.ToArray()[1];
             vm.RawFeatures = new IVMBinder<IVMForFeatureBinder>[] { _mocks.RunningFeatures[0].Object, _mocks.RunningFeatures[2].Object };
             Assert.IsNull(vm.CurrentlyEditing);
         }
-
-        //[TestMethod]
-        //public void MoveUp()
-        //{
-        //    _modelFeatures.Add(_mocks.RunningFeatures[0].Object);
-        //    var vm = Create();
-        //    vm.MoveUp(vm.Items[0]);
-        //    _mocks.Model.Verify(v => v.MoveUp(_mocks.RunningFeatures[0].Object), Times.Once);
-        //}
-
-        //[TestMethod]
-        //public void MoveDown()
-        //{
-        //    _modelFeatures.Add(_mocks.RunningFeatures[0].Object);
-        //    var vm = Create();
-        //    vm.MoveDown(vm.Items[0]);
-        //    _mocks.Model.Verify(v => v.MoveDown(_mocks.RunningFeatures[0].Object), Times.Once);
-        //}
-
-        //[TestMethod]
-        //public void Delete()
-        //{
-        //    _modelFeatures.Add(_mocks.RunningFeatures[0].Object);
-        //    var vm = Create();
-        //    vm.Delete(vm.Items[0]);
-        //    _mocks.Model.Verify(v => v.Delete(_mocks.RunningFeatures[0].Object), Times.Once);
-        //}
 
         [TestMethod]
         public void CurrentlyEditing_NoPreviousItem()
         {
             var vm = Create();
             vm.RawFeatures = _modelFeatures;
-            vm.CurrentlyEditing = vm.Items.First();
+            vm.CurrentlyEditing = vm.Items!.First();
             _mocks.FeatureVMs[0].VerifySet(m => m.IsEditing = true);
         }
 
@@ -234,7 +151,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features
             var vm = Create();
             vm.RawFeatures = _modelFeatures;
 
-            vm.CurrentlyEditing = vm.Items.First();
+            vm.CurrentlyEditing = vm.Items!.First();
             vm.CurrentlyEditing = null;
 
             _mocks.FeatureVMs[0].VerifySet(m => m.IsEditing = false);
@@ -246,7 +163,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features
             var vm = Create();
             vm.RawFeatures = _modelFeatures;
 
-            var items = vm.Items.ToArray();
+            var items = vm.Items!.ToArray();
             vm.CurrentlyEditing = items[0];
             vm.CurrentlyEditing = items[1];
 
@@ -265,7 +182,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features
         {
             var vm = Create();
             vm.RawFeatures = _modelFeatures;
-            vm.CurrentlyEditing = vm.Items.First();
+            vm.CurrentlyEditing = vm.Items!.First();
             Assert.IsTrue(vm.ShowEditingPanel);
         }
     }

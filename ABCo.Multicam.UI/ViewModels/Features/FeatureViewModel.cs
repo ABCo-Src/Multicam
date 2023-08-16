@@ -33,25 +33,26 @@ namespace ABCo.Multicam.UI.ViewModels.Features
         // Synced to the model:
         [ObservableProperty] IFeatureManager _rawManager = null!;
         [ObservableProperty] IFeatureContainer _rawContainer = null!;
-        [ObservableProperty][AlsoNotify(nameof(InnerType))][AlsoNotify(nameof(InnerVM))] ILiveFeature _rawInnerFeature = null!;
+        [ObservableProperty][AlsoNotify(nameof(InnerType))] ILiveFeature _rawInnerFeature = null!;
 
         [ObservableProperty][AlsoNotify(nameof(EditPanelTitle))] string _featureTitle;
         [ObservableProperty][AlsoNotify(nameof(EditBtnText))] bool _isEditing;
+        [ObservableProperty] ILiveFeatureViewModel? _innerVM;
+
+        public FeatureViewModel() => FeatureTitle = "New Feature";
 
         public string EditBtnText => IsEditing ? "Finish" : "Edit";
         public string EditPanelTitle => $"Editing '{FeatureTitle}'";
 
         public FeatureTypes InnerType => RawInnerFeature.FeatureType;
 
-        public ILiveFeatureViewModel InnerVM => InnerType switch 
+        partial void OnRawInnerFeatureChanged(ILiveFeature value)
         {
-            FeatureTypes.Switcher => ((IVMBinder<IVMForSwitcherFeature>)RawInnerFeature.UIBinder).GetVM<ISwitcherFeatureVM>(this),
-            _ => new UnsupportedFeatureViewModel()
-        };
-
-        public FeatureViewModel()
-        {
-            FeatureTitle = "New Feature";
+            InnerVM = value.FeatureType switch
+            {
+                FeatureTypes.Switcher => ((IVMBinder<IVMForSwitcherFeature>)RawInnerFeature.UIBinder).GetVM<ISwitcherFeatureVM>(this),
+                _ => new UnsupportedFeatureViewModel()
+            };
         }
 
         public void ToggleEdit() => 

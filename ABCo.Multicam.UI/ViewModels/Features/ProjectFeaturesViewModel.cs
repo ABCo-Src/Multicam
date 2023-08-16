@@ -28,62 +28,38 @@ namespace ABCo.Multicam.UI.ViewModels.Features
 
     public partial class ProjectFeaturesViewModel : BindingViewModelBase<IVMForProjectFeaturesBinder>, IProjectFeaturesViewModel
     {
-        IServiceSource _servSource;
         IUIDialogHandler _dialogHandler;
 
+        public ProjectFeaturesViewModel(IServiceSource servSource) => _dialogHandler = servSource.Get<IUIDialogHandler>();
+
         // Raw data synced to the model:
-        IVMBinder<IVMForFeatureBinder>[] _rawFeatures;
-        public IVMBinder<IVMForFeatureBinder>[] RawFeatures
-        {
-            get => _rawFeatures;
-            set
-            {
-                // Update the property
-                if (SetProperty(ref _rawFeatures, value, nameof(RawFeatures)))
-                    OnPropertyChanged(nameof(Items));
-
-                // Update "CurrentlyEditing" if needed
-                EnsureCurrentlyEditingExists();
-            }
-        }
-
+        [ObservableProperty] IVMBinder<IVMForFeatureBinder>[] _rawFeatures = null!;
         [ObservableProperty] IFeatureManager _rawManager = null!;
 
-        public IEnumerable<IFeatureViewModel> Items => RawFeatures.Select(f => f.GetVM<IFeatureViewModel>(this));
-
-        public ProjectFeaturesViewModel(IServiceSource servSource)
-        {
-            if (servSource == null) throw new ServiceSourceNotGivenException();
-
-            _servSource = servSource;
-            _dialogHandler = servSource.Get<IUIDialogHandler>();
-
-            _rawFeatures = Array.Empty<IVMBinder<IVMForFeatureBinder>>();
-            _rawManager = null!;
-        }
-
-        IFeatureViewModel? _currentlyEditing;
-        public IFeatureViewModel? CurrentlyEditing
-        {
-            get => _currentlyEditing;
-            set
-            {
-                // If there was a previous item, reset that
-                if (_currentlyEditing != null)
-                    _currentlyEditing.IsEditing = false;
-
-                // If there's a new item, assign editing on that
-                if (value != null) 
-                    value.IsEditing = true;
-
-                SetProperty(ref _currentlyEditing, value);
-
-                // Notify change in affected
-                OnPropertyChanged(nameof(ShowEditingPanel));
-            }
-        }
+        [ObservableProperty] IFeatureViewModel[]? _items;
+        [ObservableProperty][NotifyPropertyChangedFor(nameof(ShowEditingPanel))] IFeatureViewModel? _currentlyEditing;
 
         public bool ShowEditingPanel => CurrentlyEditing != null;
+
+        partial void OnCurrentlyEditingChanged(IFeatureViewModel? oldValue, IFeatureViewModel? newValue)
+        {
+            // Reset the old and assign the new (if needed)
+            if (oldValue != null) oldValue.IsEditing = false;
+            if (newValue != null) newValue.IsEditing = true;
+        }
+
+        partial void OnRawFeaturesChanged(IVMBinder<IVMForFeatureBinder>[] value)
+        {
+            UpdateItems();
+            EnsureCurrentlyEditingExists();
+        }
+
+        public void UpdateItems()
+        {
+            var newItems = new IFeatureViewModel[RawFeatures.Length];
+            for (int i = 0; i < newItems.Length; i++) newItems[i] = RawFeatures[i].GetVM<IFeatureViewModel>(this);
+            Items = newItems;
+        }
 
         void EnsureCurrentlyEditingExists()
         {
