@@ -28,6 +28,8 @@ namespace ABCo.Multicam.UI
             container.RegisterSingleton<MainWindowViewModel>();
 
             // Register binders
+            container.RegisterTransient<IApplicationViewModel, ApplicationViewModel>();
+            container.RegisterTransient<IProjectViewModel, ProjectViewModel>();
             container.RegisterTransient<IProjectFeaturesViewModel, ProjectFeaturesViewModel>();
             container.RegisterTransient<IBinderForProjectFeatures, ProjectFeaturesVMBinder>();
             container.RegisterTransient<IBinderForFeatureContainer, FeatureVMBinder>();

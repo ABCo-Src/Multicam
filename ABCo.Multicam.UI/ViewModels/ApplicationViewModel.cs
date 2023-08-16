@@ -13,9 +13,8 @@ public partial class ApplicationViewModel : ViewModelBase, IApplicationViewModel
 {
     [ObservableProperty]IProjectViewModel _project;
 
-    public ApplicationViewModel(IServiceSource manager)
+    public ApplicationViewModel(IServiceSource servSource)
     {
-        if (manager == null) throw new ServiceSourceNotGivenException();
-        Project = new ProjectViewModel(manager);
+        Project = servSource.Get<IProjectViewModel>();
     }
 }

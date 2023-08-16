@@ -14,7 +14,7 @@ namespace ABCo.Multicam.UI.ViewModels
     {
         readonly IUIWindow _window;
 
-        [ObservableProperty] ApplicationViewModel _application;
+        [ObservableProperty] IApplicationViewModel _application;
 
         public int TitleBarHeight => BorderWidth + 38;
         public int BorderWidth => _window.BorderRecommended ? 4 : 0;
@@ -32,10 +32,8 @@ namespace ABCo.Multicam.UI.ViewModels
 
         public MainWindowViewModel(IServiceSource source, IUIWindow window)
         {
-            if (source == null) throw new ServiceSourceNotGivenException();
-
             _window = window;
-            _application = new ApplicationViewModel(source);
+            _application = source.Get<IApplicationViewModel>();
         }
     }
 }

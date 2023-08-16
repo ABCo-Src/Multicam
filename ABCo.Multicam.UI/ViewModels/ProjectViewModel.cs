@@ -21,8 +21,6 @@ namespace ABCo.Multicam.UI.ViewModels
 
         public ProjectViewModel(IServiceSource servSource)
         {
-            if (servSource == null) throw new ServiceSourceNotGivenException();
-
             var binder = (IVMBinder<IVMForProjectFeaturesBinder>)servSource.Get<IFeatureManager>().UIBinder;
             _features = binder.GetVM<IProjectFeaturesViewModel>(this);
         }

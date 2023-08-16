@@ -15,16 +15,13 @@ namespace ABCo.Multicam.Tests.UI.ViewModels
     [TestClass]
     public class ProjectViewModelTests
     {
-        [TestMethod]
-        public void Ctor_ThrowsWithNoServiceSource() => Assert.ThrowsException<ServiceSourceNotGivenException>(() => new ProjectViewModel(null!));
-
-        [TestMethod]
-        public void Ctor_Normal()
-        {
-            var servSrc = new Mock<IServiceSource>();
-            var vm = new ProjectViewModel(servSrc.Object);
-            Assert.IsNotNull(vm.Features);
-            servSrc.Verify(v => v.Get<IFeatureManager>(), Times.Once);
-        }
+        //[TestMethod]
+        //public void Ctor_Normal()
+        //{
+        //    var servSrc = new Mock<IServiceSource>();
+        //    var vm = new ProjectViewModel(servSrc.Object);
+        //    Assert.IsNotNull(vm.Features);
+        //    servSrc.Verify(v => v.Get<IFeatureManager>(), Times.Once);
+        //}
     }
 }

@@ -14,101 +14,106 @@ namespace ABCo.Multicam.Tests.UI.ViewModels
     [TestClass]
     public class MainWindowViewModelTests
     {
+        public record struct Mocks(Mock<IServiceSource> ServSource, Mock<IApplicationViewModel> App, Mock<IUIWindow> Window);
+        Mocks _mocks = new();
+
+        [TestInitialize]
+        public void SetupMocks()
+        {
+            _mocks.App = new();
+            _mocks.ServSource = new();
+            _mocks.ServSource.Setup(m => m.Get<IApplicationViewModel>()).Returns(_mocks.App.Object);
+            _mocks.Window = new();
+        }
+
+        MainWindowViewModel Create() => new(_mocks.ServSource.Object, _mocks.Window.Object);
+
         [TestMethod]
         public void TitlebarHeight_Normal()
         {
-            var vm = new MainWindowViewModel(Mock.Of<IServiceSource>(), Mock.Of<IUIWindow>(m => m.BorderRecommended == true));
+            _mocks.Window.Setup(m => m.BorderRecommended).Returns(true);
+            var vm = Create();
             Assert.AreEqual(38 + vm.BorderWidth, vm.TitleBarHeight);
         }
 
         [TestMethod]
         public void TitlebarHeight_NoBorder()
         {
-            var vm = new MainWindowViewModel(Mock.Of<IServiceSource>(), Mock.Of<IUIWindow>(m => m.BorderRecommended == false));
+            _mocks.Window.Setup(m => m.BorderRecommended).Returns(false);
+            var vm = Create();
             Assert.AreEqual(38, vm.TitleBarHeight);
         }
 
         [TestMethod]
         public void BorderWidth_Normal()
         {
-            var vm = new MainWindowViewModel(Mock.Of<IServiceSource>(), Mock.Of<IUIWindow>(m => m.BorderRecommended == true));
+            _mocks.Window.Setup(m => m.BorderRecommended).Returns(true);
+            var vm = Create();
             Assert.AreEqual(4, vm.BorderWidth);
         }
 
         [TestMethod]
         public void BorderWidth_NoBorder()
         {
-            var vm = new MainWindowViewModel(Mock.Of<IServiceSource>(), Mock.Of<IUIWindow>(m => m.BorderRecommended == false));
+            _mocks.Window.Setup(m => m.BorderRecommended).Returns(false);
+            var vm = Create();
             Assert.AreEqual(0, vm.BorderWidth);
         }
 
         [TestMethod]
         public void Close()
         {
-            var windowMock = new Mock<IUIWindow>();
-            var vm = new MainWindowViewModel(Mock.Of<IServiceSource>(), windowMock.Object);
-            vm.Close();
-            windowMock.Verify(c => c.CloseMainWindow(), Times.Once);
+            Create().Close();
+            _mocks.Window.Verify(c => c.CloseMainWindow(), Times.Once);
         }
 
         [TestMethod]
         public void Maximize()
         {
-            var windowMock = new Mock<IUIWindow>();
-            var vm = new MainWindowViewModel(Mock.Of<IServiceSource>(), windowMock.Object);
-            vm.RequestMaximizeToggle();
-            windowMock.Verify(c => c.RequestMainWindowMaximizeToggle(), Times.Once);
+            Create().RequestMaximizeToggle();
+            _mocks.Window.Verify(c => c.RequestMainWindowMaximizeToggle(), Times.Once);
         }
 
         [TestMethod]
         public void Minimize()
         {
-            var windowMock = new Mock<IUIWindow>();
-            var vm = new MainWindowViewModel(Mock.Of<IServiceSource>(), windowMock.Object);
-            vm.RequestMinimize();
-            windowMock.Verify(c => c.RequestMainWindowMinimize(), Times.Once);
+            Create().RequestMinimize();
+            _mocks.Window.Verify(c => c.RequestMainWindowMinimize(), Times.Once);
         }
 
         [TestMethod]
         public void ShowClose()
         {
-            var windowMock = new Mock<IUIWindow>();
-            var vm = new MainWindowViewModel(Mock.Of<IServiceSource>(), windowMock.Object);
-            _ = vm.ShowClose;
-            windowMock.VerifyGet(c => c.CloseBtnRecommended, Times.Once);
+            _mocks.Window.Setup(m => m.CloseBtnRecommended).Returns(true);
+            Assert.IsTrue(Create().ShowClose);
+            _mocks.Window.VerifyGet(c => c.CloseBtnRecommended, Times.Once);
         }
 
         [TestMethod]
         public void ShowMaximize()
         {
-            var windowMock = new Mock<IUIWindow>();
-            var vm = new MainWindowViewModel(Mock.Of<IServiceSource>(), windowMock.Object);
-            _ = vm.ShowMaximize;
-            windowMock.VerifyGet(c => c.CanMaximize, Times.Once);
+            _mocks.Window.Setup(m => m.CanMaximize).Returns(true);
+            Assert.IsTrue(Create().ShowMaximize);
+            _mocks.Window.VerifyGet(c => c.CanMaximize, Times.Once);
         }
 
         [TestMethod]
         public void ShowMinimize()
         {
-            var windowMock = new Mock<IUIWindow>();
-            var vm = new MainWindowViewModel(Mock.Of<IServiceSource>(), windowMock.Object);
-            _ = vm.ShowMinimize;
-            windowMock.VerifyGet(c => c.CanMinimize, Times.Once);
+            _mocks.Window.Setup(m => m.CanMinimize).Returns(true);
+            Assert.IsTrue(Create().ShowMinimize);
+            _mocks.Window.VerifyGet(c => c.CanMinimize, Times.Once);
         }
 
         [TestMethod]
         public void Ctor()
         {
-            var vm = new MainWindowViewModel(Mock.Of<IServiceSource>(), Mock.Of<IUIWindow>());
-            Assert.IsNotNull(vm.Application);
+            Assert.AreEqual(_mocks.App.Object, Create().Application);
         }
 
         public void IsMaximized_NotifiesRequires()
         {
             // TODO: Consistency checks
         }
-
-        [TestMethod]
-        public void Ctor_ThrowsWithNoServiceSource() => Assert.ThrowsException<ServiceSourceNotGivenException>(() => new MainWindowViewModel(null!, Mock.Of<IUIWindow>()));
     }
 }

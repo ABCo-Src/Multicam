@@ -15,12 +15,9 @@ namespace ABCo.Multicam.Tests.UI.ViewModels
     public class ApplicationViewModelTests
     {
         [TestMethod]
-        public void Ctor_ThrowsWithNoServiceSource() => Assert.ThrowsException<ServiceSourceNotGivenException>(() => new ApplicationViewModel(null!));
-
-        [TestMethod]
         public void Ctor_Normal()
         {
-            var vm = new ApplicationViewModel(Mock.Of<IServiceSource>());
+            var vm = new ApplicationViewModel(Mock.Of<IServiceSource>(m => m.Get<IProjectViewModel>() == Mock.Of<IProjectViewModel>()));
             Assert.IsNotNull(vm.Project);
         }
     }
