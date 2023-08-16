@@ -37,6 +37,8 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
         {
             object obj = this;
             IntPtr val = Unsafe.As<object, IntPtr>(ref obj);
+
+            IntPtr[] hmm = SwitcherMixBlockViewModel.Test.Select(o => Unsafe.As<object, IntPtr>(ref o)).ToArray();
             _parent.CutButtonPress();
         }
     }

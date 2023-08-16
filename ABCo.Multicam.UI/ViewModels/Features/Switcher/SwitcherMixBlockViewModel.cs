@@ -9,8 +9,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
@@ -23,6 +25,8 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 
     public partial class SwitcherMixBlockViewModel : BindingViewModelBase<IVMForSwitcherMixBlock>, ISwitcherMixBlockVM
     {
+        public static List<object> Test { get; set; } = new();
+
         IServiceSource _servSource;
 
         // Synced to the model: 
@@ -58,6 +62,9 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 
             _cutButton = source.Get<ISwitcherCutButtonViewModel>();
             _cutButton.FinishConstruction(this);
+
+            Test.Add(_cutButton);
+
             _autoButton = source.Get<ISwitcherAutoButtonViewModel>();
             _autoButton.FinishConstruction(this);
         }

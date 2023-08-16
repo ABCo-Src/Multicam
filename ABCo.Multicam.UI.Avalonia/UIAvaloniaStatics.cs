@@ -17,7 +17,7 @@ namespace ABCo.Multicam.UI.Avalonia
     {
         public static ServiceContainer InitializeContainer(Window? mainWindow, MainWindowView mainView)
         {
-            var container = new ServiceContainer();
+            var container = new ServiceContainer(new ContainerOptions { EnablePropertyInjection = false });
 
             // Register general services
             container.RegisterInstance<IUIDialogHandler>(new UIDialogHandler(mainView));

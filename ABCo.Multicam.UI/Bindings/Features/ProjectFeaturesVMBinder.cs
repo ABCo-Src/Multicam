@@ -29,7 +29,8 @@ namespace ABCo.Multicam.UI.Bindings.Features
             // RawFeatures
             new PropertyBinding<IVMBinder<IVMForFeatureBinder>[]>()
             {
-                ModelChange = new(GetFeatureBinders, v => v.VM.RawFeatures = v.NewVal)
+                ModelChange = new(GetFeatureBinders, v => 
+                    v.VM.RawFeatures = v.NewVal)
             }
         };
 

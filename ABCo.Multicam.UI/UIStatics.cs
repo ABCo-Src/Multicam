@@ -1,7 +1,6 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features;
 using ABCo.Multicam.Core.Features.Switchers;
-using ABCo.Multicam.Tests;
 using ABCo.Multicam.UI.Bindings.Features;
 using ABCo.Multicam.UI.Bindings.Features.Switcher;
 using ABCo.Multicam.UI.ViewModels;
@@ -18,8 +17,14 @@ namespace ABCo.Multicam.UI
 {
     public static class UIStatics
     {
+        //public static string Log { get; set; }
+
         public static void Initialize(ServiceContainer container)
         {
+            // Logging for debug purposes if you want it:
+            //container.Initialize(registration => true,
+            //    (f, i) => ServiceSource.N += $"Service requested: {i.GetType().Name}.   Thread: {Thread.CurrentThread.ManagedThreadId}\n"
+            //);
             container.RegisterSingleton<MainWindowViewModel>();
 
             // Register binders
