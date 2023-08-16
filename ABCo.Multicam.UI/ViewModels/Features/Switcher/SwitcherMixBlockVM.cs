@@ -23,7 +23,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
         void CutButtonPress();
     }
 
-    public partial class SwitcherMixBlockViewModel : BindingViewModelBase<IVMForSwitcherMixBlock>, ISwitcherMixBlockVM
+    public partial class SwitcherMixBlockVM : BindingViewModelBase<IVMForSwitcherMixBlock>, ISwitcherMixBlockVM
     {
         public static List<object> Test { get; set; } = new();
 
@@ -48,24 +48,24 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
         public bool ShowPreview => RawMixBlock.NativeType == SwitcherMixBlockType.ProgramPreview;
         public string MainLabel => RawMixBlock.NativeType == SwitcherMixBlockType.CutBus ? "Cut Bus" : "Program";
 
-        [ObservableProperty] ObservableCollection<ISwitcherProgramInputViewModel> _programBus;
-        [ObservableProperty] ObservableCollection<ISwitcherPreviewInputViewModel> _previewBus;
+        [ObservableProperty] ObservableCollection<ISwitcherProgramInputVM> _programBus;
+        [ObservableProperty] ObservableCollection<ISwitcherPreviewInputVM> _previewBus;
 
-        [ObservableProperty] ISwitcherCutButtonViewModel _cutButton;
-        [ObservableProperty] ISwitcherAutoButtonViewModel _autoButton;
+        [ObservableProperty] ISwitcherCutButtonVM _cutButton;
+        [ObservableProperty] ISwitcherAutoButtonVM _autoButton;
 
-        public SwitcherMixBlockViewModel(IServiceSource source)
+        public SwitcherMixBlockVM(IServiceSource source)
         {
             _servSource = source;
             _programBus = new();
             _previewBus = new();
 
-            _cutButton = source.Get<ISwitcherCutButtonViewModel>();
+            _cutButton = source.Get<ISwitcherCutButtonVM>();
             _cutButton.FinishConstruction(this);
 
             Test.Add(_cutButton);
 
-            _autoButton = source.Get<ISwitcherAutoButtonViewModel>();
+            _autoButton = source.Get<ISwitcherAutoButtonVM>();
             _autoButton.FinishConstruction(this);
         }
 
@@ -74,7 +74,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
             ProgramBus.Clear();
             for (int i = 0; i < RawMixBlock.ProgramInputs.Count; i++)
             {
-                var newVM = _servSource.Get<ISwitcherProgramInputViewModel>();
+                var newVM = _servSource.Get<ISwitcherProgramInputVM>();
                 newVM.FinishConstruction(RawMixBlock.ProgramInputs[i], this);
                 ProgramBus.Add(newVM);
             }
@@ -87,7 +87,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 
             for (int i = 0; i < RawMixBlock.PreviewInputs.Count; i++)
             {
-                var newVM = _servSource.Get<ISwitcherPreviewInputViewModel>();
+                var newVM = _servSource.Get<ISwitcherPreviewInputVM>();
                 newVM.FinishConstruction(RawMixBlock.PreviewInputs[i], this);
                 PreviewBus.Add(newVM);
             }

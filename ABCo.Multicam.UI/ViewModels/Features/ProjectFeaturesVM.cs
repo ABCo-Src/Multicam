@@ -20,27 +20,27 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.ViewModels.Features
 {
-    public interface IProjectFeaturesViewModel : IVMForProjectFeaturesBinder
+    public interface IProjectFeaturesVM : IVMForProjectFeaturesBinder
     {
-        IFeatureViewModel? CurrentlyEditing { get; set; }
+        IFeatureVM? CurrentlyEditing { get; set; }
     }
 
-    public partial class ProjectFeaturesViewModel : BindingViewModelBase<IVMForProjectFeaturesBinder>, IProjectFeaturesViewModel
+    public partial class ProjectFeaturesVM : BindingViewModelBase<IVMForProjectFeaturesBinder>, IProjectFeaturesVM
     {
         IUIDialogHandler _dialogHandler;
 
-        public ProjectFeaturesViewModel(IServiceSource servSource) => _dialogHandler = servSource.Get<IUIDialogHandler>();
+        public ProjectFeaturesVM(IServiceSource servSource) => _dialogHandler = servSource.Get<IUIDialogHandler>();
 
         // Raw data synced to the model:
         [ObservableProperty] IVMBinder<IVMForFeatureBinder>[] _rawFeatures = null!;
         [ObservableProperty] IFeatureManager _rawManager = null!;
 
-        [ObservableProperty] IFeatureViewModel[]? _items;
-        [ObservableProperty][NotifyPropertyChangedFor(nameof(ShowEditingPanel))] IFeatureViewModel? _currentlyEditing;
+        [ObservableProperty] IFeatureVM[]? _items;
+        [ObservableProperty][NotifyPropertyChangedFor(nameof(ShowEditingPanel))] IFeatureVM? _currentlyEditing;
 
         public bool ShowEditingPanel => CurrentlyEditing != null;
 
-        partial void OnCurrentlyEditingChanged(IFeatureViewModel? oldValue, IFeatureViewModel? newValue)
+        partial void OnCurrentlyEditingChanged(IFeatureVM? oldValue, IFeatureVM? newValue)
         {
             // Reset the old and assign the new (if needed)
             if (oldValue != null) oldValue.IsEditing = false;
@@ -55,8 +55,8 @@ namespace ABCo.Multicam.UI.ViewModels.Features
 
         public void UpdateItems()
         {
-            var newItems = new IFeatureViewModel[RawFeatures.Length];
-            for (int i = 0; i < newItems.Length; i++) newItems[i] = RawFeatures[i].GetVM<IFeatureViewModel>(this);
+            var newItems = new IFeatureVM[RawFeatures.Length];
+            for (int i = 0; i < newItems.Length; i++) newItems[i] = RawFeatures[i].GetVM<IFeatureVM>(this);
             Items = newItems;
         }
 

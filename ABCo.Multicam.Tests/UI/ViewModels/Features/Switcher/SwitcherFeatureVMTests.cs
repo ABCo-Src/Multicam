@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
 {
     [TestClass]
-    public class SwitcherFeatureViewModelTests
+    public class SwitcherFeatureVMTests
     {
         public record struct Mocks(
             Mock<IVMBinder<IVMForSwitcherMixBlock>>[] RawMixBlocks,
@@ -35,7 +35,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
                 _mocks.RawMixBlocks[i].Setup(m => m.GetVM<ISwitcherMixBlockVM>(It.IsAny<object>())).Returns(_mocks.VMs[i].Object);
         }
 
-        public SwitcherFeatureViewModel Create() => new()
+        public SwitcherFeatureVM Create() => new()
         {
             RawMixBlocks = new[] { _mocks.RawMixBlocks[0].Object, _mocks.RawMixBlocks[1].Object }
         };

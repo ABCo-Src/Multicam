@@ -28,9 +28,6 @@ namespace ABCo.Multicam.UI
             container.RegisterSingleton<MainWindowViewModel>();
 
             // Register binders
-            container.RegisterTransient<IApplicationViewModel, ApplicationViewModel>();
-            container.RegisterTransient<IProjectViewModel, ProjectViewModel>();
-            container.RegisterTransient<IProjectFeaturesViewModel, ProjectFeaturesViewModel>();
             container.RegisterTransient<IBinderForProjectFeatures, ProjectFeaturesVMBinder>();
             container.RegisterTransient<IBinderForFeatureContainer, FeatureVMBinder>();
             container.RegisterTransient<IBinderForSwitcherFeature, SwitcherFeatureVMBinder>();
@@ -38,13 +35,16 @@ namespace ABCo.Multicam.UI
             container.RegisterTransient<IBinderForUnsupportedFeature, UnsupportedFeatureVMBinder>();
 
             // Register view-models
-            container.RegisterTransient<IFeatureViewModel, FeatureViewModel>();
-            container.RegisterTransient<ISwitcherFeatureVM, SwitcherFeatureViewModel>();
-            container.RegisterTransient<ISwitcherMixBlockVM, SwitcherMixBlockViewModel>();
-            container.RegisterTransient<ISwitcherCutButtonViewModel, SwitcherCutButtonViewModel>();
-            container.RegisterTransient<ISwitcherAutoButtonViewModel, SwitcherAutoButtonViewModel>();
-            container.RegisterTransient<ISwitcherProgramInputViewModel, SwitcherProgramInputViewModel>();
-            container.RegisterTransient<ISwitcherPreviewInputViewModel, SwitcherPreviewInputViewModel>();
+            container.RegisterTransient<IApplicationVM, ApplicationVM>();
+            container.RegisterTransient<IProjectVM, ProjectVM>();
+            container.RegisterTransient<IProjectFeaturesVM, ProjectFeaturesVM>();
+            container.RegisterTransient<IFeatureVM, FeatureVM>();
+            container.RegisterTransient<ISwitcherFeatureVM, SwitcherFeatureVM>();
+            container.RegisterTransient<ISwitcherMixBlockVM, SwitcherMixBlockVM>();
+            container.RegisterTransient<ISwitcherCutButtonVM, SwitcherCutButtonVM>();
+            container.RegisterTransient<ISwitcherAutoButtonVM, SwitcherAutoButtonVM>();
+            container.RegisterTransient<ISwitcherProgramInputVM, SwitcherProgramInputVM>();
+            container.RegisterTransient<ISwitcherPreviewInputVM, SwitcherPreviewInputVM>();
 
             CoreStatics.Initialize(container);
         }

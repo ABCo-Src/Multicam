@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
-    public interface ISwitcherButtonViewModel
+    public interface ISwitcherButtonVM
     {
         string Text { get; set; }
         SwitcherButtonStatus Status { get; set; }
     }
 
-    public abstract partial class SwitcherButtonViewModel : ViewModelBase, ISwitcherButtonViewModel
+    public abstract partial class SwitcherButtonVM : ViewModelBase, ISwitcherButtonVM
     {
         protected ISwitcherMixBlockVM _parent = null!;
 

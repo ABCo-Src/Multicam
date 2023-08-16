@@ -14,15 +14,15 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.ViewModels
 {
-    public interface IProjectViewModel { }
-    public partial class ProjectViewModel : ViewModelBase, IProjectViewModel
+    public interface IProjectVM { }
+    public partial class ProjectVM : ViewModelBase, IProjectVM
     {
-        [ObservableProperty] IProjectFeaturesViewModel _features;
+        [ObservableProperty] IProjectFeaturesVM _features;
 
-        public ProjectViewModel(IServiceSource servSource)
+        public ProjectVM(IServiceSource servSource)
         {
             var binder = (IVMBinder<IVMForProjectFeaturesBinder>)servSource.Get<IFeatureManager>().UIBinder;
-            _features = binder.GetVM<IProjectFeaturesViewModel>(this);
+            _features = binder.GetVM<IProjectFeaturesVM>(this);
         }
     }
 }

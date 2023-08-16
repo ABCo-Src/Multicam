@@ -12,9 +12,9 @@ using System.Threading.Tasks;
 namespace ABCo.Multicam.Tests.UI.ViewModels
 {
     [TestClass]
-    public class MainWindowViewModelTests
+    public class MainWindowVMTests
     {
-        public record struct Mocks(Mock<IServiceSource> ServSource, Mock<IApplicationViewModel> App, Mock<IUIWindow> Window);
+        public record struct Mocks(Mock<IServiceSource> ServSource, Mock<IApplicationVM> App, Mock<IUIWindow> Window);
         Mocks _mocks = new();
 
         [TestInitialize]
@@ -22,11 +22,11 @@ namespace ABCo.Multicam.Tests.UI.ViewModels
         {
             _mocks.App = new();
             _mocks.ServSource = new();
-            _mocks.ServSource.Setup(m => m.Get<IApplicationViewModel>()).Returns(_mocks.App.Object);
+            _mocks.ServSource.Setup(m => m.Get<IApplicationVM>()).Returns(_mocks.App.Object);
             _mocks.Window = new();
         }
 
-        MainWindowViewModel Create() => new(_mocks.ServSource.Object, _mocks.Window.Object);
+        MainWindowVM Create() => new(_mocks.ServSource.Object, _mocks.Window.Object);
 
         [TestMethod]
         public void TitlebarHeight_Normal()

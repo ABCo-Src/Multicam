@@ -31,7 +31,7 @@ public partial class App : Application
             var container = UIAvaloniaStatics.InitializeContainer(newWindow, newWindow.AppContent);
 
             // Use this to create the main VM + finish
-            newWindow.DataContext = container.GetInstance(typeof(MainWindowViewModel));
+            newWindow.DataContext = container.GetInstance(typeof(MainWindowVM));
             desktop.MainWindow = newWindow;
         }
 
@@ -45,7 +45,7 @@ public partial class App : Application
             var container = UIAvaloniaStatics.InitializeContainer(null, mainWindowView);
 
             // Use this to create the main VM + finish
-            mainWindowView.DataContext = container.GetInstance(typeof(MainWindowViewModel));
+            mainWindowView.DataContext = container.GetInstance(typeof(MainWindowVM));
             singleViewPlatform.MainView = mainWindowView;
 
         }

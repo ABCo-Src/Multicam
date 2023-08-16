@@ -10,5 +10,5 @@ using ABCo.Multicam.UI.Bindings;
 namespace ABCo.Multicam.UI.ViewModels.Features
 {
     public interface IUnsupportedFeatureViewModel : ILiveFeatureViewModel { }
-    public class UnsupportedFeatureViewModel : ViewModelBase, IUnsupportedFeatureViewModel { }
+    public class UnsupportedFeatureVM : ViewModelBase, IUnsupportedFeatureViewModel { }
 }

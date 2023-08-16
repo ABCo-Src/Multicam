@@ -14,16 +14,16 @@ using System.Threading.Tasks;
 namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
 {
     [TestClass]
-    public class SwitcherMixBlockViewModelTests
+    public class SwitcherMixBlockVMTests
     {
         public record struct Mocks(
             Mock<IServiceSource> ServiceSource,
             Mock<ISwitcherFeatureVM> Parent,
             Mock<ISwitcherRunningFeature> RawFeature,
-            Mock<ISwitcherCutButtonViewModel> Cut,
-            Mock<ISwitcherAutoButtonViewModel> Auto,
-            Mock<ISwitcherProgramInputViewModel>[] ProgInputs,
-            Mock<ISwitcherPreviewInputViewModel>[] PrevInputs,
+            Mock<ISwitcherCutButtonVM> Cut,
+            Mock<ISwitcherAutoButtonVM> Auto,
+            Mock<ISwitcherProgramInputVM>[] ProgInputs,
+            Mock<ISwitcherPreviewInputVM>[] PrevInputs,
             SwitcherBusInput[] ModelInputs
         );
 
@@ -43,18 +43,18 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
             _mocks.RawFeature = new Mock<ISwitcherRunningFeature>();
 
             _mocks.ModelInputs = new SwitcherBusInput[] { new(2, "abc"), new(3, "ghi"), new(5, "def"), new(4, "kl") };
-            _mocks.ProgInputs = NewInputs<ISwitcherProgramInputViewModel>();
-            _mocks.PrevInputs = NewInputs<ISwitcherPreviewInputViewModel>();
-            _mocks.Cut = new Mock<ISwitcherCutButtonViewModel>();
-            _mocks.Auto = new Mock<ISwitcherAutoButtonViewModel>();
+            _mocks.ProgInputs = NewInputs<ISwitcherProgramInputVM>();
+            _mocks.PrevInputs = NewInputs<ISwitcherPreviewInputVM>();
+            _mocks.Cut = new Mock<ISwitcherCutButtonVM>();
+            _mocks.Auto = new Mock<ISwitcherAutoButtonVM>();
 
             _mocks.ServiceSource = new Mock<IServiceSource>();
-            _mocks.ServiceSource.Setup(m => m.Get<ISwitcherProgramInputViewModel>()).Returns(() => _mocks.ProgInputs[_progInputPos++].Object);
-            _mocks.ServiceSource.Setup(m => m.Get<ISwitcherPreviewInputViewModel>()).Returns(() => _mocks.PrevInputs[_prevInputPos++].Object);
-            _mocks.ServiceSource.Setup(m => m.Get<ISwitcherCutButtonViewModel>()).Returns(() => _mocks.Cut.Object);
-            _mocks.ServiceSource.Setup(m => m.Get<ISwitcherAutoButtonViewModel>()).Returns(() => _mocks.Auto.Object);
+            _mocks.ServiceSource.Setup(m => m.Get<ISwitcherProgramInputVM>()).Returns(() => _mocks.ProgInputs[_progInputPos++].Object);
+            _mocks.ServiceSource.Setup(m => m.Get<ISwitcherPreviewInputVM>()).Returns(() => _mocks.PrevInputs[_prevInputPos++].Object);
+            _mocks.ServiceSource.Setup(m => m.Get<ISwitcherCutButtonVM>()).Returns(() => _mocks.Cut.Object);
+            _mocks.ServiceSource.Setup(m => m.Get<ISwitcherAutoButtonVM>()).Returns(() => _mocks.Auto.Object);
 
-            Mock<T>[] NewInputs<T>() where T : class, ISwitcherBusInputViewModel
+            Mock<T>[] NewInputs<T>() where T : class, ISwitcherBusInputVM
             {
                 var res = new Mock<T>[4];
                 for (int i = 0; i < 4; i++)
@@ -67,7 +67,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
             }
         }
 
-        SwitcherMixBlockViewModel Create() => new(_mocks.ServiceSource.Object)
+        SwitcherMixBlockVM Create() => new(_mocks.ServiceSource.Object)
         {
             RawMixBlock = _model,
             RawMixBlockIndex = 8,
@@ -81,7 +81,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
             var vm = Create();
             Assert.AreEqual(_mocks.Cut.Object, vm.CutButton);
             _mocks.Cut.Verify(m => m.FinishConstruction(vm));
-            _mocks.ServiceSource.Verify(m => m.Get<ISwitcherCutButtonViewModel>(), Times.Once);
+            _mocks.ServiceSource.Verify(m => m.Get<ISwitcherCutButtonVM>(), Times.Once);
         }
 
         [TestMethod]
@@ -90,7 +90,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
             var vm = Create();
             Assert.AreEqual(_mocks.Auto.Object, vm.AutoButton);
             _mocks.Auto.Verify(m => m.FinishConstruction(vm));
-            _mocks.ServiceSource.Verify(m => m.Get<ISwitcherAutoButtonViewModel>(), Times.Once);
+            _mocks.ServiceSource.Verify(m => m.Get<ISwitcherAutoButtonVM>(), Times.Once);
         }
 
         [TestMethod]
@@ -106,7 +106,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
 
             var programBus = vm.ProgramBus;
 
-            _mocks.ServiceSource.Verify(m => m.Get<ISwitcherProgramInputViewModel>());
+            _mocks.ServiceSource.Verify(m => m.Get<ISwitcherProgramInputVM>());
             _mocks.ProgInputs[0].Verify(m => m.FinishConstruction(busInput1, vm));
             _mocks.ProgInputs[1].Verify(m => m.FinishConstruction(busInput2, vm));
 
@@ -138,7 +138,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
 
             var previewBus = vm.PreviewBus;
 
-            _mocks.ServiceSource.Verify(m => m.Get<ISwitcherPreviewInputViewModel>());
+            _mocks.ServiceSource.Verify(m => m.Get<ISwitcherPreviewInputVM>());
             _mocks.PrevInputs[0].Verify(m => m.FinishConstruction(busInput1, vm));
             _mocks.PrevInputs[1].Verify(m => m.FinishConstruction(busInput2, vm));
 

@@ -11,14 +11,14 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
-    public interface ISwitcherBusInputViewModel 
+    public interface ISwitcherBusInputVM 
     {
         SwitcherBusInput Base { get; }
         void FinishConstruction(SwitcherBusInput busInput, ISwitcherMixBlockVM parent);
         void SetHighlight(bool visible);
     }
 
-    public abstract class SwitcherBusInputViewModel : SwitcherButtonViewModel, ISwitcherBusInputViewModel
+    public abstract class SwitcherBusInputVM : SwitcherButtonVM, ISwitcherBusInputVM
     {
         public SwitcherBusInput Base { get; private set; } = null!;
 
@@ -32,8 +32,8 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
         public abstract void SetHighlight(bool visible);
     }
 
-    public interface ISwitcherProgramInputViewModel : ISwitcherBusInputViewModel { }
-    public partial class SwitcherProgramInputViewModel : SwitcherBusInputViewModel, ISwitcherProgramInputViewModel
+    public interface ISwitcherProgramInputVM : ISwitcherBusInputVM { }
+    public partial class SwitcherProgramInputVM : SwitcherBusInputVM, ISwitcherProgramInputVM
     {
         public override void SetHighlight(bool visible)
         {
@@ -46,8 +46,8 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
         public override void Click() => _parent.SetProgram(Base.Id);
     }
 
-    public interface ISwitcherPreviewInputViewModel : ISwitcherBusInputViewModel { }
-    public partial class SwitcherPreviewInputViewModel : SwitcherBusInputViewModel, ISwitcherPreviewInputViewModel
+    public interface ISwitcherPreviewInputVM : ISwitcherBusInputVM { }
+    public partial class SwitcherPreviewInputVM : SwitcherBusInputVM, ISwitcherPreviewInputVM
     {
         public override void SetHighlight(bool visible)
         {

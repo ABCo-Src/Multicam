@@ -13,7 +13,7 @@ public partial class MainWindow : Window
     // Keep the view-model updated about any state changes
     public void MainWindow_Resized(object sender, WindowResizedEventArgs args)
     {
-        var vmAsReal = (MainWindowViewModel)DataContext!;
+        var vmAsReal = (MainWindowVM)DataContext!;
         vmAsReal.IsMaximized = WindowState != WindowState.Maximized;
     }
 }

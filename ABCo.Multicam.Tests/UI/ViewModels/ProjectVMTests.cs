@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace ABCo.Multicam.Tests.UI.ViewModels
 {
     [TestClass]
-    public class ProjectViewModelTests
+    public class ProjectVMTests
     {
         //[TestMethod]
         //public void Ctor_Normal()

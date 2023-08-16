@@ -18,7 +18,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features
 {
     using AlsoNotify = NotifyPropertyChangedForAttribute;
 
-    public interface IFeatureViewModel : IVMForFeatureBinder
+    public interface IFeatureVM : IVMForFeatureBinder
     {
         public bool IsEditing { get; set; }
     }
@@ -28,7 +28,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features
 
     }
 
-    public partial class FeatureViewModel : BindingViewModelBase<IVMForFeatureBinder>, IVMForFeatureBinder, IFeatureViewModel
+    public partial class FeatureVM : BindingViewModelBase<IVMForFeatureBinder>, IVMForFeatureBinder, IFeatureVM
     {
         // Synced to the model:
         [ObservableProperty] IFeatureManager _rawManager = null!;
@@ -39,7 +39,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features
         [ObservableProperty][AlsoNotify(nameof(EditBtnText))] bool _isEditing;
         [ObservableProperty] ILiveFeatureViewModel? _innerVM;
 
-        public FeatureViewModel() => FeatureTitle = "New Feature";
+        public FeatureVM() => FeatureTitle = "New Feature";
 
         public string EditBtnText => IsEditing ? "Finish" : "Edit";
         public string EditPanelTitle => $"Editing '{FeatureTitle}'";
@@ -51,12 +51,12 @@ namespace ABCo.Multicam.UI.ViewModels.Features
             InnerVM = value.FeatureType switch
             {
                 FeatureTypes.Switcher => ((IVMBinder<IVMForSwitcherFeature>)RawInnerFeature.UIBinder).GetVM<ISwitcherFeatureVM>(this),
-                _ => new UnsupportedFeatureViewModel()
+                _ => new UnsupportedFeatureVM()
             };
         }
 
         public void ToggleEdit() => 
-            ((IProjectFeaturesViewModel)Parent).CurrentlyEditing = IsEditing ? null : this; // Will update our editing indicator
+            ((IProjectFeaturesVM)Parent).CurrentlyEditing = IsEditing ? null : this; // Will update our editing indicator
 
         public void MoveDown() => RawManager.MoveDown(RawContainer);
         public void MoveUp() => RawManager.MoveUp(RawContainer);

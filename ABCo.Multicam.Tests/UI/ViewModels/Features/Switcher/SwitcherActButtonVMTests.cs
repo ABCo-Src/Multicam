@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
 {
     [TestClass]
-    public class SwitcherActButtonViewModelTests
+    public class SwitcherActButtonVMTests
     {
         public record struct Mocks(Mock<IServiceSource> ServiceSource, Mock<ISwitcherMixBlockVM> Parent);
         Mocks _mocks = new();
@@ -23,14 +23,14 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
             _mocks.Parent = new Mock<ISwitcherMixBlockVM>();
         }
 
-        public ISwitcherActButtonViewModel Create(bool isAuto)
+        public ISwitcherActButtonVM Create(bool isAuto)
         {
-            ISwitcherActButtonViewModel btn = isAuto ? CreateAuto() : CreateCut();
+            ISwitcherActButtonVM btn = isAuto ? CreateAuto() : CreateCut();
             btn.FinishConstruction(_mocks.Parent.Object);
             return btn;
 
-            SwitcherCutButtonViewModel CreateCut() => new();
-            SwitcherAutoButtonViewModel CreateAuto() => new();
+            SwitcherCutButtonVM CreateCut() => new();
+            SwitcherAutoButtonVM CreateAuto() => new();
         }
 
         [TestMethod]

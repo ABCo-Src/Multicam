@@ -17,14 +17,14 @@ using System.Threading.Tasks;
 namespace ABCo.Multicam.Tests.UI.ViewModels.Features
 {
     [TestClass]
-    public class FeatureViewModelTests
+    public class FeatureVMTests
     {
         public interface ISwitcherBinder : IVMBinder<IVMForSwitcherFeature>, ILiveFeatureBinder { }
 
         public record struct Mocks(
             Mock<IFeatureManager> FeatureManager, 
             Mock<IFeatureContainer> RawFeature, 
-            Mock<IProjectFeaturesViewModel> Parent,
+            Mock<IProjectFeaturesVM> Parent,
             Mock<ILiveFeature> InnerFeature,
             Mock<ISwitcherBinder> InnerFeatureBinder,
             Mock<ISwitcherFeatureVM> SwitcherVM,
@@ -51,7 +51,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features
             _mocks.Parent = new();
         }
 
-        public FeatureViewModel Create() => new()
+        public FeatureVM Create() => new()
         {
             Parent = _mocks.Parent.Object,
             RawManager = _mocks.FeatureManager.Object,
@@ -81,7 +81,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features
         {
             _type = FeatureTypes.Unsupported;
             var vm = Create();
-            Assert.IsInstanceOfType(vm.InnerVM, typeof(UnsupportedFeatureViewModel));
+            Assert.IsInstanceOfType(vm.InnerVM, typeof(UnsupportedFeatureVM));
         }
 
         [TestMethod]

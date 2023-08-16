@@ -12,12 +12,12 @@ using System.Threading.Tasks;
 namespace ABCo.Multicam.Tests.UI.ViewModels
 {
     [TestClass]
-    public class ApplicationViewModelTests
+    public class ApplicationVMTests
     {
         [TestMethod]
         public void Ctor_Normal()
         {
-            var vm = new ApplicationViewModel(Mock.Of<IServiceSource>(m => m.Get<IProjectViewModel>() == Mock.Of<IProjectViewModel>()));
+            var vm = new ApplicationVM(Mock.Of<IServiceSource>(m => m.Get<IProjectVM>() == Mock.Of<IProjectVM>()));
             Assert.IsNotNull(vm.Project);
         }
     }

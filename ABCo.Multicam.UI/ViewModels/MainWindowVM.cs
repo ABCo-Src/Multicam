@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.ViewModels
 {
-    public partial class MainWindowViewModel : ViewModelBase
+    public partial class MainWindowVM : ViewModelBase
     {
         readonly IUIWindow _window;
 
-        [ObservableProperty] IApplicationViewModel _application;
+        [ObservableProperty] IApplicationVM _application;
 
         public int TitleBarHeight => BorderWidth + 38;
         public int BorderWidth => _window.BorderRecommended ? 4 : 0;
@@ -30,10 +30,10 @@ namespace ABCo.Multicam.UI.ViewModels
         public void RequestMaximizeToggle() => _window.RequestMainWindowMaximizeToggle();
         public void RequestMinimize() => _window.RequestMainWindowMinimize();
 
-        public MainWindowViewModel(IServiceSource source, IUIWindow window)
+        public MainWindowVM(IServiceSource source, IUIWindow window)
         {
             _window = window;
-            _application = source.Get<IApplicationViewModel>();
+            _application = source.Get<IApplicationVM>();
         }
     }
 }

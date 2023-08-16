@@ -21,7 +21,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
     {
     }
 
-    public partial class SwitcherFeatureViewModel : BindingViewModelBase<IVMForSwitcherFeature>, ISwitcherFeatureVM
+    public partial class SwitcherFeatureVM : BindingViewModelBase<IVMForSwitcherFeature>, ISwitcherFeatureVM
     {
         // Synced to the model:
         [ObservableProperty] IVMBinder<IVMForSwitcherMixBlock>[] _rawMixBlocks = null!;

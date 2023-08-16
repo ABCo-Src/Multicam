@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
 {
     [TestClass]
-    public class SwitcherBusInputViewModelTests
+    public class SwitcherBusInputVMTests
     {
         public record struct Mocks(Mock<ISwitcherMixBlockVM> Parent, Mock<IServiceSource> ServiceSource);
 
@@ -27,14 +27,14 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
             _mocks.ServiceSource = new Mock<IServiceSource>();
         }
 
-        public SwitcherBusInputViewModel Create(bool isProgram)
+        public SwitcherBusInputVM Create(bool isProgram)
         {
-            SwitcherBusInputViewModel input = isProgram ? CreateProgram() : CreatePreview();
+            SwitcherBusInputVM input = isProgram ? CreateProgram() : CreatePreview();
             input.FinishConstruction(_model, _mocks.Parent.Object);
             return input;
 
-            SwitcherProgramInputViewModel CreateProgram() => new();
-            SwitcherPreviewInputViewModel CreatePreview() => new();
+            SwitcherProgramInputVM CreateProgram() => new();
+            SwitcherPreviewInputVM CreatePreview() => new();
         }
 
         [TestMethod]

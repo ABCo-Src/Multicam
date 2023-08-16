@@ -21,14 +21,14 @@ using System.Threading.Tasks;
 namespace ABCo.Multicam.Tests.UI.ViewModels.Features
 {
     [TestClass]
-    public class ProjectFeaturesViewModelTests
+    public class ProjectFeaturesVMTests
     {
         public record struct Mocks(
             Mock<IFeatureManager> Manager,
             Mock<IServiceSource> ServiceSource,
             Mock<IUIDialogHandler> DialogHandler,
             Mock<IVMBinder<IVMForFeatureBinder>>[] RunningFeatures,
-            Mock<IFeatureViewModel>[] FeatureVMs
+            Mock<IFeatureVM>[] FeatureVMs
         );
 
         Action<FeatureTypes> _dialogHandlerCallback = d => { };
@@ -46,20 +46,20 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features
                 .Callback<ContextMenuDetails<FeatureTypes>>((details) => _dialogHandlerCallback = details.OnSelect);
 
             _mocks.RunningFeatures = new Mock<IVMBinder<IVMForFeatureBinder>>[] { new(), new(), new() };
-            _mocks.FeatureVMs = new Mock<IFeatureViewModel>[] { new(), new(), new() };
+            _mocks.FeatureVMs = new Mock<IFeatureVM>[] { new(), new(), new() };
             _modelFeatures = new IVMBinder<IVMForFeatureBinder>[] { _mocks.RunningFeatures[0].Object, _mocks.RunningFeatures[1].Object, _mocks.RunningFeatures[2].Object };
 
             for (int i = 0; i < 3; i++)
             {
                 _mocks.FeatureVMs[i].SetupGet(m => m.Binder).Returns(_mocks.RunningFeatures[i].Object);
-                _mocks.RunningFeatures[i].Setup(m => m.GetVM<IFeatureViewModel>(It.IsAny<object>())).Returns(_mocks.FeatureVMs[i].Object);
+                _mocks.RunningFeatures[i].Setup(m => m.GetVM<IFeatureVM>(It.IsAny<object>())).Returns(_mocks.FeatureVMs[i].Object);
             }
 
             _mocks.ServiceSource = new();
             _mocks.ServiceSource.Setup(m => m.Get<IUIDialogHandler>()).Returns(() => _mocks.DialogHandler.Object);
         }
 
-        ProjectFeaturesViewModel Create() => new(_mocks.ServiceSource.Object)
+        ProjectFeaturesVM Create() => new(_mocks.ServiceSource.Object)
         {
             RawManager = _mocks.Manager.Object
         };
@@ -112,7 +112,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features
             for (int i = 0; i < 3; i++)
             {
                 Assert.AreEqual(_mocks.FeatureVMs[i].Object, features[i]);
-                _mocks.RunningFeatures[i].Verify(m => m.GetVM<IFeatureViewModel>(vm), Times.Once);
+                _mocks.RunningFeatures[i].Verify(m => m.GetVM<IFeatureVM>(vm), Times.Once);
             }
         }
 
