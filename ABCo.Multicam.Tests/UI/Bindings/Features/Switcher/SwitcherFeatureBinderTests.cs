@@ -70,19 +70,19 @@ namespace ABCo.Multicam.Tests.UI.Bindings.Features.Switcher
         }
 
         [TestMethod]
-        public void ModelChange_Bus()
+        public void ModelChange_BusValues()
         {
             var buffer = Create();
             _mocks.Model.SetupGet(m => m.SwitcherSpecs).Returns(_mocks.Specs);
 
             var mixBlocks = buffer.GetMixBlocks();
-            buffer.ModelChange_Bus();
+            buffer.ModelChange_BusValues();
 
             Assert.AreEqual(3, mixBlocks.Length);
             for (int i = 0; i < 3; i++)
             {
                 _mocks.Binders[i].Verify(m => m.FinishConstruction(_mocks.Model.Object, _mocks.Specs.MixBlocks[i], i), Times.Once);
-                _mocks.Binders[i].Verify(m => m.ModelChange_Bus());
+                _mocks.Binders[i].Verify(m => m.ModelChange_BusValues());
                 Assert.AreEqual(_mocks.Binders[i].Object, mixBlocks[i]);
             }
         }

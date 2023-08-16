@@ -22,6 +22,7 @@ namespace ABCo.Multicam.Core.Features.Switchers
     {
         void FinishConstruction(ISwitcherRunningFeature feature);
         void ModelChange_Specs();
+        void ModelChange_BusValues();
     }
 
     public class SwitcherRunningFeature : ISwitcherRunningFeature
@@ -68,7 +69,7 @@ namespace ABCo.Multicam.Core.Features.Switchers
             oldBuffer.Dispose();
         }
 
-        void OnBusChange(RetrospectiveFadeInfo? info) => _uiBinder.ModelChange_Specs();
+        void OnBusChange(RetrospectiveFadeInfo? info) => _uiBinder.ModelChange_BusValues();
 
         public void Dispose() => _buffer.Dispose();
         public void Cut(int mixBlock) => _buffer.Cut(mixBlock);

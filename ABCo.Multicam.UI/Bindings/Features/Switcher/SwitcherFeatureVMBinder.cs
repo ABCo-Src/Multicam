@@ -52,10 +52,10 @@ namespace ABCo.Multicam.UI.Bindings.Features.Switcher
         }
 
         public void ModelChange_Specs() => ReportModelChange(Properties[0]);
-        public void ModelChange_Bus()
+        public void ModelChange_BusValues()
         {
             for (int i = 0; i < _currentMixBlocks.Length; i++)
-                ((IBinderForSwitcherMixBlock)_currentMixBlocks[i]).ModelChange_Bus();
+                ((IBinderForSwitcherMixBlock)_currentMixBlocks[i]).ModelChange_BusValues();
         }
     }
 }

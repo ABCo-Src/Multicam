@@ -10,7 +10,7 @@ namespace ABCo.Multicam.UI.Bindings.Features.Switcher
 {
     public interface IBinderForSwitcherMixBlock
     {
-        void ModelChange_Bus();
+        void ModelChange_BusValues();
         void FinishConstruction(ISwitcherRunningFeature feature, SwitcherMixBlock block, int index);
     }
 
@@ -71,9 +71,10 @@ namespace ABCo.Multicam.UI.Bindings.Features.Switcher
             Init();
         }
 
-        public void ModelChange_Bus()
+        public void ModelChange_BusValues()
         {
-            
+            ReportModelChange(Properties[3]);
+            ReportModelChange(Properties[4]);
         }
     }
 }

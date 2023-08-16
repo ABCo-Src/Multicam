@@ -69,7 +69,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         }
 
         [TestMethod]
-        public void Ctor_FinishesBinderConstruction()
+        public void Ctor_FinishesConstruction()
         {
             var feature = Create();
             _mocks.UIBinder.Verify(m => m.FinishConstruction(feature));
@@ -169,7 +169,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers
             var feature = Create();
             if (postChange) await feature.ChangeSwitcherAsync(_mocks.NewISwitcher.Object);
             _bufferCallbacks[postChange ? 1 : 0].Invoke(new RetrospectiveFadeInfo());
-            _mocks.UIBinder.Verify(m => m.ModelChange_Specs());
+            _mocks.UIBinder.Verify(m => m.ModelChange_BusValues());
         }
 
         [TestMethod]
