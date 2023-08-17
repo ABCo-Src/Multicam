@@ -125,7 +125,7 @@ namespace ABCo.Multicam.UI.Bindings
         private void VM_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             var vm = (TVM)sender!;
-            var store = (string?)vm.BindingInfoStore;
+            var store = vm.BindingInfoStore;
 
             // Stop if syncing is disabled.
             if (store == null) return;
@@ -182,7 +182,7 @@ namespace ABCo.Multicam.UI.Bindings
         // null if binding is disabled
         // "" if binding is enabled and no property to suppress
         // "propdata" if binding is enabled and property is present
-        object? BindingInfoStore { get; set; }
+        string? BindingInfoStore { get; set; }
 
         /// <summary>
         /// The parent of this view-model.

@@ -12,6 +12,12 @@
 
   <ItemGroup>
     <PackageReference Include="Avalonia.Browser" Version="$(AvaloniaVersion)" />
+	<!--
+	    AOT Code: dotnet publish -r browser-wasm -c Debug /p:TargetArchitecture=wasm /p:EmitLegacyAssetsFileItems=true /p:NativeDebugSymbols=false
+	<PackageReference Include="Microsoft.DotNet.ILCompiler" Version="7.0.0-*" />
+	<PackageReference Include="Microsoft.DotNet.ILCompiler.LLVM; runtime.browser-wasm.Microsoft.DotNet.ILCompiler.LLVM" Version="7.0.0-*" />
+	<PackageReference Include="Microsoft.DotNet.ILCompiler.LLVM; runtime.win-x64.Microsoft.DotNet.ILCompiler.LLVM" Version="7.0.0-*" />
+	-->
   </ItemGroup>
 
   <ItemGroup>

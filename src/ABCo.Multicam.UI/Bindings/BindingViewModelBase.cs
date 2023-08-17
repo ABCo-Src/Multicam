@@ -27,7 +27,7 @@ namespace ABCo.Multicam.UI.Bindings
         public void InitBinding(IVMBinder<TVMType> binder) => Binder = binder;
 
         // Stored data for the binder
-        public object? BindingInfoStore { get; set; }
+        public string? BindingInfoStore { get; set; }
         public object Parent { get; set; } = null!;
         public IVMBinder<TVMType>? Binder { get; set; }
     }

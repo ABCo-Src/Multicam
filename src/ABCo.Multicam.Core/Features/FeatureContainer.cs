@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Core.Features
 {
-    public interface IBinderForFeatureContainer // IVMBinder<IVMForFeatureBinder>
+    public interface IBinderForFeatureContainer
     {
         void FinishConstruction(IFeatureManager manager, IFeatureContainer feature);
     }
