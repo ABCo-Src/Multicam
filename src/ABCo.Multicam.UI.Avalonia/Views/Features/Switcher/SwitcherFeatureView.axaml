@@ -16,7 +16,7 @@
 
 		<!-- Feature Name + Switcher Info -->
 		<StackPanel Margin="0 15" Orientation="Horizontal">
-			<!--<TextBlock Text="{Binding FeatureTitle}" Classes="FeatureTitleText" VerticalAlignment="Center" />-->
+			<TextBlock Text="{Binding FeatureTitle}" Classes="FeatureTitleText" VerticalAlignment="Center" />
 			<TextBlock Margin="20 0" VerticalAlignment="Center">Currently unlinked</TextBlock>
 		</StackPanel>
 
