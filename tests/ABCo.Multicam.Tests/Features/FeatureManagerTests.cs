@@ -1,6 +1,7 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features;
 using Moq;
+using System.Reflection;
 
 namespace ABCo.Multicam.Tests.Features
 {
@@ -22,11 +23,12 @@ namespace ABCo.Multicam.Tests.Features
             _mocks.VMBinder = new();
 
             _mocks.ServiceSource = new();
-            _mocks.ServiceSource.SetupSequence(m => m.Get<IFeatureContainer>())
+            _mocks.ServiceSource.Setup(m => m.Get<IBinderForProjectFeatures, IFeatureManager>(It.IsAny<IFeatureManager>())).Returns(_mocks.VMBinder.Object);
+            _mocks.ServiceSource.SetupSequence(m => m.Get<IFeatureContainer, FeatureTypes>(It.IsAny<FeatureTypes>()))
                 .Returns(_mocks.Features[0].Object).Returns(_mocks.Features[1].Object).Returns(_mocks.Features[2].Object);
         }
 
-        FeatureManager Create() => new(_mocks.ServiceSource.Object, _mocks.VMBinder.Object);
+        FeatureManager Create() => new(_mocks.ServiceSource.Object);
 
         [TestMethod]
         public void Ctor()
@@ -34,20 +36,21 @@ namespace ABCo.Multicam.Tests.Features
             var model = Create();
             Assert.IsNotNull(model.Features);
             Assert.AreEqual(_mocks.VMBinder.Object, model.UIBinder);
-            _mocks.VMBinder.Verify(m => m.FinishConstruction(model));
+            _mocks.ServiceSource.Verify(m => m.Get<IBinderForProjectFeatures, IFeatureManager>(model));
         }
 
         [TestMethod]
-        public void CreateFeature()
+        [DataRow(FeatureTypes.Unsupported)]
+        [DataRow(FeatureTypes.Switcher)]
+        public void CreateFeature(FeatureTypes type)
         {
             var manager = Create();
-            manager.CreateFeature(FeatureTypes.Unsupported);
+            manager.CreateFeature(type);
 
-            _mocks.ServiceSource.Verify(m => m.Get<IFeatureContainer>());
-            _mocks.Features[0].Verify(m => m.FinishConstruction(FeatureTypes.Unsupported));
+            _mocks.ServiceSource.Verify(m => m.Get<IFeatureContainer, FeatureTypes>(type));
 
-            Assert.AreEqual(_mocks.Features[0].Object, manager.Features[0]);
             Assert.AreEqual(1, manager.Features.Count);
+            Assert.AreEqual(_mocks.Features[0].Object, manager.Features[0]);
         }
 
         [TestMethod]

@@ -1,6 +1,7 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features;
 using ABCo.Multicam.Core.Features.Switchers;
+using ABCo.Multicam.Tests.Helpers;
 using Moq;
 
 namespace ABCo.Multicam.Tests.Features
@@ -29,13 +30,16 @@ namespace ABCo.Multicam.Tests.Features
 
             _mocks.ServSource = new();
             _mocks.ServSource.Setup(m => m.Get<ISwitcherRunningFeature>()).Returns(() => _mocks.SwitcherFeature.Object);
+            _mocks.ServSource.Setup(m => m.Get<IBinderForFeatureContainer, IFeatureManager, IFeatureContainer>(It.IsAny<IFeatureManager>(), It.IsAny<IFeatureContainer>()))
+                .Returns(_mocks.UIBinder.Object)
+                .Callback<IFeatureManager, IFeatureContainer>((m, c) => Assert.IsNotNull(m));
+
             _mocks.ServSource.Setup(m => m.Get<IUnsupportedRunningFeature>()).Returns(() => _mocks.UnsupportedFeature.Object);
         }
 
         public FeatureContainer Create()
         {
-            var container = new FeatureContainer(_mocks.UIBinder.Object, _mocks.ServSource.Object, _mocks.FeatureManager.Object);
-            _mocks.UIBinder.Verify(m => m.FinishConstruction(_mocks.FeatureManager.Object, container), Times.Never); // Fail if inner things were finished before this.
+            var container = new FeatureContainer(_mocks.ServSource.Object, _mocks.FeatureManager.Object);
             container.FinishConstruction(_type);
             return container;
         }
@@ -44,7 +48,7 @@ namespace ABCo.Multicam.Tests.Features
         public void Create_InitUIBinder()
         {
             var container = Create();
-            _mocks.UIBinder.Verify(m => m.FinishConstruction(_mocks.FeatureManager.Object, container));
+            _mocks.ServSource.Verify(m => m.Get<IBinderForFeatureContainer, IFeatureManager, IFeatureContainer>(_mocks.FeatureManager.Object, container));
         }
 
         [TestMethod]

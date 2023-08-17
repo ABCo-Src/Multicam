@@ -27,20 +27,15 @@
         public IReadOnlyList<IFeatureContainer> Features => _runningFeatures;
         public IBinderForProjectFeatures UIBinder { get; private set; }
 
-        public FeatureManager(IServiceSource source, IBinderForProjectFeatures binder)
+        public FeatureManager(IServiceSource source)
         {
-            UIBinder = binder;
-            binder.FinishConstruction(this);
-
             _servSource = source;
+            UIBinder = source.Get<IBinderForProjectFeatures, IFeatureManager>(this);
         }
 
         public void CreateFeature(FeatureTypes type)
         {
-            var newContainer = _servSource.Get<IFeatureContainer>();
-            newContainer.FinishConstruction(type);
-            _runningFeatures.Add(newContainer);
-
+            _runningFeatures.Add(_servSource.Get<IFeatureContainer, FeatureTypes>(type));
             UIBinder.ModelChange_FeaturesChange();
         }
 

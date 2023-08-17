@@ -21,14 +21,13 @@ namespace ABCo.Multicam.Core.Features
         readonly IServiceSource _servSource;
         readonly IFeatureManager _manager;
 
-        public IBinderForFeatureContainer UIBinder { get; }
+        public IBinderForFeatureContainer UIBinder { get; private set;  } = null!;
         public ILiveFeature CurrentFeature { get; private set; } = null!;
 
-        public FeatureContainer(IBinderForFeatureContainer binder, IServiceSource servSource, IFeatureManager manager)
+        public FeatureContainer(IServiceSource servSource, IFeatureManager manager)
         {
             _servSource = servSource;
             _manager = manager;
-            UIBinder = binder;
         }
 
         public void FinishConstruction(FeatureTypes featureType)
@@ -39,7 +38,7 @@ namespace ABCo.Multicam.Core.Features
                 _ => _servSource.Get<IUnsupportedRunningFeature>(),
             };
 
-            UIBinder.FinishConstruction(_manager, this);
+            UIBinder = _servSource.Get<IBinderForFeatureContainer, IFeatureManager, IFeatureContainer>(_manager, this);
         }
 
         public void Dispose() => CurrentFeature.Dispose();
