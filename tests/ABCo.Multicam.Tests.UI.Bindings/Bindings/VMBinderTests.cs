@@ -2,13 +2,8 @@
 using ABCo.Multicam.Tests.Helpers;
 using ABCo.Multicam.UI.Bindings;
 using Moq;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Tests.UI.Bindings
 {
@@ -371,7 +366,7 @@ namespace ABCo.Multicam.Tests.UI.Bindings
 
         public class DummyBinder : VMBinder<IVMForDummyBinder>
         {
-            IVMBinderOperationLogger _logger;
+            readonly IVMBinderOperationLogger _logger;
 
             public override PropertyBinding[] CreateProperties() => new PropertyBinding[] 
             {

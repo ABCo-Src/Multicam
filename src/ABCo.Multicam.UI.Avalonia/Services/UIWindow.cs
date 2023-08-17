@@ -1,17 +1,11 @@
-﻿using ABCo.Multicam.UI.Avalonia.Views;
-using ABCo.Multicam.UI.Services;
+﻿using ABCo.Multicam.UI.Services;
 using Avalonia.Controls;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.Avalonia.Services
 {
     public class WindowedUIWindow : IUIWindow
     {
-        Window _window;
+        readonly Window _window;
         public WindowedUIWindow(Window window) => _window = window;
 
         public bool CanMinimize => true;

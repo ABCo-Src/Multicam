@@ -1,6 +1,5 @@
-﻿using ABCo.Multicam.UI.ViewModels;
-using ABCo.Multicam.UI.Avalonia.Views;
-
+﻿using ABCo.Multicam.UI.Avalonia.Views;
+using ABCo.Multicam.UI.ViewModels;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;

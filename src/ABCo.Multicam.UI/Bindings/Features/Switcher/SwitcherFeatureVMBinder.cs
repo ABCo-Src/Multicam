@@ -1,12 +1,5 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features.Switchers;
-using ABCo.Multicam.UI.ViewModels.Features.Switcher;
-using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.Bindings.Features.Switcher
 {

@@ -1,14 +1,8 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.UI.Enumerations;
-using ABCo.Multicam.UI.Helpers;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
 {
@@ -17,7 +11,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
     {
         public record struct Mocks(Mock<ISwitcherMixBlockVM> Parent, Mock<IServiceSource> ServiceSource);
 
-        SwitcherBusInput _model = new SwitcherBusInput(1, "Cam1");
+        readonly SwitcherBusInput _model = new SwitcherBusInput(1, "Cam1");
         Mocks _mocks = new();
 
         [TestInitialize]

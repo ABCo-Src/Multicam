@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ABCo.Multicam.Tests.Helpers
+﻿namespace ABCo.Multicam.Tests.Helpers
 {
     public class RunCheckBetweenAwaits : SynchronizationContext
     {
         Exception? _thrownException;
 
-        Action _between;
+        readonly Action _between;
         public RunCheckBetweenAwaits(Action between) => _between = between;
 
         public void AssertNoFail()

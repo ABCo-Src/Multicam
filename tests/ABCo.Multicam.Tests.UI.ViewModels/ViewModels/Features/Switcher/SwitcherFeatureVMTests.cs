@@ -1,18 +1,7 @@
-﻿using ABCo.Multicam.Core;
-using ABCo.Multicam.Core.Features.Switchers;
-using ABCo.Multicam.Core.Features.Switchers.Fading;
-using ABCo.Multicam.Core.Features.Switchers.Types;
+﻿using ABCo.Multicam.UI.Bindings;
 using ABCo.Multicam.UI.Bindings.Features.Switcher;
-using ABCo.Multicam.UI.Bindings;
-using ABCo.Multicam.UI.Enumerations;
-using ABCo.Multicam.UI.ViewModels.Features;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
 {

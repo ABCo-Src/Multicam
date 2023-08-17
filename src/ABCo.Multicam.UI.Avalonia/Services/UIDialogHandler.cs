@@ -4,18 +4,12 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Channels;
-using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.Avalonia.Services
 {
     public class UIDialogHandler : IUIDialogHandler
     {
-        MainWindowView _mainView;
+        readonly MainWindowView _mainView;
         public UIDialogHandler(MainWindowView window) => _mainView = window;
 
         public void OpenContextMenu<T>(ContextMenuDetails<T> details)

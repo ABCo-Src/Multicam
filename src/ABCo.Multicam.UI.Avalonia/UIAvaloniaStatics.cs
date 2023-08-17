@@ -2,14 +2,7 @@
 using ABCo.Multicam.UI.Avalonia.Views;
 using ABCo.Multicam.UI.Services;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using LightInject;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.Avalonia
 {

@@ -1,9 +1,4 @@
 ﻿using ABCo.Multicam.Core.Features.Switchers.Fading;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 {
@@ -28,10 +23,10 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 
     public class MixBlockInteractionBuffer : IMixBlockInteractionBuffer
     {
-        SwitcherMixBlock _mixBlock;
-        int _mixBlockIdx;
-        ISwitcher _switcher;
-        IMixBlockInteractionEmulator _fallbackEmulator;
+        readonly SwitcherMixBlock _mixBlock;
+        readonly int _mixBlockIdx;
+        readonly ISwitcher _switcher;
+        readonly IMixBlockInteractionEmulator _fallbackEmulator;
         Action<RetrospectiveFadeInfo>? _onCacheChangeExceptRefresh;
 
         public int Program { get; private set; }

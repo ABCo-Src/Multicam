@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ABCo.Multicam.Core.Features.Switchers.Interaction
+﻿namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 {
     public interface IMixBlockInteractionEmulator 
     {
@@ -18,10 +12,10 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 
     public class MixBlockInteractionEmulator : IMixBlockInteractionEmulator
     {
-        SwitcherMixBlock _mixBlock;
-        int _mixBlockIdx;
-        ISwitcher _switcher;
-        IMixBlockInteractionBuffer _parent;
+        readonly SwitcherMixBlock _mixBlock;
+        readonly int _mixBlockIdx;
+        readonly ISwitcher _switcher;
+        readonly IMixBlockInteractionBuffer _parent;
 
         public MixBlockInteractionEmulator(SwitcherMixBlock mixBlock, int mixBlockIdx, ISwitcher switcher, IMixBlockInteractionBuffer parent) 
         {

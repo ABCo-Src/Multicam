@@ -1,11 +1,4 @@
-﻿using ABCo.Multicam.Core.Features.Switchers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ABCo.Multicam.Core.Features
+﻿namespace ABCo.Multicam.Core.Features
 {
     /// <summary>
     /// Manages all the (running) features in the current project.
@@ -28,8 +21,8 @@ namespace ABCo.Multicam.Core.Features
 
     public class FeatureManager : IFeatureManager
     {
-        IServiceSource _servSource;
-        List<IFeatureContainer> _runningFeatures = new();
+        readonly IServiceSource _servSource;
+        readonly List<IFeatureContainer> _runningFeatures = new();
 
         public IReadOnlyList<IFeatureContainer> Features => _runningFeatures;
         public IBinderForProjectFeatures UIBinder { get; private set; }

@@ -1,5 +1,4 @@
-﻿using ABCo.Multicam.UI.Bindings;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace ABCo.Multicam.UI;
 

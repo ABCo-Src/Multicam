@@ -1,15 +1,10 @@
 ﻿using ABCo.Multicam.Core.Features;
 using ABCo.Multicam.UI.Avalonia.Views.Features.Switcher;
-using ABCo.Multicam.UI.Enumerations;
 using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.Avalonia.Locators
 {

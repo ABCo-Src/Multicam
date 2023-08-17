@@ -2,16 +2,8 @@
 using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.UI.Bindings;
 using ABCo.Multicam.UI.Bindings.Features.Switcher;
-using ABCo.Multicam.UI.Enumerations;
 using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {

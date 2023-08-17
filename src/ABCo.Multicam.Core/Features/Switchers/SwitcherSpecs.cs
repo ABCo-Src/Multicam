@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ABCo.Multicam.Core.Features.Switchers
+﻿namespace ABCo.Multicam.Core.Features.Switchers
 {
     public class SwitcherSpecs
     {

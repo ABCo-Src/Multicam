@@ -1,10 +1,8 @@
-﻿using System.Runtime.Versioning;
-using System.Threading.Tasks;
-
-using ABCo.Multicam.UI.Avalonia;
-
+﻿using ABCo.Multicam.UI.Avalonia;
 using Avalonia;
 using Avalonia.Browser;
+using System.Runtime.Versioning;
+using System.Threading.Tasks;
 
 [assembly: SupportedOSPlatform("browser")]
 

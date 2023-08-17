@@ -1,12 +1,6 @@
 ﻿using ABCo.Multicam.Core.Features.Switchers.Fading;
 using ABCo.Multicam.Core.Features.Switchers.Interaction;
 using ABCo.Multicam.Core.Features.Switchers.Types;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Core.Features.Switchers
 {
@@ -35,12 +29,12 @@ namespace ABCo.Multicam.Core.Features.Switchers
         // The buffer that sits between the switcher and adds preview emulation, caching and more to all the switcher interactions.
         // A new one is created anytime the specs change (which is why it's broken into its own service, it's an easy way to avoid async data tearing when switcher (specs) are changed).
         ISwitcherInteractionBuffer _buffer;
-        ISwitcherInteractionBufferFactory _bufferFactory;
+        readonly ISwitcherInteractionBufferFactory _bufferFactory;
 
         public bool IsConnected => _buffer.IsConnected;
         public SwitcherSpecs SwitcherSpecs => _buffer.Specs;
 
-        IBinderForSwitcherFeature _uiBinder;
+        readonly IBinderForSwitcherFeature _uiBinder;
         public ILiveFeatureBinder UIBinder => _uiBinder;
 
         public FeatureTypes FeatureType => FeatureTypes.Switcher;

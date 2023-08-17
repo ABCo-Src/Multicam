@@ -2,13 +2,7 @@
 using ABCo.Multicam.Core.Features;
 using ABCo.Multicam.UI.Bindings;
 using ABCo.Multicam.UI.Bindings.Features;
-using ABCo.Multicam.UI.ViewModels.Features;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Tests.UI.Bindings.Features
 {

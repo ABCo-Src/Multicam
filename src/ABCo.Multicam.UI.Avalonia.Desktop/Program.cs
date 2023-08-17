@@ -1,5 +1,5 @@
-﻿using System;
-using Avalonia;
+﻿using Avalonia;
+using System;
 
 namespace ABCo.Multicam.UI.Avalonia.Desktop;
 

@@ -1,9 +1,4 @@
 ﻿using LightInject;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Core
 {
@@ -31,7 +26,7 @@ namespace ABCo.Multicam.Core
 
     public class ServiceSource : IServiceSource
     {
-        ServiceContainer _container;
+        readonly ServiceContainer _container;
         public ServiceSource(ServiceContainer container) => _container = container;
         public T Get<T>() where T : class => _container.GetInstance<T>();
     }

@@ -1,10 +1,4 @@
 ﻿using ABCo.Multicam.Core.Features.Switchers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Core.Features
 {
@@ -24,8 +18,8 @@ namespace ABCo.Multicam.Core.Features
 
     public class FeatureContainer : IFeatureContainer
     {
-        IServiceSource _servSource;
-        IFeatureManager _manager;
+        readonly IServiceSource _servSource;
+        readonly IFeatureManager _manager;
 
         public IBinderForFeatureContainer UIBinder { get; }
         public ILiveFeature CurrentFeature { get; private set; } = null!;

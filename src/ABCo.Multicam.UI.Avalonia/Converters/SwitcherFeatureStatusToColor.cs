@@ -1,14 +1,9 @@
 ﻿using ABCo.Multicam.UI.Enumerations;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
-using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Media;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.Avalonia.Converters
 {
