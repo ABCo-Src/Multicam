@@ -3,7 +3,6 @@ using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.UI.Bindings;
 using ABCo.Multicam.UI.Bindings.Features.Switcher;
 using ABCo.Multicam.UI.Enumerations;
-using ABCo.Multicam.UI.Helpers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;

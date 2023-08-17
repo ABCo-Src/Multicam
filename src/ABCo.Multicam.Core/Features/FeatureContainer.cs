@@ -8,20 +8,18 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Core.Features
 {
-    public interface IBinderForFeatureContainer
+    public interface IBinderForFeatureContainer : INeedsInitialization<IFeatureManager, IFeatureContainer>
     {
-        void FinishConstruction(IFeatureManager manager, IFeatureContainer feature);
     }
 
     /// <summary>
     /// Represents a feature currently loaded, either on this system or another system.
     /// Introduces properties shared across all features, such as titles or machine switching.
     /// </summary>
-    public interface IFeatureContainer : IDisposable
+    public interface IFeatureContainer : INeedsInitialization<FeatureTypes>, IDisposable
     {
         IBinderForFeatureContainer UIBinder { get; }
         ILiveFeature CurrentFeature { get; }
-        void FinishConstruction(FeatureTypes featureType);
     }
 
     public class FeatureContainer : IFeatureContainer

@@ -1,22 +1,10 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features;
-using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.UI.Bindings;
 using ABCo.Multicam.UI.Bindings.Features;
-using ABCo.Multicam.UI.Helpers;
 using ABCo.Multicam.UI.Services;
-using ABCo.Multicam.UI.ViewModels;
 using ABCo.Multicam.UI.ViewModels.Features;
-using ABCo.Multicam.UI.ViewModels.Features.Switcher;
 using Moq;
-using NuGet.Frameworks;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Tests.UI.ViewModels.Features
 {

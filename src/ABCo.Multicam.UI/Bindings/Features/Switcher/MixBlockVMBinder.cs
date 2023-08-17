@@ -8,10 +8,9 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.Bindings.Features.Switcher
 {
-    public interface IBinderForSwitcherMixBlock
+    public interface IBinderForSwitcherMixBlock : INeedsInitialization<ISwitcherRunningFeature, SwitcherMixBlock, int>
     {
         void ModelChange_BusValues();
-        void FinishConstruction(ISwitcherRunningFeature feature, SwitcherMixBlock block, int index);
     }
 
     public interface IVMForSwitcherMixBlock : IVMForBinder<IVMForSwitcherMixBlock>

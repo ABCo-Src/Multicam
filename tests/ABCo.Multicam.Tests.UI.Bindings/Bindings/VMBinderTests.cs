@@ -358,7 +358,7 @@ namespace ABCo.Multicam.Tests.UI.Bindings
         public interface IVMForDummyBinder : IVMForBinder<IVMForDummyBinder> { object Prop { get; set; } }
         public abstract class DummyVM : IVMForDummyBinder
         {
-            public object? BindingInfoStore { get; set; }
+            public string? BindingInfoStore { get; set; }
             public object Parent { get; set; } = new();
 
             public abstract object Prop { get; set; }

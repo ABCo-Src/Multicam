@@ -1,7 +1,6 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.UI.Enumerations;
-using ABCo.Multicam.UI.Helpers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
@@ -11,10 +10,9 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
-    public interface ISwitcherBusInputVM 
+    public interface ISwitcherBusInputVM : INeedsInitialization<SwitcherBusInput, ISwitcherMixBlockVM>
     {
         SwitcherBusInput Base { get; }
-        void FinishConstruction(SwitcherBusInput busInput, ISwitcherMixBlockVM parent);
         void SetHighlight(bool visible);
     }
 

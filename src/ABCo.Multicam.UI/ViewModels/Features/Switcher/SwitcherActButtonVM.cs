@@ -10,9 +10,8 @@ using System.Xml.Linq;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
-    public interface ISwitcherActButtonVM : ISwitcherButtonVM
+    public interface ISwitcherActButtonVM : ISwitcherButtonVM, INeedsInitialization<ISwitcherMixBlockVM>
     {
-        void FinishConstruction(ISwitcherMixBlockVM parent);
         void Click();
     }
 

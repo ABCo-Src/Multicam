@@ -18,9 +18,8 @@ namespace ABCo.Multicam.Core.Features.Switchers
         void Cut(int mixBlock);
     }
 
-    public interface IBinderForSwitcherFeature : ILiveFeatureBinder
+    public interface IBinderForSwitcherFeature : ILiveFeatureBinder, INeedsInitialization<ISwitcherRunningFeature>
     {
-        void FinishConstruction(ISwitcherRunningFeature feature);
         void ModelChange_Specs();
         void ModelChange_BusValues();
     }

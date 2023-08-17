@@ -15,7 +15,6 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types
     public class DummySwitcher : IDummySwitcher
     {
         SwitcherSpecs _specs;
-        int[] _programStates;
         MixBlockState[] _states;
         Action<SwitcherBusChangeInfo>? _busChangeFinishCallback;
 

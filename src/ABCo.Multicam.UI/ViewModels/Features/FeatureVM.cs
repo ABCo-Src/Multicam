@@ -4,7 +4,6 @@ using ABCo.Multicam.UI.Bindings;
 using ABCo.Multicam.UI.Bindings.Features;
 using ABCo.Multicam.UI.Bindings.Features.Switcher;
 using ABCo.Multicam.UI.Enumerations;
-using ABCo.Multicam.UI.Helpers;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;

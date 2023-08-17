@@ -21,10 +21,9 @@ namespace ABCo.Multicam.Core.Features
         void Delete(IFeatureContainer feature);
     }
 
-    public interface IBinderForProjectFeatures
+    public interface IBinderForProjectFeatures : INeedsInitialization<IFeatureManager>
     {
         void ModelChange_FeaturesChange();
-        void FinishConstruction(IFeatureManager model);
     }
 
     public class FeatureManager : IFeatureManager
