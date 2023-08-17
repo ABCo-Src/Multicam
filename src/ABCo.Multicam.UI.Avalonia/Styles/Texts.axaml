@@ -8,8 +8,18 @@
 	</Style>
 
 	<Style Selector="TextBlock.Hyperlink">
+		<Setter Property="FontWeight" Value="Bold" />
+		<Setter Property="TextDecorations" Value="Underline" />
+		<Setter Property="Cursor" Value="Hand" />
+	</Style>
+
+	<Style Selector="TextBlock.HyperLikeButtonText">
 		<Setter Property="Foreground" Value="LightBlue" />
 		<Setter Property="FontWeight" Value="Bold" />
+	</Style>
+
+	<Style Selector="TextBox">
+		<Setter Property="CornerRadius" Value="0" />
 	</Style>
 
 	<!--

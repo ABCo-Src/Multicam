@@ -3,18 +3,20 @@
     <Design.PreviewWith>
     </Design.PreviewWith>
 
+	<!-- FEP = Feature Edit Panel -->
 	<Style Selector="Grid.FEPOuterMargin, TextBox.FEPOuterMargin">
 		<Setter Property="Margin" Value="10,10,10,0" />
 	</Style>
 
 	<Style Selector="TextBlock.FEPGridLeft">
 		<Setter Property="Margin" Value="0,0,10,0" />
+		<Setter Property="FontWeight" Value="Bold" />
 		<Setter Property="VerticalAlignment" Value="Center" />
 	</Style>
 
 	<Style Selector="TextBlock.FEPTitleText">
 		<Setter Property="Margin" Value="10,10,10,0" />
-		<Setter Property="FontWeight" Value="Bold" />
+		<Setter Property="TextDecorations" Value="Underline" />
 		<Setter Property="HorizontalAlignment" Value="Center" />
 	</Style>
 

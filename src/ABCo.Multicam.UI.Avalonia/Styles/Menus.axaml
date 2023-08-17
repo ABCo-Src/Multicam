@@ -3,6 +3,12 @@
     <Design.PreviewWith>
     </Design.PreviewWith>
 
+	<Style Selector="FlyoutPresenter">
+		<Setter Property="CornerRadius" Value="0" />
+		<Setter Property="BorderThickness" Value="1" />
+		<Setter Property="BorderBrush" Value="White" />
+	</Style>
+
 	<Style Selector="Button.ContextMenuButton">
 		<Setter Property="Padding" Value="10" />
 		<Setter Property="MinWidth" Value="150" />

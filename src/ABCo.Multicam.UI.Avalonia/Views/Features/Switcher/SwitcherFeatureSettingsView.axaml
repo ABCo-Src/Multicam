@@ -6,20 +6,28 @@
              x:Class="ABCo.Multicam.UI.Avalonia.Views.Features.Switcher.SwitcherFeatureSettingsView">
 
 	<StackPanel>
+
+		<!-- Switcher Type -->
 		<TextBlock Classes="FEPTitleText">Switcher Connection</TextBlock>
-
-		<!-- Type -->
-		<TextBox Classes="FEPOuterMargin" />
 		
-		<Grid Classes="FEPOuterMargin" RowDefinitions="Auto,5,Auto" ColumnDefinitions="Auto,*">
+		<Grid Classes="FEPOuterMargin" RowDefinitions="Auto,5,Auto,5,Auto">
 
-			<!-- Something Else -->
-			<TextBlock Classes="FEPGridLeft">Using</TextBlock>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition MinWidth="90" Width="Auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+
+			<!-- Type -->
+			<TextBlock Classes="FEPGridLeft">Type:</TextBlock>
 			<TextBox Grid.Column="1" />
 
 			<!-- Something Else -->
-			<TextBlock Grid.Row="2" Classes="FEPGridLeft">Info #2</TextBlock>
+			<TextBlock Grid.Row="2" Classes="FEPGridLeft">Connection:</TextBlock>
 			<TextBox Grid.Row="2" Grid.Column="1" />
+
+			<!-- Something Else -->
+			<TextBlock Grid.Row="4" Classes="FEPGridLeft">IP Address:</TextBlock>
+			<TextBox Grid.Row="4" Grid.Column="1" />
 		</Grid>
 		
 		<Rectangle Classes="FEPContentSeparator" />

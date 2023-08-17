@@ -46,6 +46,7 @@
 	<SolidColorBrush x:Key="ProgramButtonActive">Red</SolidColorBrush>
 	<SolidColorBrush x:Key="ForegroundColor">White</SolidColorBrush>
 	<SolidColorBrush x:Key="ForegroundFaded">#ddd</SolidColorBrush>
+	<SolidColorBrush x:Key="RedForeground">Red</SolidColorBrush>
 	
 	<SolidColorBrush x:Key="AccentColor">#006900</SolidColorBrush>
 	<SolidColorBrush x:Key="AccentColor_PanelBack">DarkGreen</SolidColorBrush>

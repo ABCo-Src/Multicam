@@ -4,23 +4,15 @@
 		<Button Classes="SwitcherButton">ABC</Button>
     </Design.PreviewWith>
 
+	<Style Selector="Button">
+		<Setter Property="CornerRadius" Value="0" />
+	</Style>
+
 	<Style Selector="Button.Borderless">
 		<Setter Property="Background" Value="Transparent" />
 		<Setter Property="BorderThickness" Value="0" />
-		<Setter Property="CornerRadius" Value="0" />
 	</Style>
 	
-	<Style Selector="Button.Hyperlink">
-		<Setter Property="Template">
-			<ControlTemplate>
-				<ContentPresenter Content="{TemplateBinding Content}" />
-			</ControlTemplate>
-		</Setter>
-		
-		<Setter Property="Foreground" Value="LightBlue" />
-		<Setter Property="Cursor" Value="Hand" />
-	</Style>
-
 	<Style Selector="Button.Dashed">
 		<Setter Property="Template">
 			<Setter.Value>
