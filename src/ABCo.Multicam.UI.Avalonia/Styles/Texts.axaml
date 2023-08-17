@@ -12,12 +12,6 @@
 		<Setter Property="FontWeight" Value="Bold" />
 	</Style>
 
-	<Style Selector="Rectangle.PanelContentSeparator">
-		<Setter Property="Margin" Value="0 10" />
-		<Setter Property="Fill" Value="{DynamicResource PanelInnerSeparator}" />
-		<Setter Property="Height" Value="2" />
-	</Style>
-
 	<!--
 	<Style Selector="Button">
 		<Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />

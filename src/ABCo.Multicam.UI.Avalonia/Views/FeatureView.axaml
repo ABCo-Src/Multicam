@@ -105,7 +105,7 @@
 							<RowDefinition Height="Auto" />
 						</Grid.RowDefinitions>
 
-						<TextBlock Margin="10 10" VerticalAlignment="Center" Text="{Binding EditPanelTitle}" />
+						<TextBlock Margin="10" VerticalAlignment="Center" Text="{Binding EditPanelTitle}" />
 						<Button Grid.Column="1" Classes="Borderless" Command="{Binding ToggleEdit}">
 							<Image Source="{DynamicResource CloseIcon}" Width="16" Height="16" />
 						</Button>
@@ -117,7 +117,7 @@
 					<StackPanel Grid.Row="1" Margin="0 10">
 
 						<!-- Shared panel controls -->
-						<Grid Margin="10 0">
+						<Grid Classes="FEPOuterMargin">
 							<Grid.RowDefinitions>
 								<RowDefinition Height="Auto" />
 								<RowDefinition Height="5" />
@@ -132,19 +132,22 @@
 								<ColumnDefinition Width="*" />
 							</Grid.ColumnDefinitions>
 
-							<TextBlock Margin="0 0 5 0" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Title</TextBlock>
+							<!-- Title -->
+							<TextBlock Grid.Row="0" Grid.Column="0" Classes="FEPGridLeft">Title</TextBlock>
 							<TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding FeatureTitle}" />
 
-							<TextBlock Margin="0 0 5 0" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Position</TextBlock>
+							<!-- Move Up/Down -->
+							<TextBlock Grid.Row="2" Grid.Column="0" Classes="FEPGridLeft">Position</TextBlock>
 							<Button Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" Command="{Binding MoveUp}">Move Up</Button>
 							<Button Grid.Row="2" Grid.Column="2" HorizontalAlignment="Stretch" Command="{Binding MoveDown}">Move Down</Button>
-						
+
+							<!-- Delete -->
 							<Button Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" Command="{Binding Delete}">Delete</Button>
 						</Grid>
 
 						<!-- Panel-specific items -->
-						<Rectangle Classes="PanelContentSeparator" />
-						<ContentControl Margin="10 0" Content="{Binding InnerType, Converter={x:Static locators:FeatureSettingsViewLocator.Instance}}" />
+						<Rectangle Classes="FEPContentSeparator" />
+						<ContentControl Content="{Binding InnerType, Converter={x:Static locators:FeatureSettingsViewLocator.Instance}}" />
 					</StackPanel>
 				</Grid>
 			</DockPanel>

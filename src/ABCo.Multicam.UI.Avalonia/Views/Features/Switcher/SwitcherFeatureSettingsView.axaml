@@ -4,5 +4,24 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="ABCo.Multicam.UI.Avalonia.Views.Features.Switcher.SwitcherFeatureSettingsView">
-  Switcher feature settings.
+
+	<StackPanel>
+		<TextBlock Classes="FEPTitleText">Switcher Connection</TextBlock>
+
+		<!-- Type -->
+		<TextBox Classes="FEPOuterMargin" />
+		
+		<Grid Classes="FEPOuterMargin" RowDefinitions="Auto,5,Auto" ColumnDefinitions="Auto,*">
+
+			<!-- Something Else -->
+			<TextBlock Classes="FEPGridLeft">Using</TextBlock>
+			<TextBox Grid.Column="1" />
+
+			<!-- Something Else -->
+			<TextBlock Grid.Row="2" Classes="FEPGridLeft">Info #2</TextBlock>
+			<TextBox Grid.Row="2" Grid.Column="1" />
+		</Grid>
+		
+		<Rectangle Classes="FEPContentSeparator" />
+	</StackPanel>
 </UserControl>

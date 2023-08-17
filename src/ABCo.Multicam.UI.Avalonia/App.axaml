@@ -12,6 +12,7 @@
 		<StyleInclude Source="/Styles/Texts.axaml" />
 		<StyleInclude Source="/Styles/Windows.axaml" />
 		<StyleInclude Source="/Styles/Menus.axaml" />
+		<StyleInclude Source="/Styles/Features/EditPanel.axaml" />
 		
     </Application.Styles>
 
