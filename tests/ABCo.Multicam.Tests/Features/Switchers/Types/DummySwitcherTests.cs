@@ -6,10 +6,45 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
     [TestClass]
     public class DummySwitcherTests
     {
-        public DummySwitcher Create() => new DummySwitcher();
+        DummySwitcherConfig _config = null!;
+
+        [TestInitialize]
+        public void SetupMocks()
+        {
+            _config = new DummySwitcherConfig(4);
+        }
+
+        public DummySwitcher Create()
+        {
+            var obj = new DummySwitcher();
+            obj.FinishConstruction(_config);
+            return obj;
+        }
 
         [TestMethod]
-        public void Ctor_CorrectDefaults()
+        public void ReceiveSpecs_ZeroMixBlocks()
+        {
+            _config = new DummySwitcherConfig();
+            var dummy = Create();
+            Assert.AreEqual(0, dummy.ReceiveSpecs().MixBlocks.Count);
+        }
+
+        [TestMethod]
+        public void ReceiveSpecs_ZeroInputMixBlock()
+        {
+            _config = new DummySwitcherConfig(0);
+            var dummy = Create();
+
+            var specs = dummy.ReceiveSpecs();
+            Assert.AreEqual(1, specs.MixBlocks.Count);
+            Assert.AreEqual(SwitcherMixBlockType.ProgramPreview, specs.MixBlocks[0].NativeType);
+            Assert.AreEqual(0, specs.MixBlocks[0].ProgramInputs.Count);
+            AssertFeatures(specs.MixBlocks[0].SupportedFeatures);
+            Assert.AreEqual(specs.MixBlocks[0].ProgramInputs, specs.MixBlocks[0].PreviewInputs);
+        }
+
+        [TestMethod]
+        public void ReceiveSpecs_OneMixBlock4In()
         {
             var dummy = Create();
             var specs = dummy.ReceiveSpecs();
@@ -23,67 +58,10 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
         }
 
         [TestMethod]
-        public void UpdateSpecs_ZeroMixBlocks()
+        public void ReceiveSpecs_TwoMixBlocks()
         {
+            _config = new(2, 2);
             var dummy = Create();
-            dummy.UpdateSpecs(Array.Empty<DummyMixBlock>());
-            Assert.AreEqual(0, dummy.ReceiveSpecs().MixBlocks.Count);
-        }
-
-        [TestMethod]
-        public void UpdateSpecs_ZeroInputMixBlock()
-        {
-            var dummy = Create();
-            dummy.UpdateSpecs(new DummyMixBlock[] { new DummyMixBlock(0, SwitcherMixBlockType.ProgramPreview) });
-
-            var specs = dummy.ReceiveSpecs();
-            Assert.AreEqual(1, specs.MixBlocks.Count);
-            Assert.AreEqual(SwitcherMixBlockType.ProgramPreview, specs.MixBlocks[0].NativeType);
-            Assert.AreEqual(0, specs.MixBlocks[0].ProgramInputs.Count);
-            AssertFeatures(specs.MixBlocks[0].SupportedFeatures);
-            Assert.AreEqual(specs.MixBlocks[0].ProgramInputs, specs.MixBlocks[0].PreviewInputs);
-        }
-
-        [TestMethod]
-        public void UpdateSpecs_MixBlock_ProgramPreview()
-        {
-            var dummy = Create();
-            dummy.UpdateSpecs(new DummyMixBlock[] { new DummyMixBlock(1, SwitcherMixBlockType.ProgramPreview) });
-
-            var specs = dummy.ReceiveSpecs();
-            Assert.AreEqual(1, specs.MixBlocks.Count);
-            Assert.AreEqual(SwitcherMixBlockType.ProgramPreview, specs.MixBlocks[0].NativeType);
-            Assert.AreEqual(1, specs.MixBlocks[0].ProgramInputs.Count);
-            AssertInputsList(specs.MixBlocks[0].ProgramInputs);
-            AssertFeatures(specs.MixBlocks[0].SupportedFeatures);
-            Assert.AreEqual(specs.MixBlocks[0].ProgramInputs, specs.MixBlocks[0].PreviewInputs);
-        }
-
-        [TestMethod]
-        public void UpdateSpecs_MixBlock_CutBus()
-        {
-            var dummy = Create();
-            dummy.UpdateSpecs(new DummyMixBlock[] { new DummyMixBlock(1, SwitcherMixBlockType.CutBus) });
-
-            var specs = dummy.ReceiveSpecs();
-            Assert.AreEqual(1, specs.MixBlocks.Count);
-            Assert.AreEqual(SwitcherMixBlockType.CutBus, specs.MixBlocks[0].NativeType);
-            Assert.AreEqual(1, specs.MixBlocks[0].ProgramInputs.Count);
-            AssertInputsList(specs.MixBlocks[0].ProgramInputs);
-            AssertFeatures(specs.MixBlocks[0].SupportedFeatures);
-            Assert.IsNull(specs.MixBlocks[0].PreviewInputs);
-        }
-
-        [TestMethod]
-        public void UpdateSpecs_TwoMixBlocks_PreviewProgram()
-        {
-            var dummy = Create();
-
-            dummy.UpdateSpecs(new DummyMixBlock[]
-            {
-                new DummyMixBlock(2, SwitcherMixBlockType.ProgramPreview),
-                new DummyMixBlock(2, SwitcherMixBlockType.ProgramPreview),
-            });
 
             var specs = dummy.ReceiveSpecs();
 
@@ -126,24 +104,10 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
         }
 
         [TestMethod]
-        public void ReceiveSpecs_MatchesRegular()
-        {
-            var dummy = Create();
-            var specs = dummy.ReceiveSpecs();
-            Assert.AreEqual(dummy.ReceiveSpecs(), specs);
-        }
+        public void ReceiveValue_Program_OneMB() => Assert.AreEqual(1, Create().ReceiveValue(0, 0));
 
         [TestMethod]
-        public void ReceiveValue_Program_Default()
-        {
-            Assert.AreEqual(1, Create().ReceiveValue(0, 0));
-        }
-
-        [TestMethod]
-        public void ReceiveValue_Preview_Default()
-        {
-            Assert.AreEqual(1, Create().ReceiveValue(0, 1));
-        }
+        public void ReceiveValue_Preview_OneMB() => Assert.AreEqual(1, Create().ReceiveValue(0, 1));
 
         [TestMethod]
         public void ReceiveAndSendValue_InvalidMixBlock()
@@ -166,29 +130,16 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
         }
 
         [TestMethod]
-        public void ReceiveAndSendValue_InvalidBus_CutBus()
-        {
-            var dummy = Create();
-            dummy.UpdateSpecs(new DummyMixBlock[] { new(4, SwitcherMixBlockType.CutBus) });
-            Assert.ThrowsException<ArgumentException>(() => dummy.ReceiveValue(0, 1));
-            Assert.ThrowsException<ArgumentException>(() => dummy.ReceiveValue(0, -1));
-            Assert.ThrowsException<ArgumentException>(() => dummy.ReceiveValue(0, 2));
-            Assert.ThrowsException<ArgumentException>(() => dummy.PostValue(0, 1, 3));
-            Assert.ThrowsException<ArgumentException>(() => dummy.PostValue(0, -1, 3));
-            Assert.ThrowsException<ArgumentException>(() => dummy.PostValue(0, 2, 3));
-        }
-
-        [TestMethod]
         public void SendValue_InvalidInput()
         {
+            _config = new(2);
             var dummy = Create();
-            dummy.UpdateSpecs(new DummyMixBlock[] { new DummyMixBlock(2, SwitcherMixBlockType.ProgramPreview) });
             Assert.ThrowsException<ArgumentException>(() => dummy.PostValue(0, 0, -1));
             Assert.ThrowsException<ArgumentException>(() => dummy.PostValue(0, 0, 3));
         }
 
         [TestMethod]
-        public void SendValue_PreviewProgramMB_Program()
+        public void SendValue_Program()
         {
             var dummy = Create();
 
@@ -202,7 +153,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
         }
 
         [TestMethod]
-        public void SendValue_PreviewProgramMB_Preview()
+        public void SendValue_FirstMB_Preview()
         {
             var dummy = Create();
 
@@ -216,23 +167,10 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
         }
 
         [TestMethod]
-        public void SendValue_CutBusMB()
-        {
-            var dummy = Create();
-            dummy.UpdateSpecs(new DummyMixBlock[] { new(3, SwitcherMixBlockType.CutBus) });
-
-            dummy.PostValue(0, 0, 2);
-            Assert.AreEqual(2, dummy.ReceiveValue(0, 0));
-
-            dummy.PostValue(0, 0, 3);
-            Assert.AreEqual(3, dummy.ReceiveValue(0, 0));
-        }
-
-        [TestMethod]
         public void SendValue_SecondMB()
         {
+            _config = new(4, 4);
             var dummy = Create();
-            dummy.UpdateSpecs(new DummyMixBlock[] { new(4, SwitcherMixBlockType.CutBus), new(4, SwitcherMixBlockType.ProgramPreview) });
 
             dummy.PostValue(1, 0, 4);
             Assert.AreEqual(1, dummy.ReceiveValue(0, 0));
@@ -252,8 +190,8 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
         {
             SwitcherBusChangeInfo? info = null;
 
+            _config = new(4, 4);
             var dummy = Create();
-            dummy.UpdateSpecs(new DummyMixBlock[] { new(4, SwitcherMixBlockType.CutBus), new(4, SwitcherMixBlockType.ProgramPreview) });
 
             dummy.SetOnBusChangeFinishCall(i => info = i);
             dummy.PostValue(mixBlock, bus, newValue);

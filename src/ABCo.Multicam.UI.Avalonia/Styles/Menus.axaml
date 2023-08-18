@@ -3,7 +3,7 @@
     <Design.PreviewWith>
     </Design.PreviewWith>
 
-	<Style Selector="FlyoutPresenter">
+	<Style Selector="FlyoutPresenter, ContextMenu">
 		<Setter Property="CornerRadius" Value="0" />
 		<Setter Property="BorderThickness" Value="1" />
 		<Setter Property="BorderBrush" Value="White" />

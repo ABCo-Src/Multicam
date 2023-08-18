@@ -14,9 +14,13 @@
 		<Setter Property="VerticalAlignment" Value="Center" />
 	</Style>
 
+	<Style Selector="ComboBox.FEPGridRight">
+		<Setter Property="HorizontalAlignment" Value="Stretch" />
+	</Style>
+
 	<Style Selector="TextBlock.FEPTitleText">
 		<Setter Property="Margin" Value="10,10,10,0" />
-		<Setter Property="TextDecorations" Value="Underline" />
+		<!--<Setter Property="TextDecorations" Value="Underline" />-->
 		<Setter Property="HorizontalAlignment" Value="Center" />
 	</Style>
 

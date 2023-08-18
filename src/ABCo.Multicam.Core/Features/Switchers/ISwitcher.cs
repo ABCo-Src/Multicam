@@ -10,6 +10,7 @@ namespace ABCo.Multicam.Core.Features.Switchers
     public interface ISwitcher : IDisposable
     {
         bool IsConnected { get; }
+        SwitcherConfig ConnectionConfig { get; }
 
         /// <summary>
         /// Establishes a connection with the physical switcher

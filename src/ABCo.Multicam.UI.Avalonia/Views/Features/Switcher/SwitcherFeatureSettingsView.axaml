@@ -9,7 +9,6 @@
 
 		<!-- Switcher Type -->
 		<TextBlock Classes="FEPTitleText">Switcher Connection</TextBlock>
-		
 		<Grid Classes="FEPOuterMargin" RowDefinitions="Auto,5,Auto,5,Auto">
 
 			<Grid.ColumnDefinitions>
@@ -19,7 +18,11 @@
 
 			<!-- Type -->
 			<TextBlock Classes="FEPGridLeft">Type:</TextBlock>
-			<TextBox Grid.Column="1" />
+			<ComboBox Grid.Column="1" Classes="FEPGridRight">
+				<ComboBoxItem>Dummy</ComboBoxItem>
+				<ComboBoxItem>ATEM</ComboBoxItem>
+				<ComboBoxItem>OBS Studio</ComboBoxItem>
+			</ComboBox>
 
 			<!-- Something Else -->
 			<TextBlock Grid.Row="2" Classes="FEPGridLeft">Connection:</TextBlock>
@@ -30,6 +33,16 @@
 			<TextBox Grid.Row="4" Grid.Column="1" />
 		</Grid>
 		
+		<Rectangle Classes="FEPContentSeparator" />
+
+		<!-- Control Preferences -->
+		<TextBlock Classes="FEPTitleText">Control Preferences</TextBlock>
+		<StackPanel Classes="FEPOuterMargin">
+			<TextBlock>1</TextBlock>
+			<TextBlock>2</TextBlock>
+			<TextBlock>3</TextBlock>
+		</StackPanel>
+
 		<Rectangle Classes="FEPContentSeparator" />
 	</StackPanel>
 </UserControl>
