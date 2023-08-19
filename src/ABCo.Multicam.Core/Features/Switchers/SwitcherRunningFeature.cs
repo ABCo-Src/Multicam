@@ -12,59 +12,49 @@ namespace ABCo.Multicam.Core.Features.Switchers
         void Cut(int mixBlock);
     }
 
+    public interface ISwitcherEventHandler
+    {
+        void OnBusChangeFinish(RetrospectiveFadeInfo? info);
+    }
+
     public interface IBinderForSwitcherFeature : ILiveFeatureBinder, INeedsInitialization<ISwitcherRunningFeature>
     {
         void ModelChange_Specs();
         void ModelChange_BusValues();
     }
 
-    public class SwitcherRunningFeature : ISwitcherRunningFeature
+    public class SwitcherRunningFeature : ISwitcherRunningFeature, ISwitcherEventHandler
     {
-        // The raw underlying switcher
-        //ISwitcher _rawSwitcher;
-
         // TODO: Add slamming protection
         // TODO: Add error handling
 
         // The buffer that sits between the switcher and adds preview emulation, caching and more to all the switcher interactions.
-        // A new one is created anytime the specs change (which is why it's broken into its own service, it's an easy way to avoid async data tearing when switcher (specs) are changed).
-        ISwitcherInteractionBuffer _buffer;
-        readonly ISwitcherInteractionBufferFactory _bufferFactory;
-
-        public bool IsConnected => _buffer.IsConnected;
-        public SwitcherSpecs SwitcherSpecs => _buffer.Specs;
-
+        // A new interaction buffer is created anytime the specs change, and the swapper facilitates for us.
+        readonly ISwitcherSwapper _swapper;
         readonly IBinderForSwitcherFeature _uiBinder;
-        public ILiveFeatureBinder UIBinder => _uiBinder;
 
+        public SwitcherRunningFeature(IServiceSource serviceSource)
+        {
+            _swapper = serviceSource.Get<ISwitcherSwapper, ISwitcherEventHandler>(this);
+            _uiBinder = serviceSource.Get<IBinderForSwitcherFeature, ISwitcherRunningFeature>(this);
+        }
+
+        // Properties:
         public FeatureTypes FeatureType => FeatureTypes.Switcher;
+        public ILiveFeatureBinder UIBinder => _uiBinder;
+        public bool IsConnected => _swapper.CurrentBuffer.IsConnected;
+        public SwitcherSpecs SwitcherSpecs => _swapper.CurrentBuffer.Specs;
 
-        public SwitcherRunningFeature(IDummySwitcher dummySwitcher, ISwitcherInteractionBufferFactory bufferFactory, IBinderForSwitcherFeature uiBinder)
-        {
-            _bufferFactory = bufferFactory;
-            _uiBinder = uiBinder;
-            _buffer = bufferFactory.CreateSync(dummySwitcher);
-            _buffer.SetOnBusChangeFinishCall(OnBusChange);
+        // Methods:
+        public int GetValue(int mixBlock, int bus) => _swapper.CurrentBuffer.GetValue(mixBlock, bus);
+        public void PostValue(int mixBlock, int bus, int value) => _swapper.CurrentBuffer.PostValue(mixBlock, bus, value);
+        public void ChangeSwitcher(SwitcherConfig config) => _swapper.ChangeSwitcher(config);
+        public void Cut(int mixBlock) => _swapper.CurrentBuffer.Cut(mixBlock);
 
-            _uiBinder.FinishConstruction(this);
-        }
+        // Events:
+        public void OnBusChangeFinish(RetrospectiveFadeInfo? info) => _uiBinder.ModelChange_BusValues();
 
-        public int GetValue(int mixBlock, int bus) => _buffer.GetValue(mixBlock, bus);
-        public void PostValue(int mixBlock, int bus, int value) => _buffer.PostValue(mixBlock, bus, value);
-
-        public async Task ChangeSwitcherAsync(ISwitcher switcher)
-        {
-            var oldBuffer = _buffer;
-
-            _buffer = await _bufferFactory.CreateAsync(switcher);
-            _buffer.SetOnBusChangeFinishCall(OnBusChange);
-
-            oldBuffer.Dispose();
-        }
-
-        void OnBusChange(RetrospectiveFadeInfo? info) => _uiBinder.ModelChange_BusValues();
-
-        public void Dispose() => _buffer.Dispose();
-        public void Cut(int mixBlock) => _buffer.Cut(mixBlock);
+        // Dispose:
+        public void Dispose() => _swapper.Dispose();
     }
 }

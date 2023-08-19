@@ -9,6 +9,6 @@ namespace ABCo.Multicam.Core.Features.Switchers
     // Creates a switcher from a given config
     public interface ISwitcherFactory 
     {
-        void GetSwitcher(SwitcherConfig config);
+        ISwitcher GetSwitcher(SwitcherConfig config);
     }
 }

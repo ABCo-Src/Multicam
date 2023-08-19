@@ -2,7 +2,7 @@
 
 namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 {
-    public interface ISwitcherInteractionBuffer : IDisposable
+    public interface ISwitcherInteractionBuffer : INeedsInitialization<ISwitcher>
     {
         bool IsConnected { get; }
         SwitcherSpecs Specs { get; }
@@ -10,18 +10,26 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
         void PostValue(int mixBlock, int bus, int value);
         void Cut(int mixBlock);
         void SetOnBusChangeFinishCall(Action<RetrospectiveFadeInfo?>? callback);
+        void DisposeSwitcher();
     }
 
     public class SwitcherInteractionBuffer : ISwitcherInteractionBuffer
     {
-        readonly ISwitcher _rawSwitcher;
-        readonly IMixBlockInteractionBuffer[] _mixBlockBuffers;
+        readonly ISwitcherInteractionBufferFactory _factory;
+
+        ISwitcher _rawSwitcher = null!;
+        IMixBlockInteractionBuffer[] _mixBlockBuffers = null!;
         Action<RetrospectiveFadeInfo?>? _onBusChangeFinishCall;
 
         public bool IsConnected { get; private set; }
-        public SwitcherSpecs Specs { get; private set; }
+        public SwitcherSpecs Specs { get; private set; } = null!;
 
-        public SwitcherInteractionBuffer(ISwitcher switcher, ISwitcherInteractionBufferFactory factory)
+        public SwitcherInteractionBuffer(ISwitcherInteractionBufferFactory factory)
+        {
+            _factory = factory;
+        }
+        
+        public void FinishConstruction(ISwitcher switcher)
         {
             _rawSwitcher = switcher;
 
@@ -34,7 +42,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
                 _mixBlockBuffers = new IMixBlockInteractionBuffer[Specs.MixBlocks.Count];
                 for (int i = 0; i < Specs.MixBlocks.Count; i++)
                 {
-                    _mixBlockBuffers[i] = factory.CreateMixBlock(Specs.MixBlocks[i], i, switcher);
+                    _mixBlockBuffers[i] = _factory.CreateMixBlock(Specs.MixBlocks[i], i, switcher);
                     _mixBlockBuffers[i].SetCacheChangeExceptRefreshCall(OnCacheChange);
                 }
 
@@ -83,23 +91,21 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
         public void SetOnBusChangeFinishCall(Action<RetrospectiveFadeInfo?>? callback) => _onBusChangeFinishCall = callback;
 
         public void Cut(int mixBlock) => _mixBlockBuffers[mixBlock].Cut();
-        public void Dispose() => _rawSwitcher.Dispose();
+        public void DisposeSwitcher() => _rawSwitcher.Dispose();
 
         record struct MixBlockStore(int Program, int Preview);
     }
 
     public interface ISwitcherInteractionBufferFactory
     {
-        ISwitcherInteractionBuffer CreateSync(ISwitcher switcher);
-        Task<ISwitcherInteractionBuffer> CreateAsync(ISwitcher switcher);
         IMixBlockInteractionBuffer CreateMixBlock(SwitcherMixBlock mixBlock, int mixBlockIdx, ISwitcher switcher);
         IMixBlockInteractionEmulator CreateMixBlockEmulator(SwitcherMixBlock mixBlock, int mixBlockIdx, ISwitcher switcher, IMixBlockInteractionBuffer parentBuffer);
     }
 
     public class SwitcherInteractionBufferFactory : ISwitcherInteractionBufferFactory
     {
-        public ISwitcherInteractionBuffer CreateSync(ISwitcher switcher) => new SwitcherInteractionBuffer(switcher, this);
-        public async Task<ISwitcherInteractionBuffer> CreateAsync(ISwitcher switcher) => await Task.Run(() => CreateSync(switcher));
+        //public ISwitcherInteractionBuffer CreateSync(ISwitcher switcher) => new SwitcherInteractionBuffer(switcher, this);
+        //public async Task<ISwitcherInteractionBuffer> CreateAsync(ISwitcher switcher) => await Task.Run(() => CreateSync(switcher));
 
         public IMixBlockInteractionBuffer CreateMixBlock(SwitcherMixBlock mixBlock, int mixBlockIdx, ISwitcher switcher) =>
             new MixBlockInteractionBuffer(mixBlock, mixBlockIdx, switcher, this);

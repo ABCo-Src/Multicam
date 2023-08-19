@@ -41,7 +41,12 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             _mocks.Factory.Setup(m => m.CreateMixBlock(It.IsAny<SwitcherMixBlock>(), 1, It.IsAny<ISwitcher>())).Returns(_mocks.Buffers[1].Object);
         }
 
-        public SwitcherInteractionBuffer Create() => new SwitcherInteractionBuffer(_mocks.Switcher.Object, _mocks.Factory.Object);
+        public SwitcherInteractionBuffer Create()
+        {
+            var buffer = new SwitcherInteractionBuffer(_mocks.Factory.Object);
+            buffer.FinishConstruction(_mocks.Switcher.Object);
+            return buffer;
+        }
 
         [TestMethod]
         public void Ctor_Disconnected()
@@ -241,10 +246,10 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
         }
 
         [TestMethod]
-        public void Dispose()
+        public void DisposeSwitcher()
         {
             var feature = Create();
-            feature.Dispose();
+            feature.DisposeSwitcher();
             _mocks.Switcher.Verify(m => m.Dispose(), Times.Once);
         }
     }
