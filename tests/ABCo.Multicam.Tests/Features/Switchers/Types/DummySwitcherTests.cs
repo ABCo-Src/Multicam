@@ -1,70 +1,93 @@
 ﻿using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.Core.Features.Switchers.Types;
+using LightInject;
+using Moq;
+using System.Runtime.CompilerServices;
 
 namespace ABCo.Multicam.Tests.Features.Switchers.Types
 {
     [TestClass]
     public class DummySwitcherTests
     {
+        SwitcherSpecs? _sentSpecs;
+        SwitcherProgramChangeInfo? _changedProgramValue;
+        SwitcherPreviewChangeInfo? _changedPreviewValue;
+
+        Mock<ISwitcherEventHandler> _eventHandler = null!;
         DummySwitcherConfig _config = null!;
 
         [TestInitialize]
         public void SetupMocks()
         {
+            _sentSpecs = null;
+            _changedProgramValue = null;
+            _changedPreviewValue = null;
+            _eventHandler = new();
+            _eventHandler.Setup(m => m.OnSpecsChange(It.IsAny<SwitcherSpecs>())).Callback<SwitcherSpecs>(s => _sentSpecs = s);
+            _eventHandler.Setup(m => m.OnProgramChangeFinish(It.IsAny<SwitcherProgramChangeInfo>())).Callback<SwitcherProgramChangeInfo>(s => _changedProgramValue = s);
+            _eventHandler.Setup(m => m.OnPreviewChangeFinish(It.IsAny<SwitcherPreviewChangeInfo>())).Callback<SwitcherPreviewChangeInfo>(s => _changedPreviewValue = s);
             _config = new DummySwitcherConfig(4);
         }
 
-        public DummySwitcher Create()
+        public DummySwitcher Create(ISwitcherEventHandler? eventHandler)
         {
             var obj = new DummySwitcher();
             obj.FinishConstruction(_config);
+            obj.SetEventHandler(eventHandler);
             return obj;
         }
 
+        public DummySwitcher Create() => Create(_eventHandler.Object);
+
         [TestMethod]
-        public void ReceiveSpecs_ZeroMixBlocks()
+        public void RefreshSpecs_NoEventHandler() => Create(null).RefreshSpecs();
+
+        [TestMethod]
+        public void RefreshSpecs_ZeroMixBlocks()
         {
             _config = new DummySwitcherConfig();
-            var dummy = Create();
-            Assert.AreEqual(0, dummy.ReceiveSpecs().MixBlocks.Count);
+            Create().RefreshSpecs();
+            Assert.IsNotNull(_sentSpecs);
+            Assert.AreEqual(0, _sentSpecs!.MixBlocks.Count);
         }
 
         [TestMethod]
-        public void ReceiveSpecs_ZeroInputMixBlock()
+        public void RefreshSpecs_ZeroInputMixBlock()
         {
             _config = new DummySwitcherConfig(0);
-            var dummy = Create();
+            Create().RefreshSpecs();
 
-            var specs = dummy.ReceiveSpecs();
-            Assert.AreEqual(1, specs.MixBlocks.Count);
-            Assert.AreEqual(SwitcherMixBlockType.ProgramPreview, specs.MixBlocks[0].NativeType);
-            Assert.AreEqual(0, specs.MixBlocks[0].ProgramInputs.Count);
-            AssertFeatures(specs.MixBlocks[0].SupportedFeatures);
-            Assert.AreEqual(specs.MixBlocks[0].ProgramInputs, specs.MixBlocks[0].PreviewInputs);
+            Assert.IsNotNull(_sentSpecs);
+            Assert.AreEqual(1, _sentSpecs.MixBlocks.Count);
+            Assert.AreEqual(SwitcherMixBlockType.ProgramPreview, _sentSpecs.MixBlocks[0].NativeType);
+            Assert.AreEqual(0, _sentSpecs.MixBlocks[0].ProgramInputs.Count);
+            AssertFeatures(_sentSpecs.MixBlocks[0].SupportedFeatures);
+            Assert.AreEqual(_sentSpecs.MixBlocks[0].ProgramInputs, _sentSpecs.MixBlocks[0].PreviewInputs);
         }
 
         [TestMethod]
-        public void ReceiveSpecs_OneMixBlock4In()
+        public void RefreshSpecs_OneMixBlock4In()
         {
-            var dummy = Create();
-            var specs = dummy.ReceiveSpecs();
+            Create().RefreshSpecs();
 
-            Assert.AreEqual(1, specs.MixBlocks.Count);
-            Assert.AreEqual(SwitcherMixBlockType.ProgramPreview, specs.MixBlocks[0].NativeType);
-            Assert.AreEqual(4, specs.MixBlocks[0].ProgramInputs.Count);
-            AssertInputsList(specs.MixBlocks[0].ProgramInputs);
-            AssertFeatures(specs.MixBlocks[0].SupportedFeatures);
-            Assert.AreEqual(specs.MixBlocks[0].ProgramInputs, specs.MixBlocks[0].PreviewInputs);
+            Assert.IsNotNull(_sentSpecs);
+            Assert.AreEqual(1, _sentSpecs.MixBlocks.Count);
+            Assert.AreEqual(SwitcherMixBlockType.ProgramPreview, _sentSpecs.MixBlocks[0].NativeType);
+            Assert.AreEqual(4, _sentSpecs.MixBlocks[0].ProgramInputs.Count);
+            AssertInputsList(_sentSpecs.MixBlocks[0].ProgramInputs);
+            AssertFeatures(_sentSpecs.MixBlocks[0].SupportedFeatures);
+            Assert.AreEqual(_sentSpecs.MixBlocks[0].ProgramInputs, _sentSpecs.MixBlocks[0].PreviewInputs);
         }
 
         [TestMethod]
-        public void ReceiveSpecs_TwoMixBlocks()
+        public void RefreshSpecs_TwoMixBlocks()
         {
             _config = new(2, 2);
-            var dummy = Create();
+            Create().RefreshSpecs();
 
-            var specs = dummy.ReceiveSpecs();
+            Assert.IsNotNull(_sentSpecs);
 
+            var specs = _sentSpecs;
             Assert.AreEqual(2, specs.MixBlocks.Count);
             Assert.AreEqual(SwitcherMixBlockType.ProgramPreview, specs.MixBlocks[0].NativeType);
             Assert.AreEqual(SwitcherMixBlockType.ProgramPreview, specs.MixBlocks[1].NativeType);
@@ -104,103 +127,115 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
         }
 
         [TestMethod]
-        public void ReceiveValue_Program_OneMB() => Assert.AreEqual(1, Create().ReceiveValue(0, 0));
+        public void RefreshProgram_NoEventHandler() => Create(null).RefreshProgram(0);
 
         [TestMethod]
-        public void ReceiveValue_Preview_OneMB() => Assert.AreEqual(1, Create().ReceiveValue(0, 1));
-
-        [TestMethod]
-        public void ReceiveAndSendValue_InvalidMixBlock()
+        public void RefreshProgram_OneMB()
         {
-            var dummy = Create();
-            Assert.ThrowsException<ArgumentException>(() => dummy.ReceiveValue(1, 0));
-            Assert.ThrowsException<ArgumentException>(() => dummy.ReceiveValue(-1, 0));
-            Assert.ThrowsException<ArgumentException>(() => dummy.PostValue(1, 0, 3));
-            Assert.ThrowsException<ArgumentException>(() => dummy.PostValue(-1, 0, 3));
+            Create().RefreshProgram(0);
+            Assert.IsNotNull(_changedProgramValue);
+            Assert.AreEqual(0, _changedProgramValue.Value.MixBlock);
+            Assert.AreEqual(1, _changedProgramValue.Value.NewValue);
         }
 
         [TestMethod]
-        public void ReceiveAndSendValue_InvalidBus_PreviewProgram()
+        public void RefreshPreview_NoEventHandler() => Create(null).RefreshPreview(0);
+
+        [TestMethod]
+        public void RefreshPreview_OneMB()
         {
-            var dummy = Create();
-            Assert.ThrowsException<ArgumentException>(() => dummy.ReceiveValue(0, -1));
-            Assert.ThrowsException<ArgumentException>(() => dummy.ReceiveValue(0, 2));
-            Assert.ThrowsException<ArgumentException>(() => dummy.PostValue(0, -1, 3));
-            Assert.ThrowsException<ArgumentException>(() => dummy.PostValue(0, 2, 3));
+            Create().RefreshPreview(0);
+            Assert.IsNotNull(_changedPreviewValue);
+            Assert.AreEqual(0, _changedPreviewValue.Value.MixBlock);
+            Assert.AreEqual(1, _changedPreviewValue.Value.NewValue);
         }
 
         [TestMethod]
-        public void SendValue_InvalidInput()
+        public void RefreshAndSendProgram_InvalidMixBlock()
+        {
+            var dummy = Create();
+            Assert.ThrowsException<ArgumentException>(() => dummy.RefreshProgram(1));
+            Assert.ThrowsException<ArgumentException>(() => dummy.RefreshProgram(-1));
+            Assert.ThrowsException<ArgumentException>(() => dummy.SendProgramValue(1, 3));
+            Assert.ThrowsException<ArgumentException>(() => dummy.SendProgramValue(-1, 3));
+        }
+
+        [TestMethod]
+        public void RefreshAndSendPreview_InvalidMixBlock()
+        {
+            var dummy = Create();
+            Assert.ThrowsException<ArgumentException>(() => dummy.RefreshPreview(1));
+            Assert.ThrowsException<ArgumentException>(() => dummy.RefreshPreview(-1));
+            Assert.ThrowsException<ArgumentException>(() => dummy.SendPreviewValue(1, 3));
+            Assert.ThrowsException<ArgumentException>(() => dummy.SendPreviewValue(-1, 3));
+        }
+
+        [TestMethod]
+        public void SendProgramValue_NoEventHandler() => Create(null).SendProgramValue(0, 1);
+
+        [TestMethod]
+        public void SendProgramValue_InvalidInput()
         {
             _config = new(2);
             var dummy = Create();
-            Assert.ThrowsException<ArgumentException>(() => dummy.PostValue(0, 0, -1));
-            Assert.ThrowsException<ArgumentException>(() => dummy.PostValue(0, 0, 3));
+            Assert.ThrowsException<ArgumentException>(() => dummy.SendProgramValue(0, -1));
+            Assert.ThrowsException<ArgumentException>(() => dummy.SendProgramValue(0, 3));
         }
 
         [TestMethod]
-        public void SendValue_Program()
+        public void SendPreviewValue_NoEventHandler() => Create(null).SendPreviewValue(0, 1);
+
+        [TestMethod]
+        public void SendPreviewValue_InvalidInput()
         {
+            _config = new(2);
             var dummy = Create();
-
-            dummy.PostValue(0, 0, 2);
-            Assert.AreEqual(2, dummy.ReceiveValue(0, 0)); // Impacts program
-            Assert.AreEqual(1, dummy.ReceiveValue(0, 1)); // Does not impact preview
-
-            dummy.PostValue(0, 0, 3);
-            Assert.AreEqual(3, dummy.ReceiveValue(0, 0)); // Impacts program
-            Assert.AreEqual(1, dummy.ReceiveValue(0, 1)); // Does not impact preview
+            Assert.ThrowsException<ArgumentException>(() => dummy.SendPreviewValue(0, -1));
+            Assert.ThrowsException<ArgumentException>(() => dummy.SendPreviewValue(0, 3));
         }
 
         [TestMethod]
-        public void SendValue_FirstMB_Preview()
-        {
-            var dummy = Create();
-
-            dummy.PostValue(0, 1, 2);
-            Assert.AreEqual(2, dummy.ReceiveValue(0, 1)); // Impacts preview
-            Assert.AreEqual(1, dummy.ReceiveValue(0, 0)); // Does not impact program
-
-            dummy.PostValue(0, 1, 3);
-            Assert.AreEqual(3, dummy.ReceiveValue(0, 1)); // Impacts preview
-            Assert.AreEqual(1, dummy.ReceiveValue(0, 0)); // Does not impact program
-        }
-
-        [TestMethod]
-        public void SendValue_SecondMB()
+        [DataRow(0)]
+        [DataRow(1)]
+        public void SendProgramValue(int mixBlock)
         {
             _config = new(4, 4);
             var dummy = Create();
+            dummy.SendProgramValue(mixBlock, 2);
 
-            dummy.PostValue(1, 0, 4);
-            Assert.AreEqual(1, dummy.ReceiveValue(0, 0));
-            Assert.AreEqual(4, dummy.ReceiveValue(1, 0));
-            Assert.AreEqual(1, dummy.ReceiveValue(1, 1));
+            // Assert it sent out the event immediately
+            Assert.AreEqual(mixBlock, _changedProgramValue!.Value.MixBlock);
+            Assert.AreEqual(2, _changedProgramValue!.Value.NewValue);
 
-            dummy.PostValue(1, 1, 3);
-            Assert.AreEqual(1, dummy.ReceiveValue(0, 0));
-            Assert.AreEqual(4, dummy.ReceiveValue(1, 0));
-            Assert.AreEqual(3, dummy.ReceiveValue(1, 1));
+            // Make sure it's permanent
+            dummy.RefreshProgram(mixBlock);
+            Assert.AreEqual(2, _changedProgramValue!.Value.NewValue);
+
+            // Make sure preview was not changed.
+            dummy.RefreshPreview(mixBlock);
+            Assert.AreEqual(1, _changedPreviewValue!.Value.NewValue); 
         }
 
         [TestMethod]
-        [DataRow(1, 1, 4)]
-        [DataRow(0, 0, 2)]
-        public void SendValue_TriggersBusChangeCallback(int mixBlock, int bus, int newValue)
+        [DataRow(0)]
+        [DataRow(1)]
+        public void SendPreviewValue(int mixBlock)
         {
-            SwitcherBusChangeInfo? info = null;
-
             _config = new(4, 4);
             var dummy = Create();
+            dummy.SendPreviewValue(mixBlock, 2);
 
-            dummy.SetOnBusChangeFinishCall(i => info = i);
-            dummy.PostValue(mixBlock, bus, newValue);
+            // Assert it sent out the event immediately
+            Assert.AreEqual(mixBlock, _changedPreviewValue!.Value.MixBlock);
+            Assert.AreEqual(2, _changedPreviewValue!.Value.NewValue);
 
-            Assert.IsNotNull(info);
-            Assert.IsTrue(info.Value.IsBusKnown);
-            Assert.AreEqual(mixBlock, info.Value.MixBlock);
-            Assert.AreEqual(bus, info.Value.Bus);
-            Assert.AreEqual(newValue, info.Value.NewValue);
+            // Make sure it's permanent
+            dummy.RefreshPreview(mixBlock);
+            Assert.AreEqual(2, _changedPreviewValue!.Value.NewValue);
+
+            // Make sure nothing else was changed.
+            dummy.RefreshProgram(mixBlock);
+            Assert.AreEqual(1, _changedProgramValue!.Value.NewValue);
         }
 
         [TestMethod]

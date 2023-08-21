@@ -46,13 +46,13 @@ namespace ABCo.Multicam.UI.Bindings.Features.Switcher
             // RawProgram
             new PropertyBinding<int>()
             {
-                ModelChange = new(() => _feature.GetValue(_index, 0), v => v.VM.RawProgram = v.NewVal)
+                ModelChange = new(() => _feature.GetProgram(_index), v => v.VM.RawProgram = v.NewVal)
             },
 
             // RawPreview
             new PropertyBinding<int>()
             {
-                ModelChange = new(() => _feature.GetValue(_index, 1), v => v.VM.RawPreview = v.NewVal)
+                ModelChange = new(() => _feature.GetPreview(_index), v => v.VM.RawPreview = v.NewVal)
             }
         };
 

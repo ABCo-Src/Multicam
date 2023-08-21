@@ -12,8 +12,8 @@ namespace ABCo.Multicam.Tests.Features.Switchers
     public class SwitcherRunningFeatureTests
     {
         public record struct Mocks(
-            Mock<ISwitcherInteractionBuffer> Buffer,
-            Mock<ISwitcherSwapper> Swapper,
+            Mock<IPerSpecSwitcherInteractionBuffer> Buffer,
+            Mock<IDynamicSwitcherInteractionBuffer> DynamicBuffer,
             Mock<IBinderForSwitcherFeature> UIBinder,
             SwitcherSpecs BufferSpecs,
             Mock<IServiceSource> ServSource);
@@ -26,14 +26,14 @@ namespace ABCo.Multicam.Tests.Features.Switchers
             _mocks.UIBinder = new();
 
             _mocks.BufferSpecs = new();
-            _mocks.Buffer = Mock.Get(Mock.Of<ISwitcherInteractionBuffer>(m => m.Specs == _mocks.BufferSpecs && m.IsConnected == true));
+            _mocks.Buffer = Mock.Get(Mock.Of<IPerSpecSwitcherInteractionBuffer>(m => m.Specs == _mocks.BufferSpecs && m.IsConnected == true));
 
-            _mocks.Swapper = new();
-            _mocks.Swapper.SetupGet(m => m.CurrentBuffer).Returns(_mocks.Buffer.Object);
+            _mocks.DynamicBuffer = new();
+            _mocks.DynamicBuffer.SetupGet(m => m.CurrentBuffer).Returns(_mocks.Buffer.Object);
 
             _mocks.ServSource = new();
             _mocks.ServSource.Setup(m => m.Get<IBinderForSwitcherFeature, ISwitcherRunningFeature>(It.IsAny<ISwitcherRunningFeature>())).Returns(_mocks.UIBinder.Object);
-            _mocks.ServSource.Setup(m => m.Get<ISwitcherSwapper, ISwitcherEventHandler>(It.IsAny<ISwitcherEventHandler>())).Returns(_mocks.Swapper.Object);
+            _mocks.ServSource.Setup(m => m.Get<IDynamicSwitcherInteractionBuffer, ISwitcherEventHandler>(It.IsAny<ISwitcherEventHandler>())).Returns(_mocks.DynamicBuffer.Object);
         }
 
         public SwitcherRunningFeature Create() => new(_mocks.ServSource.Object);
@@ -43,7 +43,8 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         {
             var feature = Create();
             _mocks.ServSource.Verify(m => m.Get<IBinderForSwitcherFeature, ISwitcherRunningFeature>(feature), Times.Once);
-            _mocks.ServSource.Verify(m => m.Get<ISwitcherSwapper, ISwitcherEventHandler>(feature), Times.Once);
+            _mocks.DynamicBuffer.Verify(m => m.ChangeSwitcher(It.IsAny<DummySwitcherConfig>()), Times.Once);
+            _mocks.ServSource.Verify(m => m.Get<IDynamicSwitcherInteractionBuffer, ISwitcherEventHandler>(feature), Times.Once);
         }
 
         [TestMethod]
@@ -53,26 +54,42 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         public void UIBinder() => Assert.AreEqual(_mocks.UIBinder.Object, Create().UIBinder);
 
         [TestMethod]
-        public void GetValue()
+        public void GetProgram()
         {
-            Create().GetValue(3, 8);
-            _mocks.Swapper.VerifyGet(m => m.CurrentBuffer);
-            _mocks.Buffer.Verify(m => m.GetValue(3, 8));
+            Create().GetProgram(3);
+            _mocks.DynamicBuffer.VerifyGet(m => m.CurrentBuffer);
+            _mocks.Buffer.Verify(m => m.GetProgram(3));
         }
 
         [TestMethod]
-        public void PostValue()
+        public void GetPreview()
         {
-            Create().PostValue(3, 7, 34);
-            _mocks.Swapper.VerifyGet(m => m.CurrentBuffer);
-            _mocks.Buffer.Verify(m => m.PostValue(3, 7, 34));
+            Create().GetProgram(3);
+            _mocks.DynamicBuffer.VerifyGet(m => m.CurrentBuffer);
+            _mocks.Buffer.Verify(m => m.GetPreview(3));
+        }
+
+        [TestMethod]
+        public void SendProgram()
+        {
+            Create().SendProgram(3, 34);
+            _mocks.DynamicBuffer.VerifyGet(m => m.CurrentBuffer);
+            _mocks.Buffer.Verify(m => m.SendProgram(3, 34));
+        }
+
+        [TestMethod]
+        public void SendPreview()
+        {
+            Create().SendPreview(3, 34);
+            _mocks.DynamicBuffer.VerifyGet(m => m.CurrentBuffer);
+            _mocks.Buffer.Verify(m => m.SendPreview(3, 34));
         }
 
         [TestMethod]
         public void SwitcherSpecs()
         {
             Assert.AreEqual(_mocks.BufferSpecs, Create().SwitcherSpecs);
-            _mocks.Swapper.VerifyGet(m => m.CurrentBuffer);
+            _mocks.DynamicBuffer.VerifyGet(m => m.CurrentBuffer);
             _mocks.Buffer.VerifyGet(m => m.Specs);
         }
 
@@ -80,7 +97,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         public void IsConnected()
         {
             Assert.IsTrue(Create().IsConnected);
-            _mocks.Swapper.VerifyGet(m => m.CurrentBuffer);
+            _mocks.DynamicBuffer.VerifyGet(m => m.CurrentBuffer);
             _mocks.Buffer.VerifyGet(m => m.IsConnected);
         }
 
@@ -90,7 +107,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         public void Cut(int mixBlock)
         {
             Create().Cut(mixBlock);
-            _mocks.Swapper.VerifyGet(m => m.CurrentBuffer);
+            _mocks.DynamicBuffer.VerifyGet(m => m.CurrentBuffer);
             _mocks.Buffer.Verify(m => m.Cut(mixBlock));
         }
 
@@ -99,15 +116,31 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         {
             var config = new DummySwitcherConfig(4);
             Create().ChangeSwitcher(config);
-            _mocks.Swapper.Verify(m => m.ChangeSwitcher(config));
+            _mocks.DynamicBuffer.Verify(m => m.ChangeSwitcher(config));
         }
 
         [TestMethod]
-        public void OnBusChange()
+        public void OnProgramChangeFinish()
         {
             var feature = Create();
-            feature.OnBusChangeFinish(new RetrospectiveFadeInfo());
+            feature.OnProgramChangeFinish(new SwitcherProgramChangeInfo());
             _mocks.UIBinder.Verify(m => m.ModelChange_BusValues());
+        }
+
+        [TestMethod]
+        public void OnPreviewChangeFinish()
+        {
+            var feature = Create();
+            feature.OnPreviewChangeFinish(new SwitcherPreviewChangeInfo());
+            _mocks.UIBinder.Verify(m => m.ModelChange_BusValues());
+        }
+
+        [TestMethod]
+        public void OnSpecsChange()
+        {
+            var feature = Create();
+            feature.OnSpecsChange(new());
+            _mocks.UIBinder.Verify(m => m.ModelChange_Specs());
         }
 
         // TODO: Add test to verify that it also works when switcher is changed to dummy again?
@@ -115,7 +148,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         public void Dispose()
         {
             Create().Dispose();
-            _mocks.Swapper.Verify(m => m.Dispose(), Times.Once);
+            _mocks.DynamicBuffer.Verify(m => m.Dispose(), Times.Once);
         }
     }
 }

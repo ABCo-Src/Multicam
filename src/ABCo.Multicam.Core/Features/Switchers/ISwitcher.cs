@@ -25,19 +25,27 @@ namespace ABCo.Multicam.Core.Features.Switchers
         /// <summary>
         /// Contacts the switcher and receives its current specifications.
         /// </summary>
-        SwitcherSpecs ReceiveSpecs();
+        SwitcherSpecs RefreshSpecs();
 
         /// <summary>
-        /// Contacts the switcher and receives the current value (with no cache) stored in the given mix block. Blocking.
+        /// Receives the current value stored in the given mix block.
         /// </summary>
-        /// <param name="bus">The bus within the block. 0 is always program, and 1 may be preview IF the switcher supports it natively.</param>
-        int ReceiveValue(int mixBlock, int bus);
+        int RefreshProgram(int mixBlock);
 
         /// <summary>
-        /// Contacts the switcher and sends a new value. Non-blocking.
+        /// Receives the current value stored in the given mix block.
         /// </summary>
-        /// <param name="bus">The bus within the block. 0 is always program, and 1 may be preview IF the switcher supports it natively.</param>
-        void PostValue(int mixBlock, int bus, int id);
+        void RefreshPreview(int mixBlock);
+
+        /// <summary>
+        /// Contacts the switcher and sends a new value to the program bus of the given mix-block.
+        /// </summary>
+        void SendProgramValue(int mixBlock, int id);
+
+        /// <summary>
+        /// Contacts the switcher and sends a new value to the preview bus of the given mix-block.
+        /// </summary>
+        void SendPreviewValue(int mixBlock, int id);
 
         /// <summary>
         /// Contacts the swither and asks it to perform an "immediate cut".
@@ -56,7 +64,7 @@ namespace ABCo.Multicam.Core.Features.Switchers
         /// </summary>
         void SetCutBusMode(int mixBlock, CutBusMode mode);
 
-        void SetOnBusChangeFinishCall(Action<SwitcherBusChangeInfo>? callback);
+        void SetEventHandler(ISwitcherEventHandler? eventHandler);
     }
 
     public enum CutBusMode
@@ -65,5 +73,6 @@ namespace ABCo.Multicam.Core.Features.Switchers
         Auto
     }
 
-    public record struct SwitcherBusChangeInfo(bool IsBusKnown, int MixBlock, int Bus, int NewValue, RetrospectiveFadeInfo? FadeInfo);
+    public record struct SwitcherProgramChangeInfo(int MixBlock, byte Bus, int NewValue, RetrospectiveFadeInfo? FadeInfo);
+    public record struct SwitcherPreviewChangeInfo(int MixBlock, int NewValue, RetrospectiveFadeInfo? FadeInfo);
 }

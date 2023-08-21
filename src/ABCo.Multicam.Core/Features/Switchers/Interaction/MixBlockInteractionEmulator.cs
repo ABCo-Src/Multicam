@@ -29,7 +29,7 @@
         {
             if (_mixBlock.SupportedFeatures.SupportsDirectPreviewAccess && _mixBlock.SupportedFeatures.SupportsCutAction)
             {
-                _switcher.PostValue(_mixBlockIdx, 0, val);
+                _switcher.SendPreviewValue(_mixBlockIdx, val);
                 _switcher.Cut(_mixBlockIdx);
                 return true;
             }
@@ -71,17 +71,17 @@
         {
             int oldPrev = _parent.Preview;
             int oldProg = _parent.Program;
-            _parent.SetPreview(oldProg);
-            _parent.SetProgram(oldPrev);
+            _parent.SendPreview(oldProg);
+            _parent.SendProgram(oldPrev);
         }
 
-        public void SetCutBusWithProgSet(int val) => _parent.SetProgram(val);
+        public void SetCutBusWithProgSet(int val) => _parent.SendProgram(val);
 
         public bool TrySetCutBusWithPrevThenAuto(int val)
         {
             if (_mixBlock.SupportedFeatures.SupportsDirectPreviewAccess && _mixBlock.SupportedFeatures.SupportsAutoAction)
             {
-                _parent.SetPreview(val);
+                _parent.SendPreview(val);
                 _parent.Auto();
                 return true;
             }

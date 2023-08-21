@@ -19,6 +19,11 @@ namespace ABCo.Multicam.Core
         void FinishConstruction(T1 param1, T2 param2, T3 param3);
     }
 
+    public interface INeedsInitialization<T1, T2, T3, T4>
+    {
+        void FinishConstruction(T1 param1, T2 param2, T3 param3, T4 param4);
+    }
+
     public interface IServiceSource
     {
         T Get<T>() where T : class;

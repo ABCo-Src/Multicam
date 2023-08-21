@@ -1,4 +1,6 @@
-﻿namespace ABCo.Multicam.Core.Features.Switchers.Types
+﻿using LightInject;
+
+namespace ABCo.Multicam.Core.Features.Switchers.Types
 {
     public interface IDummySwitcher : ISwitcher, INeedsInitialization<DummySwitcherConfig> { }
 
@@ -14,12 +16,7 @@
     {
         SwitcherSpecs _specs = null!;
         MixBlockState[] _states = null!;
-        Action<SwitcherBusChangeInfo>? _busChangeFinishCallback;
-
-        public DummySwitcher()
-        {
-            (_specs, _states) = (null!, null!); // Assigned by UpdateSpecs
-        }
+        ISwitcherEventHandler? _eventHandler = null!;
 
         public void FinishConstruction(DummySwitcherConfig config)
         {
@@ -30,7 +27,13 @@
             Array.Fill(_states, new MixBlockState(1, 1));
         }
 
-        public SwitcherSpecs ReceiveSpecs() => _specs;
+        public void SetEventHandler(ISwitcherEventHandler? eventHandler) => _eventHandler = eventHandler;
+
+        public SwitcherSpecs RefreshSpecs()
+        {
+            _eventHandler?.OnSpecsChange(_specs);
+            return _specs;
+        }
 
         public static SwitcherSpecs CreateSpecsFrom(int[] mixBlocks)
         {
@@ -67,52 +70,56 @@
         public Task ConnectAsync() => Task.CompletedTask;
         public Task DisconnectAsync() => Task.CompletedTask;
 
-        public int ReceiveValue(int mixBlock, int bus)
+        public int RefreshProgram(int mixBlock)
         {
-            ValidateMixBlockAndBus(mixBlock, bus);
-            return bus == 0 ? _states[mixBlock].Program : _states[mixBlock].Preview;
+            ValidateMixBlock(mixBlock);
+            _eventHandler?.OnProgramChangeFinish(new SwitcherProgramChangeInfo(mixBlock, 0, _states[mixBlock].Program, null));
+            return 0;
         }
 
-        public void PostValue(int mixBlock, int bus, int newValue)
+        public void RefreshPreview(int mixBlock)
         {
-            // Validate mixBlock and bus
-            ValidateMixBlockAndBus(mixBlock, bus);
+            ValidateMixBlock(mixBlock);
+            _eventHandler?.OnPreviewChangeFinish(new SwitcherPreviewChangeInfo(mixBlock, _states[mixBlock].Preview, null));
+        }
 
-            // Validate input
-            bool found = false;
+        public void SendProgramValue(int mixBlock, int newValue)
+        {
+            ValidateMixBlock(mixBlock);
+            ValidateInput(mixBlock, newValue);
+
+            _states[mixBlock].Program = newValue;
+
+            _eventHandler?.OnProgramChangeFinish(new SwitcherProgramChangeInfo(mixBlock, 0, _states[mixBlock].Program, null));
+        }
+
+        void ValidateInput(int mixBlock, int newValue)
+        {
             for (int i = 0; i < _specs.MixBlocks[mixBlock].ProgramInputs.Count; i++)
                 if (_specs.MixBlocks[mixBlock].ProgramInputs[i].Id == newValue)
-                {
-                    found = true;
-                    break;
-                }
+                    return;
 
-            if (!found) throw new ArgumentException("Invalid input ID given to DummySwitcher");
-
-            if (bus == 0)
-                _states[mixBlock].Program = newValue;
-            else
-                _states[mixBlock].Preview = newValue;
-
-            _busChangeFinishCallback?.Invoke(new SwitcherBusChangeInfo(true, mixBlock, bus, newValue, null));
+            throw new ArgumentException("Invalid input ID given to DummySwitcher");
         }
 
-        void ValidateMixBlockAndBus(int mixBlock, int bus)
+        public void SendPreviewValue(int mixBlock, int newValue)
         {
-            // Validate mix block
-            if (mixBlock < 0 || mixBlock >= _specs.MixBlocks.Count) throw new ArgumentException("Invalid mix block given to DummySwitcher");
+            ValidateMixBlock(mixBlock);
+            ValidateInput(mixBlock, newValue);
 
-            // Validate bus
-            if (bus == 0) return;
-            if (bus == 1 && _specs.MixBlocks[mixBlock].NativeType == SwitcherMixBlockType.ProgramPreview) return;
+            _states[mixBlock].Preview = newValue;
 
-            throw new ArgumentException("Invalid bus given to DummySwitcher");
+            _eventHandler?.OnPreviewChangeFinish(new SwitcherPreviewChangeInfo(mixBlock, _states[mixBlock].Preview, null));
+        }
+
+        void ValidateMixBlock(int mixBlock)
+        {
+            if (mixBlock < 0 || mixBlock >= _specs.MixBlocks.Count) 
+                throw new ArgumentException("Invalid mix block given to DummySwitcher");
         }
 
         public void Cut(int mixBlockIdx) => throw new NotImplementedException();
         public void Dispose() { }
-
-        public void SetOnBusChangeFinishCall(Action<SwitcherBusChangeInfo>? callback) => _busChangeFinishCallback = callback;
 
         public void SetCutBus(int mixBlock, int newVal) => throw new NotImplementedException();
         public void SetCutBusMode(CutBusMode mode) => throw new NotImplementedException();

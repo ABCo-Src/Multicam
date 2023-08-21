@@ -96,8 +96,8 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
                 PreviewBus[i].SetHighlight(PreviewBus[i].Base.Id == RawPreview);
         }
 
-        public void SetProgram(int value) => RawFeature.PostValue(RawMixBlockIndex, 0, value);
-        public void SetPreview(int value) => RawFeature.PostValue(RawMixBlockIndex, 1, value);
+        public void SetProgram(int value) => RawFeature.SendProgram(RawMixBlockIndex, value);
+        public void SetPreview(int value) => RawFeature.SendPreview(RawMixBlockIndex, value);
         public void CutButtonPress() => RawFeature.Cut(RawMixBlockIndex);
 
     }

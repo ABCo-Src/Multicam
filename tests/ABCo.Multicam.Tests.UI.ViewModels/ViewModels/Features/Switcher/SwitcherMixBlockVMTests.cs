@@ -197,14 +197,14 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
         public void SetProgram()
         {
             Create().SetProgram(4);
-            _mocks.RawFeature.Verify(m => m.PostValue(8, 0, 4));
+            _mocks.RawFeature.Verify(m => m.SendProgram(8, 4));
         }
 
         [TestMethod]
         public void SetPreview()
         {
             Create().SetPreview(3);
-            _mocks.RawFeature.Verify(m => m.PostValue(8, 1, 3));
+            _mocks.RawFeature.Verify(m => m.SendPreview(8, 3));
         }
 
         [TestMethod]

@@ -31,8 +31,8 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             _mocks.Parent.SetupGet(m => m.Program).Returns(5);
             _mocks.Parent.SetupGet(m => m.Preview).Returns(8);
 
-            _mocks.Switcher.Setup(m => m.ReceiveValue(_mixBlockIndex, 0)).Returns(2);
-            _mocks.Switcher.Setup(m => m.ReceiveValue(_mixBlockIndex, 1)).Returns(4);
+            _mocks.Switcher.Setup(m => m.RefreshProgram(_mixBlockIndex)).Returns(2);
+            _mocks.Switcher.Setup(m => m.RefreshProgram(_mixBlockIndex)).Returns(4);
         }
 
         MixBlockInteractionEmulator Create()
@@ -49,6 +49,8 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
         {
             _features = new(supportsDirectPreviewAccess: canAccessPreview, supportsCutAction: canCut);
             Assert.IsFalse(Create().TrySetProgWithPreviewThenCut(13));
+            _mocks.Switcher.Verify(m => m.SendPreviewValue(_mixBlockIndex, 13), Times.Never);
+            _mocks.Switcher.Verify(m => m.Cut(_mixBlockIndex), Times.Never);
         }
 
         [TestMethod]
@@ -57,7 +59,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             _features = new(supportsDirectPreviewAccess: true, supportsCutAction: true);
 
             var sequence = _mocks.Switcher.SetupSequenceTracker(
-                m => m.PostValue(_mixBlockIndex, 0, 13),
+                m => m.SendPreviewValue(_mixBlockIndex, 13),
                 m => m.Cut(_mixBlockIndex)
             );
 
@@ -173,8 +175,8 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
         public void Cut_PrevThenProg()
         {
             var sequence = _mocks.Parent.SetupSequenceTracker(
-                m => m.SetPreview(5),
-                m => m.SetProgram(8)
+                m => m.SendPreview(5),
+                m => m.SendProgram(8)
             );
 
             Create().CutWithSetProgAndPrev();
@@ -189,7 +191,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
         public void SetCutBusWithProgSet()
         {
             Create().SetCutBusWithProgSet(27);
-            _mocks.Parent.Verify(m => m.SetProgram(27));
+            _mocks.Parent.Verify(m => m.SendProgram(27));
         }
 
         [TestMethod]
@@ -198,7 +200,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             _features = new(supportsDirectPreviewAccess: true, supportsAutoAction: true);
 
             var sequence = _mocks.Parent.SetupSequenceTracker(
-                m => m.SetPreview(34),
+                m => m.SendPreview(34),
                 m => m.Auto()
             );
 
@@ -214,7 +216,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
         {
             _features = new(supportsDirectPreviewAccess: directPreviewAccess, supportsAutoAction: autoAction);
             Assert.IsFalse(Create().TrySetCutBusWithPrevThenAuto(34));
-            _mocks.Parent.Verify(m => m.SetPreview(34), Times.Never);
+            _mocks.Parent.Verify(m => m.SendPreview(34), Times.Never);
             _mocks.Parent.Verify(m => m.Auto(), Times.Never);
         }
     }

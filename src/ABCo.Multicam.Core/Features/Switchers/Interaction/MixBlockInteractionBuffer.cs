@@ -1,4 +1,6 @@
 ﻿using ABCo.Multicam.Core.Features.Switchers.Fading;
+using System;
+using System.Diagnostics;
 
 namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 {
@@ -8,17 +10,16 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
         int Preview { get; }
         CutBusMode CutBusMode { get; }
 
-        void SetProgram(int val);
-        void SetPreview(int val);
+        void SendProgram(int val);
+        void SendPreview(int val);
         void Cut();
         void Auto();
         void SetCutBus(int val);
         void SetCutBusMode(CutBusMode val);
+        void RefreshValues();
 
-        void SetCacheChangeExceptRefreshCall(Action<RetrospectiveFadeInfo>? onCacheChange);
-        void RefreshCache();
-        void RefreshWithKnownProg(int val);
-        void RefreshWithKnownPrev(int val);
+        void UpdateProg(int val);
+        void UpdatePrev(int val);
     }
 
     public class MixBlockInteractionBuffer : IMixBlockInteractionBuffer
@@ -27,35 +28,39 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
         readonly int _mixBlockIdx;
         readonly ISwitcher _switcher;
         readonly IMixBlockInteractionEmulator _fallbackEmulator;
-        Action<RetrospectiveFadeInfo>? _onCacheChangeExceptRefresh;
+        readonly ISwitcherEventHandler _eventHandler;
 
         public int Program { get; private set; }
         public int Preview { get; private set; }
         public CutBusMode CutBusMode { get; private set; }
 
-        public MixBlockInteractionBuffer(SwitcherMixBlock block, int mixBlockIdx, ISwitcher switcher, ISwitcherInteractionBufferFactory factory)
+        public MixBlockInteractionBuffer(SwitcherMixBlock block, int mixBlockIdx, ISwitcher switcher, ISwitcherEventHandler eventHandler, ISwitcherInteractionBufferFactory factory)
         {
             _mixBlock = block;
             _mixBlockIdx = mixBlockIdx;
             _switcher = switcher;
+            _eventHandler = eventHandler;
             _fallbackEmulator = factory.CreateMixBlockEmulator(block, mixBlockIdx, switcher, this);
+        }
 
-            Program = switcher.ReceiveValue(mixBlockIdx, 0);
+        public void RefreshValues()
+        {
+            _switcher.RefreshProgram(_mixBlockIdx);
 
-            if (block.SupportedFeatures.SupportsDirectPreviewAccess)
-                Preview = switcher.ReceiveValue(mixBlockIdx, 1);
+            if (_mixBlock.SupportedFeatures.SupportsDirectPreviewAccess)
+                _switcher.RefreshPreview(_mixBlockIdx);
             else
-                Preview = block.ProgramInputs.Count == 0 ? 0 : block.ProgramInputs[0].Id;
+                Preview = _mixBlock.ProgramInputs.Count == 0 ? 0 : _mixBlock.ProgramInputs[0].Id;
 
             CutBusMode = _mixBlock.SupportedFeatures.SupportsCutBusModeChanging ? _switcher.GetCutBusMode(_mixBlockIdx) : CutBusMode.Cut;
         }
 
-        public void SetProgram(int val)
+        public void SendProgram(int val)
         {
             // Try to do it natively
             if (_mixBlock.SupportedFeatures.SupportsDirectProgramModification)
             {
-                _switcher.PostValue(_mixBlockIdx, 0, val);
+                _switcher.SendProgramValue(_mixBlockIdx, val);
                 return;
             }
 
@@ -66,17 +71,17 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 
             // If neither works, just update the cache
             Program = val;
-            _onCacheChangeExceptRefresh?.Invoke(new());
+            _eventHandler.OnProgramChangeFinish(new(_mixBlockIdx, 0, val, null));
         }
 
-        public void SetPreview(int val)
+        public void SendPreview(int val)
         {
             if (_mixBlock.SupportedFeatures.SupportsDirectPreviewAccess)
-                _switcher.PostValue(_mixBlockIdx, 1, val);
+                _switcher.SendPreviewValue(_mixBlockIdx, val);
             else
             {
                 Preview = val;
-                _onCacheChangeExceptRefresh?.Invoke(new());
+                _eventHandler.OnPreviewChangeFinish(new(_mixBlockIdx, val, null));
             }
         }
 
@@ -110,16 +115,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
                 CutBusMode = val;
         }
 
-        public void RefreshCache()
-        {
-            Program = _switcher.ReceiveValue(_mixBlockIdx, 0);
-
-            if (_mixBlock.SupportedFeatures.SupportsDirectPreviewAccess)
-                Preview = _switcher.ReceiveValue(_mixBlockIdx, 1);
-        }
-
-        public void RefreshWithKnownProg(int knownProg) => Program = knownProg;
-        public void RefreshWithKnownPrev(int knownPrev) => Preview = knownPrev;
-        public void SetCacheChangeExceptRefreshCall(Action<RetrospectiveFadeInfo>? cacheChange) => _onCacheChangeExceptRefresh = cacheChange;
+        public void UpdateProg(int knownProg) => Program = knownProg;
+        public void UpdatePrev(int knownPrev) => Preview = knownPrev;
     }
 }
