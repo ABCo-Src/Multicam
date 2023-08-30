@@ -35,11 +35,14 @@ namespace ABCo.Multicam.UI
             container.RegisterTransient<IProjectFeaturesVM, ProjectFeaturesVM>();
             container.RegisterTransient<IFeatureVM, FeatureVM>();
             container.RegisterTransient<ISwitcherFeatureVM, SwitcherFeatureVM>();
+            container.RegisterTransient<ISwitcherConfigVM, SwitcherConfigVM>();
             container.RegisterTransient<ISwitcherMixBlockVM, SwitcherMixBlockVM>();
             container.RegisterTransient<ISwitcherCutButtonVM, SwitcherCutButtonVM>();
             container.RegisterTransient<ISwitcherAutoButtonVM, SwitcherAutoButtonVM>();
             container.RegisterTransient<ISwitcherProgramInputVM, SwitcherProgramInputVM>();
             container.RegisterTransient<ISwitcherPreviewInputVM, SwitcherPreviewInputVM>();
+
+            container.RegisterSingleton<ISpecificSwitcherConfigVMFactory, SpecificSwitcherConfigVMFactory>();
 
             CoreStatics.Initialize(container);
         }

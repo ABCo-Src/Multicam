@@ -42,9 +42,11 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         public void Ctor()
         {
             var feature = Create();
+            Assert.IsInstanceOfType(feature.SwitcherConfig, typeof(DummySwitcherConfig));
             _mocks.ServSource.Verify(m => m.Get<IBinderForSwitcherFeature, ISwitcherRunningFeature>(feature), Times.Once);
             _mocks.DynamicBuffer.Verify(m => m.ChangeSwitcher(It.IsAny<DummySwitcherConfig>()), Times.Once);
             _mocks.ServSource.Verify(m => m.Get<IDynamicSwitcherInteractionBuffer, ISwitcherEventHandler>(feature), Times.Once);
+            _mocks.UIBinder.Verify(m => m.ModelChange_Config());
         }
 
         [TestMethod]
@@ -64,7 +66,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         [TestMethod]
         public void GetPreview()
         {
-            Create().GetProgram(3);
+            Create().GetPreview(3);
             _mocks.DynamicBuffer.VerifyGet(m => m.CurrentBuffer);
             _mocks.Buffer.Verify(m => m.GetPreview(3));
         }
@@ -115,8 +117,12 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         public void ChangeSwitcher()
         {
             var config = new DummySwitcherConfig(4);
-            Create().ChangeSwitcher(config);
+            var feature = Create();
+            feature.ChangeSwitcher(config);
+            Assert.AreEqual(config, feature.SwitcherConfig);
+
             _mocks.DynamicBuffer.Verify(m => m.ChangeSwitcher(config));
+            _mocks.UIBinder.Verify(m => m.ModelChange_Config());
         }
 
         [TestMethod]

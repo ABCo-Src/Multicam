@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ViewModels\General\" />
+    <Folder Include="General\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -3,13 +3,17 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 xmlns:fviewmodels="using:ABCo.Multicam.UI.ViewModels.Features"
+			 xmlns:viewmodels="using:ABCo.Multicam.UI.ViewModels.Features.Switcher"
+			 xmlns:sviewmodels="using:ABCo.Multicam.UI.ViewModels.Features.Switcher.Types"
+			 x:DataType="fviewmodels:FeatureVM"
              x:Class="ABCo.Multicam.UI.Avalonia.Views.Features.Switcher.SwitcherFeatureSettingsView">
 
-	<StackPanel>
+	<StackPanel DataContext="{Binding InnerVM}" x:DataType="viewmodels:SwitcherFeatureVM">
 
 		<!-- Switcher Type -->
 		<TextBlock Classes="FEPTitleText">Switcher Connection</TextBlock>
-		<Grid Classes="FEPOuterMargin" RowDefinitions="Auto,5,Auto,5,Auto">
+		<Grid Classes="FEPOuterMargin" RowDefinitions="Auto,5,Auto,5,Auto" DataContext="{Binding Config}" x:DataType="viewmodels:SwitcherConfigVM">
 
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition MinWidth="90" Width="Auto" />
@@ -18,15 +22,17 @@
 
 			<!-- Type -->
 			<TextBlock Classes="FEPGridLeft">Type:</TextBlock>
-			<ComboBox Grid.Column="1" Classes="FEPGridRight">
-				<ComboBoxItem>Dummy</ComboBoxItem>
-				<ComboBoxItem>ATEM</ComboBoxItem>
-				<ComboBoxItem>OBS Studio</ComboBoxItem>
+			<ComboBox Grid.Column="1" Classes="FEPGridRight" ItemsSource="{Binding Items}" SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}">
+				<ComboBox.ItemTemplate>
+					<DataTemplate x:DataType="viewmodels:SwitcherConfigComboItemVM">
+						<TextBlock Text="{Binding Text}" />
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
 			</ComboBox>
 
 			<!-- Something Else -->
-			<TextBlock Grid.Row="2" Classes="FEPGridLeft">Connection:</TextBlock>
-			<TextBox Grid.Row="2" Grid.Column="1" />
+			<TextBlock Grid.Row="2" Classes="FEPGridLeft">Mix Block Count:</TextBlock>
+			<ComboBox Grid.Row="2" Grid.Column="1" Classes="FEPGridRight" DataContext="{Binding CurrentConfig}" x:DataType="sviewmodels:DummySwitcherConfigVM" ItemsSource="{Binding MixBlockCountOptions}" SelectedIndex="{Binding SelectedMixBlockCount, Mode=TwoWay}" />
 
 			<!-- Something Else -->
 			<TextBlock Grid.Row="4" Classes="FEPGridLeft">IP Address:</TextBlock>

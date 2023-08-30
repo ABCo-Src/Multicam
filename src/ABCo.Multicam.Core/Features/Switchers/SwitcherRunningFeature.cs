@@ -1,17 +1,20 @@
 ﻿using ABCo.Multicam.Core.Features.Switchers.Fading;
 using ABCo.Multicam.Core.Features.Switchers.Interaction;
 using ABCo.Multicam.Core.Features.Switchers.Types;
+using System.Diagnostics.Contracts;
 
 namespace ABCo.Multicam.Core.Features.Switchers
 {
     public interface ISwitcherRunningFeature : ILiveFeature
     {
+        SwitcherConfig SwitcherConfig { get; }
         SwitcherSpecs SwitcherSpecs { get; }
         int GetProgram(int mixBlock);
         int GetPreview(int mixBlock);
         void SendProgram(int mixBlock, int value);
         void SendPreview(int mixBlock, int value);
         void Cut(int mixBlock);
+        void ChangeSwitcher(SwitcherConfig config);
     }
 
     public interface ISwitcherEventHandler
@@ -24,6 +27,7 @@ namespace ABCo.Multicam.Core.Features.Switchers
     public interface IBinderForSwitcherFeature : ILiveFeatureBinder, INeedsInitialization<ISwitcherRunningFeature>
     {
         void ModelChange_Specs();
+        void ModelChange_Config();
         void ModelChange_BusValues();
     }
 
@@ -41,7 +45,8 @@ namespace ABCo.Multicam.Core.Features.Switchers
         {
             _buffer = serviceSource.Get<IDynamicSwitcherInteractionBuffer, ISwitcherEventHandler>(this);
             _uiBinder = serviceSource.Get<IBinderForSwitcherFeature, ISwitcherRunningFeature>(this);
-            _buffer.ChangeSwitcher(new DummySwitcherConfig(4));
+            _buffer.ChangeSwitcher(SwitcherConfig = new DummySwitcherConfig(4));
+            _uiBinder.ModelChange_Config();
         }
 
         // Properties:
@@ -49,13 +54,20 @@ namespace ABCo.Multicam.Core.Features.Switchers
         public ILiveFeatureBinder UIBinder => _uiBinder;
         public bool IsConnected => _buffer.CurrentBuffer.IsConnected;
         public SwitcherSpecs SwitcherSpecs => _buffer.CurrentBuffer.Specs;
+        public SwitcherConfig SwitcherConfig { get; private set; }
 
         // Methods:
         public int GetProgram(int mixBlock) => _buffer.CurrentBuffer.GetProgram(mixBlock);
         public int GetPreview(int mixBlock) => _buffer.CurrentBuffer.GetPreview(mixBlock);
         public void SendProgram(int mixBlock, int value) => _buffer.CurrentBuffer.SendProgram(mixBlock, value);
         public void SendPreview(int mixBlock, int value) => _buffer.CurrentBuffer.SendPreview(mixBlock, value);
-        public void ChangeSwitcher(SwitcherConfig config) => _buffer.ChangeSwitcher(config);
+        public void ChangeSwitcher(SwitcherConfig config)
+        {
+            _buffer.ChangeSwitcher(config);
+            SwitcherConfig = config;
+            _uiBinder.ModelChange_Config();
+        }
+
         public void Cut(int mixBlock) => _buffer.CurrentBuffer.Cut(mixBlock);
 
         // Events:

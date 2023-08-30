@@ -5,7 +5,10 @@ namespace ABCo.Multicam.UI.Bindings.Features.Switcher
 {
     public interface IVMForSwitcherFeature : IVMForBinder<IVMForSwitcherFeature>
     {
+        ISwitcherRunningFeature RawFeature { get; set; }
         IVMBinder<IVMForSwitcherMixBlock>[] RawMixBlocks { get; set; }
+        SwitcherConfig RawConfig { get; set; }
+        void UpdateConfig(SwitcherConfig config);
     }
 
     public class SwitcherFeatureVMBinder : VMBinder<IVMForSwitcherFeature>, IBinderForSwitcherFeature
@@ -14,10 +17,22 @@ namespace ABCo.Multicam.UI.Bindings.Features.Switcher
 
         public override PropertyBinding[] CreateProperties() => new PropertyBinding[]
         {
+            // RawFeature
+            new PropertyBinding<ISwitcherRunningFeature>()
+            {
+                ModelChange = new(() => _feature, v => v.VM.RawFeature = v.NewVal)
+            },
+
             // RawMixBlock
             new PropertyBinding<IVMBinder<IVMForSwitcherMixBlock>[]>()
             {
                 ModelChange = new(GetMixBlocks, v => v.VM.RawMixBlocks = v.NewVal)
+            },
+
+            // RawConfig
+            new PropertyBinding<SwitcherConfig>()
+            {
+                ModelChange = new(() => _feature.SwitcherConfig, v => v.VM.RawConfig = v.NewVal)
             }
         };
 
@@ -28,7 +43,7 @@ namespace ABCo.Multicam.UI.Bindings.Features.Switcher
             Init();
         }
 
-        IVMBinder<IVMForSwitcherMixBlock>[] _currentMixBlocks;
+        IVMBinder<IVMForSwitcherMixBlock>[] _currentMixBlocks = null!;
         public IVMBinder<IVMForSwitcherMixBlock>[] GetMixBlocks()
         {
             var arr = new IVMBinder<IVMForSwitcherMixBlock>[_feature.SwitcherSpecs.MixBlocks.Count];
@@ -45,6 +60,7 @@ namespace ABCo.Multicam.UI.Bindings.Features.Switcher
         }
 
         public void ModelChange_Specs() => ReportModelChange(Properties[0]);
+        public void ModelChange_Config() => ReportModelChange(Properties[2]);
         public void ModelChange_BusValues()
         {
             for (int i = 0; i < _currentMixBlocks.Length; i++)
