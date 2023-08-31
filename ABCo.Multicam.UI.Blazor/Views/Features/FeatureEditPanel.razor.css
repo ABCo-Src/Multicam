@@ -2,6 +2,20 @@
     width: 100%;
     height: 100%;
     background-color: var(--col-panelback);
+
+    display: grid;
+    grid-template-columns: 1fr 3px;
+    grid-template-areas: "content rightBorder";
+}
+
+.editor .content {
+    grid-area: content;
+}
+
+.editor .rightBorder {
+    grid-area: rightBorder;
+    background: linear-gradient(0deg, var(--col-gradient1) 0%, var(--col-gradient2) 50%, var(--col-gradient1) 100%);
+    height: 100%;
 }
 
 .titlebar {
@@ -31,7 +45,14 @@
     margin: 5px 0 20px 0;
 }
 
-::deep .sectionSeparator {
+::deep .sectionSeparator, .titlebarSeparator {
+    border: none;
+    height: 3px;
+    background: linear-gradient(90deg, var(--col-gradient3) 0%, var(--col-gradient4) 50%, var(--col-gradient3) 90%, var(--col-gradient1) 100%);
+}
+
+.titlebarSeparator {
+    margin: 0;
 }
 
 .sharedContent .sharedGrid {
@@ -42,7 +63,6 @@
         "titleTag titleBox titleBox"
         "posTag moveUpBtn moveDownBtn";
     gap: 10px;
-
     align-items: center;
 }
 

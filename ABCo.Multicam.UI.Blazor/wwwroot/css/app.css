@@ -11,6 +11,10 @@ h1:focus, p:focus {
     --col-btn-highlight: #777;
     --col-btn-pressed: #666;
     --col-border: #999;
+    color: white;
+}
+
+:root {
     --col-switcherbtn-default: #333;
     --col-switcherbtn-program: darkred;
     --col-switcherbtn-programhover: #9b4444;
@@ -18,7 +22,13 @@ h1:focus, p:focus {
     --col-switcherbtn-preview: darkgreen;
     --col-switcherbtn-previewhover: #407440;
     --col-switcherbtn-previewactive: #204420;
-    color: white;
+}
+
+:root {
+    --col-gradient1: #555;
+    --col-gradient2: #666;
+    --col-gradient3: #777;
+    --col-gradient4: #888;
 }
 
 p, a {

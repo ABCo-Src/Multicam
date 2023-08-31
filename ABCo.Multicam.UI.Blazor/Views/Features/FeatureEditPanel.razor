@@ -1,38 +1,43 @@
 ﻿@using ABCo.Multicam.Core.Features;
 @using ABCo.Multicam.UI.Blazor.Views.Features.Switcher
+@using ABCo.Multicam.UI.Blazor.Views.Features.Switcher.Editor
 @using ABCo.Multicam.UI.ViewModels.Features;
 @using ABCo.Multicam.UI.ViewModels.Features.Switcher;
 @inherits VMBoundComponent<IFeatureVM>
 
 <div class="editor">
-	<div class="titlebar">
-		<p class="title">@VM.EditPanelTitle</p>
-		<a class="close btn btnIcon" @onclick=VM.ToggleEdit><img src="img/icons/smallCloseButton.svg" /></a>
-	</div>
+	<div class="rightBorder"></div>
+	<div class="content">
+		<div class="titlebar">
+			<p class="title">@VM.EditPanelTitle</p>
+			<a class="close btn btnIcon" @onclick=VM.ToggleEdit><img src="img/icons/smallCloseButton.svg" /></a>
+		</div>
+		<hr class="titlebarSeparator" />
 
-	<div class="sharedContent section">
-		<p class="sectionTitle">General Info</p>
+		<div class="sharedContent section">
+			<p class="sectionTitle">General Info</p>
 
-		<div class="sharedGrid">
-			<p class="gridTitle titleTag">Title:</p>
-			<input class="textbox titleBox" type="text" @bind="VM.FeatureTitle" />
+			<div class="sharedGrid">
+				<p class="gridTitle titleTag">Title:</p>
+				<input class="textbox titleBox" type="text" @bind="VM.FeatureTitle" />
 
-			<p class="gridTitle posTag">Position:</p>
-			<a class="btn btnNormal moveUpBtn" @onclick=VM.MoveUp>Move Up</a>
-			<a class="btn btnNormal moveDownBtn" @onclick=VM.MoveDown>Move Down</a>
+				<p class="gridTitle posTag">Position:</p>
+				<a class="btn btnNormal moveUpBtn" @onclick=VM.MoveUp>Move Up</a>
+				<a class="btn btnNormal moveDownBtn" @onclick=VM.MoveDown>Move Down</a>
+			</div>
+
+
 		</div>
 
-		
-	</div>
+		@if (VM.InnerType == FeatureTypes.Switcher)
+		{
+			<SwitcherEditor VM="(SwitcherFeatureVM)VM.InnerVM!" />
+		}
 
-	@if (VM.InnerType == FeatureTypes.Switcher)
-	{
-		<SwitcherEditor VM="(SwitcherFeatureVM)VM.InnerVM" />
-	}
+		<hr class="sectionSeparator" />
 
-	<hr class="sectionSeparator" />
-
-	<div class="deleteBtn section">
-		<a class="btn btnHyperlink btnRedHint deleteBtn" @onclick=VM.Delete>Delete Feature</a>
+		<div class="deleteBtn section">
+			<a class="btn btnHyperlink btnRedHint deleteBtn" @onclick=VM.Delete>Delete Feature</a>
+		</div>
 	</div>
 </div>
