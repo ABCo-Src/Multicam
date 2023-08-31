@@ -1,7 +1,7 @@
 ﻿.grid {
     display: grid;
-    grid-template-columns: auto 1fr;
-    grid-template-areas: "tag combo";
+    grid-template-columns: 1fr auto auto;
+    grid-template-areas: "_ tag combo";
     align-items: center;
 }
 

@@ -11,6 +11,15 @@
 	</select>
 </div>
 
+<ul class="mixBlocks">
+	@foreach (var item in VM.MixBlockVMs)
+	{
+		<li class="indexedListItem">
+			<DummyMBConfigEditor VM="(DummySwitcherConfigMixBlockVM)item" />
+		</li>
+	}
+</ul>
+
 @code {
 
 }

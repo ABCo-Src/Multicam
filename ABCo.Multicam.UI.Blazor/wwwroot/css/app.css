@@ -6,6 +6,7 @@ h1:focus, p:focus {
     --col-appback: #111;
     --col-panelback: #222;
     --col-panelinnerback: #333;
+    --col-panellistitem: #000;
     --col-alwaysinner: #4E4E4E;
     --col-accent: #006900;
     --col-btn-highlight: #777;
@@ -40,6 +41,7 @@ p, a {
 ul {
     list-style: none;
     padding: 0;
+    margin: 0;
 }
 
 body {
@@ -115,7 +117,7 @@ body {
 }
 
 .combo {
-    
+    min-width: 60px;
 }
 
 /* Blazor general */

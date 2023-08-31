@@ -1,0 +1,21 @@
+﻿.content {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    grid-template-areas: "index _ tag combo";
+    align-items: center;
+}
+
+.content .index {
+    grid-area: index;
+}
+
+.content .tag {
+    grid-area: tag;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.content .combo {
+    grid-area: combo;
+    margin-left: 10px;
+}
