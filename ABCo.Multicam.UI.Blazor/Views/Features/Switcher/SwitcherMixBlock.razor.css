@@ -32,9 +32,6 @@
     padding-right: 20px;
 }
 
-.buttonRow li {
-}
-
 .control {
     grid-area: control;
 }

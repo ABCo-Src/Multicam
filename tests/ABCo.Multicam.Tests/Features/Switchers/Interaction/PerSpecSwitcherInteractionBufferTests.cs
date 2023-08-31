@@ -35,14 +35,14 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             _mocks.EventHandler = new();
 
             _mocks.Factory = new();
-            _mocks.Factory.Setup(m => m.CreateMixBlock(It.IsAny<SwitcherMixBlock>(), 0, It.IsAny<ISwitcher>(), It.IsAny<ISwitcherEventHandler>())).Returns(_mocks.Buffers[0].Object);
-            _mocks.Factory.Setup(m => m.CreateMixBlock(It.IsAny<SwitcherMixBlock>(), 1, It.IsAny<ISwitcher>(), It.IsAny<ISwitcherEventHandler>())).Returns(_mocks.Buffers[1].Object);
+            _mocks.Factory.Setup(m => m.CreateMixBlock(It.IsAny<SwitcherMixBlock>(), 0, It.IsAny<ISwitcher>())).Returns(_mocks.Buffers[0].Object);
+            _mocks.Factory.Setup(m => m.CreateMixBlock(It.IsAny<SwitcherMixBlock>(), 1, It.IsAny<ISwitcher>())).Returns(_mocks.Buffers[1].Object);
         }
 
         public PerSpecSwitcherInteractionBuffer Create()
         {
             var buffer = new PerSpecSwitcherInteractionBuffer(_mocks.Factory.Object);
-            buffer.FinishConstruction(_switcherSpecs, _mocks.Switcher.Object, _mocks.EventHandler.Object);
+            buffer.FinishConstruction(_switcherSpecs, _mocks.Switcher.Object);
             return buffer;
         }
 
@@ -57,7 +57,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             Assert.IsFalse(feature.IsConnected);
 
             _mocks.Switcher.Verify(m => m.SetEventHandler(feature), Times.Once);
-            _mocks.Factory.Verify(m => m.CreateMixBlock(It.IsAny<SwitcherMixBlock>(), It.IsAny<int>(), It.IsAny<ISwitcher>(), It.IsAny<ISwitcherEventHandler>()), Times.Never);
+            _mocks.Factory.Verify(m => m.CreateMixBlock(It.IsAny<SwitcherMixBlock>(), It.IsAny<int>(), It.IsAny<ISwitcher>()), Times.Never);
         }
 
         [TestMethod]
@@ -68,10 +68,20 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             Assert.IsTrue(feature.IsConnected);
 
             _mocks.Switcher.Verify(m => m.SetEventHandler(feature), Times.Once);
-            _mocks.Factory.Verify(m => m.CreateMixBlock(_switcherSpecs.MixBlocks[0], 0, _mocks.Switcher.Object, _mocks.EventHandler.Object));
-            _mocks.Factory.Verify(m => m.CreateMixBlock(_switcherSpecs.MixBlocks[1], 1, _mocks.Switcher.Object, _mocks.EventHandler.Object));
+            _mocks.Factory.Verify(m => m.CreateMixBlock(_switcherSpecs.MixBlocks[0], 0, _mocks.Switcher.Object));
+            _mocks.Factory.Verify(m => m.CreateMixBlock(_switcherSpecs.MixBlocks[1], 1, _mocks.Switcher.Object));
             _mocks.Buffers[0].Verify(m => m.RefreshValues());
             _mocks.Buffers[1].Verify(m => m.RefreshValues());
+        }
+
+        [TestMethod]
+        public void SetEventHandler()
+        {
+			var feature = Create();
+            feature.SetEventHandler(_mocks.EventHandler.Object);
+
+            _mocks.Buffers[0].Verify(m => m.SetEventHandler(_mocks.EventHandler.Object));
+            _mocks.Buffers[1].Verify(m => m.SetEventHandler(_mocks.EventHandler.Object));
         }
 
         [TestMethod]
@@ -139,6 +149,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
         {
             var info = new SwitcherProgramChangeInfo(mixBlock, 0, 13, null);
             var feature = Create();
+            feature.SetEventHandler(_mocks.EventHandler.Object);
             feature.OnProgramChangeFinish(info);
 
             Verify1Success1Fail(mixBlock, (i, t) => i.Verify(m => m.UpdateProg(13), t));
@@ -156,7 +167,8 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
         {
             var info = new SwitcherPreviewChangeInfo(mixBlock, 13, null);
             var feature = Create();
-            feature.OnPreviewChangeFinish(info);
+			feature.SetEventHandler(_mocks.EventHandler.Object);
+			feature.OnPreviewChangeFinish(info);
 
             Verify1Success1Fail(mixBlock, (i, t) => i.Verify(m => m.UpdatePrev(13), t));
 
@@ -170,7 +182,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
         public void OnSpecsChange()
         {
             var feature = Create();
-
+            feature.SetEventHandler(_mocks.EventHandler.Object);
             var info = new SwitcherSpecs();
             feature.OnSpecsChange(info);
             _mocks.EventHandler.Verify(m => m.OnSpecsChange(info));

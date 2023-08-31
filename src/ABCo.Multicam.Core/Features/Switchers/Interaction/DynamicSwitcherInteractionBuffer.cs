@@ -30,17 +30,20 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
             _servSource = servSource;
 
             _switcher = factory.GetSwitcher(new DummySwitcherConfig());
-            CurrentBuffer = servSource.Get<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, ISwitcher, ISwitcherEventHandler>(new(), _switcher, this);
-        }
+            CurrentBuffer = servSource.Get<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, ISwitcher>(new(), _switcher);
+			CurrentBuffer.SetEventHandler(this);
+		}
 
         public void ChangeSwitcher(SwitcherConfig newConfig)
         {
             _switcher = _factory.GetSwitcher(newConfig);
 
             CurrentBuffer.DisposeSwitcher();
-            CurrentBuffer = _servSource.Get<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, ISwitcher, ISwitcherEventHandler>(new(), _switcher, this);
+            CurrentBuffer.SetEventHandler(null);
+            CurrentBuffer = _servSource.Get<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, ISwitcher>(new(), _switcher);
+			CurrentBuffer.SetEventHandler(this);
 
-            if (_switcher.IsConnected) _switcher.RefreshSpecs();
+			if (_switcher.IsConnected) _switcher.RefreshSpecs();
         }
 
         public void FinishConstruction(ISwitcherEventHandler eventHandler) => _eventHandler = eventHandler;
@@ -49,8 +52,9 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
         public void OnPreviewChangeFinish(SwitcherPreviewChangeInfo info) => _eventHandler.OnPreviewChangeFinish(info);
         public void OnSpecsChange(SwitcherSpecs newSpecs) 
         {
-            CurrentBuffer = _servSource.Get<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, ISwitcher, ISwitcherEventHandler>(newSpecs, _switcher, this);
-            _eventHandler.OnSpecsChange(newSpecs);
+            CurrentBuffer = _servSource.Get<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, ISwitcher>(newSpecs, _switcher);
+			CurrentBuffer.SetEventHandler(this);
+			_eventHandler.OnSpecsChange(newSpecs);
         }
 
         public void Dispose() => CurrentBuffer.DisposeSwitcher();

@@ -39,7 +39,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
                 .Returns(_mocks.Switchers[2].Object);
 
             _mocks.ServSource = new();
-            _mocks.ServSource.SetupSequence(m => m.Get<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, ISwitcher, ISwitcherEventHandler>(It.IsAny<SwitcherSpecs>(), It.IsAny<ISwitcher>(), It.IsAny<ISwitcherEventHandler>()))
+            _mocks.ServSource.SetupSequence(m => m.Get<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, ISwitcher>(It.IsAny<SwitcherSpecs>(), It.IsAny<ISwitcher>()))
                 .Returns(_mocks.Buffers[0].Object)
                 .Returns(_mocks.Buffers[1].Object)
                 .Returns(_mocks.Buffers[2].Object);
@@ -62,7 +62,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             var swapper = Create();
 
             _mocks.SwitcherFactory.Verify(m => m.GetSwitcher(It.IsAny<DummySwitcherConfig>()));
-            _mocks.ServSource.Verify(m => m.Get<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, ISwitcher, ISwitcherEventHandler>(It.IsAny<SwitcherSpecs>(), _mocks.Switchers[0].Object, swapper));
+            _mocks.ServSource.Verify(m => m.Get<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, ISwitcher>(It.IsAny<SwitcherSpecs>(), _mocks.Switchers[0].Object));
             Assert.AreEqual(_mocks.Buffers[0].Object, swapper.CurrentBuffer);
         }
 
@@ -79,10 +79,12 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
 
             // Verify old switcher is detached
             _mocks.Buffers[0].Verify(m => m.DisposeSwitcher());
+			_mocks.Buffers[0].Verify(m => m.SetEventHandler(null));
 
-            // Verify new switcher is attached
-            _mocks.SwitcherFactory.Verify(m => m.GetSwitcher(config), Times.Once);
-            _mocks.ServSource.Verify(m => m.Get<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, ISwitcher, ISwitcherEventHandler>(It.IsAny<SwitcherSpecs>(), _mocks.Switchers[1].Object, swapper));
+			// Verify new switcher is attached
+			_mocks.SwitcherFactory.Verify(m => m.GetSwitcher(config), Times.Once);
+            _mocks.ServSource.Verify(m => m.Get<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, ISwitcher>(It.IsAny<SwitcherSpecs>(), _mocks.Switchers[1].Object));
+            _mocks.Buffers[1].Verify(m => m.SetEventHandler(swapper));
             Assert.AreEqual(_mocks.Buffers[1].Object, swapper.CurrentBuffer);
 
             // Verify the specs were updated (if connected)
@@ -102,13 +104,15 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             swapper.ChangeSwitcher(new DummySwitcherConfig());
             swapper.ChangeSwitcher(config);
 
-            // Verify old switcher is detached
-            _mocks.Buffers[1].Verify(m => m.DisposeSwitcher());
+			// Verify old switcher is detached
+			_mocks.Buffers[1].Verify(m => m.SetEventHandler(null));
+			_mocks.Buffers[1].Verify(m => m.DisposeSwitcher());
 
             // Verify new switcher is attached
             _mocks.SwitcherFactory.Verify(m => m.GetSwitcher(config), Times.Once);
-            _mocks.ServSource.Verify(m => m.Get<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, ISwitcher, ISwitcherEventHandler>(It.IsAny<SwitcherSpecs>(), _mocks.Switchers[2].Object, swapper));
-            Assert.AreEqual(_mocks.Buffers[2].Object, swapper.CurrentBuffer);
+            _mocks.ServSource.Verify(m => m.Get<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, ISwitcher>(It.IsAny<SwitcherSpecs>(), _mocks.Switchers[2].Object));
+			_mocks.Buffers[2].Verify(m => m.SetEventHandler(swapper));
+			Assert.AreEqual(_mocks.Buffers[2].Object, swapper.CurrentBuffer);
 
             // Verify the specs were updated (if connected)
             _mocks.Switchers[2].Verify(m => m.RefreshSpecs(), isConnected ? Times.Once : Times.Never);
@@ -153,7 +157,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             var info = new SwitcherSpecs();
             swapper.OnSpecsChange(info);
 
-            _mocks.ServSource.Verify(m => m.Get<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, ISwitcher, ISwitcherEventHandler>(info, _mocks.Switchers[0].Object, swapper));
+            _mocks.ServSource.Verify(m => m.Get<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, ISwitcher>(info, _mocks.Switchers[0].Object));
             Assert.AreEqual(_mocks.Buffers[1].Object, swapper.CurrentBuffer);
 
             _mocks.EventHandler.Verify(m => m.OnSpecsChange(info));
@@ -167,7 +171,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             swapper.ChangeSwitcher(new DummySwitcherConfig());
             swapper.OnSpecsChange(info);
 
-            _mocks.ServSource.Verify(m => m.Get<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, ISwitcher, ISwitcherEventHandler>(info, _mocks.Switchers[1].Object, swapper));
+            _mocks.ServSource.Verify(m => m.Get<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, ISwitcher>(info, _mocks.Switchers[1].Object));
             Assert.AreEqual(_mocks.Buffers[2].Object, swapper.CurrentBuffer);
 
             _mocks.EventHandler.Verify(m => m.OnSpecsChange(info));

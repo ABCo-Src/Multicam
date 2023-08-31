@@ -2,10 +2,7 @@
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
-    public interface ISwitcherActButtonVM : ISwitcherButtonVM, INeedsInitialization<ISwitcherMixBlockVM>
-    {
-        void Click();
-    }
+    public interface ISwitcherActButtonVM : ISwitcherButtonVM, INeedsInitialization<ISwitcherMixBlockVM> { }
 
     public interface ISwitcherCutButtonVM : ISwitcherActButtonVM { }
     public class SwitcherCutButtonVM : SwitcherButtonVM, ISwitcherCutButtonVM

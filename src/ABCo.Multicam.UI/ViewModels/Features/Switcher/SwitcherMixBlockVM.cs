@@ -58,7 +58,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 
         void InvalidateProgramBus()
         {
-            ProgramBus = new ISwitcherProgramInputVM[4];
+            ProgramBus = new ISwitcherProgramInputVM[RawMixBlock.ProgramInputs.Count];
             for (int i = 0; i < RawMixBlock.ProgramInputs.Count; i++)
             {
                 var newVM = _servSource.Get<ISwitcherProgramInputVM>();
@@ -69,9 +69,13 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 
         void InvalidatePreviewBus()
         {
-			PreviewBus = new ISwitcherPreviewInputVM[4];
-			if (RawMixBlock.PreviewInputs == null) return;
+            if (RawMixBlock.PreviewInputs == null)
+            {
+				PreviewBus = Array.Empty<ISwitcherPreviewInputVM>();
+				return;
+            }
 
+			PreviewBus = new ISwitcherPreviewInputVM[RawMixBlock.PreviewInputs.Count];
             for (int i = 0; i < RawMixBlock.PreviewInputs.Count; i++)
             {
                 var newVM = _servSource.Get<ISwitcherPreviewInputVM>();

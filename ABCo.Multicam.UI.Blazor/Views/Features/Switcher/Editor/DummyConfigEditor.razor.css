@@ -1,0 +1,9 @@
+﻿.grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas: "tag combo";
+    align-items: center;
+}
+
+.gridTitle { grid-area: tag; }
+.combo { grid-area: combo; }

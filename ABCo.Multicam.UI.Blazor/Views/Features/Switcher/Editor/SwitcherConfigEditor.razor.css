@@ -1,0 +1,16 @@
+﻿.grid {
+    display: grid;
+    grid-template-rows: auto auto;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+        "tag1 item1"
+        "inner inner";
+
+    align-items: center;
+
+    gap: 10px;
+}
+
+.gridTag1 { grid-area: tag1; }
+.gridTag2 { grid-area: tag2; }
+.inner { grid-area: inner; }

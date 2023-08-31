@@ -14,7 +14,10 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
     public interface ISwitcherConfigVM : INeedsInitialization<SwitcherConfig, ISwitcherFeatureVM>, INotifyPropertyChanged
     {
-    }
+		string[] Items { get; }
+        string SelectedItem { get; set; }
+		ISpecificSwitcherConfigVM? CurrentConfig { get; }
+	}
 
     public interface ISpecificSwitcherConfigVM
     {
@@ -23,20 +26,19 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 
     public partial class SwitcherConfigVM : ViewModelBase, ISwitcherConfigVM
     {
-        static int Id;
         bool _initialized = false;
 
         ISpecificSwitcherConfigVMFactory _configVMFactory;
         ISwitcherFeatureVM _parent = null!;
         IServiceSource _servSource;
 
-        [ObservableProperty] SwitcherConfigComboItemVM[] _items = new SwitcherConfigComboItemVM[] 
+        [ObservableProperty] string[] _items = new string[]
         {
-            new SwitcherConfigComboItemVM(SwitcherType.Dummy, "Dummy", Id++),
-            new SwitcherConfigComboItemVM(SwitcherType.ATEM, "ATEM", Id++)
+            "Dummy",
+            "ATEM"
         };
 
-        [ObservableProperty] int _selectedIndex = 0;
+        [ObservableProperty] string _selectedItem = "Dummy";
         [ObservableProperty] ISpecificSwitcherConfigVM? _currentConfig;
 
         public SwitcherConfigVM(IServiceSource servSource)
@@ -50,26 +52,24 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
             _parent = parent;
 
             // Update the selected item
-            for (int i = 0; i < Items.Length; i++)
-                if (Items[i].Type == config.Type)
-                {
-                    SelectedIndex = i;
-                    break;
-                }
+            SelectedItem = config.Type switch 
+            {
+                SwitcherType.ATEM => "ATEM",
+                _ => "Dummy"
+			};
 
             CurrentConfig = _configVMFactory.Create(config, parent);
             _initialized = true;
         }
 
-        partial void OnSelectedIndexChanged(int value)
+        partial void OnSelectedItemChanged(string value)
         {
             if (!_initialized) return;
 
-            var itemAtIndex = Items[value];
-            _parent.UpdateConfig(itemAtIndex.Type switch
+            _parent.UpdateConfig(value switch
             {
-                SwitcherType.Dummy => new DummySwitcherConfig(),
-                SwitcherType.ATEM => new DummySwitcherConfig(4, 4),
+                "Dummy" => new DummySwitcherConfig(),
+                "ATEM" => new DummySwitcherConfig(4, 4),
                 _ => throw new Exception("Unsupported combo box item")
             });
         }

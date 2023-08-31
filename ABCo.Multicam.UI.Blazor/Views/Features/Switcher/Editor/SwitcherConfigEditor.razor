@@ -1,0 +1,22 @@
+﻿@using ABCo.Multicam.UI.ViewModels.Features.Switcher;
+@using ABCo.Multicam.UI.ViewModels.Features.Switcher.Types;
+@inherits VMBoundComponent<ISwitcherConfigVM>
+
+<div class="grid">
+	<p class="gridTitle gridTag1">Type:</p>
+	<select class="combo" @bind="VM.SelectedItem">
+		@foreach (var opt in VM.Items)
+		{
+			<option>@opt</option>
+		}
+		<option>DEF</option>
+	</select>
+
+	<div class="inner">
+		<DummyConfigEditor VM="(DummySwitcherConfigVM)VM.CurrentConfig!" />
+	</div>
+</div>
+
+@code {
+
+}

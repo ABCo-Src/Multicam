@@ -1,0 +1,16 @@
+﻿@using ABCo.Multicam.UI.ViewModels.Features.Switcher.Types;
+@inherits VMBoundComponent<DummySwitcherConfigVM>
+
+<div class="grid">
+	<p class="gridTitle">Mix Block Count:</p>
+	<select class="combo mixBlockCount" @bind="VM.SelectedMixBlockCount">
+		@foreach (var item in VM.MixBlockCountOptions)
+		{
+			<option>@item</option>
+		}
+	</select>
+</div>
+
+@code {
+
+}

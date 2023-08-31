@@ -11,6 +11,7 @@ h1:focus, p:focus {
     --col-btn-highlight: #777;
     --col-btn-pressed: #666;
     --col-border: #999;
+    --col-border-focus: white;
     color: white;
 }
 
@@ -100,16 +101,21 @@ body {
     cursor: pointer;
 }
 
-/* Text Boxes */
-.textbox {
+/* Text/Combo Boxes */
+.textbox, .combo {
     background-color: black;
     color: white;
     padding: 8px;
     border: solid 1px var(--col-border);
 }
 
-.strip {
-    width: 5px;
+.textbox:focus, .combo:focus {
+    border: solid 1px var(--col-border-focus);
+    outline: none;
+}
+
+.combo {
+    
 }
 
 /* Blazor general */

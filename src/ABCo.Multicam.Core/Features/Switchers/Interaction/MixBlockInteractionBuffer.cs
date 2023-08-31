@@ -10,6 +10,8 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
         int Preview { get; }
         CutBusMode CutBusMode { get; }
 
+        void SetEventHandler(ISwitcherEventHandler? eventHandler);
+
         void SendProgram(int val);
         void SendPreview(int val);
         void Cut();
@@ -28,22 +30,23 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
         readonly int _mixBlockIdx;
         readonly ISwitcher _switcher;
         readonly IMixBlockInteractionEmulator _fallbackEmulator;
-        readonly ISwitcherEventHandler _eventHandler;
+        ISwitcherEventHandler? _eventHandler;
 
         public int Program { get; private set; }
         public int Preview { get; private set; }
         public CutBusMode CutBusMode { get; private set; }
 
-        public MixBlockInteractionBuffer(SwitcherMixBlock block, int mixBlockIdx, ISwitcher switcher, ISwitcherEventHandler eventHandler, ISwitcherInteractionBufferFactory factory)
+        public MixBlockInteractionBuffer(SwitcherMixBlock block, int mixBlockIdx, ISwitcher switcher, ISwitcherInteractionBufferFactory factory)
         {
             _mixBlock = block;
             _mixBlockIdx = mixBlockIdx;
             _switcher = switcher;
-            _eventHandler = eventHandler;
             _fallbackEmulator = factory.CreateMixBlockEmulator(block, mixBlockIdx, switcher, this);
         }
 
-        public void RefreshValues()
+        public void SetEventHandler(ISwitcherEventHandler? eventHandler) => _eventHandler = eventHandler;
+
+		public void RefreshValues()
         {
             _switcher.RefreshProgram(_mixBlockIdx);
 
@@ -71,7 +74,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 
             // If neither works, just update the cache
             Program = val;
-            _eventHandler.OnProgramChangeFinish(new(_mixBlockIdx, 0, val, null));
+            _eventHandler?.OnProgramChangeFinish(new(_mixBlockIdx, 0, val, null));
         }
 
         public void SendPreview(int val)
@@ -81,7 +84,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
             else
             {
                 Preview = val;
-                _eventHandler.OnPreviewChangeFinish(new(_mixBlockIdx, val, null));
+                _eventHandler?.OnPreviewChangeFinish(new(_mixBlockIdx, val, null));
             }
         }
 

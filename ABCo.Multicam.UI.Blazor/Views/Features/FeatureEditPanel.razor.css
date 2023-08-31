@@ -1,4 +1,28 @@
-﻿.editor {
+﻿::deep .section {
+    padding: 10px;
+}
+
+::deep .sectionTitle {
+    text-decoration: underline;
+    text-align: center;
+    margin: 5px 0 20px 0;
+}
+
+::deep .sectionSeparator, .titlebarSeparator {
+    border: none;
+    height: 3px;
+    background: linear-gradient(90deg, var(--col-gradient3) 0%, var(--col-gradient4) 50%, var(--col-gradient3) 90%, var(--col-gradient1) 100%);
+}
+
+::deep .gridTitle {
+    font-weight: bold;
+}
+
+::deep .grid {
+    gap: 10px;
+}
+
+.editor {
     width: 100%;
     height: 100%;
     background-color: var(--col-panelback);
@@ -35,22 +59,6 @@
     grid-area: "close";
 }
 
-::deep .section {
-    padding: 10px;
-}
-
-::deep .sectionTitle {
-    text-decoration: underline;
-    text-align: center;
-    margin: 5px 0 20px 0;
-}
-
-::deep .sectionSeparator, .titlebarSeparator {
-    border: none;
-    height: 3px;
-    background: linear-gradient(90deg, var(--col-gradient3) 0%, var(--col-gradient4) 50%, var(--col-gradient3) 90%, var(--col-gradient1) 100%);
-}
-
 .titlebarSeparator {
     margin: 0;
 }
@@ -82,8 +90,4 @@
 
 .deleteBtn {
     float: right;
-}
-
-.gridTitle {
-    font-weight: bold;
 }

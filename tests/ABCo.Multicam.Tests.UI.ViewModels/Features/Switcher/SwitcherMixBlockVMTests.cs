@@ -102,7 +102,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
             _mocks.ProgInputs[0].Verify(m => m.FinishConstruction(busInput1, vm));
             _mocks.ProgInputs[1].Verify(m => m.FinishConstruction(busInput2, vm));
 
-            Assert.AreEqual(2, programBus.Count);
+            Assert.AreEqual(2, programBus.Length);
             Assert.AreEqual(_mocks.ProgInputs[0].Object, programBus[0]);
             Assert.AreEqual(_mocks.ProgInputs[1].Object, programBus[1]);
         }
@@ -114,7 +114,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
             var vm = Create();
 
             vm.RawMixBlock = SwitcherMixBlock.NewCutBus(new());
-            Assert.AreEqual(0, vm.PreviewBus.Count);
+            Assert.AreEqual(0, vm.PreviewBus.Length);
         }
 
         [TestMethod]
@@ -134,7 +134,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
             _mocks.PrevInputs[0].Verify(m => m.FinishConstruction(busInput1, vm));
             _mocks.PrevInputs[1].Verify(m => m.FinishConstruction(busInput2, vm));
 
-            Assert.AreEqual(2, previewBus.Count);
+            Assert.AreEqual(2, previewBus.Length);
             Assert.AreEqual(_mocks.PrevInputs[0].Object, previewBus[0]);
             Assert.AreEqual(_mocks.PrevInputs[1].Object, previewBus[1]);
         }
