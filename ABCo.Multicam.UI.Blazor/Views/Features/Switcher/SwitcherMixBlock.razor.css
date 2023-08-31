@@ -1,0 +1,40 @@
+﻿.grid {
+    display: grid;
+    gap: 10px;
+
+    grid-template-rows: auto auto;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas:
+        "programTag programInputs control"
+        "previewTag previewInputs _";
+
+    align-items: center;
+}
+
+.programTag { grid-area: programTag; }
+.previewTag { grid-area: previewTag; }
+
+.programInputs { 
+    grid-area: programInputs; 
+    height: max-content;
+}
+
+.previewInputs {
+    grid-area: previewInputs;
+}
+
+.buttonRow {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.buttonRow li {
+}
+
+.control {
+    grid-area: control;
+}

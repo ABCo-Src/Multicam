@@ -1,0 +1,49 @@
+﻿.featureView {
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 400px 1fr;
+    grid-template-areas: "editor items";
+
+    height: 100%;
+}
+
+.editor {
+    grid-area: "editor";
+}
+
+.items {
+    grid-area: "items";
+    padding-left: 10px;
+}
+
+.items .item {
+    display: grid;
+    grid-template-columns: 60px auto auto;
+    grid-template-areas: "edit strip contents";
+    margin: 20px 0;
+
+    min-height: 50px;
+    width: max-content;
+}
+
+.items .item .strip {
+    grid-area: strip;
+    width: 6px;
+    height: 100%;
+    background-color: var(--col-accent);
+}
+
+.items .item .content {
+    grid-area: contents;
+    margin-left: 10px;
+}
+
+.items .item .edit {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.items .item .edit p {
+    transform: rotate(-90deg);
+}

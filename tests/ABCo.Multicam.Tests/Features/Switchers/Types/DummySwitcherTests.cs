@@ -1,8 +1,6 @@
 ﻿using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.Core.Features.Switchers.Types;
-using LightInject;
 using Moq;
-using System.Runtime.CompilerServices;
 
 namespace ABCo.Multicam.Tests.Features.Switchers.Types
 {

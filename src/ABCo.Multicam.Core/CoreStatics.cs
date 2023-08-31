@@ -2,28 +2,26 @@
 using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.Core.Features.Switchers.Interaction;
 using ABCo.Multicam.Core.Features.Switchers.Types;
-using LightInject;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ABCo.Multicam.Core
 {
     public static class CoreStatics
     {
-        public static void Initialize(ServiceContainer container)
+        public static void Initialize(IServiceCollection container)
         {
-            container.RegisterInstance<IServiceSource>(new ServiceSource(container));
-
-            // Features
-            container.RegisterSingleton<IFeatureManager, FeatureManager>();
-            container.RegisterTransient<IFeatureContainer, FeatureContainer>();
-            container.RegisterTransient<IUnsupportedRunningFeature, UnsupportedRunningFeature>();
-            container.RegisterTransient<ISwitcherRunningFeature, SwitcherRunningFeature>();
+			// Features
+			container.AddSingleton<IFeatureManager, FeatureManager>();
+			container.AddTransient<IFeatureContainer, FeatureContainer>();
+			container.AddTransient<IUnsupportedRunningFeature, UnsupportedRunningFeature>();
+            container.AddTransient<ISwitcherRunningFeature, SwitcherRunningFeature>();
 
             // Switcher
-            container.RegisterTransient<ISwitcherFactory, SwitcherFactory>();
-            container.RegisterTransient<IDynamicSwitcherInteractionBuffer, DynamicSwitcherInteractionBuffer>();
-            container.RegisterTransient<IPerSpecSwitcherInteractionBuffer, PerSpecSwitcherInteractionBuffer>();
-            container.RegisterSingleton<ISwitcherInteractionBufferFactory, SwitcherInteractionBufferFactory>();
-            container.RegisterTransient<IDummySwitcher, DummySwitcher>();
+            container.AddTransient<ISwitcherFactory, SwitcherFactory>();
+            container.AddTransient<IDynamicSwitcherInteractionBuffer, DynamicSwitcherInteractionBuffer>();
+            container.AddTransient<IPerSpecSwitcherInteractionBuffer, PerSpecSwitcherInteractionBuffer>();
+            container.AddSingleton<ISwitcherInteractionBufferFactory, SwitcherInteractionBufferFactory>();
+            container.AddTransient<IDummySwitcher, DummySwitcher>();
         }
     }
 }

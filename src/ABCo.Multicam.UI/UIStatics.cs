@@ -7,6 +7,7 @@ using ABCo.Multicam.UI.ViewModels;
 using ABCo.Multicam.UI.ViewModels.Features;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher;
 using LightInject;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ABCo.Multicam.UI
 {
@@ -14,35 +15,35 @@ namespace ABCo.Multicam.UI
     {
         //public static string Log { get; set; }
 
-        public static void Initialize(ServiceContainer container)
+        public static void Initialize(IServiceCollection container)
         {
             // Logging for debug purposes if you want it:
             //container.Initialize(registration => true,
             //    (f, i) => ServiceSource.N += $"Service requested: {i.GetType().Name}.   Thread: {Thread.CurrentThread.ManagedThreadId}\n"
             //);
-            container.RegisterSingleton<MainWindowVM>();
+            container.AddSingleton<MainWindowVM>();
 
             // Register binders
-            container.RegisterTransient<IBinderForProjectFeatures, ProjectFeaturesVMBinder>();
-            container.RegisterTransient<IBinderForFeatureContainer, FeatureVMBinder>();
-            container.RegisterTransient<IBinderForSwitcherFeature, SwitcherFeatureVMBinder>();
-            container.RegisterTransient<IBinderForSwitcherMixBlock, MixBlockVMBinder>();
-            container.RegisterTransient<IBinderForUnsupportedFeature, UnsupportedFeatureVMBinder>();
+            container.AddTransient<IBinderForProjectFeatures, ProjectFeaturesVMBinder>();
+            container.AddTransient<IBinderForFeatureContainer, FeatureVMBinder>();
+            container.AddTransient<IBinderForSwitcherFeature, SwitcherFeatureVMBinder>();
+            container.AddTransient<IBinderForSwitcherMixBlock, MixBlockVMBinder>();
+            container.AddTransient<IBinderForUnsupportedFeature, UnsupportedFeatureVMBinder>();
 
             // Register view-models
-            container.RegisterTransient<IApplicationVM, ApplicationVM>();
-            container.RegisterTransient<IProjectVM, ProjectVM>();
-            container.RegisterTransient<IProjectFeaturesVM, ProjectFeaturesVM>();
-            container.RegisterTransient<IFeatureVM, FeatureVM>();
-            container.RegisterTransient<ISwitcherFeatureVM, SwitcherFeatureVM>();
-            container.RegisterTransient<ISwitcherConfigVM, SwitcherConfigVM>();
-            container.RegisterTransient<ISwitcherMixBlockVM, SwitcherMixBlockVM>();
-            container.RegisterTransient<ISwitcherCutButtonVM, SwitcherCutButtonVM>();
-            container.RegisterTransient<ISwitcherAutoButtonVM, SwitcherAutoButtonVM>();
-            container.RegisterTransient<ISwitcherProgramInputVM, SwitcherProgramInputVM>();
-            container.RegisterTransient<ISwitcherPreviewInputVM, SwitcherPreviewInputVM>();
+            container.AddTransient<IApplicationVM, ApplicationVM>();
+            container.AddTransient<IProjectVM, ProjectVM>();
+            container.AddTransient<IProjectFeaturesVM, ProjectFeaturesVM>();
+            container.AddTransient<IFeatureVM, FeatureVM>();
+            container.AddTransient<ISwitcherFeatureVM, SwitcherFeatureVM>();
+            container.AddTransient<ISwitcherConfigVM, SwitcherConfigVM>();
+            container.AddTransient<ISwitcherMixBlockVM, SwitcherMixBlockVM>();
+            container.AddTransient<ISwitcherCutButtonVM, SwitcherCutButtonVM>();
+            container.AddTransient<ISwitcherAutoButtonVM, SwitcherAutoButtonVM>();
+            container.AddTransient<ISwitcherProgramInputVM, SwitcherProgramInputVM>();
+            container.AddTransient<ISwitcherPreviewInputVM, SwitcherPreviewInputVM>();
 
-            container.RegisterSingleton<ISpecificSwitcherConfigVMFactory, SpecificSwitcherConfigVMFactory>();
+            container.AddSingleton<ISpecificSwitcherConfigVMFactory, SpecificSwitcherConfigVMFactory>();
 
             CoreStatics.Initialize(container);
         }

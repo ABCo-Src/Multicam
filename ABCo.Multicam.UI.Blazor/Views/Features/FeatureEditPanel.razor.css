@@ -1,0 +1,69 @@
+﻿.editor {
+    width: 100%;
+    height: 100%;
+    background-color: var(--col-panelback);
+}
+
+.titlebar {
+    background-color: var(--col-panelinnerback);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas: "title close";
+    align-items: center;
+}
+
+.titlebar .title {
+    grid-area: "title";
+    padding-left: 10px;
+}
+
+.titlebar .close {
+    grid-area: "close";
+}
+
+::deep .section {
+    padding: 10px;
+}
+
+::deep .sectionTitle {
+    text-decoration: underline;
+    text-align: center;
+    margin: 5px 0 20px 0;
+}
+
+::deep .sectionSeparator {
+}
+
+.sharedContent .sharedGrid {
+    display: grid;
+    grid-template-rows: auto auto;
+    grid-template-columns: auto 1fr 1fr;
+    grid-template-areas:
+        "titleTag titleBox titleBox"
+        "posTag moveUpBtn moveDownBtn";
+    gap: 10px;
+
+    align-items: center;
+}
+
+.titleTag { grid-area: titleTag; }
+.titleBox { grid-area: titleBox; }
+.posTag {
+    grid-area: posTag;
+}
+
+.moveUpBtn {
+    grid-area: moveUpBtn;
+}
+
+.moveDownBtn {
+    grid-area: moveDownBtn;
+}
+
+.deleteBtn {
+    float: right;
+}
+
+.gridTitle {
+    font-weight: bold;
+}

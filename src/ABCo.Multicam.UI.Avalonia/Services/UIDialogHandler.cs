@@ -7,41 +7,46 @@ using System;
 
 namespace ABCo.Multicam.UI.Avalonia.Services
 {
-    public class UIDialogHandler : IUIDialogHandler
+	public class UIDialogHandler : IUIDialogHandler
     {
         readonly MainWindowView _mainView;
         public UIDialogHandler(MainWindowView window) => _mainView = window;
 
-        public void OpenContextMenu<T>(ContextMenuDetails<T> details)
-        {
-            var itemsControl = new StackPanel();
-            var menuInfo = new ContextMenuInfo<T>(CreateFlyout(itemsControl), details.OnSelect, details.OnCancel);
+        //public void OpenContextMenu<T>(ContextMenuDetails<T> details)
+        //{
+        //    var itemsControl = new StackPanel();
+        //    var menuInfo = new ContextMenuInfo<T>(CreateFlyout(itemsControl), details.OnSelect, details.OnCancel);
 
-            // Create title
-            if (details.Title != "")
-            {
-                var titleControl = new TextBlock() { Text = details.Title };
-                titleControl.Classes.Add("ContextMenuTitle");
-                itemsControl.Children.Add(titleControl);
-            }
+        //    // Create title
+        //    if (details.Title != "")
+        //    {
+        //        var titleControl = new TextBlock() { Text = details.Title };
+        //        titleControl.Classes.Add("ContextMenuTitle");
+        //        itemsControl.Children.Add(titleControl);
+        //    }
 
-            // Create items
-            for (int i = 0; i < details.Items.Length; i++)
-            {
-                var button = new Button() { Content = details.Items[i].Name };
-                button.Classes.Add("Borderless");
-                button.Classes.Add("ContextMenuButton");
-                button.Tag = details.Items[i].Value;
-                button.Click += menuInfo.HandleButtonClick;
+        //    // Create items
+        //    for (int i = 0; i < details.Items.Length; i++)
+        //    {
+        //        var button = new Button() { Content = details.Items[i].Name };
+        //        button.Classes.Add("Borderless");
+        //        button.Classes.Add("ContextMenuButton");
+        //        button.Tag = details.Items[i].Value;
+        //        button.Click += menuInfo.HandleButtonClick;
 
-                itemsControl.Children.Add(button);
-            }
+        //        itemsControl.Children.Add(button);
+        //    }
 
-            // Show flyout
-            ShowFlyout(menuInfo.Flyout);
-        }
+        //    // Show flyout
+        //    ShowFlyout(menuInfo.Flyout);
+        //}
 
-        private Flyout CreateFlyout(Control content)
+		public void OpenContextMenu(ContextMenuDetails details)
+		{
+			throw new NotImplementedException();
+		}
+
+		private Flyout CreateFlyout(Control content)
         {
             var control = new Flyout()
             {

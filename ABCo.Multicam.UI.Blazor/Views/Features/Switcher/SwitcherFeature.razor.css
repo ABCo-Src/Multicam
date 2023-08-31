@@ -1,0 +1,12 @@
+﻿.top {
+    display: flex;
+    flex-direction: row;
+}
+
+.linkText {
+    margin-left: 10px;
+}
+
+.mixBlocks {
+    margin-top: 10px;
+}

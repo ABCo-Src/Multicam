@@ -59,7 +59,7 @@ namespace ABCo.Multicam.UI.Bindings.Features.Switcher
             return arr;
         }
 
-        public void ModelChange_Specs() => ReportModelChange(Properties[0]);
+        public void ModelChange_Specs() => ReportModelChange(Properties[1]);
         public void ModelChange_Config() => ReportModelChange(Properties[2]);
         public void ModelChange_BusValues()
         {

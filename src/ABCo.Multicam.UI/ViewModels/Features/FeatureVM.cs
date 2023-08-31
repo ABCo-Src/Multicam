@@ -4,15 +4,25 @@ using ABCo.Multicam.UI.Bindings.Features;
 using ABCo.Multicam.UI.Bindings.Features.Switcher;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher;
 using CommunityToolkit.Mvvm.ComponentModel;
+using System.ComponentModel;
 
 namespace ABCo.Multicam.UI.ViewModels.Features
 {
     using AlsoNotify = NotifyPropertyChangedForAttribute;
 
-    public interface IFeatureVM : IVMForFeatureBinder
+    public interface IFeatureVM : IVMForFeatureBinder, INotifyPropertyChanged
     {
-        public bool IsEditing { get; set; }
-    }
+        public string FeatureTitle { get; set; }
+        public string EditBtnText { get; }
+        public string EditPanelTitle { get; }
+		public bool IsEditing { get; set; }
+        ILiveFeatureViewModel? InnerVM { get; set; }
+        FeatureTypes InnerType { get; }
+		void ToggleEdit();
+        void MoveDown();
+        void MoveUp();
+        void Delete();
+	}
 
     public interface ILiveFeatureViewModel
     {

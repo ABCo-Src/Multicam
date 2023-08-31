@@ -1,8 +1,10 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features;
+using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.UI.Bindings;
 using ABCo.Multicam.UI.Bindings.Features;
 using ABCo.Multicam.UI.Services;
+using ABCo.Multicam.UI.Structures;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace ABCo.Multicam.UI.ViewModels.Features
@@ -61,13 +63,20 @@ namespace ABCo.Multicam.UI.ViewModels.Features
             CurrentlyEditing = null;
         }
 
-        public void CreateFeature()
+        public void CreateFeature(CursorPosition pos)
         {
-            _dialogHandler.OpenContextMenu(new ContextMenuDetails<FeatureTypes>("Choose Type", RawManager.CreateFeature, null, new ContextMenuItem<FeatureTypes>[]
+            _dialogHandler.OpenContextMenu(new ContextMenuDetails("Choose Type", HandleChoice, null, pos, new string[]
             {
-                new("Switcher", FeatureTypes.Switcher),
-                new("Tally", FeatureTypes.Tally)
+                "Switcher",
+                "Tally"
             }));
+
+            void HandleChoice(string choice) => RawManager.CreateFeature(choice switch
+            {
+                "Switcher" => FeatureTypes.Switcher,
+				"Tally" => FeatureTypes.Tally,
+                _ => throw new Exception()
+			});
         }
     }
 }

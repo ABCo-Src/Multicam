@@ -4,7 +4,7 @@ using ABCo.Multicam.UI.Enumerations;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
-    public interface ISwitcherBusInputVM : INeedsInitialization<SwitcherBusInput, ISwitcherMixBlockVM>
+    public interface ISwitcherBusInputVM : INeedsInitialization<SwitcherBusInput, ISwitcherMixBlockVM>, ISwitcherButtonVM
     {
         SwitcherBusInput Base { get; }
         void SetHighlight(bool visible);

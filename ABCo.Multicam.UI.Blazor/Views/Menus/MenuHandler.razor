@@ -1,0 +1,52 @@
+﻿@using ABCo.Multicam.UI.Blazor.Services;
+@using ABCo.Multicam.UI.Services;
+
+@code {
+
+	protected override void OnInitialized()
+	{
+		UIDialogHandler.System = this;
+	}
+
+	public void Cancel()
+	{
+		_contextMenu?.OnCancel?.Invoke();
+		_contextMenu = null;
+	}
+
+	// Context Menu:
+	ContextMenuDetails? _contextMenu;
+
+	public ContextMenuDetails? ContextMenu
+	{
+		get => _contextMenu;
+		set
+		{
+			_contextMenu = value;
+			StateHasChanged();
+		}
+	}
+
+	public void Choose(string item)
+	{
+		_contextMenu!.Value.OnSelect(item);
+		_contextMenu = null;
+	}
+}
+
+@if (ContextMenu != null)
+{
+	<div class="menuContainer">
+		<div class="blackCurtain" @onclick=Cancel></div>
+		<div class="menu contextMenu" style="left: @(ContextMenu.Value.Pos.X)px; top: @(ContextMenu.Value.Pos.Y)px;">
+			<p class="title">@ContextMenu.Value.Title</p>
+
+			<ul>
+				@foreach (var item in ContextMenu.Value.Items)
+				{
+					<li class="btn btnBorderless" @onclick="() => Choose(item)"><p>@item</p></li>
+				}
+			</ul>
+		</div>
+	</div>
+}

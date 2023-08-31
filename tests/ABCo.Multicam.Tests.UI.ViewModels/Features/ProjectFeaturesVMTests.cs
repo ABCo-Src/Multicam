@@ -3,6 +3,7 @@ using ABCo.Multicam.Core.Features;
 using ABCo.Multicam.UI.Bindings;
 using ABCo.Multicam.UI.Bindings.Features;
 using ABCo.Multicam.UI.Services;
+using ABCo.Multicam.UI.Structures;
 using ABCo.Multicam.UI.ViewModels.Features;
 using Moq;
 
@@ -19,7 +20,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features
             Mock<IFeatureVM>[] FeatureVMs
         );
 
-        Action<FeatureTypes> _dialogHandlerCallback = d => { };
+        Action<string> _dialogHandlerCallback = d => { };
         IVMBinder<IVMForFeatureBinder>[] _modelFeatures = Array.Empty<IVMBinder<IVMForFeatureBinder>>();
         Mocks _mocks = new();
 
@@ -30,8 +31,8 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features
             
             _mocks.DialogHandler = new();
             _mocks.DialogHandler
-                .Setup(a => a.OpenContextMenu(It.IsAny<ContextMenuDetails<FeatureTypes>>()))
-                .Callback<ContextMenuDetails<FeatureTypes>>((details) => _dialogHandlerCallback = details.OnSelect);
+                .Setup(a => a.OpenContextMenu(It.IsAny<ContextMenuDetails>()))
+                .Callback<ContextMenuDetails>((details) => _dialogHandlerCallback = details.OnSelect);
 
             _mocks.RunningFeatures = new Mock<IVMBinder<IVMForFeatureBinder>>[] { new(), new(), new() };
             _mocks.FeatureVMs = new Mock<IFeatureVM>[] { new(), new(), new() };
@@ -62,19 +63,20 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features
         [TestMethod]
         public void CreateFeature_OpensDialog()
         {
-            Create().CreateFeature();
+            Create().CreateFeature(new(75, 32));
 
-            _mocks.DialogHandler.Verify(a => a.OpenContextMenu(It.Is<ContextMenuDetails<FeatureTypes>>(d =>
+            _mocks.DialogHandler.Verify(a => a.OpenContextMenu(It.Is<ContextMenuDetails>(d =>
                 d.Title == "Choose Type" &&
                 d.OnSelect != null &&
                 d.OnCancel == null &&
-                d.Items.SequenceEqual(new ContextMenuItem<FeatureTypes>[]
+                d.Pos == new CursorPosition(75, 32) &&
+                d.Items.SequenceEqual(new string[]
                     {
-                        new("Switcher", FeatureTypes.Switcher),
-                        new("Tally", FeatureTypes.Tally)
+                        "Switcher",
+                        "Tally"
                     })
-                ))
-            );
+                )
+			));
         }
 
         [TestMethod]
@@ -82,8 +84,13 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features
         [DataRow(FeatureTypes.Tally)]
         public void CreateFeature_OnChoose(FeatureTypes type)
         {
-            Create().CreateFeature();
-            _dialogHandlerCallback(type);
+            Create().CreateFeature(new());
+            _dialogHandlerCallback(type switch
+            {
+                FeatureTypes.Switcher => "Switcher",
+                FeatureTypes.Tally => "Tally",
+                _ => throw new Exception()
+            });
             _mocks.Manager.Verify(m => m.CreateFeature(type), Times.Once);
         }
 

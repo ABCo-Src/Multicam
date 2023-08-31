@@ -22,7 +22,7 @@ namespace ABCo.Multicam.UI.Avalonia
                 container.RegisterInstance<IUIWindow>(new WindowedUIWindow(mainWindow!));
 
             // Register the next layer down now
-            UIStatics.Initialize(container);
+            //UIStatics.Initialize(container);
 
             return container;
         }

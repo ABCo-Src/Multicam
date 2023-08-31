@@ -1,0 +1,44 @@
+﻿@using ABCo.Multicam.Core.Features;
+@using ABCo.Multicam.UI.Blazor.Views.Features.Switcher
+@using ABCo.Multicam.UI.ViewModels.Features;
+@using ABCo.Multicam.UI.ViewModels.Features.Switcher;
+@inherits VMBoundComponent<ProjectFeaturesVM>
+
+<div class="featureView">
+	<!-- Edit Panel -->
+	@if (VM.ShowEditingPanel)
+	{
+		<div class="editor">
+			<FeatureEditPanel VM="VM.CurrentlyEditing" />
+		</div>
+	}
+
+	<!-- Items -->
+	<ul class="items">
+		@if (VM.Items != null)
+			@foreach (var item in VM.Items)
+			{
+				<li class="item">
+					<div class="edit btn btnBlueHint" @onclick=item.ToggleEdit>
+						<p>@item.EditBtnText</p>
+					</div>
+					<div class="strip"></div>
+					<div class="content">
+						@if (item.InnerType == FeatureTypes.Switcher)
+						{
+							<SwitcherFeature OuterVM="@item" VM="(SwitcherFeatureVM)item.InnerVM!" />
+						}
+						else
+						{
+							<p>Unsupported feature!</p>
+						}
+					</div>
+				</li>
+			}
+
+		<li class="item">
+			<div class="strip"></div>
+			<a class="content newBtn btn btnDashed" @onclick="e => VM.CreateFeature(new(e.ClientX, e.ClientY))">New Feature</a>
+		</li>
+	</ul>
+</div>

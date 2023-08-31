@@ -1,0 +1,8 @@
+﻿@page "/"
+@inject MainWindowVM VM
+@using ABCo.Multicam.UI.ViewModels;
+@using ABCo.Multicam.UI.Blazor.Views.Features;
+@using ABCo.Multicam.UI.ViewModels.Features;
+
+<!-- Content View -->
+<FeatureView VM="(ProjectFeaturesVM)VM.Application.Project.Features" />

@@ -1,0 +1,35 @@
+﻿.btnSwitcher {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.colorNeutral:not(:active):not(:hover) {
+    background-color: var(--col-switcherbtn-default);
+}
+
+.colorProgram {
+    background-color: var(--col-switcherbtn-program);
+}
+
+.colorProgram:hover {
+    background-color: var(--col-switcherbtn-programhover);
+}
+
+.colorProgram:active {
+    background-color: var(--col-switcherbtn-programactive);
+}
+
+.colorPreview {
+    background-color: var(--col-switcherbtn-preview);
+}
+
+.colorPreview:hover {
+    background-color: var(--col-switcherbtn-previewhover);
+}
+
+.colorPreview:active {
+    background-color: var(--col-switcherbtn-previewactive);
+}

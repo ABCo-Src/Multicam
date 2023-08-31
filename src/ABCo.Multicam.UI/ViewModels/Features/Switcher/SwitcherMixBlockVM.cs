@@ -9,15 +9,15 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
     public interface ISwitcherMixBlockVM : IVMForSwitcherMixBlock
     {
-        void SetProgram(int value);
+		ISwitcherProgramInputVM[] ProgramBus { get; }
+		ISwitcherPreviewInputVM[] PreviewBus { get; }
+		void SetProgram(int value);
         void SetPreview(int value);
         void CutButtonPress();
     }
 
     public partial class SwitcherMixBlockVM : BindingViewModelBase<IVMForSwitcherMixBlock>, ISwitcherMixBlockVM
     {
-        public static List<object> Test { get; set; } = new();
-
         IServiceSource _servSource;
 
         // Synced to the model: 
@@ -39,8 +39,8 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
         public bool ShowPreview => RawMixBlock.NativeType == SwitcherMixBlockType.ProgramPreview;
         public string MainLabel => RawMixBlock.NativeType == SwitcherMixBlockType.CutBus ? "Cut Bus" : "Program";
 
-        [ObservableProperty] ObservableCollection<ISwitcherProgramInputVM> _programBus;
-        [ObservableProperty] ObservableCollection<ISwitcherPreviewInputVM> _previewBus;
+        [ObservableProperty] ISwitcherProgramInputVM[] _programBus = Array.Empty<ISwitcherProgramInputVM>();
+        [ObservableProperty] ISwitcherPreviewInputVM[] _previewBus = Array.Empty<ISwitcherPreviewInputVM>();
 
         [ObservableProperty] ISwitcherCutButtonVM _cutButton;
         [ObservableProperty] ISwitcherAutoButtonVM _autoButton;
@@ -48,13 +48,9 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
         public SwitcherMixBlockVM(IServiceSource source)
         {
             _servSource = source;
-            _programBus = new();
-            _previewBus = new();
 
             _cutButton = source.Get<ISwitcherCutButtonVM>();
             _cutButton.FinishConstruction(this);
-
-            Test.Add(_cutButton);
 
             _autoButton = source.Get<ISwitcherAutoButtonVM>();
             _autoButton.FinishConstruction(this);
@@ -62,37 +58,37 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 
         void InvalidateProgramBus()
         {
-            ProgramBus.Clear();
+            ProgramBus = new ISwitcherProgramInputVM[4];
             for (int i = 0; i < RawMixBlock.ProgramInputs.Count; i++)
             {
                 var newVM = _servSource.Get<ISwitcherProgramInputVM>();
                 newVM.FinishConstruction(RawMixBlock.ProgramInputs[i], this);
-                ProgramBus.Add(newVM);
+                ProgramBus[i] = newVM;
             }
         }
 
         void InvalidatePreviewBus()
         {
-            PreviewBus.Clear();
-            if (RawMixBlock.PreviewInputs == null) return;
+			PreviewBus = new ISwitcherPreviewInputVM[4];
+			if (RawMixBlock.PreviewInputs == null) return;
 
             for (int i = 0; i < RawMixBlock.PreviewInputs.Count; i++)
             {
                 var newVM = _servSource.Get<ISwitcherPreviewInputVM>();
                 newVM.FinishConstruction(RawMixBlock.PreviewInputs[i], this);
-                PreviewBus.Add(newVM);
+                PreviewBus[i] = newVM;
             }
         }
 
         void RefreshProgram()
         {
-            for (int i = 0; i < ProgramBus.Count; i++)
+            for (int i = 0; i < ProgramBus.Length; i++)
                 ProgramBus[i].SetHighlight(ProgramBus[i].Base.Id == RawProgram);
         }
 
         void RefreshPreview()
         {
-            for (int i = 0; i < PreviewBus.Count; i++)
+            for (int i = 0; i < PreviewBus.Length; i++)
                 PreviewBus[i].SetHighlight(PreviewBus[i].Base.Id == RawPreview);
         }
 
