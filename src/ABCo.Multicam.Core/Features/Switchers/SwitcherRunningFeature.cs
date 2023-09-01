@@ -10,6 +10,8 @@ namespace ABCo.Multicam.Core.Features.Switchers
         SwitcherConfig SwitcherConfig { get; }
         SwitcherSpecs SwitcherSpecs { get; }
         bool IsConnected { get; }
+        void Connect();
+        void Disconnect();
         int GetProgram(int mixBlock);
         int GetPreview(int mixBlock);
         void SendProgram(int mixBlock, int value);
@@ -59,7 +61,9 @@ namespace ABCo.Multicam.Core.Features.Switchers
         public SwitcherConfig SwitcherConfig { get; private set; }
 
         // Methods:
-        public int GetProgram(int mixBlock) => _buffer.CurrentBuffer.GetProgram(mixBlock);
+        public void Connect() => _buffer.CurrentBuffer.Connect();
+		public void Disconnect() => _buffer.CurrentBuffer.Disconnect();
+		public int GetProgram(int mixBlock) => _buffer.CurrentBuffer.GetProgram(mixBlock);
         public int GetPreview(int mixBlock) => _buffer.CurrentBuffer.GetPreview(mixBlock);
         public void SendProgram(int mixBlock, int value) => _buffer.CurrentBuffer.SendProgram(mixBlock, value);
         public void SendPreview(int mixBlock, int value) => _buffer.CurrentBuffer.SendPreview(mixBlock, value);

@@ -1,28 +1,22 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
-	<PropertyGroup>
-		<TargetFramework>net7.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<PublishTrimmed>true</PublishTrimmed>
-		<TrimMode>full</TrimMode>
-		<!--<RunAOTCompilation>true</RunAOTCompilation>-->
-		<!--<TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>--> <!-- (Minimal improvement) -->
-		<InvariantGlobalization>true</InvariantGlobalization>
-		<BlazorEnableTimeZoneSupport>false</BlazorEnableTimeZoneSupport>
-	</PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
 
-	<ItemGroup>
-		<TrimmerRootDescriptor Include="trimming.xml" />
-	</ItemGroup>
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.10" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.10" PrivateAssets="all" />
-	</ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.5" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\ABCo.Multicam.UI\ABCo.Multicam.UI.csproj" />
-	</ItemGroup>
-	
+  <ItemGroup>
+    <ProjectReference Include="..\ABCo.Multicam.Core\ABCo.Multicam.Core.csproj" />
+    <ProjectReference Include="..\ABCo.Multicam.UI\ABCo.Multicam.UI.csproj" />
+  </ItemGroup>
+
 </Project>

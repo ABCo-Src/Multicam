@@ -18,13 +18,16 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
         // Synced to the model:
         [ObservableProperty] ISwitcherRunningFeature _rawFeature = null!;
         [ObservableProperty] IVMBinder<IVMForSwitcherMixBlock>[] _rawMixBlocks = null!;
+        [ObservableProperty][NotifyPropertyChangedFor(nameof(IsConnectButtonVisible))] SwitcherSpecs _rawSpecs = null!;
         [ObservableProperty] SwitcherConfig _rawConfig = null!;
-        [ObservableProperty] bool _rawIsConnected;
+        [ObservableProperty][NotifyPropertyChangedFor(nameof(StatusText))] bool _rawIsConnected;
 
         [ObservableProperty] ISwitcherMixBlockVM[]? _mixBlocks;
         [ObservableProperty] ISwitcherConfigVM? _config;
 
-        public string StatusText => RawIsConnected ? "Connected" : "Not Connected";
+        public string StatusText => RawIsConnected ? "Connected: No Errors" : "Disconnected";
+		public string ConnectionButtonText => RawIsConnected ? "Disconnect" : "Connect";
+		public bool IsConnectButtonVisible => RawSpecs.CanChangeConnection;
 
         public SwitcherFeatureVM(IServiceSource servSource) => _servSource = servSource;
 
@@ -38,5 +41,12 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
         partial void OnRawConfigChanged(SwitcherConfig value) => Config = _servSource.Get<ISwitcherConfigVM, SwitcherConfig, ISwitcherFeatureVM>(RawConfig, this);
 
         public void UpdateConfig(SwitcherConfig config) => RawFeature.ChangeSwitcher(config);
+		public void ToggleConnection()
+		{
+            if (RawIsConnected)
+			    RawFeature.Disconnect();
+            else
+				RawFeature.Connect();
+		}
     }
 }

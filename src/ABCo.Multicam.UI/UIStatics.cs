@@ -6,7 +6,6 @@ using ABCo.Multicam.UI.Bindings.Features.Switcher;
 using ABCo.Multicam.UI.ViewModels;
 using ABCo.Multicam.UI.ViewModels.Features;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher;
-using LightInject;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ABCo.Multicam.UI

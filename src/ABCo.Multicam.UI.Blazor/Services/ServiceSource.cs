@@ -1,6 +1,7 @@
 ﻿using ABCo.Multicam.Core;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace ABCo.Multicam.UI.Blazor.Services
+namespace ABCo.Multicam.UI.Blazor.Web.Services
 {
 	public class ServiceSource : IServiceSource
 	{

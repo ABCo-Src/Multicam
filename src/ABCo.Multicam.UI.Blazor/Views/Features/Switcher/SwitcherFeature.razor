@@ -5,6 +5,11 @@
 <div class="top">
 	<FeatureTitle VM="@OuterVM" />
 	<p class="linkText">@VM.StatusText</p>
+
+	@if (VM.IsConnectButtonVisible)
+	{
+		<a class="connectBtn hyperlink" @onclick=VM.ToggleConnection>@VM.ConnectionButtonText</a>
+	}
 </div>
 
 <ul class="mixBlocks">

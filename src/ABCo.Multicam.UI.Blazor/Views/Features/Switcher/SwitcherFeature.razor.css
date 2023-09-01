@@ -4,9 +4,13 @@
 }
 
 .linkText {
-    margin-left: 10px;
+    margin-left: 15px;
 }
 
 .mixBlocks {
     margin-top: 10px;
+}
+
+.connectBtn {
+    margin-left: 15px;
 }

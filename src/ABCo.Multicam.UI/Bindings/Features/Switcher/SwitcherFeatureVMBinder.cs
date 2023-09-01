@@ -9,6 +9,7 @@ namespace ABCo.Multicam.UI.Bindings.Features.Switcher
         IVMBinder<IVMForSwitcherMixBlock>[] RawMixBlocks { get; set; }
         SwitcherConfig RawConfig { get; set; }
         bool RawIsConnected { get; set; }
+        SwitcherSpecs RawSpecs { get; set; }
     }
 
     public class SwitcherFeatureVMBinder : VMBinder<IVMForSwitcherFeature>, IBinderForSwitcherFeature
@@ -39,7 +40,13 @@ namespace ABCo.Multicam.UI.Bindings.Features.Switcher
             new PropertyBinding<bool>()
 			{
 				ModelChange = new(() => _feature.IsConnected, v => v.VM.RawIsConnected = v.NewVal)
-			}
+			},
+
+            // RawSpecs
+            new PropertyBinding<SwitcherSpecs>()
+			{
+				ModelChange = new(() => _feature.SwitcherSpecs, v => v.VM.RawSpecs = v.NewVal)
+			},
 		};
 
         public SwitcherFeatureVMBinder(IServiceSource servSource) : base(servSource) { }
