@@ -30,9 +30,6 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
 
             _mocks.Parent.SetupGet(m => m.Program).Returns(5);
             _mocks.Parent.SetupGet(m => m.Preview).Returns(8);
-
-            _mocks.Switcher.Setup(m => m.RefreshProgram(_mixBlockIndex)).Returns(2);
-            _mocks.Switcher.Setup(m => m.RefreshProgram(_mixBlockIndex)).Returns(4);
         }
 
         MixBlockInteractionEmulator Create()

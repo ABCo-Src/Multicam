@@ -22,7 +22,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\src\ABCo.Multicam.UI\ABCo.Multicam.UI.csproj" />
+		<ProjectReference Include="..\ABCo.Multicam.UI\ABCo.Multicam.UI.csproj" />
 	</ItemGroup>
 	
 </Project>

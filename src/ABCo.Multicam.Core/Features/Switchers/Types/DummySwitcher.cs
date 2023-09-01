@@ -27,13 +27,9 @@
 
         public void SetEventHandler(ISwitcherEventHandler? eventHandler) => _eventHandler = eventHandler;
 
-        public SwitcherSpecs RefreshSpecs()
-        {
-            _eventHandler?.OnSpecsChange(_specs);
-            return _specs;
-        }
+		public void RefreshSpecs() => _eventHandler?.OnSpecsChange(_specs);
 
-        public static SwitcherSpecs CreateSpecsFrom(int[] mixBlocks)
+		public static SwitcherSpecs CreateSpecsFrom(int[] mixBlocks)
         {
             var mixBlocksArray = new SwitcherMixBlock[mixBlocks.Length];
 
@@ -63,16 +59,15 @@
         };
 
         public bool IsConnected => true;
-        public SwitcherConfig ConnectionConfig => throw new NotImplementedException();
 
-        public Task ConnectAsync() => Task.CompletedTask;
-        public Task DisconnectAsync() => Task.CompletedTask;
+        public void Connect() { }
+        public void Disconnect() { }
+        public void RefreshConnectionStatus() { }
 
-        public int RefreshProgram(int mixBlock)
+        public void RefreshProgram(int mixBlock)
         {
             ValidateMixBlock(mixBlock);
             _eventHandler?.OnProgramChangeFinish(new SwitcherProgramChangeInfo(mixBlock, 0, _states[mixBlock].Program, null));
-            return 0;
         }
 
         public void RefreshPreview(int mixBlock)
@@ -87,7 +82,6 @@
             ValidateInput(mixBlock, newValue);
 
             _states[mixBlock].Program = newValue;
-
             _eventHandler?.OnProgramChangeFinish(new SwitcherProgramChangeInfo(mixBlock, 0, _states[mixBlock].Program, null));
         }
 

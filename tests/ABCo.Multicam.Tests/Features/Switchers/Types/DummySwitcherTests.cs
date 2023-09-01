@@ -243,9 +243,9 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
         public void IsConnected() => Assert.IsTrue(Create().IsConnected);
 
         [TestMethod]
-        public async Task Connect_NoException() => await Create().ConnectAsync();
+        public void Connect_NoException() => Create().Connect();
 
         [TestMethod]
-        public async Task Disconnect_NoException() => await Create().DisconnectAsync();
+        public void Disconnect_NoException() => Create().Disconnect();
     }
 }

@@ -29,7 +29,6 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
 
             _mocks.Switcher = new();
             _mocks.Switcher.Setup(m => m.IsConnected).Returns(true);
-            _mocks.Switcher.Setup(m => m.RefreshSpecs()).Returns(() => _switcherSpecs);
 
             _mocks.Buffers = new Mock<IMixBlockInteractionBuffer>[] { new(), new() };
             _mocks.EventHandler = new();
