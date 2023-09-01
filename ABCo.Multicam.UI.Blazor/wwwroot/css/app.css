@@ -121,6 +121,10 @@ body {
 }
 
 /* Blazor general */
+.loading-span::after {
+    content: var(--blazor-load-percentage-text);
+}
+
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;
