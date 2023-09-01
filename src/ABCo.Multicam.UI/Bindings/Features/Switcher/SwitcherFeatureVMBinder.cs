@@ -8,7 +8,7 @@ namespace ABCo.Multicam.UI.Bindings.Features.Switcher
         ISwitcherRunningFeature RawFeature { get; set; }
         IVMBinder<IVMForSwitcherMixBlock>[] RawMixBlocks { get; set; }
         SwitcherConfig RawConfig { get; set; }
-        void UpdateConfig(SwitcherConfig config);
+        bool RawIsConnected { get; set; }
     }
 
     public class SwitcherFeatureVMBinder : VMBinder<IVMForSwitcherFeature>, IBinderForSwitcherFeature
@@ -33,8 +33,14 @@ namespace ABCo.Multicam.UI.Bindings.Features.Switcher
             new PropertyBinding<SwitcherConfig>()
             {
                 ModelChange = new(() => _feature.SwitcherConfig, v => v.VM.RawConfig = v.NewVal)
-            }
-        };
+            },
+
+            // RawIsConnected
+            new PropertyBinding<bool>()
+			{
+				ModelChange = new(() => _feature.IsConnected, v => v.VM.RawIsConnected = v.NewVal)
+			}
+		};
 
         public SwitcherFeatureVMBinder(IServiceSource servSource) : base(servSource) { }
         public void FinishConstruction(ISwitcherRunningFeature feature) 
@@ -61,8 +67,8 @@ namespace ABCo.Multicam.UI.Bindings.Features.Switcher
 
         public void ModelChange_Specs() => ReportModelChange(Properties[1]);
         public void ModelChange_Config() => ReportModelChange(Properties[2]);
-        public void ModelChange_ConnectionState() { }
-        public void ModelChange_BusValues()
+        public void ModelChange_ConnectionState() => ReportModelChange(Properties[3]);
+		public void ModelChange_BusValues()
         {
             for (int i = 0; i < _currentMixBlocks.Length; i++)
                 ((IBinderForSwitcherMixBlock)_currentMixBlocks[i]).ModelChange_BusValues();

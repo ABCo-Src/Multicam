@@ -8,7 +8,8 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
     public interface ISwitcherFeatureVM : IVMForSwitcherFeature, ILiveFeatureViewModel
     {
-    }
+		void UpdateConfig(SwitcherConfig config);
+	}
 
     public partial class SwitcherFeatureVM : BindingViewModelBase<IVMForSwitcherFeature>, ISwitcherFeatureVM
     {
@@ -18,9 +19,12 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
         [ObservableProperty] ISwitcherRunningFeature _rawFeature = null!;
         [ObservableProperty] IVMBinder<IVMForSwitcherMixBlock>[] _rawMixBlocks = null!;
         [ObservableProperty] SwitcherConfig _rawConfig = null!;
+        [ObservableProperty] bool _rawIsConnected;
 
         [ObservableProperty] ISwitcherMixBlockVM[]? _mixBlocks;
         [ObservableProperty] ISwitcherConfigVM? _config;
+
+        public string StatusText => RawIsConnected ? "Connected" : "Not Connected";
 
         public SwitcherFeatureVM(IServiceSource servSource) => _servSource = servSource;
 

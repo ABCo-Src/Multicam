@@ -73,5 +73,21 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
             Assert.AreEqual(_mocks.ConfigVM.Object, vm.Config);
             _mocks.ServSource.Verify(m => m.Get<ISwitcherConfigVM, SwitcherConfig, ISwitcherFeatureVM>(config, vm));
         }
-    }
+
+        [TestMethod]
+        public void StatusText_Connected()
+        {
+            var vm = Create();
+            vm.RawIsConnected = true;
+            Assert.AreEqual("Connected", vm.StatusText);
+        }
+
+		[TestMethod]
+		public void StatusText_Disconnected()
+		{
+			var vm = Create();
+			vm.RawIsConnected = false;
+			Assert.AreEqual("Not Connected", vm.StatusText);
+		}
+	}
 }

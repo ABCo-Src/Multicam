@@ -29,7 +29,6 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             );
 
             _mocks.Switcher = new();
-            _mocks.Switcher.Setup(m => m.IsConnected).Returns(true);
 
             _mocks.Buffers = new Mock<IMixBlockInteractionBuffer>[] { new(), new() };
             _mocks.EventHandler = new();
@@ -114,7 +113,6 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
         [DataRow(1)]
         public void SendProgram_Disconnected(int mixBlock)
         {
-            _mocks.Switcher.Setup(m => m.IsConnected).Returns(false);
             Create().SendProgram(mixBlock, 198);
             _mocks.Buffers[0].Verify(m => m.SendProgram(198), Times.Never);
             _mocks.Buffers[1].Verify(m => m.SendProgram(198), Times.Never);

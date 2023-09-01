@@ -9,6 +9,7 @@ namespace ABCo.Multicam.Core.Features.Switchers
     {
         SwitcherConfig SwitcherConfig { get; }
         SwitcherSpecs SwitcherSpecs { get; }
+        bool IsConnected { get; }
         int GetProgram(int mixBlock);
         int GetPreview(int mixBlock);
         void SendProgram(int mixBlock, int value);
