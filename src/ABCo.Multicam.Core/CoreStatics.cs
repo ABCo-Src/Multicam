@@ -18,7 +18,8 @@ namespace ABCo.Multicam.Core
 
             // Switcher
             container.AddTransient<ISwitcherFactory, SwitcherFactory>();
-            container.AddTransient<IDynamicSwitcherInteractionBuffer, DynamicSwitcherInteractionBuffer>();
+            container.AddTransient<IHotSwappableSwitcherInteractionBuffer, HotSwappableSwitcherInteractionBuffer>();
+            container.AddTransient<IPerSwitcherInteractionBuffer, PerSwitcherInteractionBuffer>();
             container.AddTransient<IPerSpecSwitcherInteractionBuffer, PerSpecSwitcherInteractionBuffer>();
             container.AddSingleton<ISwitcherInteractionBufferFactory, SwitcherInteractionBufferFactory>();
             container.AddTransient<IDummySwitcher, DummySwitcher>();

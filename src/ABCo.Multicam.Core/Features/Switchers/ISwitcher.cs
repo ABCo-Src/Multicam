@@ -11,8 +11,6 @@ namespace ABCo.Multicam.Core.Features.Switchers
     /// </summary>
     public interface ISwitcher : IDisposable
     {
-        bool IsConnected { get; }
-
 		// General:
 		void Connect();
         void Disconnect();

@@ -22,8 +22,8 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
             _changedPreviewValue = null;
             _eventHandler = new();
             _eventHandler.Setup(m => m.OnSpecsChange(It.IsAny<SwitcherSpecs>())).Callback<SwitcherSpecs>(s => _sentSpecs = s);
-            _eventHandler.Setup(m => m.OnProgramChangeFinish(It.IsAny<SwitcherProgramChangeInfo>())).Callback<SwitcherProgramChangeInfo>(s => _changedProgramValue = s);
-            _eventHandler.Setup(m => m.OnPreviewChangeFinish(It.IsAny<SwitcherPreviewChangeInfo>())).Callback<SwitcherPreviewChangeInfo>(s => _changedPreviewValue = s);
+            _eventHandler.Setup(m => m.OnProgramValueChange(It.IsAny<SwitcherProgramChangeInfo>())).Callback<SwitcherProgramChangeInfo>(s => _changedProgramValue = s);
+            _eventHandler.Setup(m => m.UpdatePreview(It.IsAny<SwitcherPreviewChangeInfo>())).Callback<SwitcherPreviewChangeInfo>(s => _changedPreviewValue = s);
             _config = new DummySwitcherConfig(4);
         }
 
@@ -36,6 +36,13 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
         }
 
         public DummySwitcher Create() => Create(_eventHandler.Object);
+
+        [TestMethod]
+        public void RefreshConnectionState()
+        {
+            Create().RefreshConnectionStatus();
+            _eventHandler.Verify(m => m.OnConnectionStateChange(true));
+        }
 
         [TestMethod]
         public void RefreshSpecs_NoEventHandler() => Create(null).RefreshSpecs();

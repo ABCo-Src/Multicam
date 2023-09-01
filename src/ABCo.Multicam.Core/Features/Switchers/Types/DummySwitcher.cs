@@ -62,18 +62,18 @@
 
         public void Connect() { }
         public void Disconnect() { }
-        public void RefreshConnectionStatus() { }
+        public void RefreshConnectionStatus() => _eventHandler?.OnConnectionStateChange(true);
 
         public void RefreshProgram(int mixBlock)
         {
             ValidateMixBlock(mixBlock);
-            _eventHandler?.OnProgramChangeFinish(new SwitcherProgramChangeInfo(mixBlock, 0, _states[mixBlock].Program, null));
+            _eventHandler?.OnProgramValueChange(new SwitcherProgramChangeInfo(mixBlock, 0, _states[mixBlock].Program, null));
         }
 
         public void RefreshPreview(int mixBlock)
         {
             ValidateMixBlock(mixBlock);
-            _eventHandler?.OnPreviewChangeFinish(new SwitcherPreviewChangeInfo(mixBlock, _states[mixBlock].Preview, null));
+            _eventHandler?.UpdatePreview(new SwitcherPreviewChangeInfo(mixBlock, _states[mixBlock].Preview, null));
         }
 
         public void SendProgramValue(int mixBlock, int newValue)
@@ -82,7 +82,7 @@
             ValidateInput(mixBlock, newValue);
 
             _states[mixBlock].Program = newValue;
-            _eventHandler?.OnProgramChangeFinish(new SwitcherProgramChangeInfo(mixBlock, 0, _states[mixBlock].Program, null));
+            _eventHandler?.OnProgramValueChange(new SwitcherProgramChangeInfo(mixBlock, 0, _states[mixBlock].Program, null));
         }
 
         void ValidateInput(int mixBlock, int newValue)
@@ -101,7 +101,7 @@
 
             _states[mixBlock].Preview = newValue;
 
-            _eventHandler?.OnPreviewChangeFinish(new SwitcherPreviewChangeInfo(mixBlock, _states[mixBlock].Preview, null));
+            _eventHandler?.UpdatePreview(new SwitcherPreviewChangeInfo(mixBlock, _states[mixBlock].Preview, null));
         }
 
         void ValidateMixBlock(int mixBlock)
