@@ -10,7 +10,7 @@
         public DummySwitcherConfig(params int[] mixBlocks) => MixBlocks = mixBlocks;
     }
 
-    public class DummySwitcher : IDummySwitcher
+    public class DummySwitcher : Switcher, IDummySwitcher
     {
         SwitcherSpecs _specs = null!;
         MixBlockState[] _states = null!;
@@ -25,9 +25,9 @@
             Array.Fill(_states, new MixBlockState(1, 1));
         }
 
-        public void SetEventHandler(ISwitcherEventHandler? eventHandler) => _eventHandler = eventHandler;
+        public override void SetEventHandler(ISwitcherEventHandler? eventHandler) => _eventHandler = eventHandler;
 
-		public void RefreshSpecs() => _eventHandler?.OnSpecsChange(_specs);
+		public override void RefreshSpecs() => _eventHandler?.OnSpecsChange(_specs);
 
 		public static SwitcherSpecs CreateSpecsFrom(int[] mixBlocks)
         {
@@ -58,25 +58,21 @@
             SupportsCutBusAutoMode = false
         };
 
-        public bool IsConnected => true;
+        public override void RefreshConnectionStatus() => _eventHandler?.OnConnectionStateChange(true);
 
-        public void Connect() { }
-        public void Disconnect() { }
-        public void RefreshConnectionStatus() => _eventHandler?.OnConnectionStateChange(true);
-
-        public void RefreshProgram(int mixBlock)
+        public override void RefreshProgram(int mixBlock)
         {
             ValidateMixBlock(mixBlock);
             _eventHandler?.OnProgramValueChange(new SwitcherProgramChangeInfo(mixBlock, _states[mixBlock].Program, null));
         }
 
-        public void RefreshPreview(int mixBlock)
+        public override void RefreshPreview(int mixBlock)
         {
             ValidateMixBlock(mixBlock);
             _eventHandler?.OnPreviewValueChange(new SwitcherPreviewChangeInfo(mixBlock, _states[mixBlock].Preview, null));
         }
 
-        public void SendProgramValue(int mixBlock, int newValue)
+        public override void SendProgramValue(int mixBlock, int newValue)
         {
             ValidateMixBlock(mixBlock);
             ValidateInput(mixBlock, newValue);
@@ -94,7 +90,7 @@
             throw new ArgumentException("Invalid input ID given to DummySwitcher");
         }
 
-        public void SendPreviewValue(int mixBlock, int newValue)
+        public override void SendPreviewValue(int mixBlock, int newValue)
         {
             ValidateMixBlock(mixBlock);
             ValidateInput(mixBlock, newValue);
@@ -109,13 +105,7 @@
                 throw new ArgumentException("Invalid mix block given to DummySwitcher");
         }
 
-        public void Cut(int mixBlockIdx) => throw new NotImplementedException();
-        public void Dispose() { }
-
-        public void SetCutBus(int mixBlock, int newVal) => throw new NotImplementedException();
-        public void SetCutBusMode(CutBusMode mode) => throw new NotImplementedException();
-        public CutBusMode GetCutBusMode(int mixBlock) => throw new NotImplementedException();
-        public void SetCutBusMode(int mixBlock, CutBusMode mode) => throw new NotImplementedException();
+        public override void Dispose() { }
 
         public record struct MixBlockState(int Program, int Preview);
     }

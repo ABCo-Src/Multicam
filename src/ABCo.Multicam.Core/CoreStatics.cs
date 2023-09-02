@@ -2,6 +2,7 @@
 using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.Core.Features.Switchers.Interaction;
 using ABCo.Multicam.Core.Features.Switchers.Types;
+using ABCo.Multicam.Core.General;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ABCo.Multicam.Core
@@ -15,6 +16,7 @@ namespace ABCo.Multicam.Core
 			container.AddTransient<IFeatureContainer, FeatureContainer>();
 			container.AddTransient<IUnsupportedRunningFeature, UnsupportedRunningFeature>();
             container.AddTransient<ISwitcherRunningFeature, SwitcherRunningFeature>();
+            container.AddTransient<ISwitcherOrderedBackgroundQueue, OrderedBackgroundQueue>();
 
             // Switcher
             container.AddTransient<ISwitcherFactory, SwitcherFactory>();

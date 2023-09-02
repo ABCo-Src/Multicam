@@ -252,14 +252,5 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
 
         [TestMethod]
         public void Dispose_DoesNotThrow() => Create().Dispose();
-
-        [TestMethod]
-        public void IsConnected() => Assert.IsTrue(Create().IsConnected);
-
-        [TestMethod]
-        public void Connect_NoException() => Create().Connect();
-
-        [TestMethod]
-        public void Disconnect_NoException() => Create().Disconnect();
     }
 }
