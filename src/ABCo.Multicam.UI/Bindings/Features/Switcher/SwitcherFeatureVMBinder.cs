@@ -10,6 +10,7 @@ namespace ABCo.Multicam.UI.Bindings.Features.Switcher
         SwitcherConfig RawConfig { get; set; }
         bool RawIsConnected { get; set; }
         SwitcherSpecs RawSpecs { get; set; }
+        SwitcherError? RawError { get; set; }
     }
 
     public class SwitcherFeatureVMBinder : VMBinder<IVMForSwitcherFeature>, IBinderForSwitcherFeature
@@ -47,7 +48,15 @@ namespace ABCo.Multicam.UI.Bindings.Features.Switcher
 			{
 				ModelChange = new(() => _feature.SwitcherSpecs, v => v.VM.RawSpecs = v.NewVal)
 			},
+
+            // RawError
+            new PropertyBinding<SwitcherError?>()
+			{
+				ModelChange = new(() => _lastError, v => v.VM.RawError = v.NewVal)
+			}
 		};
+
+        SwitcherError? _lastError;
 
         public SwitcherFeatureVMBinder(IServiceSource servSource) : base(servSource) { }
         public void FinishConstruction(ISwitcherRunningFeature feature) 
@@ -72,13 +81,34 @@ namespace ABCo.Multicam.UI.Bindings.Features.Switcher
             return arr;
         }
 
-        public void ModelChange_Specs() => ReportModelChange(Properties[1]);
-        public void ModelChange_Config() => ReportModelChange(Properties[2]);
-        public void ModelChange_ConnectionState() => ReportModelChange(Properties[3]);
+		public void ModelChange_Specs()
+		{
+			ReportModelChange(Properties[1]);
+			ReportModelChange(Properties[4]);
+		}
+
+		public void ModelChange_Config() => ReportModelChange(Properties[2]);
+		public void ModelChange_ConnectionState()
+		{
+			if (_feature.IsConnected)
+            {
+                _lastError = null;
+				ReportModelChange(Properties[5]);
+			}
+
+			ReportModelChange(Properties[3]);
+		}
+
 		public void ModelChange_BusValues()
         {
             for (int i = 0; i < _currentMixBlocks.Length; i++)
                 ((IBinderForSwitcherMixBlock)_currentMixBlocks[i]).ModelChange_BusValues();
         }
+
+        public void ModelChange_Failure(SwitcherError error)
+        {
+            _lastError = error;
+			ReportModelChange(Properties[5]);
+		}
     }
 }

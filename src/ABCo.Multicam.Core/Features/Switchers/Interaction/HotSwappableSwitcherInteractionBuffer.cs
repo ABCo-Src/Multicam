@@ -21,11 +21,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 
 		public IPerSwitcherInteractionBuffer CurrentBuffer { get; private set; } = null!;
 
-		public HotSwappableSwitcherInteractionBuffer(IServiceSource servSource)
-		{
-			_servSource = servSource;
-		}
-
+		public HotSwappableSwitcherInteractionBuffer(IServiceSource servSource) => _servSource = servSource;
 		public void FinishConstruction(SwitcherConfig config) => CurrentBuffer = _servSource.Get<IPerSwitcherInteractionBuffer, SwitcherConfig>(config);
 
 		public void ChangeSwitcher(SwitcherConfig config)

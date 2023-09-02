@@ -42,7 +42,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
 
             _mocks.EventHandler = new();
             _mocks.EventHandler.Setup(m => m.OnProgramValueChange(It.IsAny<SwitcherProgramChangeInfo>())).Callback<SwitcherProgramChangeInfo>(v => _programChangeVal = v);
-            _mocks.EventHandler.Setup(m => m.UpdatePreview(It.IsAny<SwitcherPreviewChangeInfo>())).Callback<SwitcherPreviewChangeInfo>(v => _previewChangeVal = v);
+            _mocks.EventHandler.Setup(m => m.OnPreviewValueChange(It.IsAny<SwitcherPreviewChangeInfo>())).Callback<SwitcherPreviewChangeInfo>(v => _previewChangeVal = v);
 
             _mocks.Switcher.Setup(m => m.GetCutBusMode(_mixBlockIndex)).Returns(CutBusMode.Auto);
 
@@ -235,7 +235,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             _mocks.Switcher.Verify(m => m.SendPreviewValue(_mixBlockIndex, 13), Times.Once);
             _mocks.Switcher.Verify(m => m.SendPreviewValue(_mixBlockIndex, 4), Times.Once);
 
-            _mocks.EventHandler.Verify(m => m.UpdatePreview(It.IsAny<SwitcherPreviewChangeInfo>()), Times.Never);
+            _mocks.EventHandler.Verify(m => m.OnPreviewValueChange(It.IsAny<SwitcherPreviewChangeInfo>()), Times.Never);
         }
 
         [TestMethod]
@@ -248,7 +248,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             Assert.AreEqual(24, feature.Preview);
             _mocks.Switcher.Verify(m => m.SendPreviewValue(_mixBlockIndex, 24), Times.Never);
 
-            _mocks.EventHandler.Verify(m => m.UpdatePreview(It.IsAny<SwitcherPreviewChangeInfo>()), Times.Once);
+            _mocks.EventHandler.Verify(m => m.OnPreviewValueChange(It.IsAny<SwitcherPreviewChangeInfo>()), Times.Once);
             Assert.AreEqual(13, _previewChangeVal!.Value.MixBlock);
             Assert.AreEqual(24, _previewChangeVal!.Value.NewValue);
         }
@@ -264,7 +264,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             _mocks.Emulator.Verify(m => m.CutWithSetProgAndPrev(), Times.Never);
 
             _mocks.EventHandler.Verify(m => m.OnProgramValueChange(It.IsAny<SwitcherProgramChangeInfo>()), Times.Never);
-            _mocks.EventHandler.Verify(m => m.UpdatePreview(It.IsAny<SwitcherPreviewChangeInfo>()), Times.Never);
+            _mocks.EventHandler.Verify(m => m.OnPreviewValueChange(It.IsAny<SwitcherPreviewChangeInfo>()), Times.Never);
         }
 
         [TestMethod]
@@ -277,7 +277,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             _mocks.Emulator.Verify(m => m.CutWithSetProgAndPrev(), Times.Once);
 
             _mocks.EventHandler.Verify(m => m.OnProgramValueChange(It.IsAny<SwitcherProgramChangeInfo>()), Times.Never);
-            _mocks.EventHandler.Verify(m => m.UpdatePreview(It.IsAny<SwitcherPreviewChangeInfo>()), Times.Never);
+            _mocks.EventHandler.Verify(m => m.OnPreviewValueChange(It.IsAny<SwitcherPreviewChangeInfo>()), Times.Never);
         }
 
         [TestMethod]

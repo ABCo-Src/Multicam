@@ -23,7 +23,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
             _eventHandler = new();
             _eventHandler.Setup(m => m.OnSpecsChange(It.IsAny<SwitcherSpecs>())).Callback<SwitcherSpecs>(s => _sentSpecs = s);
             _eventHandler.Setup(m => m.OnProgramValueChange(It.IsAny<SwitcherProgramChangeInfo>())).Callback<SwitcherProgramChangeInfo>(s => _changedProgramValue = s);
-            _eventHandler.Setup(m => m.UpdatePreview(It.IsAny<SwitcherPreviewChangeInfo>())).Callback<SwitcherPreviewChangeInfo>(s => _changedPreviewValue = s);
+            _eventHandler.Setup(m => m.OnPreviewValueChange(It.IsAny<SwitcherPreviewChangeInfo>())).Callback<SwitcherPreviewChangeInfo>(s => _changedPreviewValue = s);
             _config = new DummySwitcherConfig(4);
         }
 
@@ -52,31 +52,32 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
         {
             _config = new DummySwitcherConfig();
             Create().RefreshSpecs();
-            Assert.IsNotNull(_sentSpecs);
-            Assert.AreEqual(0, _sentSpecs!.MixBlocks.Count);
+
+			AssertGeneralSpecsInfo();
+			Assert.AreEqual(0, _sentSpecs!.MixBlocks.Count);
         }
 
         [TestMethod]
         public void RefreshSpecs_ZeroInputMixBlock()
-        {
-            _config = new DummySwitcherConfig(0);
-            Create().RefreshSpecs();
+		{
+			_config = new DummySwitcherConfig(0);
+			Create().RefreshSpecs();
 
-            Assert.IsNotNull(_sentSpecs);
-            Assert.AreEqual(1, _sentSpecs.MixBlocks.Count);
-            Assert.AreEqual(SwitcherMixBlockType.ProgramPreview, _sentSpecs.MixBlocks[0].NativeType);
-            Assert.AreEqual(0, _sentSpecs.MixBlocks[0].ProgramInputs.Count);
-            AssertFeatures(_sentSpecs.MixBlocks[0].SupportedFeatures);
-            Assert.AreEqual(_sentSpecs.MixBlocks[0].ProgramInputs, _sentSpecs.MixBlocks[0].PreviewInputs);
-        }
+			AssertGeneralSpecsInfo();
+			Assert.AreEqual(1, _sentSpecs!.MixBlocks.Count);
+			Assert.AreEqual(SwitcherMixBlockType.ProgramPreview, _sentSpecs.MixBlocks[0].NativeType);
+			Assert.AreEqual(0, _sentSpecs.MixBlocks[0].ProgramInputs.Count);
+			AssertFeatures(_sentSpecs.MixBlocks[0].SupportedFeatures);
+			Assert.AreEqual(_sentSpecs.MixBlocks[0].ProgramInputs, _sentSpecs.MixBlocks[0].PreviewInputs);
+		}
 
-        [TestMethod]
+		[TestMethod]
         public void RefreshSpecs_OneMixBlock4In()
         {
             Create().RefreshSpecs();
 
-            Assert.IsNotNull(_sentSpecs);
-            Assert.AreEqual(1, _sentSpecs.MixBlocks.Count);
+			AssertGeneralSpecsInfo();
+			Assert.AreEqual(1, _sentSpecs!.MixBlocks.Count);
             Assert.AreEqual(SwitcherMixBlockType.ProgramPreview, _sentSpecs.MixBlocks[0].NativeType);
             Assert.AreEqual(4, _sentSpecs.MixBlocks[0].ProgramInputs.Count);
             AssertInputsList(_sentSpecs.MixBlocks[0].ProgramInputs);
@@ -90,9 +91,9 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
             _config = new(2, 2);
             Create().RefreshSpecs();
 
-            Assert.IsNotNull(_sentSpecs);
+			AssertGeneralSpecsInfo();
 
-            var specs = _sentSpecs;
+			var specs = _sentSpecs!;
             Assert.AreEqual(2, specs.MixBlocks.Count);
             Assert.AreEqual(SwitcherMixBlockType.ProgramPreview, specs.MixBlocks[0].NativeType);
             Assert.AreEqual(SwitcherMixBlockType.ProgramPreview, specs.MixBlocks[1].NativeType);
@@ -110,7 +111,13 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
             Assert.AreEqual(specs.MixBlocks[1].ProgramInputs, specs.MixBlocks[1].PreviewInputs);
         }
 
-        void AssertInputsList(IReadOnlyList<SwitcherBusInput> inputs)
+		private void AssertGeneralSpecsInfo()
+		{
+			Assert.IsNotNull(_sentSpecs);
+			Assert.IsFalse(_sentSpecs.CanChangeConnection);
+		}
+
+		void AssertInputsList(IReadOnlyList<SwitcherBusInput> inputs)
         {
             for (int i = 0; i < inputs.Count; i++)
             {

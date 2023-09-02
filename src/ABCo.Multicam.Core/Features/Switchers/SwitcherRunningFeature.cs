@@ -23,9 +23,10 @@ namespace ABCo.Multicam.Core.Features.Switchers
     public interface ISwitcherEventHandler
     {
         void OnProgramValueChange(SwitcherProgramChangeInfo info);
-        void UpdatePreview(SwitcherPreviewChangeInfo info);
+        void OnPreviewValueChange(SwitcherPreviewChangeInfo info);
         void OnSpecsChange(SwitcherSpecs newSpecs);
         void OnConnectionStateChange(bool isConnected);
+        void OnFailure(SwitcherError error);
     }
 
     public interface IBinderForSwitcherFeature : ILiveFeatureBinder, INeedsInitialization<ISwitcherRunningFeature>
@@ -34,6 +35,7 @@ namespace ABCo.Multicam.Core.Features.Switchers
         void ModelChange_Config();
         void ModelChange_BusValues();
         void ModelChange_ConnectionState();
+        void ModelChange_Failure(SwitcherError error);
     }
 
     public class SwitcherRunningFeature : ISwitcherRunningFeature, ISwitcherEventHandler
@@ -69,8 +71,8 @@ namespace ABCo.Multicam.Core.Features.Switchers
         public void SendPreview(int mixBlock, int value) => _buffer.CurrentBuffer.SendPreview(mixBlock, value);
         public void ChangeSwitcher(SwitcherConfig config)
         {
-            _buffer.ChangeSwitcher(config);
             SwitcherConfig = config;
+            _buffer.ChangeSwitcher(config);
             _uiBinder.ModelChange_Config();
         }
 
@@ -78,9 +80,17 @@ namespace ABCo.Multicam.Core.Features.Switchers
 
         // Events:
         public void OnProgramValueChange(SwitcherProgramChangeInfo info) => _uiBinder.ModelChange_BusValues();
-        public void UpdatePreview(SwitcherPreviewChangeInfo info) => _uiBinder.ModelChange_BusValues();
+        public void OnPreviewValueChange(SwitcherPreviewChangeInfo info) => _uiBinder.ModelChange_BusValues();
         public void OnSpecsChange(SwitcherSpecs newSpecs) => _uiBinder.ModelChange_Specs();
 		public void OnConnectionStateChange(bool newState) => _uiBinder.ModelChange_ConnectionState();
+
+		public void OnFailure(SwitcherError error)
+		{
+            // Create a new buffer
+            _buffer.ChangeSwitcher(SwitcherConfig);
+
+			_uiBinder.ModelChange_Failure(error);
+		}
 
 		// Dispose:
 		public void Dispose() => _buffer.Dispose();

@@ -4,10 +4,11 @@ namespace ABCo.Multicam.Core.Features.Switchers
 {
     /// <summary>
     /// The raw surface to talk to a switcher. 
+    /// 
     /// None of these operations are likely to be cached (there's a buffer sitting atop to do that caching), and all interactions implemented here should only be
     /// implemented if the switcher can natively/intuitively perform them. 
     /// 
-    /// (no changing the preview bus if there is none, for instance, it's the runner's job to emulate this if needed).
+    /// For example, the preview API should throw if the specs say preview isn't supported. The layers above the switcher will emulate it.
     /// </summary>
     public interface ISwitcher : IDisposable
     {
@@ -39,6 +40,6 @@ namespace ABCo.Multicam.Core.Features.Switchers
         Auto
     }
 
-    public record struct SwitcherProgramChangeInfo(int MixBlock, byte Bus, int NewValue, RetrospectiveFadeInfo? FadeInfo);
+    public record struct SwitcherProgramChangeInfo(int MixBlock, int NewValue, RetrospectiveFadeInfo? FadeInfo);
     public record struct SwitcherPreviewChangeInfo(int MixBlock, int NewValue, RetrospectiveFadeInfo? FadeInfo);
 }

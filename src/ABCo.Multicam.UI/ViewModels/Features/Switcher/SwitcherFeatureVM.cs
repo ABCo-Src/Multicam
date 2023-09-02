@@ -6,7 +6,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
-    public interface ISwitcherFeatureVM : IVMForSwitcherFeature, ILiveFeatureViewModel
+	using AlsoNotify = NotifyPropertyChangedForAttribute;
+
+	public interface ISwitcherFeatureVM : IVMForSwitcherFeature, ILiveFeatureViewModel
     {
 		void UpdateConfig(SwitcherConfig config);
 	}
@@ -18,15 +20,32 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
         // Synced to the model:
         [ObservableProperty] ISwitcherRunningFeature _rawFeature = null!;
         [ObservableProperty] IVMBinder<IVMForSwitcherMixBlock>[] _rawMixBlocks = null!;
-        [ObservableProperty][NotifyPropertyChangedFor(nameof(IsConnectButtonVisible))] SwitcherSpecs _rawSpecs = null!;
         [ObservableProperty] SwitcherConfig _rawConfig = null!;
-        [ObservableProperty][NotifyPropertyChangedFor(nameof(StatusText))] bool _rawIsConnected;
+        [ObservableProperty][AlsoNotify(nameof(IsConnectButtonVisible))] SwitcherSpecs _rawSpecs = null!;
+        [ObservableProperty][AlsoNotify(nameof(StatusText), nameof(ConnectionButtonText))] bool _rawIsConnected;
+        [ObservableProperty][AlsoNotify(nameof(StatusText), nameof(ConnectionButtonText))] SwitcherError? _rawError;
 
         [ObservableProperty] ISwitcherMixBlockVM[]? _mixBlocks;
         [ObservableProperty] ISwitcherConfigVM? _config;
 
-        public string StatusText => RawIsConnected ? "Connected: No Errors" : "Disconnected";
-		public string ConnectionButtonText => RawIsConnected ? "Disconnect" : "Connect";
+		public string StatusText
+		{
+			get
+			{
+                if (RawError != null) return $"Communication Error: {RawError.Value.Exception.Message}";
+				return RawIsConnected ? "Connected" : "Disconnected";
+			}
+		}
+
+		public string ConnectionButtonText
+		{
+			get
+			{
+				if (RawError != null) return "Reconnect";
+				return RawIsConnected ? "Disconnect" : "Connect";
+			}
+		}
+
 		public bool IsConnectButtonVisible => RawSpecs.CanChangeConnection;
 
         public SwitcherFeatureVM(IServiceSource servSource) => _servSource = servSource;

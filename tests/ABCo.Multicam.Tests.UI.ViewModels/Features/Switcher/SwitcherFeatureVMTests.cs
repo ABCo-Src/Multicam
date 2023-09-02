@@ -79,7 +79,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
         {
             var vm = Create();
             vm.RawIsConnected = true;
-            Assert.AreEqual("Connected: No Errors", vm.StatusText);
+            Assert.AreEqual("Connected", vm.StatusText);
         }
 
 		[TestMethod]
@@ -88,6 +88,17 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
 			var vm = Create();
 			vm.RawIsConnected = false;
 			Assert.AreEqual("Disconnected", vm.StatusText);
+		}
+
+		[TestMethod]
+        [DataRow(false)]
+        [DataRow(true)]
+		public void StatusText_Error(bool connected)
+        {
+			var vm = Create();
+			vm.RawIsConnected = connected;
+            vm.RawError = new(new Exception("ABC"));
+			Assert.AreEqual("Communication Error: ABC", vm.StatusText);
 		}
 
 		[TestMethod]
@@ -109,6 +120,17 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
 		[TestMethod]
 		[DataRow(false)]
 		[DataRow(true)]
+		public void ConnectionButtonText_Error(bool connected)
+		{
+			var vm = Create();
+			vm.RawIsConnected = connected;
+			vm.RawError = new(new Exception("ABC"));
+			Assert.AreEqual("Reconnect", vm.ConnectionButtonText);
+		}
+
+		[TestMethod]
+		[DataRow(false)]
+		[DataRow(true)]
 		public void IsConnectButtonVisible(bool val)
 		{
 			var vm = Create();
@@ -121,7 +143,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
 		{
 			var vm = Create();
 			vm.RawIsConnected = true;
-			Create().ToggleConnection();
+			vm.ToggleConnection();
 			_mocks.RawFeature.Verify(m => m.Disconnect());
 		}
 
@@ -130,7 +152,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
 		{
 			var vm = Create();
 			vm.RawIsConnected = false;
-			Create().ToggleConnection();
+			vm.ToggleConnection();
 			_mocks.RawFeature.Verify(m => m.Connect());
 		}
 	}

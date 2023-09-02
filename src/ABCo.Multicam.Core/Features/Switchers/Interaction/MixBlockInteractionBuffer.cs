@@ -74,7 +74,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 
             // If neither works, just update the cache
             Program = val;
-            _eventHandler?.OnProgramValueChange(new(_mixBlockIdx, 0, val, null));
+            _eventHandler?.OnProgramValueChange(new(_mixBlockIdx, val, null));
         }
 
         public void SendPreview(int val)
@@ -84,7 +84,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
             else
             {
                 Preview = val;
-                _eventHandler?.UpdatePreview(new(_mixBlockIdx, val, null));
+                _eventHandler?.OnPreviewValueChange(new(_mixBlockIdx, val, null));
             }
         }
 

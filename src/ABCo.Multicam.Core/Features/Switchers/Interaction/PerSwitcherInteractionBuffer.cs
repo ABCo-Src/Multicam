@@ -25,7 +25,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 
     public class PerSwitcherInteractionBuffer : IPerSwitcherInteractionBuffer
     {
-        // TODO: Handle interactions when disconnected 
+		// TODO: Handle interactions when disconnected
         IServiceSource _servSource;
         ISwitcherFactory _factory;
 		IPerSpecSwitcherInteractionBuffer _currentBuffer = null!;
@@ -77,10 +77,18 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 			_eventHandler?.OnProgramValueChange(info);
 		}
 
-		public void UpdatePreview(SwitcherPreviewChangeInfo info)
+		public void OnPreviewValueChange(SwitcherPreviewChangeInfo info)
 		{
 			_currentBuffer.UpdatePrev(info);
-			_eventHandler?.UpdatePreview(info);
+			_eventHandler?.OnPreviewValueChange(info);
+		}
+
+		public void OnFailure(SwitcherError error)
+		{
+			_eventHandler?.OnFailure(error);
+
+			_switcher.SetEventHandler(null); // Detach the switcher so if things are really bad the Dispose doesn't make an infinite error loop with us
+			_switcher.Dispose();
 		}
 
 		public void SetEventHandler(ISwitcherEventHandler? eventHandler)

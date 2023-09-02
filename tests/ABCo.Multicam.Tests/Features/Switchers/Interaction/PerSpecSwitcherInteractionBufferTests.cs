@@ -132,7 +132,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
         [DataRow(1)]
         public void OnProgramChange(int mixBlock)
         {
-            var info = new SwitcherProgramChangeInfo(mixBlock, 0, 13, null);
+            var info = new SwitcherProgramChangeInfo(mixBlock, 13, null);
             var feature = Create();
             feature.SetEventHandler(_mocks.EventHandler.Object);
             feature.UpdateProg(info);
@@ -160,7 +160,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             for (int i = 0; i < 2; i++)
                 _mocks.Buffers[i].Verify(m => m.UpdateProg(13), Times.Never);
 
-            _mocks.EventHandler.Verify(m => m.UpdatePreview(info));
+            _mocks.EventHandler.Verify(m => m.OnPreviewValueChange(info));
         }
 
 		[TestMethod]

@@ -8,9 +8,5 @@ public abstract class ViewModelBase : ObservableObject
 {
     public ViewModelBase()
     {
-        PropertyChanged += (s, e) =>
-        {
-            Debug.WriteLine("Property changed: " + e.PropertyName);
-        };
     }
 }

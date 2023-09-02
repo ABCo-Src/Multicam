@@ -67,13 +67,13 @@
         public void RefreshProgram(int mixBlock)
         {
             ValidateMixBlock(mixBlock);
-            _eventHandler?.OnProgramValueChange(new SwitcherProgramChangeInfo(mixBlock, 0, _states[mixBlock].Program, null));
+            _eventHandler?.OnProgramValueChange(new SwitcherProgramChangeInfo(mixBlock, _states[mixBlock].Program, null));
         }
 
         public void RefreshPreview(int mixBlock)
         {
             ValidateMixBlock(mixBlock);
-            _eventHandler?.UpdatePreview(new SwitcherPreviewChangeInfo(mixBlock, _states[mixBlock].Preview, null));
+            _eventHandler?.OnPreviewValueChange(new SwitcherPreviewChangeInfo(mixBlock, _states[mixBlock].Preview, null));
         }
 
         public void SendProgramValue(int mixBlock, int newValue)
@@ -82,7 +82,7 @@
             ValidateInput(mixBlock, newValue);
 
             _states[mixBlock].Program = newValue;
-            _eventHandler?.OnProgramValueChange(new SwitcherProgramChangeInfo(mixBlock, 0, _states[mixBlock].Program, null));
+            _eventHandler?.OnProgramValueChange(new SwitcherProgramChangeInfo(mixBlock, _states[mixBlock].Program, null));
         }
 
         void ValidateInput(int mixBlock, int newValue)
@@ -100,8 +100,7 @@
             ValidateInput(mixBlock, newValue);
 
             _states[mixBlock].Preview = newValue;
-
-            _eventHandler?.UpdatePreview(new SwitcherPreviewChangeInfo(mixBlock, _states[mixBlock].Preview, null));
+            _eventHandler?.OnPreviewValueChange(new SwitcherPreviewChangeInfo(mixBlock, _states[mixBlock].Preview, null));
         }
 
         void ValidateMixBlock(int mixBlock)
