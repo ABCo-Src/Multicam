@@ -1,4 +1,5 @@
-﻿@using ABCo.Multicam.UI.ViewModels.Features.Switcher;
+﻿@using ABCo.Multicam.Core.Features.Switchers;
+@using ABCo.Multicam.UI.ViewModels.Features.Switcher;
 @using ABCo.Multicam.UI.ViewModels.Features.Switcher.Types;
 @inherits VMBoundComponent<ISwitcherConfigVM>
 
@@ -9,12 +10,14 @@
 		{
 			<option>@opt</option>
 		}
-		<option>DEF</option>
 	</select>
 </div>
 
 <div class="inner">
-	<DummyConfigEditor VM="(DummySwitcherConfigVM)VM.CurrentConfig!" />
+	@if (VM.SwitcherType == SwitcherType.Dummy)
+	{
+		<DummyConfigEditor VM="(DummySwitcherConfigVM)VM.CurrentConfig!" />
+	}
 </div>
 
 @code {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ABCo.Multicam.Core.General;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,10 +13,14 @@ namespace ABCo.Multicam.Core.Features.Switchers
     }
 
     /// <summary>
-    /// Provides a base class that fails everything on the ISwitcher API unless overriden.
+    /// Provides a base class to make implementing switchers easier that:
+    /// 1. Fails everything on the ISwitcher API unless overriden.
+    /// 2. Stores the assigned event handler in a protected field
     /// </summary>
     public abstract class Switcher : ISwitcher
     {
+        protected ISwitcherEventHandler? _eventHandler;
+
         public virtual void Connect() => throw new UnsupportedSwitcherBehaviourException();
         public virtual void Disconnect() => throw new UnsupportedSwitcherBehaviourException();
         public virtual void Cut(int mixBlock) => throw new UnsupportedSwitcherBehaviourException();
@@ -26,10 +31,15 @@ namespace ABCo.Multicam.Core.Features.Switchers
         public virtual void SendProgramValue(int mixBlock, int id) => throw new UnsupportedSwitcherBehaviourException();
         public virtual void SetCutBus(int mixBlock, int newVal) => throw new UnsupportedSwitcherBehaviourException();
         public virtual void SetCutBusMode(int mixBlock, CutBusMode mode) => throw new UnsupportedSwitcherBehaviourException();
-        public virtual void SetEventHandler(ISwitcherEventHandler? eventHandler) => throw new UnsupportedSwitcherBehaviourException();
 
         public abstract void RefreshConnectionStatus();
         public abstract void RefreshSpecs();
         public abstract void Dispose();
-    }
+
+		public virtual void SetEventHandler(ISwitcherEventHandler? eventHandler)
+		{
+            // TODO: For safety, implement a non-null event handler target
+            _eventHandler = eventHandler;
+		}
+	}
 }

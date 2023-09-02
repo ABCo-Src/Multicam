@@ -1,4 +1,5 @@
 ﻿using ABCo.Multicam.Core;
+using ABCo.Multicam.Core.General;
 using ABCo.Multicam.UI.Blazor.Services;
 using ABCo.Multicam.UI.Blazor.Web.Services;
 using ABCo.Multicam.UI.Services;
@@ -28,6 +29,7 @@ namespace ABCo.Multicam.UI.Blazor.Desktop
 			builder.Services.AddSingleton<IServiceSource, ServiceSource>();
 			builder.Services.AddSingleton<IUIWindow, UnwindowedUIWindow>();
 			builder.Services.AddSingleton<IUIDialogHandler, UIDialogHandler>();
+			builder.Services.AddSingleton<IMainThreadDispatcher, MainThreadDispatcher>();
 
 			UIStatics.Initialize(builder.Services);
 

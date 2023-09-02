@@ -1,6 +1,6 @@
 ﻿.top {
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: auto 1fr auto;    
 }
 
 .linkText {

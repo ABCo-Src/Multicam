@@ -48,7 +48,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 			_switcher.SetEventHandler(this);
 
 			// Request a connection status update, and use an empty buffer in the meantime
-			_currentBuffer = _servSource.Get<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, ISwitcher>(new(), _switcher);
+			_currentBuffer = _servSource.Get<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, ISwitcher>(new(true), _switcher);
             _switcher.RefreshConnectionStatus();
 		}
 

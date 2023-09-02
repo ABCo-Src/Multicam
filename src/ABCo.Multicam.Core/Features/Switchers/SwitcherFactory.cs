@@ -1,4 +1,5 @@
 ﻿using ABCo.Multicam.Core.Features.Switchers.Types;
+using ABCo.Multicam.Core.Features.Switchers.Types.ATEM;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,7 @@ namespace ABCo.Multicam.Core.Features.Switchers
             return config switch
             {
                 DummySwitcherConfig d => _servSource.Get<IDummySwitcher, DummySwitcherConfig>(d),
+                ATEMSwitcherConfig a => _servSource.Get<IATEMSwitcher, ATEMSwitcherConfig>(a),
                 _ => throw new Exception("Unsupported switcher type!")
             };
         }

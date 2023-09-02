@@ -1,6 +1,7 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.Core.Features.Switchers.Types;
+using ABCo.Multicam.Core.Features.Switchers.Types.ATEM;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher.Types;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
@@ -17,6 +18,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 		string[] Items { get; }
         string SelectedItem { get; set; }
 		ISpecificSwitcherConfigVM? CurrentConfig { get; }
+		SwitcherType SwitcherType { get; }
 	}
 
     public interface ISpecificSwitcherConfigVM
@@ -40,6 +42,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 
         [ObservableProperty] string _selectedItem = "Dummy";
         [ObservableProperty] ISpecificSwitcherConfigVM? _currentConfig;
+        [ObservableProperty] SwitcherType _switcherType;
 
         public SwitcherConfigVM(IServiceSource servSource)
         {
@@ -52,7 +55,8 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
             _parent = parent;
 
             // Update the selected item
-            SelectedItem = config.Type switch 
+            _switcherType = config.Type;
+			SelectedItem = config.Type switch 
             {
                 SwitcherType.ATEM => "ATEM",
                 _ => "Dummy"
@@ -69,7 +73,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
             _parent.UpdateConfig(value switch
             {
                 "Dummy" => new DummySwitcherConfig(),
-                "ATEM" => new DummySwitcherConfig(4, 4),
+                "ATEM" => new ATEMSwitcherConfig(),
                 _ => throw new Exception("Unsupported combo box item")
             });
         }
@@ -89,8 +93,14 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
             return config switch
             {
                 DummySwitcherConfig dummyConfig => new DummySwitcherConfigVM(dummyConfig, parent),
+                ATEMSwitcherConfig atemConfig => new TempEmptyVM(),
                 _ => throw new Exception("Unrecognised config")
             };
         }
+    }
+
+    class TempEmptyVM : ViewModelBase, ISpecificSwitcherConfigVM
+	{
+        
     }
 }
