@@ -3,6 +3,7 @@ using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.Core.Features.Switchers.Interaction;
 using ABCo.Multicam.Core.Features.Switchers.Types;
 using ABCo.Multicam.Core.Features.Switchers.Types.ATEM;
+using ABCo.Multicam.Core.Features.Switchers.Types.ATEM.Native;
 using ABCo.Multicam.Core.Features.Switchers.Types.ATEM.Windows;
 using ABCo.Multicam.Core.General;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,7 +32,7 @@ namespace ABCo.Multicam.Core
 			container.AddTransient<IATEMCallbackHandler, ATEMCallbackHandler>();
 
 #pragma warning disable
-            container.AddSingleton<IATEMRawAPI, WindowsATEMRawAPI>();
+            container.AddSingleton<INativeATEMSwitcherDiscovery, WindowsNativeATEMSwitcherDiscovery>();
 #pragma warning enable
 		}
     }

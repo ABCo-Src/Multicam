@@ -18,7 +18,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 		public override SwitcherType Type => SwitcherType.ATEM;
 	}
 
-	public class ATEMSwitcher : Switcher, IATEMSwitcher, IATEMConnectionEventHandler
+	public class ATEMSwitcher : Switcher, IATEMSwitcher
 	{
 		IMainThreadDispatcher _mainThreadDispatcher;
 		IServiceSource _servSource;
@@ -38,7 +38,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 		{
 			_interactionThread.QueueTask(s =>
 			{
-				s._connection = s._servSource.Get<IATEMConnection, IATEMConnectionEventHandler>(s);
+				s._connection = s._servSource.Get<IATEMConnection, ISwitcher>(s);
 				s._mainThreadDispatcher.QueueOnMainFeatureThread(() => s._eventHandler?.OnConnectionStateChange(true));
 			}, this);
 
@@ -78,7 +78,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 			{
 				if (s._connection == null) throw new UnexpectedSwitcherDisconnectionException();
 
-				s._connection.GetProgram(mixBlock, out long val);
+				long val = s._connection.GetProgram(mixBlock);
 				s._mainThreadDispatcher.QueueOnMainFeatureThread(() => _eventHandler?.OnProgramValueChange(new SwitcherProgramChangeInfo(mixBlock, (int)val, null)));
 			}, this);
 		}
@@ -89,7 +89,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 			{
 				if (s._connection == null) throw new UnexpectedSwitcherDisconnectionException();
 
-				s._connection.GetPreview(mixBlock, out long val);
+				long val = s._connection.GetPreview(mixBlock);
 				_mainThreadDispatcher.QueueOnMainFeatureThread(() => _eventHandler?.OnPreviewValueChange(new SwitcherPreviewChangeInfo(mixBlock, (int)val, null)));
 			}, this);
 		}

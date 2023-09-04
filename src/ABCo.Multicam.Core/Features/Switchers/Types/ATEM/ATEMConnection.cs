@@ -1,4 +1,5 @@
-﻿using ABCo.Multicam.Core.General;
+﻿using ABCo.Multicam.Core.Features.Switchers.Types.ATEM.Native;
+using ABCo.Multicam.Core.General;
 using BMDSwitcherAPI;
 using System;
 using System.Collections.Generic;
@@ -9,48 +10,37 @@ using static ABCo.Multicam.Core.Features.Switchers.Types.ATEM.ATEMSwitcher;
 
 namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 {
-    public interface IATEMConnection : IDisposable, INeedsInitialization<IATEMConnectionEventHandler>
+    public interface IATEMConnection : IDisposable, INeedsInitialization<ISwitcher>
 	{
 		SwitcherSpecs InvalidateCurrentSpecs();
-		void GetProgram(int mixBlock, out long val);
-		void GetPreview(int mixBlock, out long val);
+		long GetProgram(int mixBlock);
+		long GetPreview(int mixBlock);
 		void SendProgram(int mixBlock, long val);
 		void SendPreview(int mixBlock, long val);
-	}
-
-	public interface IATEMConnectionEventHandler
-	{
-		void OnATEMDisconnect();
-		void OnATEMProgramChange(int mixBlock);
-		void OnATEMPreviewChange(int mixBlock);
 	}
 
 	public class ATEMConnection : IATEMConnection
 	{
 		IServiceSource _servSource;
-
-		// Interaction layers:
-		IATEMRawAPI _api = null!;
 		IATEMCallbackHandler _callbackHandler = null!;
 
-		IBMDSwitcher _nativeSwitcher = null!;
-		IBMDSwitcherMixEffectBlock[] _nativeBlocks = Array.Empty<IBMDSwitcherMixEffectBlock>();
+		INativeATEMSwitcher _nativeSwitcher = null!;
+		INativeATEMMixBlock[] _nativeBlocks = Array.Empty<INativeATEMMixBlock>();
 
 		public ATEMConnection(IServiceSource servSource)
 		{
 			_servSource = servSource;
-			_api = servSource.Get<IATEMRawAPI>();
 		}
 
-		public void FinishConstruction(IATEMConnectionEventHandler eventHandler)
+		public void FinishConstruction(ISwitcher eventHandler)
 		{
-			_nativeSwitcher = _api.Connect("");
-			_callbackHandler = _servSource.Get<IATEMCallbackHandler, IATEMConnectionEventHandler>(eventHandler);
+			_nativeSwitcher = _servSource.Get<INativeATEMSwitcherDiscovery>().Connect("");
+			_callbackHandler = _servSource.Get<IATEMCallbackHandler, ISwitcher>(eventHandler);
 			_callbackHandler.AttachToSwitcher(_nativeSwitcher);
 		}
 
-		public void GetProgram(int mixBlock, out long val) => _nativeBlocks[mixBlock].GetProgramInput(out val);
-		public void GetPreview(int mixBlock, out long val) => _nativeBlocks[mixBlock].GetPreviewInput(out val);
+		public long GetProgram(int mixBlock) => _nativeBlocks[mixBlock].GetProgramInput();
+		public long GetPreview(int mixBlock) => _nativeBlocks[mixBlock].GetPreviewInput();
 		public void SendProgram(int mixBlock, long val) => _nativeBlocks[mixBlock].SetProgramInput(val);
 		public void SendPreview(int mixBlock, long val) => _nativeBlocks[mixBlock].SetPreviewInput(val);
 
@@ -69,7 +59,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 			return CreateSpecs(rawMixBlocks, rawInputs);
 		}
 
-		SwitcherSpecs CreateSpecs(IList<IBMDSwitcherMixEffectBlock> rawMixBlocks, IList<RawInputData> rawInputs)
+		SwitcherSpecs CreateSpecs(IList<INativeATEMMixBlock> rawMixBlocks, IList<RawInputData> rawInputs)
 		{
 			SwitcherMixBlock[] mixBlockSpecs = new SwitcherMixBlock[rawMixBlocks.Count];
 
@@ -96,16 +86,16 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 		{
 			var res = new List<RawInputData>();
 
-			var iter = _api.CreateInputIterator(_nativeSwitcher!);
-			while (_api.MoveNext(iter, out var input))
+			using var iter = _nativeSwitcher.CreateInputIterator();
+			while (iter.MoveNext(out var input))
 			{
 				// Only count inputs that are actually assigned to a mix block
-				var availability = _api.GetAvailability(input);
+				var availability = input.GetAvailability();
 				if ((availability & _BMDSwitcherInputAvailability.bmdSwitcherInputAvailabilityInputCut) == 0) continue;
 
 				res.Add(new RawInputData(
-					_api.GetID(input),
-					_api.GetShortName(input),
+					input.GetID(),
+					input.GetShortName(),
 					(byte)(availability & (
 						_BMDSwitcherInputAvailability.bmdSwitcherInputAvailabilityMixEffectBlock0 |
 						_BMDSwitcherInputAvailability.bmdSwitcherInputAvailabilityMixEffectBlock1 |
@@ -114,22 +104,19 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 					))
 				));
 
-				_api.Free(input);
+				input.Dispose();
 			}
 
-			_api.Free(iter);
 			return res;
 		}
 
-		IList<IBMDSwitcherMixEffectBlock> GetRawMixBlocks()
+		IList<INativeATEMMixBlock> GetRawMixBlocks()
 		{
-			var res = new List<IBMDSwitcherMixEffectBlock>();
-			var iter = _api.CreateMixBlockIterator(_nativeSwitcher!);
+			var res = new List<INativeATEMMixBlock>();
 
-			while (_api.MoveNext(iter, out var input))
+			using var iter = _nativeSwitcher.CreateMixBlockIterator();
+			while (iter.MoveNext(out var input))
 				res.Add(input);
-
-			_api.Free(iter);
 
 			return res;
 		}
@@ -150,14 +137,14 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 		{
 			_callbackHandler.DetachMixBlocks(_nativeBlocks);
 			for (int i = 0; i < _nativeBlocks.Length; i++)
-				_api.Free(_nativeBlocks[i]);
+				_nativeBlocks[i].Dispose();
 		}
 
 		public void Dispose()
 		{
 			DisposeNativeBlocks();
 			_callbackHandler.DetachFromSwitcher(_nativeSwitcher);
-			_api.Free(_nativeSwitcher);
+			_nativeSwitcher.Dispose();
 		}
 	}
 }

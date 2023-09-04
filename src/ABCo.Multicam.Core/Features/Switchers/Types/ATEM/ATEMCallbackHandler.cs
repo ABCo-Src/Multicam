@@ -1,4 +1,5 @@
-﻿using BMDSwitcherAPI;
+﻿using ABCo.Multicam.Core.Features.Switchers.Types.ATEM.Native;
+using BMDSwitcherAPI;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,63 +9,61 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 {
-    public interface IATEMCallbackHandler : INeedsInitialization<IATEMConnectionEventHandler>
+    public interface IATEMCallbackHandler : INeedsInitialization<ISwitcher>
     {
-        void AttachToSwitcher(IBMDSwitcher switcher);
-		void DetachFromSwitcher(IBMDSwitcher switcher);
-        void AttachMixBlocks(IBMDSwitcherMixEffectBlock[] mixBlocks);
-		void DetachMixBlocks(IBMDSwitcherMixEffectBlock[] mixBlocks);
+        void AttachToSwitcher(INativeATEMSwitcher switcher);
+		void DetachFromSwitcher(INativeATEMSwitcher switcher);
+        void AttachMixBlocks(INativeATEMMixBlock[] mixBlocks);
+		void DetachMixBlocks(INativeATEMMixBlock[] mixBlocks);
 	}
 
-	internal class ATEMCallbackHandler : IATEMCallbackHandler, IBMDSwitcherCallback
+	internal class ATEMCallbackHandler : IATEMCallbackHandler, INativeATEMSwitcherCallbackHandler
 	{
-		IATEMConnectionEventHandler _handler = null!;
+		ISwitcher _topSwitcher = null!;
 		MixEffectBlockHandler[] _handlers = Array.Empty<MixEffectBlockHandler>();
 
-		public void FinishConstruction(IATEMConnectionEventHandler handler) => _handler = handler;
+		public void FinishConstruction(ISwitcher switcher) => _topSwitcher = switcher;
 
 		public void Notify(_BMDSwitcherEventType type, _BMDSwitcherVideoMode videoMode)
 		{
 			if (type == _BMDSwitcherEventType.bmdSwitcherEventTypeDisconnected)
-				_handler.OnATEMDisconnect();
+				_topSwitcher.Disconnect();
 		}
 
-		public void AttachToSwitcher(IBMDSwitcher switcher) => switcher.AddCallback(this);
-		public void DetachFromSwitcher(IBMDSwitcher switcher) => switcher.RemoveCallback(this);
+		public void AttachToSwitcher(INativeATEMSwitcher switcher) => switcher.AddCallback(this);
+		public void DetachFromSwitcher(INativeATEMSwitcher switcher) => switcher.ClearCallback();
 
-		public void DetachMixBlocks(IBMDSwitcherMixEffectBlock[] mixBlocks)
+		public void DetachMixBlocks(INativeATEMMixBlock[] mixBlocks)
 		{
-			for (int i = 0; i < mixBlocks.Length; i++)
-				mixBlocks[i].RemoveCallback(_handlers[i]);
-
+			for (int i = 0; i < mixBlocks.Length; i++) mixBlocks[i].ClearCallback();
 			_handlers = Array.Empty<MixEffectBlockHandler>();
 		}
 
-		public void AttachMixBlocks(IBMDSwitcherMixEffectBlock[] mixBlocks)
+		public void AttachMixBlocks(INativeATEMMixBlock[] mixBlocks)
 		{
 			Debug.Assert(_handlers.Length == 0); // Old mix-blocks should have been detached
 
 			_handlers = new MixEffectBlockHandler[mixBlocks.Length];
 			for (int i = 0; i < mixBlocks.Length; i++)
 			{
-				_handlers[i] = new MixEffectBlockHandler(_handler, i);
+				_handlers[i] = new MixEffectBlockHandler(_topSwitcher, i);
 				mixBlocks[i].AddCallback(_handlers[i]);
 			}
 		}
 
-		class MixEffectBlockHandler : IBMDSwitcherMixEffectBlockCallback
+		class MixEffectBlockHandler : INativeATEMBlockCallbackHandler
         {
-			IATEMConnectionEventHandler _handler;
+			ISwitcher _switcher;
 			int _index;
 
-			public MixEffectBlockHandler(IATEMConnectionEventHandler handler, int index) => (_handler, _index) = (handler, index);
+			public MixEffectBlockHandler(ISwitcher handler, int index) => (_switcher, _index) = (handler, index);
 
 			public void Notify(_BMDSwitcherMixEffectBlockEventType eventType)
 			{
 				if (eventType == _BMDSwitcherMixEffectBlockEventType.bmdSwitcherMixEffectBlockEventTypeProgramInputChanged)
-					_handler.OnATEMProgramChange(_index);
+					_switcher.RefreshProgram(_index);
 				else if (eventType == _BMDSwitcherMixEffectBlockEventType.bmdSwitcherMixEffectBlockEventTypePreviewInputChanged)
-					_handler.OnATEMPreviewChange(_index);
+					_switcher.RefreshPreview(_index);
 			}
 		}
     }
