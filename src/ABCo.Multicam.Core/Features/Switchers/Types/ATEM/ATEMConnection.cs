@@ -17,6 +17,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 		long GetPreview(int mixBlock);
 		void SendProgram(int mixBlock, long val);
 		void SendPreview(int mixBlock, long val);
+		void Cut(int mixBlock);
 	}
 
 	public class ATEMConnection : IATEMConnection
@@ -43,6 +44,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 		public long GetPreview(int mixBlock) => _nativeBlocks[mixBlock].GetPreviewInput();
 		public void SendProgram(int mixBlock, long val) => _nativeBlocks[mixBlock].SetProgramInput(val);
 		public void SendPreview(int mixBlock, long val) => _nativeBlocks[mixBlock].SetPreviewInput(val);
+		public void Cut(int mixBlock) => _nativeBlocks[mixBlock].Cut();
 
 		public SwitcherSpecs InvalidateCurrentSpecs()
 		{

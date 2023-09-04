@@ -38,6 +38,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM.Native
         long GetPreviewInput();
         void SetProgramInput(long val);
         void SetPreviewInput(long val);
+        void Cut();
 	}
 
     public interface INativeATEMInput : IDisposable

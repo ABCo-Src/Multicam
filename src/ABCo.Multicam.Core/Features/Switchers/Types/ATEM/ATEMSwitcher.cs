@@ -112,6 +112,15 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 			}, this);
 		}
 
+		public override void Cut(int mixBlock)
+		{
+			_interactionThread.QueueTask(s =>
+			{
+				if (s._connection == null) throw new UnexpectedSwitcherDisconnectionException();
+				s._connection.Cut(mixBlock);
+			}, this);
+		}
+
 		public void OnATEMDisconnect() => _mainThreadDispatcher.QueueOnMainFeatureThread(() => _eventHandler?.OnConnectionStateChange(false));
 		public void OnATEMProgramChange(int mixBlock) => RefreshProgram(mixBlock);
 		public void OnATEMPreviewChange(int mixBlock) => RefreshPreview(mixBlock);

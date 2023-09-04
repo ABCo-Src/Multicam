@@ -178,8 +178,10 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM.Windows
 
 		public void SetPreviewInput(long val) => _comObject.SetPreviewInput(val);
 		public void SetProgramInput(long val) => _comObject.SetProgramInput(val);
+		public void Cut() => _comObject.PerformCut();
 
 		// Native callback:
 		public void Notify(_BMDSwitcherMixEffectBlockEventType eventType) => _handler.Notify(eventType);
+
 	}
 }
