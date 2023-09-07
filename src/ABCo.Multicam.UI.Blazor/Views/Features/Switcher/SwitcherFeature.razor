@@ -2,15 +2,7 @@
 @using ABCo.Multicam.UI.ViewModels.Features.Switcher;
 @inherits VMBoundComponent<SwitcherFeatureVM>
 
-<div class="top">
-	<FeatureTitle VM="@OuterVM" />
-	<p class="linkText">@VM.StatusText</p>
-
-	@if (VM.IsConnectButtonVisible)
-	{
-		<a class="connectBtn hyperlink" @onclick=VM.ToggleConnection>@VM.ConnectionButtonText</a>
-	}
-</div>
+<SwitcherConnectionStrip OuterVM="OuterVM" VM="(SwitcherConnectionVM)VM.Connection" />
 
 <ul class="mixBlocks">
 	@foreach (var mixBlock in VM.MixBlocks!)

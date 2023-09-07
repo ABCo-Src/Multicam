@@ -1,0 +1,12 @@
+﻿.top {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+}
+
+.linkText {
+    margin-left: 15px;
+}
+
+.connectBtn {
+    margin-left: 15px;
+}

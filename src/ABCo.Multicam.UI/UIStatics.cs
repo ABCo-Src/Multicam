@@ -41,6 +41,7 @@ namespace ABCo.Multicam.UI
             container.AddTransient<ISwitcherAutoButtonVM, SwitcherAutoButtonVM>();
             container.AddTransient<ISwitcherProgramInputVM, SwitcherProgramInputVM>();
             container.AddTransient<ISwitcherPreviewInputVM, SwitcherPreviewInputVM>();
+            container.AddTransient<ISwitcherConnectionVM, SwitcherConnectionVM>();
 
             container.AddSingleton<ISpecificSwitcherConfigVMFactory, SpecificSwitcherConfigVMFactory>();
 

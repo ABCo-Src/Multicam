@@ -21,43 +21,29 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
         [ObservableProperty] ISwitcherRunningFeature _rawFeature = null!;
         [ObservableProperty] IVMBinder<IVMForSwitcherMixBlock>[] _rawMixBlocks = null!;
         [ObservableProperty] SwitcherConfig _rawConfig = null!;
-        [ObservableProperty][AlsoNotify(nameof(IsConnectButtonVisible))] SwitcherSpecs _rawSpecs = null!;
-        [ObservableProperty][AlsoNotify(nameof(StatusText), nameof(ConnectionButtonText))] bool _rawIsConnected;
-        [ObservableProperty][AlsoNotify(nameof(StatusText), nameof(ConnectionButtonText))] SwitcherError? _rawError;
+        [ObservableProperty] SwitcherSpecs _rawSpecs = null!;
+        [ObservableProperty] bool _rawIsConnected;
+        [ObservableProperty] SwitcherError? _rawError;
 
         [ObservableProperty] ISwitcherMixBlockVM[]? _mixBlocks;
+        [ObservableProperty] ISwitcherConnectionVM _connection = null!;
         [ObservableProperty] ISwitcherConfigVM? _config;
 
-		public string StatusText
-		{
-			get
-			{
-                if (RawError != null) return $"Communication Error: {RawError.Value.Exception.Message}";
-				return RawIsConnected ? "Connected" : "Disconnected";
-			}
-		}
+		public SwitcherFeatureVM(IServiceSource servSource) => _servSource = servSource;
 
-		public string ConnectionButtonText
-		{
-			get
-			{
-				if (RawError != null) return "Reconnect";
-				return RawIsConnected ? "Disconnect" : "Connect";
-			}
-		}
+		partial void OnRawFeatureChanged(ISwitcherRunningFeature value) => Connection = _servSource.Get<ISwitcherConnectionVM, ISwitcherRunningFeature>(RawFeature);
 
-		public bool IsConnectButtonVisible => RawSpecs.CanChangeConnection;
-
-        public SwitcherFeatureVM(IServiceSource servSource) => _servSource = servSource;
-
-        partial void OnRawMixBlocksChanged(IVMBinder<IVMForSwitcherMixBlock>[] value)
+		partial void OnRawMixBlocksChanged(IVMBinder<IVMForSwitcherMixBlock>[] value)
         {
             var newArr = new ISwitcherMixBlockVM[value.Length];
             for (int i = 0; i < newArr.Length; i++) newArr[i] = value[i].GetVM<ISwitcherMixBlockVM>(this);
             MixBlocks = newArr;
         }
 
-        partial void OnRawConfigChanged(SwitcherConfig value) => Config = _servSource.Get<ISwitcherConfigVM, SwitcherConfig, ISwitcherFeatureVM>(RawConfig, this);
+        partial void OnRawErrorChanged(SwitcherError? value) => Connection.OnException(value?.Exception);
+		partial void OnRawIsConnectedChanged(bool value) => Connection.OnConnection(value);
+		partial void OnRawSpecsChanged(SwitcherSpecs value) => Connection.OnSpecced(value);
+		partial void OnRawConfigChanged(SwitcherConfig value) => Config = _servSource.Get<ISwitcherConfigVM, SwitcherConfig, ISwitcherFeatureVM>(RawConfig, this);
 
         public void UpdateConfig(SwitcherConfig config) => RawFeature.ChangeSwitcher(config);
 		public void ToggleConnection()

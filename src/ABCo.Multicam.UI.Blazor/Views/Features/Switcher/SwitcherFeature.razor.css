@@ -1,16 +1,3 @@
-﻿.top {
-    display: grid;
-    grid-template-columns: auto 1fr auto;    
-}
-
-.linkText {
-    margin-left: 15px;
-}
-
-.mixBlocks {
+﻿.mixBlocks {
     margin-top: 10px;
-}
-
-.connectBtn {
-    margin-left: 15px;
 }
