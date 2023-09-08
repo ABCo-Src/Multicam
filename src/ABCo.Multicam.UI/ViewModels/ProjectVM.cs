@@ -7,7 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace ABCo.Multicam.UI.ViewModels
 {
-    public interface IProjectVM 
+	public interface IProjectVM 
     { 
         IProjectFeaturesVM Features { get; }
     }

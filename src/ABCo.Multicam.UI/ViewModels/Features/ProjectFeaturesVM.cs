@@ -1,6 +1,5 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features;
-using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.UI.Bindings;
 using ABCo.Multicam.UI.Bindings.Features;
 using ABCo.Multicam.UI.Services;
@@ -9,7 +8,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace ABCo.Multicam.UI.ViewModels.Features
 {
-    public interface IProjectFeaturesVM : IVMForProjectFeaturesBinder
+	public interface IProjectFeaturesVM : IVMForProjectFeaturesBinder
     {
         IFeatureVM? CurrentlyEditing { get; set; }
     }

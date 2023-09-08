@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace ABCo.Multicam.UI.Bindings
 {
-    public interface IVMBinder<T> where T : IVMForBinder<T>
+	public interface IVMBinder<T> where T : IVMForBinder<T>
     {
         TNew GetVM<TNew>(object parentVM) where TNew : class, T;
         void AddVM(T targetVM); 

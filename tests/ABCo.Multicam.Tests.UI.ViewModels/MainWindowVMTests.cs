@@ -5,7 +5,7 @@ using Moq;
 
 namespace ABCo.Multicam.Tests.UI.ViewModels
 {
-    [TestClass]
+	[TestClass]
     public class MainWindowVMTests
     {
         public record struct Mocks(Mock<IServiceSource> ServSource, Mock<IApplicationVM> App, Mock<IUIWindow> Window);

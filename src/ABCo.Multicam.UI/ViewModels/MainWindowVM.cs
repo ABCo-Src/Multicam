@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace ABCo.Multicam.UI.ViewModels
 {
-    public partial class MainWindowVM : ViewModelBase
+	public partial class MainWindowVM : ViewModelBase
     {
         readonly IUIWindow _window;
 

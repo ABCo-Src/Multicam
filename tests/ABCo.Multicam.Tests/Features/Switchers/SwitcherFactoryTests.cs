@@ -2,15 +2,10 @@
 using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.Core.Features.Switchers.Types;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Tests.Features.Switchers
 {
-    [TestClass]
+	[TestClass]
     public class SwitcherFactoryTests
     {
         public record struct Mocks(

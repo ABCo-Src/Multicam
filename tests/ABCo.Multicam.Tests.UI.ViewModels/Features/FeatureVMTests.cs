@@ -8,14 +8,14 @@ using System.Data;
 
 namespace ABCo.Multicam.Tests.UI.ViewModels.Features
 {
-    [TestClass]
+	[TestClass]
     public class FeatureVMTests
     {
         public interface ISwitcherBinder : IVMBinder<IVMForSwitcherFeature>, ILiveFeatureBinder { }
 
         public record struct Mocks(
             Mock<IFeatureManager> FeatureManager, 
-            Mock<IFeatureContainer> RawFeature, 
+            Mock<IFeature> RawFeature, 
             Mock<IProjectFeaturesVM> Parent,
             Mock<ILiveFeature> InnerFeature,
             Mock<ISwitcherBinder> InnerFeatureBinder,

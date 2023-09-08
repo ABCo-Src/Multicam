@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
-    public interface ISwitcherButtonVM : INotifyPropertyChanged
+	public interface ISwitcherButtonVM : INotifyPropertyChanged
     {
         string Text { get; set; }
         SwitcherButtonStatus Status { get; set; }
@@ -13,8 +13,6 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 
     public abstract partial class SwitcherButtonVM : ViewModelBase, ISwitcherButtonVM
     {
-        protected ISwitcherMixBlockVM _parent = null!;
-
         [ObservableProperty] string _text = "";
         [ObservableProperty] SwitcherButtonStatus _status;
 

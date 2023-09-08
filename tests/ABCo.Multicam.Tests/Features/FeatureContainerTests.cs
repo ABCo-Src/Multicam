@@ -1,19 +1,18 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features;
 using ABCo.Multicam.Core.Features.Switchers;
-using ABCo.Multicam.Tests.Helpers;
 using Moq;
 
 namespace ABCo.Multicam.Tests.Features
 {
-    [TestClass]
+	[TestClass]
     public class FeatureContainerTests
     {
         public record struct Mocks(
             Mock<IServiceSource> ServSource,
             Mock<IFeatureManager> FeatureManager,
             Mock<ISwitcherRunningFeature> SwitcherFeature,
-            Mock<IBinderForFeatureContainer> UIBinder,
+            Mock<IGeneralFeaturePresenter> UIBinder,
             Mock<IUnsupportedRunningFeature> UnsupportedFeature
         );
 
@@ -30,16 +29,16 @@ namespace ABCo.Multicam.Tests.Features
 
             _mocks.ServSource = new();
             _mocks.ServSource.Setup(m => m.Get<ISwitcherRunningFeature>()).Returns(() => _mocks.SwitcherFeature.Object);
-            _mocks.ServSource.Setup(m => m.Get<IBinderForFeatureContainer, IFeatureManager, IFeatureContainer>(It.IsAny<IFeatureManager>(), It.IsAny<IFeatureContainer>()))
+            _mocks.ServSource.Setup(m => m.Get<IGeneralFeaturePresenter, IFeatureManager, IFeature>(It.IsAny<IFeatureManager>(), It.IsAny<IFeature>()))
                 .Returns(_mocks.UIBinder.Object)
-                .Callback<IFeatureManager, IFeatureContainer>((m, c) => Assert.IsNotNull(m));
+                .Callback<IFeatureManager, IFeature>((m, c) => Assert.IsNotNull(m));
 
             _mocks.ServSource.Setup(m => m.Get<IUnsupportedRunningFeature>()).Returns(() => _mocks.UnsupportedFeature.Object);
         }
 
-        public FeatureContainer Create()
+        public Feature Create()
         {
-            var container = new FeatureContainer(_mocks.ServSource.Object, _mocks.FeatureManager.Object);
+            var container = new Feature(_mocks.ServSource.Object, _mocks.FeatureManager.Object);
             container.FinishConstruction(_type);
             return container;
         }
@@ -48,7 +47,7 @@ namespace ABCo.Multicam.Tests.Features
         public void Create_InitUIBinder()
         {
             var container = Create();
-            _mocks.ServSource.Verify(m => m.Get<IBinderForFeatureContainer, IFeatureManager, IFeatureContainer>(_mocks.FeatureManager.Object, container));
+            _mocks.ServSource.Verify(m => m.Get<IGeneralFeaturePresenter, IFeatureManager, IFeature>(_mocks.FeatureManager.Object, container));
         }
 
         [TestMethod]
@@ -57,7 +56,7 @@ namespace ABCo.Multicam.Tests.Features
             _type = FeatureTypes.Switcher;
             var manager = Create();
             _mocks.ServSource.Verify(m => m.Get<ISwitcherRunningFeature>(), Times.Once);
-            Assert.AreEqual(_mocks.SwitcherFeature.Object, manager.CurrentFeature);
+            Assert.AreEqual(_mocks.SwitcherFeature.Object, manager.LiveFeature);
         }
 
         [TestMethod]
@@ -66,14 +65,14 @@ namespace ABCo.Multicam.Tests.Features
             _type = FeatureTypes.Unsupported;
             var manager = Create();
             _mocks.ServSource.Verify(m => m.Get<IUnsupportedRunningFeature>(), Times.Once);
-            Assert.AreEqual(_mocks.UnsupportedFeature.Object, manager.CurrentFeature);
+            Assert.AreEqual(_mocks.UnsupportedFeature.Object, manager.LiveFeature);
         }
 
         [TestMethod]
         public void UIBinder()
         {
             var manager = Create();
-            Assert.AreEqual(_mocks.UIBinder.Object, manager.UIBinder);
+            Assert.AreEqual(_mocks.UIBinder.Object, manager.UIPresenter);
         }
 
         [TestMethod]

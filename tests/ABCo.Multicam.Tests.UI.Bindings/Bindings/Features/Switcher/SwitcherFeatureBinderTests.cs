@@ -6,7 +6,7 @@ using Moq;
 
 namespace ABCo.Multicam.Tests.UI.Bindings.Features.Switcher
 {
-    [TestClass]
+	[TestClass]
     public class SwitcherFeatureBinderTests
     {
         public interface IMB : IVMBinder<IVMForSwitcherMixBlock>, IBinderForSwitcherMixBlock { }

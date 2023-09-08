@@ -3,7 +3,7 @@ using Moq;
 
 namespace ABCo.Multicam.Tests.UI.Bindings
 {
-    [TestClass]
+	[TestClass]
     public class BindingViewModelBaseTests
     {
         public class Sub : BindingViewModelBase<Sub>, IVMForBinder<Sub>

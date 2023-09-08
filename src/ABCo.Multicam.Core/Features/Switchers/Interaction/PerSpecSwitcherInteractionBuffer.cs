@@ -1,9 +1,6 @@
-﻿using ABCo.Multicam.Core.Features.Switchers.Fading;
-using System;
-
-namespace ABCo.Multicam.Core.Features.Switchers.Interaction
+﻿namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 {
-    public interface IPerSpecSwitcherInteractionBuffer : INeedsInitialization<SwitcherSpecs, ISwitcher>
+	public interface IPerSpecSwitcherInteractionBuffer : INeedsInitialization<SwitcherSpecs, ISwitcher>
     {
         SwitcherSpecs Specs { get; }
         void SetEventHandler(ISwitcherEventHandler? eventHandler);

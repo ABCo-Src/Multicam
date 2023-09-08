@@ -3,7 +3,7 @@ using ABCo.Multicam.Core.Features;
 
 namespace ABCo.Multicam.UI.Bindings.Features
 {
-    public interface IVMForProjectFeaturesBinder : IVMForBinder<IVMForProjectFeaturesBinder>
+	public interface IVMForProjectFeaturesBinder : IVMForBinder<IVMForProjectFeaturesBinder>
     {
         IVMBinder<IVMForFeatureBinder>[] RawFeatures { get; set; }
         IFeatureManager RawManager { get; set; }
@@ -34,7 +34,7 @@ namespace ABCo.Multicam.UI.Bindings.Features
             var arr = new IVMBinder<IVMForFeatureBinder>[_model.Features.Count];
 
             for (int i = 0; i < arr.Length; i++)
-                arr[i] = (IVMBinder<IVMForFeatureBinder>)_model.Features[i].UIBinder;
+                arr[i] = (IVMBinder<IVMForFeatureBinder>)_model.Features[i].GeneralUIPresenter;
 
             return arr;
         }

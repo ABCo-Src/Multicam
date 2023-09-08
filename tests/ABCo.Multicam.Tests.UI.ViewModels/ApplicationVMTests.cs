@@ -4,7 +4,7 @@ using Moq;
 
 namespace ABCo.Multicam.Tests.UI.ViewModels
 {
-    [TestClass]
+	[TestClass]
     public class ApplicationVMTests
     {
         [TestMethod]

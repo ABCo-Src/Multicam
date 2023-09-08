@@ -1,19 +1,10 @@
-﻿using ABCo.Multicam.Core;
-using ABCo.Multicam.Core.Features.Switchers.Types;
+﻿using ABCo.Multicam.Core.Features.Switchers.Types;
 using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher.Types
 {
-    public interface IDummySwitcherConfigVM : ISpecificSwitcherConfigVM, INotifyPropertyChanged
+	public interface IDummySwitcherConfigVM : ISpecificSwitcherConfigVM, INotifyPropertyChanged
     {
         void UpdateModel();
     }

@@ -1,6 +1,6 @@
 ﻿namespace ABCo.Multicam.Core.Features.Switchers.Types
 {
-    public interface IDummySwitcher : ISwitcher, INeedsInitialization<DummySwitcherConfig> { }
+	public interface IDummySwitcher : ISwitcher, INeedsInitialization<DummySwitcherConfig> { }
 
     public class DummySwitcherConfig : SwitcherConfig
     {

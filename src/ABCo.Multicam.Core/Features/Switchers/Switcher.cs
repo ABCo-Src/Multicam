@@ -1,13 +1,6 @@
-﻿using ABCo.Multicam.Core.General;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ABCo.Multicam.Core.Features.Switchers
+﻿namespace ABCo.Multicam.Core.Features.Switchers
 {
-    public class UnsupportedSwitcherBehaviourException : Exception
+	public class UnsupportedSwitcherBehaviourException : Exception
     {
         public UnsupportedSwitcherBehaviourException() : base("Switcher was asked to perform something it can't. Either switcher is reporting incorrect specs or something higher-up went wrong.") { }
     }

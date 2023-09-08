@@ -1,17 +1,17 @@
 ﻿namespace ABCo.Multicam.Core.Features
 {
-    /// <summary>
-    /// Manages all the (running) features in the current project.
-    /// </summary>
-    public interface IFeatureManager : IDisposable
+	/// <summary>
+	/// Manages all the (running) features in the current project.
+	/// </summary>
+	public interface IFeatureManager : IDisposable
     {
-        IReadOnlyList<IFeatureContainer> Features { get; }
+        IReadOnlyList<IFeature> Features { get; }
         IBinderForProjectFeatures UIBinder { get; }
 
         void CreateFeature(FeatureTypes type);
-        void MoveUp(IFeatureContainer feature);
-        void MoveDown(IFeatureContainer feature);
-        void Delete(IFeatureContainer feature);
+        void MoveUp(IFeature feature);
+        void MoveDown(IFeature feature);
+        void Delete(IFeature feature);
     }
 
     public interface IBinderForProjectFeatures : INeedsInitialization<IFeatureManager>
@@ -22,9 +22,9 @@
     public class FeatureManager : IFeatureManager
     {
         readonly IServiceSource _servSource;
-        readonly List<IFeatureContainer> _runningFeatures = new();
+        readonly List<IFeature> _runningFeatures = new();
 
-        public IReadOnlyList<IFeatureContainer> Features => _runningFeatures;
+        public IReadOnlyList<IFeature> Features => _runningFeatures;
         public IBinderForProjectFeatures UIBinder { get; private set; }
 
         public FeatureManager(IServiceSource source)
@@ -35,11 +35,11 @@
 
         public void CreateFeature(FeatureTypes type)
         {
-            _runningFeatures.Add(_servSource.Get<IFeatureContainer, FeatureTypes>(type));
+            _runningFeatures.Add(_servSource.Get<IFeature, FeatureTypes>(type));
             UIBinder.ModelChange_FeaturesChange();
         }
 
-        public void MoveUp(IFeatureContainer feature)
+        public void MoveUp(IFeature feature)
         {
             int indexOfFeature = _runningFeatures.IndexOf(feature);
 
@@ -51,7 +51,7 @@
             UIBinder.ModelChange_FeaturesChange();
         }
 
-        public void MoveDown(IFeatureContainer feature)
+        public void MoveDown(IFeature feature)
         {
             int indexOfFeature = _runningFeatures.IndexOf(feature);
 
@@ -63,7 +63,7 @@
             UIBinder.ModelChange_FeaturesChange();
         }
 
-        public void Delete(IFeatureContainer feature)
+        public void Delete(IFeature feature)
         {
             _runningFeatures.Remove(feature);
             feature.Dispose();

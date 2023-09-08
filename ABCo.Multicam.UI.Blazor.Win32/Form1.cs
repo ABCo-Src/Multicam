@@ -5,10 +5,7 @@ using ABCo.Multicam.UI.Blazor.Web.Services;
 using ABCo.Multicam.UI.Services;
 using Microsoft.AspNetCore.Components.WebView.WindowsForms;
 using Microsoft.Extensions.DependencyInjection;
-using System.Diagnostics.Metrics;
 using ABCo.Multicam.UI.Blazor.Win32.Services;
-using BMDSwitcherAPI;
-using ABCo.Multicam.Core.Features.Switchers.Types.ATEM;
 
 namespace ABCo.Multicam.UI.Blazor.Win32
 {

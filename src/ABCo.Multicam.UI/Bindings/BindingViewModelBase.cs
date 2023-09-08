@@ -1,8 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-
-namespace ABCo.Multicam.UI.Bindings
+﻿namespace ABCo.Multicam.UI.Bindings
 {
-    public abstract class BindingViewModelBase<TVMType> : ViewModelBase, IVMForBinder<TVMType>, IDisposable 
+	public abstract class BindingViewModelBase<TVMType> : ViewModelBase, IVMForBinder<TVMType>, IDisposable 
         where TVMType : IVMForBinder<TVMType>
     {
         public void ReenableModelBindingAndSend(params string[] toSend)

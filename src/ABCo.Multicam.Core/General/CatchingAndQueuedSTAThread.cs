@@ -1,12 +1,4 @@
-﻿using ABCo.Multicam.Core.Features.Switchers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ABCo.Multicam.Core.General
+﻿namespace ABCo.Multicam.Core.General
 {
 	public interface ICatchingOrderedBackgroundQueue<T> where T : IErrorHandlingTarget
 	{

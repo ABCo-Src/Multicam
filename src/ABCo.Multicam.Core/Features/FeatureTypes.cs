@@ -1,6 +1,6 @@
 ﻿namespace ABCo.Multicam.Core.Features
 {
-    public enum FeatureTypes
+	public enum FeatureTypes
     {
         Unsupported,
 

@@ -9,7 +9,7 @@ using Moq;
 
 namespace ABCo.Multicam.Tests.UI.ViewModels.Features
 {
-    [TestClass]
+	[TestClass]
     public class ProjectFeaturesVMTests
     {
         public record struct Mocks(

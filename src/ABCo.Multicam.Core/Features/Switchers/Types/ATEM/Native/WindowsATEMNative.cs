@@ -1,13 +1,7 @@
 ﻿using ABCo.Multicam.Core.Features.Switchers.Types.ATEM.Native;
 using BMDSwitcherAPI;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM.Windows
 {

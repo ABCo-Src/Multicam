@@ -1,6 +1,6 @@
 ﻿namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 {
-    public interface IMixBlockInteractionEmulator 
+	public interface IMixBlockInteractionEmulator 
     {
         bool TrySetProgWithPreviewThenCut(int val);
         bool TrySetProgWithCutBusCut(int val);

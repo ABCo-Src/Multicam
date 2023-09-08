@@ -1,12 +1,10 @@
 ﻿using ABCo.Multicam.Core.Features.Switchers;
-using ABCo.Multicam.Core.Features.Switchers.Fading;
 using ABCo.Multicam.Core.Features.Switchers.Interaction;
 using Moq;
-using System;
 
 namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
 {
-    [TestClass]
+	[TestClass]
     public class MixBlockInteractionBufferTests
     {
         public record struct Mocks(

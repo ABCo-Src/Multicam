@@ -1,16 +1,10 @@
 ﻿using ABCo.Multicam.Core.Features.Switchers.Types.ATEM.Native;
-using ABCo.Multicam.Core.General;
 using BMDSwitcherAPI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static ABCo.Multicam.Core.Features.Switchers.Types.ATEM.ATEMSwitcher;
 
 namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 {
-    public interface IATEMConnection : IDisposable, INeedsInitialization<ISwitcher>
+	public interface IATEMConnection : IDisposable, INeedsInitialization<ISwitcher>
 	{
 		SwitcherSpecs InvalidateCurrentSpecs();
 		long GetProgram(int mixBlock);

@@ -1,6 +1,6 @@
 ﻿namespace ABCo.Multicam.Tests.Helpers
 {
-    public static class StructuredTesting
+	public static class StructuredTesting
     {
         public static void Test()
         {

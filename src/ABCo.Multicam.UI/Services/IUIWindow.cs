@@ -1,6 +1,6 @@
 ﻿namespace ABCo.Multicam.UI.Services
 {
-    public interface IUIWindow
+	public interface IUIWindow
     {
         bool CanMinimize { get; }
         bool CanMaximize { get; }

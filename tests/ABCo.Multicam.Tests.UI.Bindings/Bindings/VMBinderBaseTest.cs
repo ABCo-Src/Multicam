@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 
 namespace ABCo.Multicam.Tests.UI.Bindings
 {
-    public abstract class VMBinderBaseTest<TType, TVM, TModel> 
+	public abstract class VMBinderBaseTest<TType, TVM, TModel> 
         where TType : VMBinder<TVM>
         where TModel : class
         where TVM : class, IVMForBinder<TVM>

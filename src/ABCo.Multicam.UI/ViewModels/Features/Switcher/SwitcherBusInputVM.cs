@@ -1,54 +1,36 @@
 ﻿using ABCo.Multicam.Core;
-using ABCo.Multicam.Core.Features.Switchers;
-using ABCo.Multicam.UI.Enumerations;
+using ABCo.Multicam.UI.Presenters.Features.Switcher;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
-    public interface ISwitcherBusInputVM : INeedsInitialization<SwitcherBusInput, ISwitcherMixBlockVM>, ISwitcherButtonVM
+	public interface ISwitcherBusInputVM : INeedsInitialization<ISwitcherMixBlocksPresenter, int, int>, ISwitcherButtonVM
     {
-        SwitcherBusInput Base { get; }
-        void SetHighlight(bool visible);
-    }
+		int BusId { get; }
+	}
 
-    public abstract class SwitcherBusInputVM : SwitcherButtonVM, ISwitcherBusInputVM
+    public abstract class SwitcherBusInputVM : SwitcherButtonVM
     {
-        public SwitcherBusInput Base { get; private set; } = null!;
+		protected ISwitcherMixBlocksPresenter _presenter;
+		protected int _mixBlockIndex;
+		public int BusId { get; private set; }
 
-        public void FinishConstruction(SwitcherBusInput busInput, ISwitcherMixBlockVM parent)
-        {
-            Base = busInput;
-            Text = busInput.Name;
-            _parent = parent;
-        }
-
-        public abstract void SetHighlight(bool visible);
-    }
+		public void FinishConstruction(ISwitcherMixBlocksPresenter presenter, int mixBlockIndex, int busIndex)
+		{
+			_presenter = presenter;
+			_mixBlockIndex = mixBlockIndex;
+			BusId = busIndex;
+		}
+	}
 
     public interface ISwitcherProgramInputVM : ISwitcherBusInputVM { }
     public partial class SwitcherProgramInputVM : SwitcherBusInputVM, ISwitcherProgramInputVM
-    {
-        public override void SetHighlight(bool visible)
-        {
-            if (visible)
-                Status = SwitcherButtonStatus.ProgramActive;
-            else
-                Status = SwitcherButtonStatus.NeutralInactive;
-        }
-
-        public override void Click() => _parent.SetProgram(Base.Id);
+	{
+        public override void Click() => _presenter.SetProgram(_mixBlockIndex, BusId);
     }
 
-    public interface ISwitcherPreviewInputVM : ISwitcherBusInputVM { }
-    public partial class SwitcherPreviewInputVM : SwitcherBusInputVM, ISwitcherPreviewInputVM
-    {
-        public override void SetHighlight(bool visible)
-        {
-            if (visible)
-                Status = SwitcherButtonStatus.PreviewActive;
-            else
-                Status = SwitcherButtonStatus.NeutralInactive;
-        }
-
-        public override void Click() => _parent.SetPreview(Base.Id);
-    }
+	public interface ISwitcherPreviewInputVM : ISwitcherBusInputVM { }
+	public partial class SwitcherPreviewInputVM : SwitcherBusInputVM, ISwitcherPreviewInputVM
+	{
+		public override void Click() => _presenter.SetProgram(_mixBlockIndex, BusId);
+	}
 }

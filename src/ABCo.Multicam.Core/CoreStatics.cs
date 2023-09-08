@@ -5,20 +5,19 @@ using ABCo.Multicam.Core.Features.Switchers.Types;
 using ABCo.Multicam.Core.Features.Switchers.Types.ATEM;
 using ABCo.Multicam.Core.Features.Switchers.Types.ATEM.Native;
 using ABCo.Multicam.Core.Features.Switchers.Types.ATEM.Windows;
-using ABCo.Multicam.Core.General;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ABCo.Multicam.Core
 {
-    public static class CoreStatics
+	public static class CoreStatics
     {
         public static void Initialize(IServiceCollection container)
         {
 			// Features
 			container.AddSingleton<IFeatureManager, FeatureManager>();
-			container.AddTransient<IFeatureContainer, FeatureContainer>();
+			container.AddTransient<IFeature, Feature>();
 			container.AddTransient<IUnsupportedRunningFeature, UnsupportedRunningFeature>();
-            container.AddTransient<ISwitcherRunningFeature, SwitcherRunningFeature>();
+            container.AddTransient<ISwitcherRunningFeature, SwitcherLiveFeature>();
 
             // Switcher
             container.AddTransient<ISwitcherFactory, SwitcherFactory>();

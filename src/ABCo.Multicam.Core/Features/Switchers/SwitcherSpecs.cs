@@ -1,6 +1,6 @@
 ﻿namespace ABCo.Multicam.Core.Features.Switchers
 {
-    public class SwitcherSpecs
+	public class SwitcherSpecs
     {
         public readonly bool CanChangeConnection;
         public readonly IReadOnlyList<SwitcherMixBlock> MixBlocks;

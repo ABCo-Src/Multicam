@@ -6,10 +6,10 @@ using Moq;
 
 namespace ABCo.Multicam.Tests.UI.Bindings.Features
 {
-    [TestClass]
+	[TestClass]
     public class ProjectFeaturesBinderTests
     {
-        public interface SubBinder : IBinderForFeatureContainer, IVMBinder<IVMForFeatureBinder> { }
+        public interface SubBinder : IGeneralFeaturePresenter, IVMBinder<IVMForFeatureBinder> { }
 
         record struct Mocks(Mock<IFeatureManager> FeatureManager, Mock<SubBinder>[] Binders);
         Mocks _mocks = new();
@@ -20,10 +20,10 @@ namespace ABCo.Multicam.Tests.UI.Bindings.Features
             _mocks.Binders = new Mock<SubBinder>[] { new(), new() };
 
             _mocks.FeatureManager = new();
-            _mocks.FeatureManager.Setup(m => m.Features).Returns(new IFeatureContainer[] 
+            _mocks.FeatureManager.Setup(m => m.Features).Returns(new IFeature[] 
             { 
-                Mock.Of<IFeatureContainer>(m => m.UIBinder == _mocks.Binders[0].Object), 
-                Mock.Of<IFeatureContainer>(m => m.UIBinder == _mocks.Binders[1].Object) 
+                Mock.Of<IFeature>(m => m.UIPresenter == _mocks.Binders[0].Object), 
+                Mock.Of<IFeature>(m => m.UIPresenter == _mocks.Binders[1].Object) 
             });
         }
 

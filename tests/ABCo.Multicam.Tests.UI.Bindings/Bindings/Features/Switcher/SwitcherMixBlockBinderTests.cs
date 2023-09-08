@@ -5,7 +5,7 @@ using Moq;
 
 namespace ABCo.Multicam.Tests.UI.Bindings.Features.Switcher
 {
-    [TestClass]
+	[TestClass]
     public class SwitcherMixBlockBinderTests
     {
         public record struct Mocks(

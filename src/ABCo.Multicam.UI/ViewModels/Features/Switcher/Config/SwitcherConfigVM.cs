@@ -4,16 +4,11 @@ using ABCo.Multicam.Core.Features.Switchers.Types;
 using ABCo.Multicam.Core.Features.Switchers.Types.ATEM;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher.Types;
 using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
-    public interface ISwitcherConfigVM : INeedsInitialization<SwitcherConfig, ISwitcherFeatureVM>, INotifyPropertyChanged
+	public interface ISwitcherConfigVM : INeedsInitialization<SwitcherConfig, ISwitcherFeatureVM>, INotifyPropertyChanged
     {
 		string[] Items { get; }
         string SelectedItem { get; set; }

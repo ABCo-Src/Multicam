@@ -4,7 +4,7 @@ using Moq;
 
 namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
 {
-    [TestClass]
+	[TestClass]
     public class SwitcherActButtonVMTests
     {
         public record struct Mocks(Mock<IServiceSource> ServiceSource, Mock<ISwitcherMixBlockVM> Parent);

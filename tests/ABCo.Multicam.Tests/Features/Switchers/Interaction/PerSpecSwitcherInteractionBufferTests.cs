@@ -1,12 +1,11 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features.Switchers;
-using ABCo.Multicam.Core.Features.Switchers.Fading;
 using ABCo.Multicam.Core.Features.Switchers.Interaction;
 using Moq;
 
 namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
 {
-    [TestClass]
+	[TestClass]
     public class PerSpecSwitcherInteractionBufferTests
     {
         public record struct Mocks(

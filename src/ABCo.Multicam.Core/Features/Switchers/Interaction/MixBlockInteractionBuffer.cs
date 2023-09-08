@@ -1,10 +1,6 @@
-﻿using ABCo.Multicam.Core.Features.Switchers.Fading;
-using System;
-using System.Diagnostics;
-
-namespace ABCo.Multicam.Core.Features.Switchers.Interaction
+﻿namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 {
-    public interface IMixBlockInteractionBuffer 
+	public interface IMixBlockInteractionBuffer 
     {
         int Program { get; }
         int Preview { get; }

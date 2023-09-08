@@ -1,6 +1,6 @@
 ﻿namespace ABCo.Multicam.Core
 {
-    public interface INeedsNoInitialization { }
+	public interface INeedsNoInitialization { }
 
     public interface INeedsInitialization<T>
     {

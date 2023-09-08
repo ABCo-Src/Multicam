@@ -3,7 +3,7 @@ using Moq;
 
 namespace ABCo.Multicam.Tests.Features
 {
-    [TestClass]
+	[TestClass]
     public class UnsupportedRunningFeatureTests
     {
         Mock<IBinderForUnsupportedFeature> _binderMock = null!;

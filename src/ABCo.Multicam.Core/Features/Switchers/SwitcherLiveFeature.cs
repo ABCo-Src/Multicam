@@ -1,11 +1,9 @@
-﻿using ABCo.Multicam.Core.Features.Switchers.Fading;
-using ABCo.Multicam.Core.Features.Switchers.Interaction;
+﻿using ABCo.Multicam.Core.Features.Switchers.Interaction;
 using ABCo.Multicam.Core.Features.Switchers.Types;
-using System.Diagnostics.Contracts;
 
 namespace ABCo.Multicam.Core.Features.Switchers
 {
-    public interface ISwitcherRunningFeature : ILiveFeature
+	public interface ISwitcherRunningFeature : ILiveFeature
     {
         SwitcherConfig SwitcherConfig { get; }
         SwitcherSpecs SwitcherSpecs { get; }
@@ -38,7 +36,7 @@ namespace ABCo.Multicam.Core.Features.Switchers
         void ModelChange_Failure(SwitcherError error);
     }
 
-    public class SwitcherRunningFeature : ISwitcherRunningFeature, ISwitcherEventHandler
+    public class SwitcherLiveFeature : ISwitcherRunningFeature, ISwitcherEventHandler
     {
         // TODO: Add slamming protection
         // TODO: Add error handling
@@ -48,7 +46,7 @@ namespace ABCo.Multicam.Core.Features.Switchers
         readonly IHotSwappableSwitcherInteractionBuffer _buffer;
         readonly IBinderForSwitcherFeature _uiBinder;
 
-        public SwitcherRunningFeature(IServiceSource serviceSource)
+        public SwitcherLiveFeature(IServiceSource serviceSource)
         {
             _buffer = serviceSource.Get<IHotSwappableSwitcherInteractionBuffer, SwitcherConfig>(SwitcherConfig = new DummySwitcherConfig(4));
             _uiBinder = serviceSource.Get<IBinderForSwitcherFeature, ISwitcherRunningFeature>(this);

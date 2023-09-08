@@ -2,7 +2,7 @@
 
 namespace ABCo.Multicam.UI.Blazor.Web.Services
 {
-    public class UnwindowedUIWindow : IUIWindow
+	public class UnwindowedUIWindow : IUIWindow
     {
         public bool CanMinimize => false;
         public bool CanMaximize => false;

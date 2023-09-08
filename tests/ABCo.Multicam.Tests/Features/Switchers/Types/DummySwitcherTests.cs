@@ -4,7 +4,7 @@ using Moq;
 
 namespace ABCo.Multicam.Tests.Features.Switchers.Types
 {
-    [TestClass]
+	[TestClass]
     public class DummySwitcherTests
     {
         SwitcherSpecs? _sentSpecs;

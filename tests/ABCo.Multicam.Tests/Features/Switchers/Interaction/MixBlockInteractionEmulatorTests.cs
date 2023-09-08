@@ -5,7 +5,7 @@ using Moq;
 
 namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
 {
-    [TestClass]
+	[TestClass]
     public class MixBlockInteractionEmulatorTests
     {
         public record struct Mocks(

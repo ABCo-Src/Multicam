@@ -6,7 +6,7 @@ using Moq;
 
 namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
 {
-    [TestClass]
+	[TestClass]
     public class SwitcherBusInputVMTests
     {
         public record struct Mocks(Mock<ISwitcherMixBlockVM> Parent, Mock<IServiceSource> ServiceSource);

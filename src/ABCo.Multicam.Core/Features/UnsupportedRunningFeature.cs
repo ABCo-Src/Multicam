@@ -1,6 +1,6 @@
 ﻿namespace ABCo.Multicam.Core.Features
 {
-    public interface IUnsupportedRunningFeature : ILiveFeature { }
+	public interface IUnsupportedRunningFeature : ILiveFeature { }
     public interface IBinderForUnsupportedFeature : ILiveFeatureBinder { }
 
     public class UnsupportedRunningFeature : IUnsupportedRunningFeature

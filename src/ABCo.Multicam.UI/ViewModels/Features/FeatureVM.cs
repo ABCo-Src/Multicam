@@ -1,23 +1,18 @@
 ﻿using ABCo.Multicam.Core.Features;
-using ABCo.Multicam.UI.Bindings;
-using ABCo.Multicam.UI.Bindings.Features;
-using ABCo.Multicam.UI.Bindings.Features.Switcher;
-using ABCo.Multicam.UI.ViewModels.Features.Switcher;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.ComponentModel;
 
 namespace ABCo.Multicam.UI.ViewModels.Features
 {
-    using AlsoNotify = NotifyPropertyChangedForAttribute;
+	using AlsoNotify = NotifyPropertyChangedForAttribute;
 
-    public interface IFeatureVM : IVMForFeatureBinder, INotifyPropertyChanged
+	public interface IFeatureVM : INotifyPropertyChanged
     {
         public string FeatureTitle { get; set; }
         public string EditBtnText { get; }
         public string EditPanelTitle { get; }
 		public bool IsEditing { get; set; }
         ILiveFeatureViewModel? InnerVM { get; set; }
-        FeatureTypes InnerType { get; }
 		void ToggleEdit();
         void MoveDown();
         void MoveUp();
@@ -29,12 +24,13 @@ namespace ABCo.Multicam.UI.ViewModels.Features
 
     }
 
-    public partial class FeatureVM : BindingViewModelBase<IVMForFeatureBinder>, IVMForFeatureBinder, IFeatureVM
+    public partial class FeatureVM : ViewModelBase, IFeatureVM
     {
+        IProjectFeaturesVM _parent;
+
         // Synced to the model:
         [ObservableProperty] IFeatureManager _rawManager = null!;
-        [ObservableProperty] IFeatureContainer _rawContainer = null!;
-        [ObservableProperty][AlsoNotify(nameof(InnerType))] ILiveFeature _rawInnerFeature = null!;
+        [ObservableProperty] IFeature _rawFeature = null!;
 
         [ObservableProperty][AlsoNotify(nameof(EditPanelTitle))] string _featureTitle;
         [ObservableProperty][AlsoNotify(nameof(EditBtnText))] bool _isEditing;
@@ -45,22 +41,11 @@ namespace ABCo.Multicam.UI.ViewModels.Features
         public string EditBtnText => IsEditing ? "Finish" : "Edit";
         public string EditPanelTitle => $"Editing '{FeatureTitle}'";
 
-        public FeatureTypes InnerType => RawInnerFeature.FeatureType;
-
-        partial void OnRawInnerFeatureChanged(ILiveFeature value)
-        {
-            InnerVM = value.FeatureType switch
-            {
-                FeatureTypes.Switcher => ((IVMBinder<IVMForSwitcherFeature>)RawInnerFeature.UIBinder).GetVM<ISwitcherFeatureVM>(this),
-                _ => new UnsupportedFeatureVM()
-            };
-        }
-
         public void ToggleEdit() => 
-            ((IProjectFeaturesVM)Parent).CurrentlyEditing = IsEditing ? null : this; // Will update our editing indicator
+            ((IProjectFeaturesVM)_parent).CurrentlyEditing = IsEditing ? null : this; // Will update our editing indicator
 
-        public void MoveDown() => RawManager.MoveDown(RawContainer);
-        public void MoveUp() => RawManager.MoveUp(RawContainer);
-        public void Delete() => RawManager.Delete(RawContainer);
+        public void MoveDown() => RawManager.MoveDown(_rawFeature);
+        public void MoveUp() => RawManager.MoveUp(_rawFeature);
+        public void Delete() => RawManager.Delete(_rawFeature);
     }
 }

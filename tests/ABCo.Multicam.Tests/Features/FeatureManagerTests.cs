@@ -1,17 +1,16 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features;
 using Moq;
-using System.Reflection;
 
 namespace ABCo.Multicam.Tests.Features
 {
-    [TestClass]
+	[TestClass]
     public class FeatureManagerTests
     {
         public record struct Mocks(
             Mock<IServiceSource> ServiceSource,
             Mock<IBinderForProjectFeatures> VMBinder,
-            Mock<IFeatureContainer>[] Features
+            Mock<IFeature>[] Features
         );
 
         Mocks _mocks = new();
@@ -19,12 +18,12 @@ namespace ABCo.Multicam.Tests.Features
         [TestInitialize]
         public void InitMocks()
         {
-            _mocks.Features = new Mock<IFeatureContainer>[] { new(), new(), new() };
+            _mocks.Features = new Mock<IFeature>[] { new(), new(), new() };
             _mocks.VMBinder = new();
 
             _mocks.ServiceSource = new();
             _mocks.ServiceSource.Setup(m => m.Get<IBinderForProjectFeatures, IFeatureManager>(It.IsAny<IFeatureManager>())).Returns(_mocks.VMBinder.Object);
-            _mocks.ServiceSource.SetupSequence(m => m.Get<IFeatureContainer, FeatureTypes>(It.IsAny<FeatureTypes>()))
+            _mocks.ServiceSource.SetupSequence(m => m.Get<IFeature, FeatureTypes>(It.IsAny<FeatureTypes>()))
                 .Returns(_mocks.Features[0].Object).Returns(_mocks.Features[1].Object).Returns(_mocks.Features[2].Object);
         }
 
@@ -47,7 +46,7 @@ namespace ABCo.Multicam.Tests.Features
             var manager = Create();
             manager.CreateFeature(type);
 
-            _mocks.ServiceSource.Verify(m => m.Get<IFeatureContainer, FeatureTypes>(type));
+            _mocks.ServiceSource.Verify(m => m.Get<IFeature, FeatureTypes>(type));
 
             Assert.AreEqual(1, manager.Features.Count);
             Assert.AreEqual(_mocks.Features[0].Object, manager.Features[0]);

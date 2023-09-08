@@ -5,10 +5,10 @@ using Moq;
 
 namespace ABCo.Multicam.Tests.UI.Bindings.Features
 {
-    [TestClass]
+	[TestClass]
     public class FeatureBinderTests
     {
-        record struct Mocks(Mock<IFeatureManager> Manager, Mock<IFeatureContainer> Container);
+        record struct Mocks(Mock<IFeatureManager> Manager, Mock<IFeature> Container);
         Mocks _mocks = new();
 
         [TestInitialize]

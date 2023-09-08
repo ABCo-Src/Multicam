@@ -2,7 +2,6 @@
 using ABCo.Multicam.Core.Features;
 using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.UI.Bindings.Features;
-using ABCo.Multicam.UI.Bindings.Features.Switcher;
 using ABCo.Multicam.UI.ViewModels;
 using ABCo.Multicam.UI.ViewModels.Features;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher;
@@ -10,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace ABCo.Multicam.UI
 {
-    public static class UIStatics
+	public static class UIStatics
     {
         //public static string Log { get; set; }
 
@@ -24,7 +23,7 @@ namespace ABCo.Multicam.UI
 
             // Register binders
             container.AddTransient<IBinderForProjectFeatures, ProjectFeaturesVMBinder>();
-            container.AddTransient<IBinderForFeatureContainer, FeatureVMBinder>();
+            container.AddTransient<IGeneralFeaturePresenter, FeatureVMBinder>();
             container.AddTransient<IBinderForSwitcherFeature, SwitcherFeatureVMBinder>();
             container.AddTransient<IBinderForSwitcherMixBlock, MixBlockVMBinder>();
             container.AddTransient<IBinderForUnsupportedFeature, UnsupportedFeatureVMBinder>();

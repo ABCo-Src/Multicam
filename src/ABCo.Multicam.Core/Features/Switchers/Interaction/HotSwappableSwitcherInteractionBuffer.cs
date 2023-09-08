@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ABCo.Multicam.Core.Features.Switchers.Interaction
+﻿namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 {
 	public interface IHotSwappableSwitcherInteractionBuffer : INeedsInitialization<SwitcherConfig>, IDisposable
 	{

@@ -2,15 +2,15 @@
 
 namespace ABCo.Multicam.Core.Features.Switchers
 {
-    /// <summary>
-    /// The raw surface to talk to a switcher. 
-    /// 
-    /// None of these operations are likely to be cached (there's a buffer sitting atop to do that caching), and all interactions implemented here should only be
-    /// implemented if the switcher can natively/intuitively perform them. 
-    /// 
-    /// For example, the preview API should throw if the specs say preview isn't supported. The layers above the switcher will emulate it.
-    /// </summary>
-    public interface ISwitcher : IDisposable
+	/// <summary>
+	/// The raw surface to talk to a switcher. 
+	/// 
+	/// None of these operations are likely to be cached (there's a buffer sitting atop to do that caching), and all interactions implemented here should only be
+	/// implemented if the switcher can natively/intuitively perform them. 
+	/// 
+	/// For example, the preview API should throw if the specs say preview isn't supported. The layers above the switcher will emulate it.
+	/// </summary>
+	public interface ISwitcher : IDisposable
     {
 		// General:
 		void Connect();

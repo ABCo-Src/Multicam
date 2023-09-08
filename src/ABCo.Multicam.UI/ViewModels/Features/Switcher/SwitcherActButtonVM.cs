@@ -1,26 +1,26 @@
 ﻿using ABCo.Multicam.Core;
+using ABCo.Multicam.UI.Presenters.Features.Switcher;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
-    public interface ISwitcherActButtonVM : ISwitcherButtonVM, INeedsInitialization<ISwitcherMixBlockVM> { }
+	public interface ISwitcherActButtonVM : ISwitcherButtonVM, INeedsInitialization<ISwitcherMixBlocksPresenter, int> { }
 
-    public interface ISwitcherCutButtonVM : ISwitcherActButtonVM { }
-    public class SwitcherCutButtonVM : SwitcherButtonVM, ISwitcherCutButtonVM
+	public abstract class SwitcherActButtonVM : SwitcherButtonVM
+	{
+        protected ISwitcherMixBlocksPresenter _presenter = null!;
+        protected int _mixBlockIndex;
+
+		public void FinishConstruction(ISwitcherMixBlocksPresenter presenter, int mixBlockIndex)
+		{
+            _presenter = presenter;
+            _mixBlockIndex = mixBlockIndex;
+		}
+	}
+
+	public interface ISwitcherCutButtonVM : ISwitcherActButtonVM { }
+    public class SwitcherCutButtonVM : SwitcherActButtonVM, ISwitcherCutButtonVM
     {
         public SwitcherCutButtonVM() => Text = "Cut";
-        public void FinishConstruction(ISwitcherMixBlockVM parent) => _parent = parent;
-        public override void Click() => _parent.CutButtonPress();
-    }
-
-    public interface ISwitcherAutoButtonVM : ISwitcherActButtonVM { }
-    public class SwitcherAutoButtonVM : SwitcherButtonVM, ISwitcherAutoButtonVM
-    {
-        public SwitcherAutoButtonVM() => Text = "Auto";
-        public void FinishConstruction(ISwitcherMixBlockVM parent) => _parent = parent;
-
-        public override void Click()
-        {
-            throw new NotImplementedException();
-        }
+		public override void Click() => _presenter.Cut(_mixBlockIndex);
     }
 }

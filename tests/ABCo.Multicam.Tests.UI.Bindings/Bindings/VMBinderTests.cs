@@ -7,7 +7,7 @@ using System.Data;
 
 namespace ABCo.Multicam.Tests.UI.Bindings
 {
-    [TestClass]
+	[TestClass]
     public class VMBinderTests
     {
         public interface IVMType1 : IVMForDummyBinder { }

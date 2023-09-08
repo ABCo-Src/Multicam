@@ -8,7 +8,7 @@ using Moq;
 
 namespace ABCo.Multicam.Tests.UI.ViewModels.Features.Switcher
 {
-    [TestClass]
+	[TestClass]
     public class SwitcherFeatureVMTests
     {
         public record struct Mocks(
