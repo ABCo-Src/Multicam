@@ -3,7 +3,7 @@ using ABCo.Multicam.Core.General;
 
 namespace ABCo.Multicam.Core.Features
 {
-	public interface IGeneralFeaturePresenter : INeedsInitialization<IFeature>
+	public interface IGeneralFeaturePresenter
     {
 		void OnFragmentUpdate<T>(int code, T structure);
     }
@@ -17,7 +17,7 @@ namespace ABCo.Multicam.Core.Features
     /// Represents a feature currently loaded, either on this system or another system.
     /// Introduces properties shared across all features, such as titles or machine switching.
     /// </summary>
-    public interface IFeature : INeedsInitialization<FeatureTypes>, IDisposable
+    public interface IFeature : IParameteredService<FeatureTypes>, IDisposable
     {
         IGeneralFeaturePresenter GeneralUIPresenter { get; }
         ILiveFeature LiveFeature { get; }
@@ -36,32 +36,30 @@ namespace ABCo.Multicam.Core.Features
 		public ISpecificFeaturePresenter SpecificUIPresenter { get; private set; } = null!;
 		public ILiveFeature LiveFeature { get; private set; } = null!;
 
-        public Feature(IServiceSource servSource, IFeatureManager manager)
+        public static IFeature New(FeatureTypes featureType, IServiceSource servSource) => new Feature(featureType, servSource);
+		public Feature(FeatureTypes featureType, IServiceSource servSource)
         {
             _servSource = servSource;
-            _manager = manager;
-        }
+            _manager = servSource.Get<IFeatureManager>();
 
-        public void FinishConstruction(FeatureTypes featureType)
-        {
-            // Get the data specification for the given type
-            var specs = featureType switch
-            {
-                FeatureTypes.Switcher => new SwitcherFeatureDataSpecification(),
-                _ => throw new Exception("Unsupported feature type")
-            };
+			// Get the data specification for the given type
+			var specs = featureType switch
+			{
+				FeatureTypes.Switcher => new SwitcherFeatureDataSpecification(),
+				_ => throw new Exception("Unsupported feature type")
+			};
 
-            _dataStore = new(specs);
+			_dataStore = new(specs);
 
-            LiveFeature = featureType switch
-            {
-                FeatureTypes.Switcher => _servSource.Get<ISwitcherRunningFeature>(),
-                _ => _servSource.Get<IUnsupportedRunningFeature>(),
-            };
+			LiveFeature = featureType switch
+			{
+				FeatureTypes.Switcher => _servSource.Get<ISwitcherRunningFeature>(),
+				_ => _servSource.Get<IUnsupportedRunningFeature>(),
+			};
 
-            GeneralUIPresenter = _servSource.Get<IGeneralFeaturePresenter, IFeature>(this);
-            SpecificUIPresenter = _servSource.Get<ISpecificFeaturePresenter, IFeature>(this);
-        }
+			GeneralUIPresenter = _servSource.Get<IGeneralFeaturePresenter, IFeature>(this);
+			SpecificUIPresenter = _servSource.Get<ISpecificFeaturePresenter, IFeature>(this);
+		}
 
         public void Dispose() => LiveFeature.Dispose();
 

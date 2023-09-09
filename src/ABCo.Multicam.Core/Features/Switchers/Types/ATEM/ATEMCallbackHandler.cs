@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 {
-	public interface IATEMCallbackHandler : INeedsInitialization<ISwitcher>
+	public interface IATEMCallbackHandler : IParameteredService<ISwitcher>
     {
         void AttachToSwitcher(INativeATEMSwitcher switcher);
 		void DetachFromSwitcher(INativeATEMSwitcher switcher);
@@ -14,10 +14,11 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 
 	internal class ATEMCallbackHandler : IATEMCallbackHandler, INativeATEMSwitcherCallbackHandler
 	{
-		ISwitcher _topSwitcher = null!;
+		ISwitcher _topSwitcher;
 		MixEffectBlockHandler[] _handlers = Array.Empty<MixEffectBlockHandler>();
 
-		public void FinishConstruction(ISwitcher switcher) => _topSwitcher = switcher;
+		public static IATEMCallbackHandler New(ISwitcher switcher, IServiceSource servSource) => new ATEMCallbackHandler(switcher);
+		public ATEMCallbackHandler(ISwitcher switcher) => _topSwitcher = switcher;
 
 		public void Notify(_BMDSwitcherEventType type, _BMDSwitcherVideoMode videoMode)
 		{

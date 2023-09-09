@@ -8,7 +8,7 @@ using System.ComponentModel;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
-	public interface ISwitcherConfigVM : INeedsInitialization<SwitcherConfig, ISwitcherFeatureVM>, INotifyPropertyChanged
+	public interface ISwitcherConfigVM : IParameteredService<SwitcherConfig, ISwitcherFeatureVM>, INotifyPropertyChanged
     {
 		string[] Items { get; }
         string SelectedItem { get; set; }
@@ -39,27 +39,25 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
         [ObservableProperty] ISpecificSwitcherConfigVM? _currentConfig;
         [ObservableProperty] SwitcherType _switcherType;
 
-        public SwitcherConfigVM(IServiceSource servSource)
+        public static ISwitcherConfigVM New(SwitcherConfig config, ISwitcherFeatureVM parent, IServiceSource servSource) => new SwitcherConfigVM(config, parent, servSource);
+        public SwitcherConfigVM(SwitcherConfig config, ISwitcherFeatureVM parent, IServiceSource servSource)
         {
             _servSource = servSource;
             _configVMFactory = servSource.Get<ISpecificSwitcherConfigVMFactory>();
-        }
 
-        public void FinishConstruction(SwitcherConfig config, ISwitcherFeatureVM parent)
-        {
-            _parent = parent;
+			_parent = parent;
 
-            // Update the selected item
-            _switcherType = config.Type;
-			SelectedItem = config.Type switch 
-            {
-                SwitcherType.ATEM => "ATEM",
-                _ => "Dummy"
+			// Update the selected item
+			_switcherType = config.Type;
+			SelectedItem = config.Type switch
+			{
+				SwitcherType.ATEM => "ATEM",
+				_ => "Dummy"
 			};
 
-            CurrentConfig = _configVMFactory.Create(config, parent);
-            _initialized = true;
-        }
+			CurrentConfig = _configVMFactory.Create(config, parent);
+			_initialized = true;
+		}
 
         partial void OnSelectedItemChanged(string value)
         {

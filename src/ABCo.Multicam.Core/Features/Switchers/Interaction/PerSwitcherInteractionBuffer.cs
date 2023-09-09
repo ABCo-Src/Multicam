@@ -1,6 +1,6 @@
 ﻿namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 {
-	public interface IPerSwitcherInteractionBuffer : INeedsInitialization<SwitcherConfig>, ISwitcherEventHandler
+	public interface IPerSwitcherInteractionBuffer : IParameteredService<SwitcherConfig>, ISwitcherEventHandler
     {
         bool IsConnected { get; }
         SwitcherSpecs Specs { get; }
@@ -27,21 +27,19 @@
         public bool IsConnected { get; private set; }
 		public SwitcherSpecs Specs => _currentBuffer.Specs;
 
-        public PerSwitcherInteractionBuffer(IServiceSource servSource, ISwitcherFactory factory)
+		public static IPerSwitcherInteractionBuffer New(SwitcherConfig config, IServiceSource servSource) => new PerSwitcherInteractionBuffer(config, servSource);
+        public PerSwitcherInteractionBuffer(SwitcherConfig config, IServiceSource servSource)
         {
-            _factory = factory;
+            _factory = servSource.Get<ISwitcherFactory>();
             _servSource = servSource;
-		}
 
-        public void FinishConstruction(SwitcherConfig config)
-        {
 			// Update the switcher
 			_switcher = _factory.GetSwitcher(config);
 			_switcher.SetEventHandler(this);
 
 			// Request a connection status update, and use an empty buffer in the meantime
 			_currentBuffer = _servSource.Get<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, ISwitcher>(new(true), _switcher);
-            _switcher.RefreshConnectionStatus();
+			_switcher.RefreshConnectionStatus();
 		}
 
 		// Switcher events:

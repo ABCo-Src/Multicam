@@ -20,12 +20,8 @@ namespace ABCo.Multicam.UI.Blazor.Win32
 			var services = new ServiceCollection();
 			services.AddWindowsFormsBlazorWebView();
 			services.AddBlazorWebViewDeveloperTools();
-			services.AddSingleton<IServiceSource, ServiceSource>();
-			services.AddSingleton<IUIWindow, UnwindowedUIWindow>();
-			services.AddSingleton<IUIDialogHandler, UIDialogHandler>();
 			services.AddSingleton<IMainThreadDispatcher, MainThreadDispatcher>();
-
-			UIStatics.Initialize(services);
+			BlazorStatics.Initialize(services);
 
 			blazorWebView1.HostPage = "wwwroot\\index.html";
 			blazorWebView1.Services = services.BuildServiceProvider();

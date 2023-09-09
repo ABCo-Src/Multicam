@@ -11,27 +11,28 @@ namespace ABCo.Multicam.Core
 {
 	public static class CoreStatics
     {
-        public static void Initialize(IServiceCollection container)
+        public static void Initialize(IParameteredServiceCollection container)
         {
 			// Features
 			container.AddSingleton<IFeatureManager, FeatureManager>();
-			container.AddTransient<IFeature, Feature>();
+			container.AddTransient<IFeature, FeatureTypes>(Feature.New);
 			container.AddTransient<IUnsupportedRunningFeature, UnsupportedRunningFeature>();
             container.AddTransient<ISwitcherRunningFeature, SwitcherLiveFeature>();
 
             // Switcher
             container.AddTransient<ISwitcherFactory, SwitcherFactory>();
-            container.AddTransient<IHotSwappableSwitcherInteractionBuffer, HotSwappableSwitcherInteractionBuffer>();
-            container.AddTransient<IPerSwitcherInteractionBuffer, PerSwitcherInteractionBuffer>();
-            container.AddTransient<IPerSpecSwitcherInteractionBuffer, PerSpecSwitcherInteractionBuffer>();
+            container.AddTransient<IHotSwappableSwitcherInteractionBuffer, SwitcherConfig>(HotSwappableSwitcherInteractionBuffer.New);
+			container.AddTransient<IPerSwitcherInteractionBuffer, SwitcherConfig>(PerSwitcherInteractionBuffer.New);
+            container.AddTransient<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, ISwitcher>(PerSpecSwitcherInteractionBuffer.New);
             container.AddSingleton<ISwitcherInteractionBufferFactory, SwitcherInteractionBufferFactory>();
-            container.AddTransient<IDummySwitcher, DummySwitcher>();
-            container.AddTransient<IATEMSwitcher, ATEMSwitcher>();
-            container.AddTransient<IATEMConnection, ATEMConnection>();
-			container.AddTransient<IATEMCallbackHandler, ATEMCallbackHandler>();
+
+            container.AddTransient<IDummySwitcher, DummySwitcherConfig>(DummySwitcher.New);
+			container.AddTransient<IATEMSwitcher, ATEMSwitcherConfig>(ATEMSwitcher.New);
+            container.AddTransient<IATEMConnection, ISwitcher>(ATEMConnection.New);
+			container.AddTransient<IATEMCallbackHandler, ISwitcher>(ATEMCallbackHandler.New);
 
 #pragma warning disable
-            container.AddSingleton<INativeATEMSwitcherDiscovery, WindowsNativeATEMSwitcherDiscovery>();
+			container.AddSingleton<INativeATEMSwitcherDiscovery, WindowsNativeATEMSwitcherDiscovery>();
 #pragma warning enable
 		}
     }

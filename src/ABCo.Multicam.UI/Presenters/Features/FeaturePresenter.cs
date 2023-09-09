@@ -1,4 +1,5 @@
-﻿using ABCo.Multicam.Core.Features;
+﻿using ABCo.Multicam.Core;
+using ABCo.Multicam.Core.Features;
 using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.UI.ViewModels.Features;
 
@@ -9,21 +10,16 @@ namespace ABCo.Multicam.UI.Presenters.Features
 
     }
 
-	public class FeaturePresenter : IFeaturePresenter
+	public class FeaturePresenter : IFeaturePresenter, INeedsInitialization<IFeature, IFeatureVM>
 	{
 		IFeature _feature;
 		IFeatureVM _featureVM;
 		bool _isEditing;
 
-		public void FinishConstruction(IFeature param2, IFeatureVM targetVM)
+		public void FinishConstruction(IFeature feature, IFeatureVM targetVM)
 		{
+			_feature = feature;
 			_featureVM = targetVM;
-			_feature = param2;
-		}
-
-		public void ToggleEdit()
-		{
-			
 		}
 
 		public void OnFragmentUpdate<T>(int code, T structure)

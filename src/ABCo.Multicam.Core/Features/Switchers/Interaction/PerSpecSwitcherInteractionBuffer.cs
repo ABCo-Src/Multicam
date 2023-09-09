@@ -1,6 +1,6 @@
 ﻿namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 {
-	public interface IPerSpecSwitcherInteractionBuffer : INeedsInitialization<SwitcherSpecs, ISwitcher>
+	public interface IPerSpecSwitcherInteractionBuffer : IParameteredService<SwitcherSpecs, ISwitcher>
     {
         SwitcherSpecs Specs { get; }
         void SetEventHandler(ISwitcherEventHandler? eventHandler);
@@ -18,23 +18,24 @@
     {
         readonly ISwitcherInteractionBufferFactory _factory;
         
-        ISwitcher _rawSwitcher = null!;
-        IMixBlockInteractionBuffer[] _mixBlockBuffers = null!;
+        ISwitcher _rawSwitcher;
+        IMixBlockInteractionBuffer[] _mixBlockBuffers;
 
-        public SwitcherSpecs Specs { get; private set; } = null!;
+        public SwitcherSpecs Specs { get; private set; }
 
-		public PerSpecSwitcherInteractionBuffer(ISwitcherInteractionBufferFactory factory) => _factory = factory;
+        public static IPerSpecSwitcherInteractionBuffer New(SwitcherSpecs specs, ISwitcher switcher, IServiceSource servSource) => new PerSpecSwitcherInteractionBuffer(specs, switcher, servSource);
+		public PerSpecSwitcherInteractionBuffer(SwitcherSpecs specs, ISwitcher switcher, IServiceSource servSource)
+		{
+			_factory = servSource.Get<ISwitcherInteractionBufferFactory>();
 
-		public void FinishConstruction(SwitcherSpecs specs, ISwitcher switcher)
-        {
-            Specs = specs;
-            _rawSwitcher = switcher;
+			Specs = specs;
+			_rawSwitcher = switcher;
 
-            // Create mix block buffers
-            _mixBlockBuffers = new IMixBlockInteractionBuffer[Specs.MixBlocks.Count];
-            for (int i = 0; i < Specs.MixBlocks.Count; i++)
-                _mixBlockBuffers[i] = _factory.CreateMixBlock(Specs.MixBlocks[i], i, switcher);
-        }
+			// Create mix block buffers
+			_mixBlockBuffers = new IMixBlockInteractionBuffer[Specs.MixBlocks.Count];
+			for (int i = 0; i < Specs.MixBlocks.Count; i++)
+				_mixBlockBuffers[i] = _factory.CreateMixBlock(Specs.MixBlocks[i], i, switcher);
+		}
 
         public void UpdateEverything()
         {

@@ -1,10 +1,11 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.Core.General;
+using ABCo.Multicam.UI.Presenters.Features.Switcher;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
-	public interface ISwitcherConnectionVM : INeedsInitialization<ISwitcherRunningFeature>
+	public interface ISwitcherConnectionVM : IParameteredService<ISwitcherRunningFeature>
 	{
 		void OnException(Exception? currentError);
 		void OnConnection(bool state);
@@ -28,8 +29,13 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 		Timer? _transitionTimer;
 		int _transitionState;
 
-		public SwitcherConnectionVM(IServiceSource servSource) => _dispatcher = servSource.Get<IMainThreadDispatcher>();
-		public void FinishConstruction(ISwitcherRunningFeature baseFeature) => _feature = baseFeature;
+		public static ISwitcherConnectionVM New(ISwitcherRunningFeature baseFeature, IServiceSource servSource) => new SwitcherConnectionVM(baseFeature, servSource);
+
+		public SwitcherConnectionVM(ISwitcherRunningFeature baseFeature, IServiceSource servSource)
+		{
+			_dispatcher = servSource.Get<IMainThreadDispatcher>();
+			_feature = baseFeature;
+		}
 
 		public string StatusText
 		{

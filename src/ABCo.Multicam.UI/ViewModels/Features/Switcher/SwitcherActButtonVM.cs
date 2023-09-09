@@ -3,14 +3,14 @@ using ABCo.Multicam.UI.Presenters.Features.Switcher;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
-	public interface ISwitcherActButtonVM : ISwitcherButtonVM, INeedsInitialization<ISwitcherMixBlocksPresenter, int> { }
+	public interface ISwitcherActButtonVM : ISwitcherButtonVM, IParameteredService<ISwitcherMixBlocksPresenter, int> { }
 
 	public abstract class SwitcherActButtonVM : SwitcherButtonVM
 	{
-        protected ISwitcherMixBlocksPresenter _presenter = null!;
+        protected ISwitcherMixBlocksPresenter _presenter;
         protected int _mixBlockIndex;
 
-		public void FinishConstruction(ISwitcherMixBlocksPresenter presenter, int mixBlockIndex)
+		public SwitcherActButtonVM(ISwitcherMixBlocksPresenter presenter, int mixBlockIndex)
 		{
             _presenter = presenter;
             _mixBlockIndex = mixBlockIndex;
@@ -20,7 +20,8 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 	public interface ISwitcherCutButtonVM : ISwitcherActButtonVM { }
     public class SwitcherCutButtonVM : SwitcherActButtonVM, ISwitcherCutButtonVM
     {
-        public SwitcherCutButtonVM() => Text = "Cut";
+		public static ISwitcherCutButtonVM New(ISwitcherMixBlocksPresenter presenter, int mixBlockIndex, IServiceSource servSource) => new SwitcherCutButtonVM(presenter, mixBlockIndex);
+		public SwitcherCutButtonVM(ISwitcherMixBlocksPresenter presenter, int mixBlockIndex) : base(presenter, mixBlockIndex) => Text = "Cut";
 		public override void Click() => _presenter.Cut(_mixBlockIndex);
     }
 }

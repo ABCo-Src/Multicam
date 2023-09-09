@@ -1,6 +1,6 @@
 ﻿namespace ABCo.Multicam.Core.Features.Switchers.Types
 {
-	public interface IDummySwitcher : ISwitcher, INeedsInitialization<DummySwitcherConfig> { }
+	public interface IDummySwitcher : ISwitcher, IParameteredService<DummySwitcherConfig> { }
 
     public class DummySwitcherConfig : SwitcherConfig
     {
@@ -14,9 +14,9 @@
     {
         SwitcherSpecs _specs = null!;
         MixBlockState[] _states = null!;
-        ISwitcherEventHandler? _eventHandler = null!;
 
-        public void FinishConstruction(DummySwitcherConfig config)
+        public static IDummySwitcher New(DummySwitcherConfig config, IServiceSource servSource) => new DummySwitcher(config);
+        public DummySwitcher(DummySwitcherConfig config)
         {
             _specs = CreateSpecsFrom(config.MixBlocks);
 
@@ -24,8 +24,6 @@
             _states = new MixBlockState[_specs.MixBlocks.Count];
             Array.Fill(_states, new MixBlockState(1, 1));
         }
-
-        public override void SetEventHandler(ISwitcherEventHandler? eventHandler) => _eventHandler = eventHandler;
 
 		public override void RefreshSpecs() => _eventHandler?.OnSpecsChange(_specs);
 
