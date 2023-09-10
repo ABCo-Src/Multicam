@@ -8,9 +8,28 @@
     height: 100%;
 }
 
+@keyframes editPanelSlideIn {
+    0% {
+        margin-left: -400px;
+    }
+    100% {
+        margin-left: 0;
+    }
+}
+
+@keyframes newItemSlideDown {
+    0% {
+        clip-path: inset(0px 100% 0px 0px);
+    }
+    100% {
+        clip-path: inset(0px 0px 0px 0px);
+    }
+}
+
 .editor {
     width: 400px;
     grid-area: editor;
+    animation: editPanelSlideIn 0.2s ease-out;
 }
 
 .items {
@@ -25,6 +44,7 @@
     grid-template-areas: "edit strip contents";
     margin: 20px 0;
 
+    animation: newItemSlideDown 0.2s ease-out;
     min-height: 50px;
 }
 
