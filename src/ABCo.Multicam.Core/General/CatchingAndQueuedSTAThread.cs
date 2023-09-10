@@ -15,7 +15,7 @@
 	{
 		record struct QueueItem(Action<T>? ToPerform, T Target);
 
-		Queue<QueueItem> _taskQueue;
+		readonly Queue<QueueItem> _taskQueue;
 
 		public CatchingAndQueuedSTAThread()
 		{

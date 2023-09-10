@@ -1,7 +1,6 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features;
-using ABCo.Multicam.UI.Bindings;
-using ABCo.Multicam.UI.Bindings.Features;
+using ABCo.Multicam.UI.Presenters.Features;
 using ABCo.Multicam.UI.ViewModels.Features;
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -18,8 +17,8 @@ namespace ABCo.Multicam.UI.ViewModels
 
         public ProjectVM(IServiceSource servSource)
         {
-            var binder = (IVMBinder<IVMForProjectFeaturesBinder>)servSource.Get<IFeatureManager>().UIBinder;
-            _features = binder.GetVM<IProjectFeaturesVM>(this);
+            var presenter = (IProjectFeaturesPresenterForVM)servSource.Get<IFeatureManager>().UIPresenter;
+            _features = presenter.VM;
         }
     }
 }

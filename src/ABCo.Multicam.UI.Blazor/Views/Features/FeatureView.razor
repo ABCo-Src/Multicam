@@ -24,9 +24,9 @@
 					</div>
 					<div class="strip"></div>
 					<div class="content">
-						@if (item.InnerType == FeatureTypes.Switcher)
+						@if (item.Feature.Content is SwitcherFeatureVM switcherVM)
 						{
-							<SwitcherFeature OuterVM="@item" VM="(SwitcherFeatureVM)item.InnerVM!" />
+							<SwitcherFeature OuterVM="@item.Feature" VM="switcherVM" />
 						}
 						else
 						{

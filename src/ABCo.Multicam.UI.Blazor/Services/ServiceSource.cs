@@ -1,5 +1,4 @@
 ﻿using ABCo.Multicam.Core;
-using BMDSwitcherAPI;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ABCo.Multicam.UI.Blazor.Web.Services
@@ -36,7 +35,7 @@ namespace ABCo.Multicam.UI.Blazor.Web.Services
 
 	public class TransientServiceRegister : IParameteredServiceCollection
 	{
-		IServiceCollection _normalContainer;
+		readonly IServiceCollection _normalContainer;
 		public TransientServiceRegister(IServiceCollection normalContainer) => _normalContainer = normalContainer;
 
 		public void AddSingleton<T, TTarget>()

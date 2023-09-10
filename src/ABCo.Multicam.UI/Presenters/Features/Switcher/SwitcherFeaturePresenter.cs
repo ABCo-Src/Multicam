@@ -1,51 +1,73 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features;
 using ABCo.Multicam.Core.Features.Switchers;
+using ABCo.Multicam.Core.Features.Switchers.Data;
+using ABCo.Multicam.UI.ViewModels.Features;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher;
 
 namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 {
-	public interface ISwitcherFeaturePresenter : ISpecificFeaturePresenter
+    public interface ISwitcherVMFeaturePresenter : ISwitcherFeaturePresenter, IFeatureContentPresenterForVM, IParameteredService<IFeature> { }
+	public class SwitcherFeaturePresenter : ISwitcherVMFeaturePresenter
 	{
+		readonly IServiceSource _servSource;
 
-	}
+		readonly IFeature _feature;
+		readonly ISwitcherFeatureVM _vm;
+		readonly ISwitcherConnectionPresenter _connectionPresenter;
+		readonly ISwitcherMixBlocksPresenter _mixBlocksPresenter;
 
-	public class SwitcherFeaturePresenter : ISwitcherFeaturePresenter
-	{
-		IServiceSource _servSource;
-
-		IFeature _baseFeature = null!;
-		ISwitcherFeatureVM _vm;
-		ISwitcherMixBlocksPresenter _mixBlocksPresenter = null!;
-		ISwitcherMixBlocksPresenter _connectionPresenter = null!;
-
-		public SwitcherFeaturePresenter(IServiceSource servSource)
+		public static ISwitcherFeaturePresenter New(IFeature baseFeature, IServiceSource servSource) => new SwitcherFeaturePresenter(baseFeature, servSource);
+		public SwitcherFeaturePresenter(IFeature baseFeature, IServiceSource servSource)
 		{
 			_servSource = servSource;
-			_vm = servSource.Get<ISwitcherFeatureVM>();
+			_vm = servSource.Get<ISwitcherFeatureVM, IFeature>(baseFeature);
+
+			_feature = baseFeature;
+			_connectionPresenter = _servSource.Get<ISwitcherConnectionPresenter, IFeature>(_feature);
+			_vm.Connection = _connectionPresenter.VM;
+			_mixBlocksPresenter = _servSource.Get<ISwitcherMixBlocksPresenter, ISwitcherFeatureVM, IFeature>(_vm, _feature);
 		}
 
-		public void FinishConstruction(IFeature baseFeature)
-		{
-			_baseFeature = baseFeature;
-			_mixBlocksPresenter = _servSource.Get<ISwitcherMixBlocksPresenter, ISwitcherFeatureVM, IFeature>(_vm, _baseFeature);
-		}
+		public IFeatureContentVM VM => _vm;
 
-		public void OnFragmentUpdate<T>(int code, T structure)
+		public void OnDataChange(FeatureData data)
 		{
-			var id = (SwitcherFeatureFragmentID)code;
-			switch (id)
+			switch (data)
 			{
-				case SwitcherFeatureFragmentID.SwitcherConfig:
-					_vm.Config = _servSource.Get<ISwitcherConfigVM, SwitcherConfig, ISwitcherFeatureVM>((SwitcherConfig)(object)structure!, _vm);
+				case SwitcherConfig config:
+					_vm.Config = _servSource.Get<ISwitcherConfigVM, SwitcherConfig, ISwitcherFeatureVM>(config, _vm);
 					break;
-				case SwitcherFeatureFragmentID.SwitcherSpecs:
-					_mixBlocksPresenter.UpdateSpecs((SwitcherSpecs)(object)structure!);
+
+				case SwitcherConnection connection:
+					_connectionPresenter.OnConnection(connection.IsConnected);
 					break;
-				case SwitcherFeatureFragmentID.SwitcherState:
-					_mixBlocksPresenter.UpdateState((MixBlockState[])(object)structure!);
+
+				case SwitcherError error:
+					_connectionPresenter.OnError(error.Message);
 					break;
+
+				case SwitcherSpecs specs:
+					_connectionPresenter.OnSpecced(specs);
+					_mixBlocksPresenter.OnSpecced(specs);
+					_feature.RefreshData<SwitcherState>();
+					break;
+
+				case SwitcherState state:
+					_mixBlocksPresenter.OnState(state.Data);
+					break;
+
 			}
+		}
+
+		public void Init()
+		{
+			// Update config, then connection, then specs, then state, then error (order important for the presenter to track what's happening clearly)
+			_feature.RefreshData<SwitcherConfig>();
+			_feature.RefreshData<SwitcherConnection>();
+			_feature.RefreshData<SwitcherSpecs>();
+			_feature.RefreshData<SwitcherState>();
+			_feature.RefreshData<SwitcherError>();
 		}
 	}
 }

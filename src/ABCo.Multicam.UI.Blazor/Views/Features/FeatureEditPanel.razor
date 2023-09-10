@@ -3,15 +3,16 @@
 @using ABCo.Multicam.UI.Blazor.Views.Features.Switcher.Editor
 @using ABCo.Multicam.UI.ViewModels.Features;
 @using ABCo.Multicam.UI.ViewModels.Features.Switcher;
-@inherits VMBoundComponent<IFeatureVM>
+@inherits VMBoundComponent<IProjectFeaturesListItemVM>
 
 <div class="editor">
 	<div class="rightBorder"></div>
 	<div class="content">
 		<div class="titlebar">
-			<p class="title">@VM.EditPanelTitle</p>
+			<FeatureEditPanelTitle VM="VM.Feature" />
 			<a class="close btn btnIcon" @onclick=VM.ToggleEdit><img src="_content/ABCo.Multicam.UI.Blazor/img/icons/smallCloseButton.svg" /></a>
 		</div>
+
 		<hr class="titlebarSeparator" />
 
 		<div class="sharedContent section">
@@ -19,19 +20,17 @@
 
 			<div class="grid sharedGrid">
 				<p class="gridTitle titleTag">Title:</p>
-				<input class="textbox titleBox" type="text" @bind="VM.FeatureTitle" />
+				<FeatureEditPanelTextBox VM="VM.Feature" />
 
 				<p class="gridTitle posTag">Position:</p>
 				<a class="btn btnNormal moveUpBtn" @onclick=VM.MoveUp>Move Up</a>
 				<a class="btn btnNormal moveDownBtn" @onclick=VM.MoveDown>Move Down</a>
 			</div>
-
-
 		</div>
 
-		@if (VM.InnerType == FeatureTypes.Switcher)
+		@if (VM.Feature.Content is SwitcherFeatureVM switcherVM)
 		{
-			<SwitcherEditor VM="(SwitcherFeatureVM)VM.InnerVM!" />
+			<SwitcherEditor VM="switcherVM" />
 		}
 
 		<hr class="sectionSeparator" />

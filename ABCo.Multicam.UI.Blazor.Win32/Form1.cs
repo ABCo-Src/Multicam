@@ -1,11 +1,7 @@
 using ABCo.Multicam.Core.General;
-using ABCo.Multicam.Core;
-using ABCo.Multicam.UI.Blazor.Services;
-using ABCo.Multicam.UI.Blazor.Web.Services;
-using ABCo.Multicam.UI.Services;
+using ABCo.Multicam.UI.Blazor.Win32.Services;
 using Microsoft.AspNetCore.Components.WebView.WindowsForms;
 using Microsoft.Extensions.DependencyInjection;
-using ABCo.Multicam.UI.Blazor.Win32.Services;
 
 namespace ABCo.Multicam.UI.Blazor.Win32
 {

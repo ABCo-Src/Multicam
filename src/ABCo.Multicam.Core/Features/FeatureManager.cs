@@ -6,7 +6,7 @@
 	public interface IFeatureManager : IDisposable
     {
         IReadOnlyList<IFeature> Features { get; }
-        IBinderForProjectFeatures UIBinder { get; }
+		IProjectFeaturesPresenter UIPresenter { get; }
 
         void CreateFeature(FeatureTypes type);
         void MoveUp(IFeature feature);
@@ -14,9 +14,9 @@
         void Delete(IFeature feature);
     }
 
-    public interface IBinderForProjectFeatures : INeedsInitialization<IFeatureManager>
+	public interface IProjectFeaturesPresenter : IParameteredService<IFeatureManager>
     {
-        void ModelChange_FeaturesChange();
+        void OnItemsChange();
     }
 
     public class FeatureManager : IFeatureManager
@@ -25,18 +25,18 @@
         readonly List<IFeature> _runningFeatures = new();
 
         public IReadOnlyList<IFeature> Features => _runningFeatures;
-        public IBinderForProjectFeatures UIBinder { get; private set; }
+        public IProjectFeaturesPresenter UIPresenter { get; private set; }
 
         public FeatureManager(IServiceSource source)
         {
             _servSource = source;
-            UIBinder = source.Get<IBinderForProjectFeatures, IFeatureManager>(this);
+            UIPresenter = source.Get<IProjectFeaturesPresenter, IFeatureManager>(this);
         }
 
         public void CreateFeature(FeatureTypes type)
         {
             _runningFeatures.Add(_servSource.Get<IFeature, FeatureTypes>(type));
-            UIBinder.ModelChange_FeaturesChange();
+            UIPresenter.OnItemsChange();
         }
 
         public void MoveUp(IFeature feature)
@@ -48,7 +48,7 @@
 
             (_runningFeatures[indexOfFeature], _runningFeatures[indexOfFeature - 1]) = (_runningFeatures[indexOfFeature - 1], _runningFeatures[indexOfFeature]);
 
-            UIBinder.ModelChange_FeaturesChange();
+            UIPresenter.OnItemsChange();
         }
 
         public void MoveDown(IFeature feature)
@@ -60,7 +60,7 @@
 
             (_runningFeatures[indexOfFeature], _runningFeatures[indexOfFeature + 1]) = (_runningFeatures[indexOfFeature + 1], _runningFeatures[indexOfFeature]);
 
-            UIBinder.ModelChange_FeaturesChange();
+            UIPresenter.OnItemsChange();
         }
 
         public void Delete(IFeature feature)
@@ -68,7 +68,7 @@
             _runningFeatures.Remove(feature);
             feature.Dispose();
 
-            UIBinder.ModelChange_FeaturesChange();
+            UIPresenter.OnItemsChange();
         }
 
         public void Dispose()

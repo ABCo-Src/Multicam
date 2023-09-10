@@ -11,7 +11,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher.Types
 
     public partial class DummySwitcherConfigVM : ViewModelBase, IDummySwitcherConfigVM
     {
-        ISwitcherFeatureVM _parent = null!;
+		readonly ISwitcherFeatureVM _parent = null!;
 
         [ObservableProperty] int[] _mixBlockCountOptions = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
         [ObservableProperty] int _selectedMixBlockCount;
@@ -61,7 +61,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher.Types
 
     public partial class DummySwitcherConfigMixBlockVM : ViewModelBase, IDummySwitcherConfigMixBlockVM
     {
-        IDummySwitcherConfigVM _parent;
+		readonly IDummySwitcherConfigVM _parent;
         [ObservableProperty] int _index;
 
         [ObservableProperty] int[] _inputCountItems = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };

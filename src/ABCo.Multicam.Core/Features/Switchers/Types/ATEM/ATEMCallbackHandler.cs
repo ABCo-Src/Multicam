@@ -14,7 +14,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 
 	internal class ATEMCallbackHandler : IATEMCallbackHandler, INativeATEMSwitcherCallbackHandler
 	{
-		ISwitcher _topSwitcher;
+		readonly ISwitcher _topSwitcher;
 		MixEffectBlockHandler[] _handlers = Array.Empty<MixEffectBlockHandler>();
 
 		public static IATEMCallbackHandler New(ISwitcher switcher, IServiceSource servSource) => new ATEMCallbackHandler(switcher);
@@ -49,8 +49,8 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 
 		class MixEffectBlockHandler : INativeATEMBlockCallbackHandler
         {
-			ISwitcher _switcher;
-			int _index;
+			readonly ISwitcher _switcher;
+			readonly int _index;
 
 			public MixEffectBlockHandler(ISwitcher handler, int index) => (_switcher, _index) = (handler, index);
 

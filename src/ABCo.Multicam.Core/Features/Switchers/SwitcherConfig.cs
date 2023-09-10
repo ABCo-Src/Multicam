@@ -1,8 +1,11 @@
-﻿namespace ABCo.Multicam.Core.Features.Switchers
+﻿using ABCo.Multicam.Core.Features.Switchers.Data;
+
+namespace ABCo.Multicam.Core.Features.Switchers
 {
-	public abstract class SwitcherConfig
+    public abstract class SwitcherConfig : FeatureData
     {
-        public abstract SwitcherType Type { get; }
+		public override int DataId => SwitcherFragmentID.CONFIG;
+		public abstract SwitcherType Type { get; }
     }
 
     public enum SwitcherType

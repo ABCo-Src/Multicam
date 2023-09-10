@@ -16,9 +16,9 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 
 	public class ATEMConnection : IATEMConnection
 	{
-		IServiceSource _servSource;
-		IATEMCallbackHandler _callbackHandler;
-		INativeATEMSwitcher _nativeSwitcher;
+		readonly IServiceSource _servSource;
+		readonly IATEMCallbackHandler _callbackHandler;
+		readonly INativeATEMSwitcher _nativeSwitcher;
 		INativeATEMMixBlock[] _nativeBlocks = Array.Empty<INativeATEMMixBlock>();
 
 		public static IATEMConnection New(ISwitcher eventHandler, IServiceSource servSource) => new ATEMConnection(eventHandler, servSource);

@@ -5,7 +5,7 @@ using ABCo.Multicam.Core.Features.Switchers.Types;
 using ABCo.Multicam.Core.Features.Switchers.Types.ATEM;
 using ABCo.Multicam.Core.Features.Switchers.Types.ATEM.Native;
 using ABCo.Multicam.Core.Features.Switchers.Types.ATEM.Windows;
-using Microsoft.Extensions.DependencyInjection;
+using ABCo.Multicam.UI.ViewModels.Features;
 
 namespace ABCo.Multicam.Core
 {
@@ -15,12 +15,14 @@ namespace ABCo.Multicam.Core
         {
 			// Features
 			container.AddSingleton<IFeatureManager, FeatureManager>();
+			container.AddSingleton<IFeatureContentFactory, FeatureContentFactory>();
 			container.AddTransient<IFeature, FeatureTypes>(Feature.New);
-			container.AddTransient<IUnsupportedRunningFeature, UnsupportedRunningFeature>();
-            container.AddTransient<ISwitcherRunningFeature, SwitcherLiveFeature>();
+			container.AddTransient<ILocalFeatureInteractionHandler, FeatureTypes, FeatureDataInfo[]>(LocalFeatureInteractionHandler.New);
+			container.AddTransient<IUnsupportedLiveFeature, UnsupportedLiveFeature>();
+            container.AddTransient<ISwitcherLiveFeature, ILocalFragmentCollection>(SwitcherLiveFeature.New);
 
-            // Switcher
-            container.AddTransient<ISwitcherFactory, SwitcherFactory>();
+			// Switcher
+			container.AddTransient<ISwitcherFactory, SwitcherFactory>();
             container.AddTransient<IHotSwappableSwitcherInteractionBuffer, SwitcherConfig>(HotSwappableSwitcherInteractionBuffer.New);
 			container.AddTransient<IPerSwitcherInteractionBuffer, SwitcherConfig>(PerSwitcherInteractionBuffer.New);
             container.AddTransient<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, ISwitcher>(PerSpecSwitcherInteractionBuffer.New);

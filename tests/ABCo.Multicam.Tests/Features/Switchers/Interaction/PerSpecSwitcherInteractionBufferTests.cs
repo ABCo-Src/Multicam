@@ -37,14 +37,9 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             _mocks.Factory.Setup(m => m.CreateMixBlock(It.IsAny<SwitcherMixBlock>(), 1, It.IsAny<ISwitcher>())).Returns(_mocks.Buffers[1].Object);
         }
 
-        public PerSpecSwitcherInteractionBuffer Create()
-        {
-            var buffer = new PerSpecSwitcherInteractionBuffer(_mocks.Factory.Object);
-            buffer.FinishConstruction(_switcherSpecs, _mocks.Switcher.Object);
-            return buffer;
-        }
+		public PerSpecSwitcherInteractionBuffer Create() => new PerSpecSwitcherInteractionBuffer(_switcherSpecs, _mocks.Switcher.Object, _mocks.ServSource.Object);
 
-        [TestMethod]
+		[TestMethod]
         public void Ctor_Disconnected()
         {
 			_switcherSpecs = new();

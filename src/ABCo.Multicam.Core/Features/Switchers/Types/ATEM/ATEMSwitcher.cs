@@ -14,9 +14,9 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 
 	public class ATEMSwitcher : Switcher, IATEMSwitcher
 	{
-		IMainThreadDispatcher _mainThreadDispatcher;
-		IServiceSource _servSource;
-		CatchingAndQueuedSTAThread<ATEMSwitcher> _interactionThread = new();
+		readonly IMainThreadDispatcher _mainThreadDispatcher;
+		readonly IServiceSource _servSource;
+		readonly CatchingAndQueuedSTAThread<ATEMSwitcher> _interactionThread = new();
 
 		IATEMConnection? _connection; // MUST always be used from the background queue
 
@@ -118,7 +118,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 		public void OnATEMProgramChange(int mixBlock) => RefreshProgram(mixBlock);
 		public void OnATEMPreviewChange(int mixBlock) => RefreshPreview(mixBlock);
 
-		public void ProcessError(Exception ex) => _mainThreadDispatcher.QueueOnMainFeatureThread(() => _eventHandler?.OnFailure(new(ex)));
+		public void ProcessError(Exception ex) => _mainThreadDispatcher.QueueOnMainFeatureThread(() => _eventHandler?.OnFailure(new(ex.Message)));
 
 		public override void Dispose() 
 		{

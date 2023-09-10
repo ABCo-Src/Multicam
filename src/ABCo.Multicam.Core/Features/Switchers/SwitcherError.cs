@@ -1,6 +1,8 @@
-﻿namespace ABCo.Multicam.Core.Features.Switchers
+﻿using ABCo.Multicam.Core.Features.Switchers.Data;
+
+namespace ABCo.Multicam.Core.Features.Switchers
 {
-	public class SwitcherErrorException : Exception
+    public class SwitcherErrorException : Exception
 	{
 		public SwitcherErrorException(string message) : base(message) { }
 	}
@@ -10,5 +12,11 @@
 		public UnexpectedSwitcherDisconnectionException() : base("Switcher was unexpectedly disconnected.") { }
 	}
 
-	public record struct SwitcherError(Exception Exception);
+	public class SwitcherError : FeatureData 
+	{
+		public override int DataId => SwitcherFragmentID.PREVIOUS_ERROR;
+
+		public string? Message { get; }
+		public SwitcherError(string? message) => Message = message;
+	}
 }

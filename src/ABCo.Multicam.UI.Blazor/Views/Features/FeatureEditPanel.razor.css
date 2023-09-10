@@ -61,11 +61,6 @@
     align-items: center;
 }
 
-.titlebar .title {
-    grid-area: "title";
-    padding-left: 10px;
-}
-
 .titlebar .close {
     grid-area: "close";
 }
@@ -86,7 +81,7 @@
 }
 
 .titleTag { grid-area: titleTag; }
-.titleBox { grid-area: titleBox; }
+
 .posTag {
     grid-area: posTag;
 }

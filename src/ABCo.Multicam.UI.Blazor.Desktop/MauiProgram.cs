@@ -26,12 +26,9 @@ namespace ABCo.Multicam.UI.Blazor.Desktop
 			builder.Logging.AddDebug();
 #endif
 
-			builder.Services.AddSingleton<IServiceSource, ServiceSource>();
-			builder.Services.AddSingleton<IUIWindow, UnwindowedUIWindow>();
-			builder.Services.AddSingleton<IUIDialogHandler, UIDialogHandler>();
 			builder.Services.AddSingleton<IMainThreadDispatcher, MainThreadDispatcher>();
 
-			UIStatics.Initialize(builder.Services);
+			BlazorStatics.Initialize(builder.Services);
 
 			return builder.Build();
 		}

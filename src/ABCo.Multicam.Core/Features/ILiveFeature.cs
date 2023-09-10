@@ -1,9 +1,8 @@
 ﻿namespace ABCo.Multicam.Core.Features
 {
-	public interface ILiveFeatureBinder { }
     public interface ILiveFeature : IDisposable
     {
-        ILiveFeatureBinder UIBinder { get; }
-        FeatureTypes FeatureType { get; }
+        void PerformAction(int id);
+        void PerformAction(int id, object param);
     }
 }

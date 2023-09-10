@@ -38,6 +38,6 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 		public static ISwitcherPreviewInputVM New(ISwitcherMixBlocksPresenter presenter, int mixBlockIndex, int busIndex, IServiceSource servSource) =>
 			new SwitcherPreviewInputVM(presenter, mixBlockIndex, busIndex);
 		public SwitcherPreviewInputVM(ISwitcherMixBlocksPresenter presenter, int mixBlockIndex, int busIndex) : base(presenter, mixBlockIndex, busIndex) { }
-		public override void Click() => _presenter.SetProgram(_mixBlockIndex, BusId);
+		public override void Click() => _presenter.SetPreview(_mixBlockIndex, BusId);
 	}
 }

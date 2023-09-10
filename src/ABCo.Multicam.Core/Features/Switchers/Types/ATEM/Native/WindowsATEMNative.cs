@@ -38,7 +38,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM.Windows
 	[SupportedOSPlatform("windows")]
 	public class WindowsNativeATEMSwitcher : INativeATEMSwitcher, IBMDSwitcherCallback
 	{
-		IBMDSwitcher _comSwitcher;
+		readonly IBMDSwitcher _comSwitcher;
 		INativeATEMSwitcherCallbackHandler _callbackHandler = null!;
 
 		public WindowsNativeATEMSwitcher(IBMDSwitcher comInterface) => _comSwitcher = comInterface;
@@ -84,7 +84,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM.Windows
 	[SupportedOSPlatform("windows")]
 	public class WindowsNativeATEMBlockIterator : INativeATEMBlockIterator
 	{
-		IBMDSwitcherMixEffectBlockIterator _comIterator;
+		readonly IBMDSwitcherMixEffectBlockIterator _comIterator;
 		public WindowsNativeATEMBlockIterator(IBMDSwitcherMixEffectBlockIterator comInterface) => _comIterator = comInterface;
 
 		public bool MoveNext(out INativeATEMMixBlock item)
@@ -100,7 +100,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM.Windows
 	[SupportedOSPlatform("windows")]
 	public class WindowsNativeATEMInputIterator : INativeATEMInputIterator
 	{
-		IBMDSwitcherInputIterator _comIterator;
+		readonly IBMDSwitcherInputIterator _comIterator;
 		public WindowsNativeATEMInputIterator(IBMDSwitcherInputIterator comInterface) => _comIterator = comInterface;
 
 		public bool MoveNext(out INativeATEMInput item)
@@ -116,7 +116,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM.Windows
 	[SupportedOSPlatform("windows")]
 	public class WindowsNativeATEMInput : INativeATEMInput
 	{
-		IBMDSwitcherInput _comObject;
+		readonly IBMDSwitcherInput _comObject;
 		public WindowsNativeATEMInput(IBMDSwitcherInput comInterface) => _comObject = comInterface;
 
 		public long GetID()
@@ -143,7 +143,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM.Windows
 	[SupportedOSPlatform("windows")]
 	public class WindowsNativeATEMBlock : INativeATEMMixBlock, IBMDSwitcherMixEffectBlockCallback
 	{
-		IBMDSwitcherMixEffectBlock _comObject;
+		readonly IBMDSwitcherMixEffectBlock _comObject;
 		INativeATEMBlockCallbackHandler _handler = null!;
 
 		public WindowsNativeATEMBlock(IBMDSwitcherMixEffectBlock comObject) => _comObject = comObject;

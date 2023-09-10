@@ -12,8 +12,8 @@
 
     public class DummySwitcher : Switcher, IDummySwitcher
     {
-        SwitcherSpecs _specs = null!;
-        MixBlockState[] _states = null!;
+		readonly SwitcherSpecs _specs = null!;
+		readonly MixBlockState[] _states = null!;
 
         public static IDummySwitcher New(DummySwitcherConfig config, IServiceSource servSource) => new DummySwitcher(config);
         public DummySwitcher(DummySwitcherConfig config)

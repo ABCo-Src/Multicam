@@ -1,33 +1,55 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features;
-using ABCo.Multicam.Core.Features.Switchers;
+using ABCo.Multicam.UI.Presenters.Features.Switcher;
 using ABCo.Multicam.UI.ViewModels.Features;
 
 namespace ABCo.Multicam.UI.Presenters.Features
 {
-    public interface IFeaturePresenter : IGeneralFeaturePresenter
+	public interface IFeaturePresenterForVM : IFeaturePresenter
     {
+		IFeatureVM VM { get; }
+		void OnTitleChange();
+	}
 
-    }
-
-	public class FeaturePresenter : IFeaturePresenter, INeedsInitialization<IFeature, IFeatureVM>
+	public interface IFeatureContentPresenterForVM : IFeaturePresenter
 	{
-		IFeature _feature;
-		IFeatureVM _featureVM;
-		bool _isEditing;
+		IFeatureContentVM VM { get; }
+	}
 
-		public void FinishConstruction(IFeature feature, IFeatureVM targetVM)
+	public class FeaturePresenter : IFeaturePresenterForVM, IParameteredService<IFeature, FeatureTypes>
+	{
+		FeatureTypes _type;
+
+		public IFeatureVM VM { get; private set; }
+
+		IFeatureContentPresenterForVM? _contentPresenter;
+		readonly IFeature _feature;
+
+		public static IFeaturePresenter New(IFeature feature, FeatureTypes type, IServiceSource servSource) => new FeaturePresenter(feature, type, servSource);
+		public FeaturePresenter(IFeature feature, FeatureTypes type, IServiceSource servSource)
 		{
 			_feature = feature;
-			_featureVM = targetVM;
+			_type = type;
+			_contentPresenter = (IFeatureContentPresenterForVM?)servSource.Get<IFeatureContentFactory>().GetFeaturePresenter(type, feature);
+
+			VM = servSource.Get<IFeatureVM, IFeaturePresenterForVM>(this);
+			if (_contentPresenter != null) VM.Content = _contentPresenter.VM;
 		}
 
-		public void OnFragmentUpdate<T>(int code, T structure)
+		public void Init()
 		{
-			if (code == (int)FeatureFragmentID.Title)
-			{
-				_featureVM.FeatureTitle = (string)(object)structure!;
-			}
+			_feature.RefreshData<FeatureGeneralInfo>();
+			_contentPresenter?.Init();
 		}
+
+		public void OnDataChange(FeatureData structure)
+		{
+			if (structure is FeatureGeneralInfo info)
+				VM.FeatureTitle = info.Title;
+			else
+				_contentPresenter?.OnDataChange(structure);
+		}
+
+		public void OnTitleChange() => _feature.InteractionHandler.PerformAction(0, new FeatureGeneralInfo(_type, VM.FeatureTitle));
 	}
 }

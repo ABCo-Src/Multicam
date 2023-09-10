@@ -29,8 +29,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
 
         public DummySwitcher Create(ISwitcherEventHandler? eventHandler)
         {
-            var obj = new DummySwitcher();
-            obj.FinishConstruction(_config);
+            var obj = new DummySwitcher(_config);
             obj.SetEventHandler(eventHandler);
             return obj;
         }

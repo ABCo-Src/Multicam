@@ -18,10 +18,10 @@
     public class PerSwitcherInteractionBuffer : IPerSwitcherInteractionBuffer
     {
 		// TODO: Handle interactions when disconnected
-        IServiceSource _servSource;
-        ISwitcherFactory _factory;
+		readonly IServiceSource _servSource;
+		readonly ISwitcherFactory _factory;
 		IPerSpecSwitcherInteractionBuffer _currentBuffer = null!;
-		ISwitcher _switcher = null!;
+		readonly ISwitcher _switcher = null!;
         ISwitcherEventHandler? _eventHandler;
 
         public bool IsConnected { get; private set; }

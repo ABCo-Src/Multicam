@@ -1,106 +1,76 @@
 ﻿using ABCo.Multicam.Core.Features.Switchers;
-using ABCo.Multicam.Core.General;
+using ABCo.Multicam.UI.ViewModels.Features;
 
 namespace ABCo.Multicam.Core.Features
 {
-	public interface IGeneralFeaturePresenter
-    {
-		void OnFragmentUpdate<T>(int code, T structure);
-    }
-
-    public interface ISpecificFeaturePresenter : INeedsInitialization<IFeature>
-    {
-		void OnFragmentUpdate<T>(int code, T structure);
-	}
-
-    /// <summary>
-    /// Represents a feature currently loaded, either on this system or another system.
-    /// Introduces properties shared across all features, such as titles or machine switching.
-    /// </summary>
-    public interface IFeature : IParameteredService<FeatureTypes>, IDisposable
-    {
-        IGeneralFeaturePresenter GeneralUIPresenter { get; }
-        ILiveFeature LiveFeature { get; }
-
-        void PerformAction(int code, object param);
-    }
-
-	public class Feature : IFeature
-    {
-        readonly IServiceSource _servSource;
-        readonly IFeatureManager _manager;
-
-        FeatureDataStore _dataStore = null!;
-
-        public IGeneralFeaturePresenter GeneralUIPresenter { get; private set; } = null!;
-		public ISpecificFeaturePresenter SpecificUIPresenter { get; private set; } = null!;
-		public ILiveFeature LiveFeature { get; private set; } = null!;
-
-        public static IFeature New(FeatureTypes featureType, IServiceSource servSource) => new Feature(featureType, servSource);
-		public Feature(FeatureTypes featureType, IServiceSource servSource)
-        {
-            _servSource = servSource;
-            _manager = servSource.Get<IFeatureManager>();
-
-			// Get the data specification for the given type
-			var specs = featureType switch
-			{
-				FeatureTypes.Switcher => new SwitcherFeatureDataSpecification(),
-				_ => throw new Exception("Unsupported feature type")
-			};
-
-			_dataStore = new(specs);
-
-			LiveFeature = featureType switch
-			{
-				FeatureTypes.Switcher => _servSource.Get<ISwitcherRunningFeature>(),
-				_ => _servSource.Get<IUnsupportedRunningFeature>(),
-			};
-
-			GeneralUIPresenter = _servSource.Get<IGeneralFeaturePresenter, IFeature>(this);
-			SpecificUIPresenter = _servSource.Get<ISpecificFeaturePresenter, IFeature>(this);
-		}
-
-        public void Dispose() => LiveFeature.Dispose();
-
-		public void PerformAction(int code, object param)
-		{
-			var act = _dataStore.GetApplyToLiveParamed(code);
-
-			// If we have a live feature, apply it to that
-			if (LiveFeature != null)
-				act(LiveFeature, param);
-		}
-	}
-
-	public enum FeatureFragmentID
+	public interface IFeaturePresenter : IParameteredService<IFeature, FeatureTypes>
 	{
-		Title
+		void Init();
+		void OnDataChange(FeatureData data);
 	}
 
-	public enum FeatureActionID
-    {
-		SetTitle,
-		MoveUp,
-		MoveDown,
-		Delete
+	/// <summary>
+	/// Represents a feature currently loaded, whether running locally on this system or remotely.
+	/// Introduces the entire data fragments system, as well as fragments like the "Title" or "Item" within there
+	/// </summary>
+	public interface IFeature : IParameteredService<FeatureTypes>, IDisposable
+	{
+		IFeaturePresenter UIPresenter { get; }
+		IFeatureInteractionHandler InteractionHandler { get; }
+		void PerformAction(int id);
+		void PerformAction(int id, object param);
+		void RefreshData<T>() where T : FeatureData;
 	}
 
-    public abstract class FeatureDataSpecification
-    {
-        public abstract FeatureDataValue[] Fragments { get; }
-        public abstract FeatureAction[] ParameterlessActions { get; }
-        public abstract FeatureActionParam[] ParamedActions { get; }
-    }
+	public class Feature : IFeature, IFragmentChangeEventHandler
+	{
+		public IFeatureInteractionHandler InteractionHandler { get; private set; }
+		public IFeaturePresenter UIPresenter { get; private set; }
 
-    public struct FeatureDataValue
-    {
-        public int Id;
-        public Type Type;
+		public static IFeature New(FeatureTypes featureType, IServiceSource servSource) => new Feature(featureType, servSource);
+		public Feature(FeatureTypes featureType, IServiceSource servSource)
+		{
+			// Create the interaction handler
+			var fragments = servSource.Get<IFeatureContentFactory>().GetFeatureFragments(featureType);
+			InteractionHandler = servSource.Get<ILocalFeatureInteractionHandler, FeatureTypes, FeatureDataInfo[]>(featureType, fragments);
+			InteractionHandler.SetFragmentChangeHandler(this);
 
-        public FeatureDataValue(int id, Type type) => (Id, Type) = (id, type);
-    }
+			// Create the UI presenter
+			UIPresenter = servSource.Get<IFeaturePresenter, IFeature, FeatureTypes>(this, featureType);
+			UIPresenter.Init();
+		}
 
-	public record struct FeatureAction(int Id, Action<object> ApplyToLive);
-	public record struct FeatureActionParam(int Id, Action<object, object> ApplyToLive);
+		public void RefreshData<T>() where T : FeatureData => InteractionHandler.RefreshData<T>();
+		public void PerformAction(int id) => InteractionHandler.PerformAction(id);
+		public void PerformAction(int id, object param) => InteractionHandler.PerformAction(id, param);
+		public void OnDataChange(FeatureData val) => UIPresenter.OnDataChange(val);
+		public void Dispose() => InteractionHandler.Dispose();
+	}
+
+	public class FeatureGeneralInfo : FeatureData
+	{
+		public override int DataId => 0;
+
+		public FeatureTypes Type { get; }
+		public string Title { get; }
+
+		public FeatureGeneralInfo(FeatureTypes type, string title)
+		{
+			Type = type;
+			Title = title;
+		}
+	}
+
+	public struct FeatureDataInfo
+	{
+		public Type Type;
+		public FeatureData DefaultValue;
+
+		public FeatureDataInfo(Type type, FeatureData defaultValue) => (Type, DefaultValue) = (type, defaultValue);
+	}
+
+	public abstract class FeatureData 
+	{ 
+		public abstract int DataId { get; }
+	}
 }

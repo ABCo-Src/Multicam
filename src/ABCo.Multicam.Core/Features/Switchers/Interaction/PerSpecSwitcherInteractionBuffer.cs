@@ -17,9 +17,9 @@
     public class PerSpecSwitcherInteractionBuffer : IPerSpecSwitcherInteractionBuffer
     {
         readonly ISwitcherInteractionBufferFactory _factory;
-        
-        ISwitcher _rawSwitcher;
-        IMixBlockInteractionBuffer[] _mixBlockBuffers;
+
+		readonly ISwitcher _rawSwitcher;
+		readonly IMixBlockInteractionBuffer[] _mixBlockBuffers;
 
         public SwitcherSpecs Specs { get; private set; }
 

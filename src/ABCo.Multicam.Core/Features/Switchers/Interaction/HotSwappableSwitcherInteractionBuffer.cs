@@ -9,7 +9,7 @@
 
 	public class HotSwappableSwitcherInteractionBuffer : IHotSwappableSwitcherInteractionBuffer
 	{
-		IServiceSource _servSource;
+		readonly IServiceSource _servSource;
 		ISwitcherEventHandler? _handler;
 
 		public IPerSwitcherInteractionBuffer CurrentBuffer { get; private set; } = null!;

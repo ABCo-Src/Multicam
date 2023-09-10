@@ -23,11 +23,11 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 
     public partial class SwitcherConfigVM : ViewModelBase, ISwitcherConfigVM
     {
-        bool _initialized = false;
+		readonly bool _initialized = false;
 
-        ISpecificSwitcherConfigVMFactory _configVMFactory;
-        ISwitcherFeatureVM _parent = null!;
-        IServiceSource _servSource;
+		readonly ISpecificSwitcherConfigVMFactory _configVMFactory;
+		readonly ISwitcherFeatureVM _parent = null!;
+		readonly IServiceSource _servSource;
 
         [ObservableProperty] string[] _items = new string[]
         {

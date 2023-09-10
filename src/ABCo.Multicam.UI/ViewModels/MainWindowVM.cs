@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace ABCo.Multicam.UI.ViewModels
 {
-    public interface IMainWindowVM 
+	public interface IMainWindowVM 
     {
 		IApplicationVM Application { get; }
 	}

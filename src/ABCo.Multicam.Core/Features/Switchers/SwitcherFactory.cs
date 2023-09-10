@@ -11,7 +11,7 @@ namespace ABCo.Multicam.Core.Features.Switchers
 
     public class SwitcherFactory : ISwitcherFactory
     {
-        IServiceSource _servSource;
+		readonly IServiceSource _servSource;
         public SwitcherFactory(IServiceSource servSource) => _servSource = servSource;
 
         public ISwitcher GetSwitcher(SwitcherConfig config)
