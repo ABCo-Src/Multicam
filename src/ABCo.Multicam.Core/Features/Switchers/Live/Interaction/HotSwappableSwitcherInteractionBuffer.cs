@@ -27,8 +27,8 @@
 			CurrentBuffer.SetEventHandler(_handler);
 
 			// Refresh everything to match the change
-			_handler?.OnSpecsChange(CurrentBuffer.Specs);
 			_handler?.OnConnectionStateChange(CurrentBuffer.IsConnected);
+			_handler?.OnSpecsChange(CurrentBuffer.Specs);
 		}
 
 		public void SetEventHandler(ISwitcherEventHandler? handler)

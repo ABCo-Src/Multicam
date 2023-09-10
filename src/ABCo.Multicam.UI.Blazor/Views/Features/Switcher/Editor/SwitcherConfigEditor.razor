@@ -5,7 +5,7 @@
 
 <div class="grid">
 	<p class="gridTitle gridTag1">Type:</p>
-	<select class="combo" @bind="VM.SelectedItem">
+	<select class="combo" value="@VM.SelectedItem" @onchange="e => { VM.SelectedItem = (string)e.Value!; VM.UpdateSelectedItem(); }">
 		@foreach (var opt in VM.Items)
 		{
 			<option>@opt</option>
@@ -14,9 +14,9 @@
 </div>
 
 <div class="inner">
-	@if (VM.SwitcherType == SwitcherType.Dummy)
+	@if (VM.CurrentConfig is DummySwitcherConfigVM dummyConfig)
 	{
-		<DummyConfigEditor VM="(DummySwitcherConfigVM)VM.CurrentConfig!" />
+		<DummyConfigEditor VM="dummyConfig" />
 	}
 </div>
 

@@ -1,14 +1,8 @@
-﻿namespace ABCo.Multicam.Core.Features.Switchers.Types
+﻿using ABCo.Multicam.Core.Features.Switchers.Data.Config;
+
+namespace ABCo.Multicam.Core.Features.Switchers.Types
 {
 	public interface IDummySwitcher : ISwitcher, IParameteredService<DummySwitcherConfig> { }
-
-    public class DummySwitcherConfig : SwitcherConfig
-    {
-        public override SwitcherType Type => SwitcherType.Dummy;
-        public int[] MixBlocks { get; }
-
-        public DummySwitcherConfig(params int[] mixBlocks) => MixBlocks = mixBlocks;
-    }
 
     public class DummySwitcher : Switcher, IDummySwitcher
     {

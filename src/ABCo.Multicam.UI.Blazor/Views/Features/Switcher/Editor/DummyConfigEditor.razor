@@ -3,7 +3,7 @@
 
 <div class="grid">
 	<p class="gridTitle">Mix Block Count:</p>
-	<select class="combo mixBlockCount" @bind="VM.SelectedMixBlockCount">
+	<select class="combo mixBlockCount" value="@VM.SelectedMixBlockCount" @onchange="e => { VM.SelectedMixBlockCount = (string)e.Value!; VM.MixBlockCountChange(); }">
 		@foreach (var item in VM.MixBlockCountOptions)
 		{
 			<option>@item</option>

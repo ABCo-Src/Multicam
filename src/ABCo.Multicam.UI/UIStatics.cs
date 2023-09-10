@@ -4,9 +4,12 @@ using ABCo.Multicam.Core.Features.Data;
 using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.UI.Presenters.Features;
 using ABCo.Multicam.UI.Presenters.Features.Switcher;
+using ABCo.Multicam.UI.Presenters.Features.Switcher.Config;
 using ABCo.Multicam.UI.ViewModels;
 using ABCo.Multicam.UI.ViewModels.Features;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher;
+using ABCo.Multicam.UI.ViewModels.Features.Switcher.Types;
+using System.Security.Cryptography;
 
 namespace ABCo.Multicam.UI
 {
@@ -30,23 +33,27 @@ namespace ABCo.Multicam.UI
 			container.AddTransient<ISwitcherErrorPresenter, IFeature, Action>((p1, p2, s) => new SwitcherErrorPresenter(p1, p2, s));
 			container.AddTransient<ISwitcherMixBlocksPresenter, ISwitcherFeatureVM, IFeature>((p1, p2, s) => new SwitcherMixBlocksPresenter(p1, p2, s));
 
-            // Register view-models
-            container.AddTransient<IApplicationVM, ApplicationVM>();
+			container.AddTransient<ISwitcherConfigPresenter, IFeature, SwitcherConfigType>((p1, p2, s) => new SwitcherConfigPresenter(p1, p2, s));
+			container.AddTransient<ISwitcherDummyConfigPresenter, IFeature>((p1, s) => new SwitcherDummyConfigPresenter(p1, s));
+
+			// Register view-models
+			container.AddTransient<IApplicationVM, ApplicationVM>();
             container.AddTransient<IProjectVM, ProjectVM>();
             container.AddTransient<IProjectFeaturesVM, IProjectFeaturesPresenterForVM>((p1, s) => new ProjectFeaturesVM(p1));
             container.AddTransient<IProjectFeaturesListItemVM, IProjectFeaturesPresenterForVM, IFeature, IFeatureVM>((p1, p2, p3, s) => new ProjectFeaturesListItemVM(p1, p2, p3));
             container.AddTransient<IFeatureVM, IFeaturePresenterForVM>((p1, s) => new FeatureVM(p1));
 			container.AddTransient<ISwitcherFeatureVM, IFeature>((p1, s) => new SwitcherFeatureVM(p1));
-            container.AddTransient<ISwitcherConfigVM, SwitcherConfig, ISwitcherFeatureVM>((p1, p2, s) => new SwitcherConfigVM(p1, p2, s));
             container.AddTransient<ISwitcherMixBlockVM, SwitcherMixBlockVM>();
             container.AddTransient<ISwitcherCutButtonVM, ISwitcherMixBlocksPresenter, int>((p1, p2, s) => new SwitcherCutButtonVM(p1, p2));
             container.AddTransient<ISwitcherProgramInputVM, ISwitcherMixBlocksPresenter, int, int>((p1, p2, p3, s) => new SwitcherProgramInputVM(p1, p2, p3));
 			container.AddTransient<ISwitcherPreviewInputVM, ISwitcherMixBlocksPresenter, int, int>((p1, p2, p3, s) => new SwitcherPreviewInputVM(p1, p2, p3));
 			container.AddTransient<ISwitcherConnectionVM, ISwitcherErrorPresenter>((p1, s) => new SwitcherConnectionVM(p1));
 
-            container.AddSingleton<ISpecificSwitcherConfigVMFactory, SpecificSwitcherConfigVMFactory>();
+			container.AddTransient<ISwitcherConfigVM, ISwitcherConfigPresenter>((p1, s) => new SwitcherConfigVM(p1));
+			container.AddTransient<IDummySwitcherConfigVM, ISwitcherDummyConfigPresenter>((p1, s) => new DummySwitcherConfigVM(p1));
+			container.AddTransient<IDummySwitcherConfigMixBlockVM, ISwitcherDummyConfigPresenter>((p1, s) => new DummySwitcherConfigMixBlockVM(p1));
 
-            CoreStatics.Initialize(container);
+			CoreStatics.Initialize(container);
         }
     }
 }

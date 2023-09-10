@@ -1,15 +1,11 @@
 ﻿using ABCo.Multicam.Core.Features.Switchers.Data;
+using ABCo.Multicam.Core.Features.Switchers.Data.Config;
 using ABCo.Multicam.Core.General;
 
 namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 {
 	public interface IATEMSwitcher : ISwitcher, IErrorHandlingTarget, IParameteredService<ATEMSwitcherConfig>
 	{
-	}
-
-	public class ATEMSwitcherConfig : SwitcherConfig 
-	{
-		public override SwitcherType Type => SwitcherType.ATEM;
 	}
 
 	public class ATEMSwitcher : Switcher, IATEMSwitcher

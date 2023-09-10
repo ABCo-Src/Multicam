@@ -89,6 +89,8 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 
 		public void OnSpecced(SwitcherSpecs specs)
 		{
+			if (!_isConnected) return;
+
 			StopTransitionTimer();
 			_errorPresenter.SetErrorlessButtonText("Disconnect");
 			_errorPresenter.SetErrorlessStatus("Connected.");

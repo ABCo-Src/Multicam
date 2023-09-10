@@ -1,4 +1,5 @@
-﻿using ABCo.Multicam.Core.Features.Switchers.Types;
+﻿using ABCo.Multicam.Core.Features.Switchers.Data.Config;
+using ABCo.Multicam.Core.Features.Switchers.Types;
 using ABCo.Multicam.Core.Features.Switchers.Types.ATEM;
 
 namespace ABCo.Multicam.Core.Features.Switchers

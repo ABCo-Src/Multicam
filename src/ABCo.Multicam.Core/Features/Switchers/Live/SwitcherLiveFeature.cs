@@ -1,6 +1,8 @@
 ﻿using ABCo.Multicam.Core.Features.Data;
 using ABCo.Multicam.Core.Features.Switchers.Data;
+using ABCo.Multicam.Core.Features.Switchers.Data.Config;
 using ABCo.Multicam.Core.Features.Switchers.Interaction;
+using ABCo.Multicam.Core.Features.Switchers.Types;
 
 namespace ABCo.Multicam.Core.Features.Switchers
 {
@@ -80,7 +82,22 @@ namespace ABCo.Multicam.Core.Features.Switchers
 					_buffer.CurrentBuffer.Cut((int)param);
 					break;
 
-				case SwitcherActionID.SET_SWITCHER:
+				case SwitcherActionID.SET_CONFIG_TYPE:
+					var newConfigType = (SwitcherConfigType)param;
+
+					SwitcherConfig newDefaultConfig = newConfigType.Type switch
+					{
+						SwitcherType.Dummy => new DummySwitcherConfig(4),
+						SwitcherType.ATEM => new ATEMSwitcherConfig(),
+						_ => throw new Exception("Currently unsupported switcher type!")
+					};
+
+					_buffer.ChangeSwitcher(newDefaultConfig);
+					_fragmentCollection.SetData(newConfigType);
+					_fragmentCollection.SetData(newDefaultConfig);
+					break;
+
+				case SwitcherActionID.SET_CONFIG:
 					var newConfig = (SwitcherConfig)param;
 					_buffer.ChangeSwitcher(newConfig);
 					_fragmentCollection.SetData(newConfig);

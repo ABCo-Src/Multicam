@@ -17,6 +17,7 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 		readonly ISwitcherFeatureVM _vm;
 		readonly ISwitcherConnectionPresenter _connectionPresenter;
 		readonly ISwitcherMixBlocksPresenter _mixBlocksPresenter;
+		ISwitcherConfigPresenter? _configPresenter;
 
 		public SwitcherFeaturePresenter(IFeature baseFeature, IServiceSource servSource)
 		{
@@ -24,8 +25,10 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 			_vm = servSource.Get<ISwitcherFeatureVM, IFeature>(baseFeature);
 
 			_feature = baseFeature;
+
 			_connectionPresenter = _servSource.Get<ISwitcherConnectionPresenter, IFeature>(_feature);
 			_vm.Connection = _connectionPresenter.VM;
+
 			_mixBlocksPresenter = _servSource.Get<ISwitcherMixBlocksPresenter, ISwitcherFeatureVM, IFeature>(_vm, _feature);
 		}
 
@@ -35,8 +38,13 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 		{
 			switch (data)
 			{
+				case SwitcherConfigType configType:
+					_configPresenter = _servSource.Get<ISwitcherConfigPresenter, IFeature, SwitcherConfigType>(_feature, configType);
+					_vm.Config = _configPresenter.VM;
+					break;
+
 				case SwitcherConfig config:
-					_vm.Config = _servSource.Get<ISwitcherConfigVM, SwitcherConfig, ISwitcherFeatureVM>(config, _vm);
+					_configPresenter?.OnConfig(config);
 					break;
 
 				case SwitcherConnection connection:
@@ -62,6 +70,7 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 		public void Init()
 		{
 			// Update config, then connection, then specs, then state, then error (order important for the presenter to track what's happening clearly)
+			_feature.RefreshData<SwitcherConfigType>();
 			_feature.RefreshData<SwitcherConfig>();
 			_feature.RefreshData<SwitcherConnection>();
 			_feature.RefreshData<SwitcherSpecs>();

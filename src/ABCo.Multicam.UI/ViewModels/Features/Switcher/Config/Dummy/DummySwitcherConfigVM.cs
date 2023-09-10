@@ -1,82 +1,49 @@
-﻿using ABCo.Multicam.Core.Features.Switchers.Types;
+﻿using ABCo.Multicam.Core;
+using ABCo.Multicam.Core.Features.Switchers.Types;
+using ABCo.Multicam.UI.Presenters.Features.Switcher.Config;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.ComponentModel;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher.Types
 {
-	public interface IDummySwitcherConfigVM : ISpecificSwitcherConfigVM, INotifyPropertyChanged
+	public interface IDummySwitcherConfigVM : ISwitcherSpecificConfigVM, IParameteredService<ISwitcherDummyConfigPresenter>, INotifyPropertyChanged
     {
-        void UpdateModel();
+        string SelectedMixBlockCount { get; set; }
+		int[] MixBlockCountOptions { get; }
+		IDummySwitcherConfigMixBlockVM[] MixBlockVMs { get; set; }
     }
 
     public partial class DummySwitcherConfigVM : ViewModelBase, IDummySwitcherConfigVM
     {
-		readonly ISwitcherFeatureVM _parent = null!;
+        readonly ISwitcherDummyConfigPresenter _presenter;
 
-        [ObservableProperty] int[] _mixBlockCountOptions = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-        [ObservableProperty] int _selectedMixBlockCount;
+        public int[] MixBlockCountOptions => new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 
+        [ObservableProperty] string _selectedMixBlockCount;
         [ObservableProperty] IDummySwitcherConfigMixBlockVM[] _mixBlockVMs = null!;
 
-        public DummySwitcherConfigVM(DummySwitcherConfig config, ISwitcherFeatureVM parent) 
-        {
-            _selectedMixBlockCount = config.MixBlocks.Length;
-            _mixBlockVMs = new IDummySwitcherConfigMixBlockVM[config.MixBlocks.Length];
-            for (int i = 0; i < config.MixBlocks.Length; i++)
-                _mixBlockVMs[i] = new DummySwitcherConfigMixBlockVM(this, i + 1, config.MixBlocks[i]);
+		public DummySwitcherConfigVM(ISwitcherDummyConfigPresenter presenter) => _presenter = presenter;
 
-            _parent = parent;
-        }
-
-        partial void OnSelectedMixBlockCountChanged(int oldValue, int newValue)
-        {
-            // Resize the array
-            var arr = MixBlockVMs;
-            Array.Resize(ref arr, newValue);
-            MixBlockVMs = arr;
-
-            // Create new items where there weren't any
-            for (int i = oldValue; i < newValue; i++)
-                MixBlockVMs[i] = new DummySwitcherConfigMixBlockVM(this, i + 1, 1);
-
-            // Update the model to match
-            UpdateModel();
-        }
-
-        public void UpdateModel()
-        {
-            int[] arr = new int[SelectedMixBlockCount];
-
-            for (int i = 0; i < arr.Length; i++)
-                arr[i] = MixBlockVMs[i].InputCount;
-
-            _parent.UpdateConfig(new DummySwitcherConfig(arr));
-        }
+        public void MixBlockCountChange() => _presenter.OnChange();
     }
 
-    public interface IDummySwitcherConfigMixBlockVM
+    public interface IDummySwitcherConfigMixBlockVM : IParameteredService<ISwitcherDummyConfigPresenter>
     { 
-        int InputCount { get; set; }
+        string InputCount { get; set; }
+        int InputIndex { get; set; }
+        void InputCountChange();
     }
 
     public partial class DummySwitcherConfigMixBlockVM : ViewModelBase, IDummySwitcherConfigMixBlockVM
     {
-		readonly IDummySwitcherConfigVM _parent;
-        [ObservableProperty] int _index;
+		readonly ISwitcherDummyConfigPresenter _presenter;
 
         [ObservableProperty] int[] _inputCountItems = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-        [ObservableProperty] int _inputCount;
+        [ObservableProperty] int _inputIndex;
+        [ObservableProperty] string _inputCount;
 
-        public DummySwitcherConfigMixBlockVM(IDummySwitcherConfigVM parent, int inputIdx, int inputCount)
-        {
-            _parent = parent;
-            _index = inputIdx;
-            _inputCount = inputCount;
-        }
+		public DummySwitcherConfigMixBlockVM(ISwitcherDummyConfigPresenter presenter) => _presenter = presenter;
 
-        partial void OnInputCountChanged(int value)
-        {
-            _parent.UpdateModel();
-        }
+		public void InputCountChange() => _presenter.OnChange();
     }
 }
