@@ -32,12 +32,13 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 		public void OnSpecced(SwitcherSpecs specs)
 		{
 			// Update mix-blocks
-			_vm.MixBlocks = new ISwitcherMixBlockVM[specs.MixBlocks.Count];
-			for (int i = 0; i < specs.MixBlocks.Count; i++)
+			var newMixBlocks = new ISwitcherMixBlockVM[specs.MixBlocks.Count];
+			for (int i = 0; i < newMixBlocks.Length; i++)
 			{
-				_vm.MixBlocks[i] = _servSource.Get<ISwitcherMixBlockVM>();
-				PopulateMixBlockVM(_vm.MixBlocks[i], specs.MixBlocks[i], i);
+				newMixBlocks[i] = _servSource.Get<ISwitcherMixBlockVM>();
+				PopulateMixBlockVM(newMixBlocks[i], specs.MixBlocks[i], i);
 			}
+			_vm.MixBlocks = newMixBlocks;
 		}
 
 		void PopulateMixBlockVM(ISwitcherMixBlockVM vm, SwitcherMixBlock mb, int mixBlockIndex)

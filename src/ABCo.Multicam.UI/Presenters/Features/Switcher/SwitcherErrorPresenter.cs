@@ -53,27 +53,29 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 		public void SetErrorlessButtonText(string text)
 		{
 			_errorlessButtonText = text;
-			if (_currentError != null) VM.StatusButtonText = _errorlessButtonText;
+			if (_currentError == null) VM.StatusButtonText = _errorlessButtonText;
 		}
 
 		bool _errorlessButtonVisible = true;
 		public void SetErrorlessButtonVisible(bool visible)
 		{
 			_errorlessButtonVisible = visible;
-			if (_currentError != null) VM.ShowConnectionButton = _errorlessButtonVisible;
+			if (_currentError == null) VM.ShowConnectionButton = _errorlessButtonVisible;
 		}
 
 		string _errorlessStatusText = "";
 		public void SetErrorlessStatus(string status)
 		{
 			_errorlessStatusText = status;
-			if (_currentError != null) VM.StatusText = _errorlessStatusText;
+			if (_currentError == null) VM.StatusText = _errorlessStatusText;
 		}
 
 		public void ButtonClick()
 		{
-			if (_currentError != null) _feature.InteractionHandler.PerformAction(SwitcherActionID.ACKNOWLEDGE_ERROR);
-			_noErrorClick();
+			if (_currentError != null) 
+				_feature.InteractionHandler.PerformAction(SwitcherActionID.ACKNOWLEDGE_ERROR);
+			else 
+				_noErrorClick();
 		}
 	}
 }

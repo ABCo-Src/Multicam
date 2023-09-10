@@ -7,22 +7,22 @@ namespace ABCo.Multicam.Core.Features
 	public interface ILocalFeatureInteractionHandler : IFeatureInteractionHandler, IParameteredService<FeatureTypes, FeatureDataInfo[]> { }
 	public class LocalFeatureInteractionHandler : ILocalFeatureInteractionHandler, ILocalFragmentCollection
 	{
-        readonly FeatureData[] _fragmentStore;
+        readonly Data[] _fragmentStore;
         readonly ILiveFeature _runningFeature;
 		IFragmentChangeEventHandler? _parentEventHandler;
 
         public LocalFeatureInteractionHandler(FeatureTypes type, FeatureDataInfo[] fragments, IServiceSource servSource)
         {
-			_fragmentStore = fragments.Select(i => i.DefaultValue).ToArray();
+			_fragmentStore = fragments.Select(i => new Data(i.Type, i.DefaultValue)).ToArray();
 			_runningFeature = servSource.Get<IFeatureContentFactory>().GetLiveFeature(type, this);
 		}
 
-		public T GetData<T>() where T : FeatureData => (T)_fragmentStore.First(s => s is T);
+		public T GetData<T>() where T : FeatureData => (T)_fragmentStore.First(s => typeof(T).IsAssignableTo(s.Type)).Object;
 		public void RefreshData<T>() where T : FeatureData => _parentEventHandler?.OnDataChange(GetData<T>());
 		public void SetData(FeatureData newValue)
 		{
 			var index = GetFragmentIndex(newValue);
-			_fragmentStore[index] = newValue;
+			_fragmentStore[index].Object = newValue;
 			_parentEventHandler?.OnDataChange(newValue);
 		}
 
@@ -33,11 +33,19 @@ namespace ABCo.Multicam.Core.Features
 		private int GetFragmentIndex(FeatureData data)
 		{
 			Type targetType = data.GetType();
-			int index = Array.FindIndex(_fragmentStore, s => s.GetType() == targetType);
+			int index = Array.FindIndex(_fragmentStore, s => targetType.IsAssignableTo(s.Type));
 			if (index == -1) throw new Exception("Attempt to set unregistered fragment!");
 			return index;
 		}
 
 		public void Dispose() => _runningFeature.Dispose();
+
+		public struct Data
+		{
+			public Type Type;
+			public FeatureData Object;
+
+			public Data(Type type, FeatureData obj) => (Type, Object) = (type, obj);
+		}
 	}
 }

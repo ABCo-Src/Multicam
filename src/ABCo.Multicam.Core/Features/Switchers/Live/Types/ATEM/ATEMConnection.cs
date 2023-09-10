@@ -4,7 +4,7 @@ using static ABCo.Multicam.Core.Features.Switchers.Types.ATEM.ATEMSwitcher;
 
 namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 {
-	public interface IATEMConnection : IDisposable, IParameteredService<ISwitcher>
+	public interface IATEMConnection : IDisposable, IParameteredService<IATEMSwitcher>
 	{
 		SwitcherSpecs InvalidateCurrentSpecs();
 		long GetProgram(int mixBlock);
@@ -21,11 +21,11 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 		readonly INativeATEMSwitcher _nativeSwitcher;
 		INativeATEMMixBlock[] _nativeBlocks = Array.Empty<INativeATEMMixBlock>();
 
-		public ATEMConnection(ISwitcher eventHandler, IServiceSource servSource)
+		public ATEMConnection(IATEMSwitcher eventHandler, IServiceSource servSource)
 		{
 			_servSource = servSource;
 			_nativeSwitcher = _servSource.Get<INativeATEMSwitcherDiscovery>().Connect("");
-			_callbackHandler = _servSource.Get<IATEMCallbackHandler, ISwitcher>(eventHandler);
+			_callbackHandler = _servSource.Get<IATEMCallbackHandler, IATEMSwitcher>(eventHandler);
 			_callbackHandler.AttachToSwitcher(_nativeSwitcher);
 		}
 

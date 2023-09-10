@@ -1,10 +1,11 @@
-﻿using ABCo.Multicam.Core.Features.Switchers.Types.ATEM.Native;
+﻿using ABCo.Multicam.Core.Features.Switchers.Data;
+using ABCo.Multicam.Core.Features.Switchers.Types.ATEM.Native;
 using BMDSwitcherAPI;
 using System.Diagnostics;
 
 namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 {
-	public interface IATEMCallbackHandler : IParameteredService<ISwitcher>
+	public interface IATEMCallbackHandler : IParameteredService<IATEMSwitcher>
     {
         void AttachToSwitcher(INativeATEMSwitcher switcher);
 		void DetachFromSwitcher(INativeATEMSwitcher switcher);
@@ -14,15 +15,15 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 
 	internal class ATEMCallbackHandler : IATEMCallbackHandler, INativeATEMSwitcherCallbackHandler
 	{
-		readonly ISwitcher _topSwitcher;
+		readonly IATEMSwitcher _topSwitcher;
 		MixEffectBlockHandler[] _handlers = Array.Empty<MixEffectBlockHandler>();
 
-		public ATEMCallbackHandler(ISwitcher switcher) => _topSwitcher = switcher;
+		public ATEMCallbackHandler(IATEMSwitcher switcher) => _topSwitcher = switcher;
 
 		public void Notify(_BMDSwitcherEventType type, _BMDSwitcherVideoMode videoMode)
 		{
 			if (type == _BMDSwitcherEventType.bmdSwitcherEventTypeDisconnected)
-				_topSwitcher.Disconnect();
+				_topSwitcher.ProcessError(new UnexpectedSwitcherDisconnectionException());
 		}
 
 		public void AttachToSwitcher(INativeATEMSwitcher switcher) => switcher.AddCallback(this);

@@ -5,7 +5,6 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 {
 	public interface IATEMSwitcher : ISwitcher, IErrorHandlingTarget, IParameteredService<ATEMSwitcherConfig>
 	{
-		
 	}
 
 	public class ATEMSwitcherConfig : SwitcherConfig 
@@ -31,7 +30,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 		{
 			_interactionThread.QueueTask(s =>
 			{
-				s._connection = s._servSource.Get<IATEMConnection, ISwitcher>(s);
+				s._connection = s._servSource.Get<IATEMConnection, IATEMSwitcher>(s);
 				s._mainThreadDispatcher.QueueOnMainFeatureThread(() => s._eventHandler?.OnConnectionStateChange(true));
 			}, this);
 
