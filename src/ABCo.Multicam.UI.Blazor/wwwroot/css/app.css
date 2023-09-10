@@ -49,7 +49,9 @@ body {
     margin: 0;
     position: absolute;
     height: 100%;
-    background-color: var(--col-appback);
+    
+    background-image: url('../img/CloudBg.png');
+    background-repeat: repeat;
 }
 
 #app, main {
