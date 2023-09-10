@@ -17,6 +17,16 @@
     }
 }
 
+@keyframes editPanelSlideOut {
+    0% {
+        margin-left: 0;
+    }
+
+    100% {
+        margin-left: -400px;
+    }
+}
+
 @keyframes newItemSlideDown {
     0% {
         clip-path: inset(0px 100% 0px 0px);
@@ -26,10 +36,14 @@
     }
 }
 
-.editor {
+.menu {
     width: 400px;
-    grid-area: editor;
+    grid-area: menu;
     animation: editPanelSlideIn 0.2s ease-out;
+}
+
+.slideOut {
+    animation: editPanelSlideOut 0.2s ease-out forwards;
 }
 
 .items {

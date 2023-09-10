@@ -59,15 +59,16 @@ namespace ABCo.Multicam.UI.Presenters.Features
 			VM.Items = newItems;
 
 			// Stop editing if the vm associated with that has been removed
-			if (_currentlyEditing != null) 
-				EnsureCurrentlyEditingExists();
+			EnsureCurrentlyEditingExists();
 		}
 
 		void EnsureCurrentlyEditingExists()
 		{
+			if (_currentlyEditing == null) return;
+
 			// Stop if this feature is still present in the new list
 			for (int i = 0; i < _manager.Features.Count; i++)
-				if (_manager.Features[i] == _currentlyEditing)
+				if (_manager.Features[i] == _currentlyEditing.NativeItem)
 					return;
 
 			// Stop editing if we weren't stopped
@@ -91,7 +92,7 @@ namespace ABCo.Multicam.UI.Presenters.Features
 		void DisableEditing(IProjectFeaturesListItemVM vm) => vm.EditBtnText = "Edit";
 		void EnableEditing(IProjectFeaturesListItemVM vm) => vm.EditBtnText = "Finish";
 
-		public void ToggleEdit(IProjectFeaturesListItemVM vm) => ChangeCurrentlyEditing(_currentlyEditing == null ? vm : null);
+		public void ToggleEdit(IProjectFeaturesListItemVM vm) => ChangeCurrentlyEditing(_currentlyEditing == vm ? null : vm);
 
 		public void CreateFeature(CursorPosition pos)
 		{

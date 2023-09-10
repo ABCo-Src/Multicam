@@ -8,7 +8,7 @@
 	<!-- Edit Panel -->
 	@if (VM.ShowEditingPanel)
 	{
-		<div class="editor">
+		<div class="menu @EditPanelClass">
 			<FeatureEditPanel VM="VM.CurrentlyEditing" />
 		</div>
 	}
@@ -19,7 +19,7 @@
 			@foreach (var item in VM.Items)
 			{
 				<li class="item">
-					<div class="edit btn btnBlueHint" @onclick=item.ToggleEdit>
+					<div class="edit btn btnBlueHint" @onclick="e => TogglePanelPrescence(item.ToggleEdit)">
 						<p>@item.EditBtnText</p>
 					</div>
 					<div class="strip"></div>
@@ -42,3 +42,23 @@
 		</li>
 	</ul>
 </div>
+
+@code {
+	public string EditPanelClass { get; set; } = "";
+
+	public async Task TogglePanelPrescence(Action act)
+	{
+		// If the panel is currently open, perform a slide-out first
+		if (VM.ShowEditingPanel)
+		{
+			EditPanelClass = "slideOut";
+			StateHasChanged();
+			await Task.Delay(200);
+		}
+
+		// Now go ahead and perform the action like planned
+		EditPanelClass = "";
+		StateHasChanged();
+		act();
+	}
+}
