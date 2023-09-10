@@ -15,7 +15,6 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher.Config
 {
 	public interface ISwitcherDummyConfigPresenter : ISwitcherSpecificConfigPresenter, IParameteredService<IFeature>
 	{
-		ISwitcherSpecificConfigVM VM { get; }
 		void OnChange();
 	}
 

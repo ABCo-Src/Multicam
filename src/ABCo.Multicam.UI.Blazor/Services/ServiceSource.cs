@@ -1,7 +1,7 @@
 ﻿using ABCo.Multicam.Core;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ABCo.Multicam.UI.Blazor.Web.Services
+namespace ABCo.Multicam.UI.Blazor.Services
 {
 	public class ServiceSource : IServiceSource
 	{
@@ -36,6 +36,9 @@ namespace ABCo.Multicam.UI.Blazor.Web.Services
 		readonly IServiceCollection _normalContainer;
 		public TransientServiceRegister(IServiceCollection normalContainer) => _normalContainer = normalContainer;
 
+		public void AddSingletonDirect<TTarget>() where TTarget : class
+			=> _normalContainer.AddSingleton<TTarget>();
+
 		public void AddSingleton<T, TTarget>()
 			where T : class
 			where TTarget : class, T
@@ -46,13 +49,13 @@ namespace ABCo.Multicam.UI.Blazor.Web.Services
 			where TTarget : class, T 
 			=> _normalContainer.AddTransient<T, TTarget>();
 
-		public void AddTransient<T, T1>(Func<T1, IServiceSource, T> factory) where T : class, IParameteredService<T1> => 
+		public void AddTransient<T, T1>(Func<T1, IServiceSource, T> factory) where T : IParameteredService<T1> => 
 			ParameteredTransientStore<T>.Factory = factory;
 
-		public void AddTransient<T, T1, T2>(Func<T1, T2, IServiceSource, T> factory) where T : class, IParameteredService<T1, T2> => 
+		public void AddTransient<T, T1, T2>(Func<T1, T2, IServiceSource, T> factory) where T : IParameteredService<T1, T2> => 
 			ParameteredTransientStore<T>.Factory = factory;
 
-		public void AddTransient<T, T1, T2, T3>(Func<T1, T2, T3, IServiceSource, T> factory) where T : class, IParameteredService<T1, T2, T3> => 
+		public void AddTransient<T, T1, T2, T3>(Func<T1, T2, T3, IServiceSource, T> factory) where T : IParameteredService<T1, T2, T3> => 
 			ParameteredTransientStore<T>.Factory = factory;
 	}
 

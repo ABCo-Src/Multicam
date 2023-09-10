@@ -19,14 +19,15 @@ namespace ABCo.Multicam.UI
 
         public static void Initialize(IParameteredServiceCollection container)
         {
-            // Logging for debug purposes if you want it:
-            //container.Initialize(registration => true,
-            //    (f, i) => ServiceSource.N += $"Service requested: {i.GetType().Name}.   Thread: {Thread.CurrentThread.ManagedThreadId}\n"
-            //);
-            container.AddSingleton<IMainWindowVM, MainWindowVM>();
+			// Logging for debug purposes if you want it:
+			//container.Initialize(registration => true,
+			//    (f, i) => ServiceSource.N += $"Service requested: {i.GetType().Name}.   Thread: {Thread.CurrentThread.ManagedThreadId}\n"
+			//);
 
-            // Register presenters
-            container.AddTransient<IProjectFeaturesPresenter, IFeatureManager>((p1, s) => new ProjectFeaturesPresenter(p1, s));
+			container.AddSingletonDirect<MainWindowVM>();
+
+			// Register presenters
+			container.AddTransient<IProjectFeaturesPresenter, IFeatureManager>((p1, s) => new ProjectFeaturesPresenter(p1, s));
             container.AddTransient<IFeaturePresenter, IFeature, FeatureTypes>((p1, p2, s) => new FeaturePresenter(p1, p2, s));
 			container.AddTransient<ISwitcherFeaturePresenter, IFeature>((p1, s) => new SwitcherFeaturePresenter(p1, s));
 			container.AddTransient<ISwitcherConnectionPresenter, IFeature>((p1, s) => new SwitcherConnectionPresenter(p1, s));

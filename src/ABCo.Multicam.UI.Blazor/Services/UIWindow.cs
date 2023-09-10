@@ -1,6 +1,6 @@
 ﻿using ABCo.Multicam.UI.Services;
 
-namespace ABCo.Multicam.UI.Blazor.Web.Services
+namespace ABCo.Multicam.UI.Blazor.Services
 {
 	public class UnwindowedUIWindow : IUIWindow
     {

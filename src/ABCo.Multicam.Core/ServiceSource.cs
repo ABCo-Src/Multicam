@@ -1,14 +1,15 @@
-﻿namespace ABCo.Multicam.Core
-{
-	public interface INeedsNoInitialization { }
+﻿using System.Diagnostics.CodeAnalysis;
 
+namespace ABCo.Multicam.Core
+{
 	public interface IParameteredServiceCollection
 	{
-		void AddSingleton<T, TTarget>() where T : class where TTarget : class, T;
-        void AddTransient<T, TTarget>() where T : class where TTarget : class, T;
-		void AddTransient<T, T1>(Func<T1, IServiceSource, T> factory) where T : class, IParameteredService<T1>;
-        void AddTransient<T, T1, T2>(Func<T1, T2, IServiceSource, T> factory) where T : class, IParameteredService<T1, T2>;
-        void AddTransient<T, T1, T2, T3>(Func<T1, T2, T3, IServiceSource, T> factory) where T : class, IParameteredService<T1, T2, T3>;
+		void AddSingletonDirect<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TTarget>() where TTarget : class;
+		void AddSingleton<T, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TTarget>() where T : class where TTarget : class, T;
+        void AddTransient<T, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TTarget>() where T : class where TTarget : class, T;
+		void AddTransient<T, T1>(Func<T1, IServiceSource, T> factory) where T : IParameteredService<T1>;
+        void AddTransient<T, T1, T2>(Func<T1, T2, IServiceSource, T> factory) where T : IParameteredService<T1, T2>;
+        void AddTransient<T, T1, T2, T3>(Func<T1, T2, T3, IServiceSource, T> factory) where T : IParameteredService<T1, T2, T3>;
 	}
 
     public interface IParameteredService<T>

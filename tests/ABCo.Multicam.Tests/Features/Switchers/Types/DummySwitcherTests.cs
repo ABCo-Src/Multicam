@@ -1,4 +1,5 @@
 ﻿using ABCo.Multicam.Core.Features.Switchers;
+using ABCo.Multicam.Core.Features.Switchers.Data.Config;
 using ABCo.Multicam.Core.Features.Switchers.Types;
 using Moq;
 
