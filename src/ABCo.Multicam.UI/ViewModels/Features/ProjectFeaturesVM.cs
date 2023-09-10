@@ -16,7 +16,6 @@ namespace ABCo.Multicam.UI.ViewModels.Features
     {
 		readonly IProjectFeaturesPresenterForVM _presenter;
 
-        public static IProjectFeaturesVM New(IProjectFeaturesPresenterForVM presenter, IServiceSource servSource) => new ProjectFeaturesVM(presenter);
 		public ProjectFeaturesVM(IProjectFeaturesPresenterForVM presenter) => _presenter = presenter;
 
         [ObservableProperty] IProjectFeaturesListItemVM[] _items = Array.Empty<IProjectFeaturesListItemVM>();

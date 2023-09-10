@@ -29,8 +29,6 @@ namespace ABCo.Multicam.UI.Blazor.Web.Services
 			var castedFactory = (Func<T1, T2, T3, IServiceSource, T>)factory;
 			return castedFactory(param1, param2, param3, this);
 		}
-
-
 	}
 
 	public class TransientServiceRegister : IParameteredServiceCollection
@@ -48,9 +46,14 @@ namespace ABCo.Multicam.UI.Blazor.Web.Services
 			where TTarget : class, T 
 			=> _normalContainer.AddTransient<T, TTarget>();
 
-		public void AddTransient<T, T1>(Func<T1, IServiceSource, T> factory) => ParameteredTransientStore<T>.Factory = factory;
-		public void AddTransient<T, T1, T2>(Func<T1, T2, IServiceSource, T> factory) => ParameteredTransientStore<T>.Factory = factory;
-		public void AddTransient<T, T1, T2, T3>(Func<T1, T2, T3, IServiceSource, T> factory) => ParameteredTransientStore<T>.Factory = factory;
+		public void AddTransient<T, T1>(Func<T1, IServiceSource, T> factory) where T : class, IParameteredService<T1> => 
+			ParameteredTransientStore<T>.Factory = factory;
+
+		public void AddTransient<T, T1, T2>(Func<T1, T2, IServiceSource, T> factory) where T : class, IParameteredService<T1, T2> => 
+			ParameteredTransientStore<T>.Factory = factory;
+
+		public void AddTransient<T, T1, T2, T3>(Func<T1, T2, T3, IServiceSource, T> factory) where T : class, IParameteredService<T1, T2, T3> => 
+			ParameteredTransientStore<T>.Factory = factory;
 	}
 
 	public static class ParameteredTransientStore<T>

@@ -15,7 +15,6 @@
 		readonly SwitcherSpecs _specs = null!;
 		readonly MixBlockState[] _states = null!;
 
-        public static IDummySwitcher New(DummySwitcherConfig config, IServiceSource servSource) => new DummySwitcher(config);
         public DummySwitcher(DummySwitcherConfig config)
         {
             _specs = CreateSpecsFrom(config.MixBlocks);

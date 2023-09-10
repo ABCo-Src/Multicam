@@ -26,7 +26,6 @@ namespace ABCo.Multicam.UI.Presenters.Features
 		public IProjectFeaturesVM VM { get; }
 		IProjectFeaturesListItemVM? _currentlyEditing;
 
-		public static IProjectFeaturesPresenter New(IFeatureManager manager, IServiceSource servSource) => new ProjectFeaturesPresenter(manager, servSource);
 		public ProjectFeaturesPresenter(IFeatureManager manager, IServiceSource servSource)
 		{
 			_manager = manager;

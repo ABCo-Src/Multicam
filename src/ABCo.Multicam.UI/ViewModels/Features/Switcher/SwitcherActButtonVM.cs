@@ -20,7 +20,6 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 	public interface ISwitcherCutButtonVM : ISwitcherActButtonVM { }
     public class SwitcherCutButtonVM : SwitcherActButtonVM, ISwitcherCutButtonVM
     {
-		public static ISwitcherCutButtonVM New(ISwitcherMixBlocksPresenter presenter, int mixBlockIndex, IServiceSource servSource) => new SwitcherCutButtonVM(presenter, mixBlockIndex);
 		public SwitcherCutButtonVM(ISwitcherMixBlocksPresenter presenter, int mixBlockIndex) : base(presenter, mixBlockIndex) => Text = "Cut";
 		public override void Click() => _presenter.Cut(_mixBlockIndex);
     }

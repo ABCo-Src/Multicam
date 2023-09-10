@@ -28,7 +28,6 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 
 		public ISwitcherConnectionVM VM => _errorPresenter.VM;
 
-		public static ISwitcherConnectionPresenter New(IFeature feature, IServiceSource servSource) => new SwitcherConnectionPresenter(feature, servSource);
 		public SwitcherConnectionPresenter(IFeature feature, IServiceSource servSource)
 		{
 			_feature = feature;

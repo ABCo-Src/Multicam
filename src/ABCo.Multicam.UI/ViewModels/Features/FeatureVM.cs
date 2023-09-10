@@ -27,7 +27,6 @@ namespace ABCo.Multicam.UI.ViewModels.Features
 
 		public string EditPanelTitle => $"Editing: {FeatureTitle}";
 
-		public static IFeatureVM New(IFeaturePresenterForVM presenter, IServiceSource servSource) => new FeatureVM(presenter);
         public FeatureVM(IFeaturePresenterForVM presenter) => _presenter = presenter;
 
         public void OnTitleChange() => _presenter.OnTitleChange();

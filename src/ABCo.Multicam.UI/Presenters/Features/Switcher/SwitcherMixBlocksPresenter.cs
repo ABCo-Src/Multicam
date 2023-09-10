@@ -22,7 +22,6 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 		readonly ISwitcherFeatureVM _vm = null!;
 		readonly IFeature _feature = null!;
 
-		public static ISwitcherMixBlocksPresenter New(ISwitcherFeatureVM vm, IFeature feature, IServiceSource servSource) => new SwitcherMixBlocksPresenter(vm, feature, servSource);
 		public SwitcherMixBlocksPresenter(ISwitcherFeatureVM vm, IFeature feature, IServiceSource servSource)
 		{
 			_vm = vm;

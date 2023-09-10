@@ -39,7 +39,6 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
         [ObservableProperty] ISpecificSwitcherConfigVM? _currentConfig;
         [ObservableProperty] SwitcherType _switcherType;
 
-        public static ISwitcherConfigVM New(SwitcherConfig config, ISwitcherFeatureVM parent, IServiceSource servSource) => new SwitcherConfigVM(config, parent, servSource);
         public SwitcherConfigVM(SwitcherConfig config, ISwitcherFeatureVM parent, IServiceSource servSource)
         {
             _servSource = servSource;

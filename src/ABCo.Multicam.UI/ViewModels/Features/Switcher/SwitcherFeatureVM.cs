@@ -22,7 +22,6 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
         [ObservableProperty] ISwitcherConnectionVM _connection = null!;
         [ObservableProperty] ISwitcherConfigVM? _config;
 
-		public static ISwitcherFeatureVM New(IFeature feature, IServiceSource servSource) => new SwitcherFeatureVM(feature);
 		public SwitcherFeatureVM(IFeature feature) => _feature = feature;
 
 		public void UpdateConfig(SwitcherConfig config) => _feature.InteractionHandler.PerformAction(SwitcherActionID.SET_SWITCHER, config);

@@ -17,7 +17,6 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 		readonly ISwitcher _topSwitcher;
 		MixEffectBlockHandler[] _handlers = Array.Empty<MixEffectBlockHandler>();
 
-		public static IATEMCallbackHandler New(ISwitcher switcher, IServiceSource servSource) => new ATEMCallbackHandler(switcher);
 		public ATEMCallbackHandler(ISwitcher switcher) => _topSwitcher = switcher;
 
 		public void Notify(_BMDSwitcherEventType type, _BMDSwitcherVideoMode videoMode)

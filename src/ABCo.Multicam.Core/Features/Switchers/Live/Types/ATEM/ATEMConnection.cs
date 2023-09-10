@@ -21,7 +21,6 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 		readonly INativeATEMSwitcher _nativeSwitcher;
 		INativeATEMMixBlock[] _nativeBlocks = Array.Empty<INativeATEMMixBlock>();
 
-		public static IATEMConnection New(ISwitcher eventHandler, IServiceSource servSource) => new ATEMConnection(eventHandler, servSource);
 		public ATEMConnection(ISwitcher eventHandler, IServiceSource servSource)
 		{
 			_servSource = servSource;

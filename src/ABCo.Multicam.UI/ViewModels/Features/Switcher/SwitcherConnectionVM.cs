@@ -15,11 +15,10 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 	{
 		ISwitcherErrorPresenter _errorPresenter;		
 
-		public static ISwitcherConnectionVM New(ISwitcherErrorPresenter error, IServiceSource servSource) => new SwitcherConnectionVM(error);
 		public SwitcherConnectionVM(ISwitcherErrorPresenter errorPresenter) => _errorPresenter = errorPresenter;
 
-		[ObservableProperty] string _statusText;
-		[ObservableProperty] string _statusButtonText;
+		[ObservableProperty] string _statusText = "";
+		[ObservableProperty] string _statusButtonText = "";
 		[ObservableProperty] bool _showConnectionButton;
 
 		public void ToggleConnection() => _errorPresenter.ButtonClick();

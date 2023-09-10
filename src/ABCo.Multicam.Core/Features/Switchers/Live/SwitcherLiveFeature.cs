@@ -102,6 +102,7 @@ namespace ABCo.Multicam.Core.Features.Switchers
 
         public void OnProgramValueChange(SwitcherProgramChangeInfo info) => OnMixBlockStateChange();
 		public void OnPreviewValueChange(SwitcherPreviewChangeInfo info) => OnMixBlockStateChange();
+
 		public void OnSpecsChange(SwitcherSpecs newSpecs)
 		{
 			_fragmentCollection.SetData(newSpecs);

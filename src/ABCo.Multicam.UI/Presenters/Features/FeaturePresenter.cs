@@ -25,7 +25,6 @@ namespace ABCo.Multicam.UI.Presenters.Features
 		IFeatureContentPresenterForVM? _contentPresenter;
 		readonly IFeature _feature;
 
-		public static IFeaturePresenter New(IFeature feature, FeatureTypes type, IServiceSource servSource) => new FeaturePresenter(feature, type, servSource);
 		public FeaturePresenter(IFeature feature, FeatureTypes type, IServiceSource servSource)
 		{
 			_feature = feature;

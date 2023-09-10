@@ -29,7 +29,6 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
         public bool IsConnected { get; private set; }
 		public SwitcherSpecs Specs => _currentBuffer.Specs;
 
-		public static IPerSwitcherInteractionBuffer New(SwitcherConfig config, IServiceSource servSource) => new PerSwitcherInteractionBuffer(config, servSource);
         public PerSwitcherInteractionBuffer(SwitcherConfig config, IServiceSource servSource)
         {
             _factory = servSource.Get<ISwitcherFactory>();

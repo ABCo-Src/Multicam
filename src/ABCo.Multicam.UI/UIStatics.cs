@@ -23,26 +23,26 @@ namespace ABCo.Multicam.UI
             container.AddSingleton<IMainWindowVM, MainWindowVM>();
 
             // Register presenters
-            container.AddTransient<IProjectFeaturesPresenter, IFeatureManager>(ProjectFeaturesPresenter.New);
-            container.AddTransient<IFeaturePresenter, IFeature, FeatureTypes>(FeaturePresenter.New);
-			container.AddTransient<ISwitcherFeaturePresenter, IFeature>(SwitcherFeaturePresenter.New);
-			container.AddTransient<ISwitcherConnectionPresenter, IFeature>(SwitcherConnectionPresenter.New);
-			container.AddTransient<ISwitcherErrorPresenter, IFeature, Action>(SwitcherErrorPresenter.New);
-			container.AddTransient<ISwitcherMixBlocksPresenter, ISwitcherFeatureVM, IFeature>(SwitcherMixBlocksPresenter.New);
+            container.AddTransient<IProjectFeaturesPresenter, IFeatureManager>((p1, s) => new ProjectFeaturesPresenter(p1, s));
+            container.AddTransient<IFeaturePresenter, IFeature, FeatureTypes>((p1, p2, s) => new FeaturePresenter(p1, p2, s));
+			container.AddTransient<ISwitcherFeaturePresenter, IFeature>((p1, s) => new SwitcherFeaturePresenter(p1, s));
+			container.AddTransient<ISwitcherConnectionPresenter, IFeature>((p1, s) => new SwitcherConnectionPresenter(p1, s));
+			container.AddTransient<ISwitcherErrorPresenter, IFeature, Action>((p1, p2, s) => new SwitcherErrorPresenter(p1, p2, s));
+			container.AddTransient<ISwitcherMixBlocksPresenter, ISwitcherFeatureVM, IFeature>((p1, p2, s) => new SwitcherMixBlocksPresenter(p1, p2, s));
 
             // Register view-models
             container.AddTransient<IApplicationVM, ApplicationVM>();
             container.AddTransient<IProjectVM, ProjectVM>();
-            container.AddTransient<IProjectFeaturesVM, IProjectFeaturesPresenterForVM>(ProjectFeaturesVM.New);
-            container.AddTransient<IProjectFeaturesListItemVM, IProjectFeaturesPresenterForVM, IFeature, IFeatureVM>((param1, param2, param3, s) => new ProjectFeaturesListItemVM(param1, param2, param3));
-            container.AddTransient<IFeatureVM, IFeaturePresenterForVM>(FeatureVM.New);
-			container.AddTransient<ISwitcherFeatureVM, IFeature>(SwitcherFeatureVM.New);
-            container.AddTransient<ISwitcherConfigVM, SwitcherConfig, ISwitcherFeatureVM>(SwitcherConfigVM.New);
+            container.AddTransient<IProjectFeaturesVM, IProjectFeaturesPresenterForVM>((p1, s) => new ProjectFeaturesVM(p1));
+            container.AddTransient<IProjectFeaturesListItemVM, IProjectFeaturesPresenterForVM, IFeature, IFeatureVM>((p1, p2, p3, s) => new ProjectFeaturesListItemVM(p1, p2, p3));
+            container.AddTransient<IFeatureVM, IFeaturePresenterForVM>((p1, s) => new FeatureVM(p1));
+			container.AddTransient<ISwitcherFeatureVM, IFeature>((p1, s) => new SwitcherFeatureVM(p1));
+            container.AddTransient<ISwitcherConfigVM, SwitcherConfig, ISwitcherFeatureVM>((p1, p2, s) => new SwitcherConfigVM(p1, p2, s));
             container.AddTransient<ISwitcherMixBlockVM, SwitcherMixBlockVM>();
-            container.AddTransient<ISwitcherCutButtonVM, ISwitcherMixBlocksPresenter, int>(SwitcherCutButtonVM.New);
-            container.AddTransient<ISwitcherProgramInputVM, ISwitcherMixBlocksPresenter, int, int>(SwitcherProgramInputVM.New);
-			container.AddTransient<ISwitcherPreviewInputVM, ISwitcherMixBlocksPresenter, int, int>(SwitcherPreviewInputVM.New);
-			container.AddTransient<ISwitcherConnectionVM, ISwitcherErrorPresenter>(SwitcherConnectionVM.New);
+            container.AddTransient<ISwitcherCutButtonVM, ISwitcherMixBlocksPresenter, int>((p1, p2, s) => new SwitcherCutButtonVM(p1, p2));
+            container.AddTransient<ISwitcherProgramInputVM, ISwitcherMixBlocksPresenter, int, int>((p1, p2, p3, s) => new SwitcherProgramInputVM(p1, p2, p3));
+			container.AddTransient<ISwitcherPreviewInputVM, ISwitcherMixBlocksPresenter, int, int>((p1, p2, p3, s) => new SwitcherPreviewInputVM(p1, p2, p3));
+			container.AddTransient<ISwitcherConnectionVM, ISwitcherErrorPresenter>((p1, s) => new SwitcherConnectionVM(p1));
 
             container.AddSingleton<ISpecificSwitcherConfigVMFactory, SpecificSwitcherConfigVMFactory>();
 

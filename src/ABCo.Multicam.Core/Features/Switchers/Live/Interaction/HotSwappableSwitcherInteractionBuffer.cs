@@ -14,7 +14,6 @@
 
 		public IPerSwitcherInteractionBuffer CurrentBuffer { get; private set; } = null!;
 
-		public static IHotSwappableSwitcherInteractionBuffer New(SwitcherConfig config, IServiceSource servSource) => new HotSwappableSwitcherInteractionBuffer(config, servSource);
 		public HotSwappableSwitcherInteractionBuffer(SwitcherConfig config, IServiceSource servSource)
 		{
 			_servSource = servSource;

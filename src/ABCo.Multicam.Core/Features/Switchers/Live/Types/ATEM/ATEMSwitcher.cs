@@ -21,7 +21,6 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 
 		IATEMConnection? _connection; // MUST always be used from the background queue
 
-		public static IATEMSwitcher New(ATEMSwitcherConfig config, IServiceSource servSource) => new ATEMSwitcher(config, servSource);
 		public ATEMSwitcher(ATEMSwitcherConfig config, IServiceSource servSource)
 		{
 			_servSource = servSource;

@@ -11,8 +11,6 @@ namespace ABCo.Multicam.Core.Features
         readonly ILiveFeature _runningFeature;
 		IFragmentChangeEventHandler? _parentEventHandler;
 
-		public static ILocalFeatureInteractionHandler New(FeatureTypes type, FeatureDataInfo[] fragments, IServiceSource servSource) 
-			=> new LocalFeatureInteractionHandler(type, fragments, servSource);
         public LocalFeatureInteractionHandler(FeatureTypes type, FeatureDataInfo[] fragments, IServiceSource servSource)
         {
 			_fragmentStore = fragments.Select(i => i.DefaultValue).ToArray();

@@ -23,7 +23,6 @@
 
         public SwitcherSpecs Specs { get; private set; }
 
-        public static IPerSpecSwitcherInteractionBuffer New(SwitcherSpecs specs, ISwitcher switcher, IServiceSource servSource) => new PerSpecSwitcherInteractionBuffer(specs, switcher, servSource);
 		public PerSpecSwitcherInteractionBuffer(SwitcherSpecs specs, ISwitcher switcher, IServiceSource servSource)
 		{
 			_factory = servSource.Get<ISwitcherInteractionBufferFactory>();

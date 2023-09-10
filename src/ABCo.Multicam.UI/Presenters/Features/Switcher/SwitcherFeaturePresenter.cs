@@ -18,7 +18,6 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 		readonly ISwitcherConnectionPresenter _connectionPresenter;
 		readonly ISwitcherMixBlocksPresenter _mixBlocksPresenter;
 
-		public static ISwitcherFeaturePresenter New(IFeature baseFeature, IServiceSource servSource) => new SwitcherFeaturePresenter(baseFeature, servSource);
 		public SwitcherFeaturePresenter(IFeature baseFeature, IServiceSource servSource)
 		{
 			_servSource = servSource;
