@@ -1,4 +1,6 @@
-﻿namespace ABCo.Multicam.Core.Features
+﻿using ABCo.Multicam.Core.Features.Data;
+
+namespace ABCo.Multicam.Core.Features
 {
 	public interface IUnsupportedLiveFeature : ILiveFeature, IParameteredService<ILocalFragmentCollection> { }
     public class UnsupportedLiveFeature : IUnsupportedLiveFeature

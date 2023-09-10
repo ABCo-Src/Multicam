@@ -1,13 +1,8 @@
 ﻿using ABCo.Multicam.Core.Features;
-using ABCo.Multicam.Core.Features.Switchers.Types;
 using ABCo.Multicam.Core.Features.Switchers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features.Switchers.Data;
+using ABCo.Multicam.Core.Features.Data;
 
 namespace ABCo.Multicam.UI.ViewModels.Features
 {
@@ -25,15 +20,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features
 
 		public FeatureDataInfo[] GetFeatureFragments(FeatureTypes type) => type switch
 		{
-			FeatureTypes.Switcher => new FeatureDataInfo[]
-			{
-				new FeatureDataInfo(typeof(FeatureGeneralInfo), new FeatureGeneralInfo(FeatureTypes.Switcher, "New Switcher")),
-				new FeatureDataInfo(typeof(SwitcherConfig), new DummySwitcherConfig(4)),
-				new FeatureDataInfo(typeof(SwitcherSpecs), new SwitcherSpecs()),
-				new FeatureDataInfo(typeof(SwitcherState), new SwitcherState(Array.Empty<MixBlockState>())),
-				new FeatureDataInfo(typeof(SwitcherConnection), new SwitcherConnection(false)),
-				new FeatureDataInfo(typeof(SwitcherError), new SwitcherError(null))
-			},
+			FeatureTypes.Switcher => SwitcherDataSpecs.DataInfo,
 			_ => new FeatureDataInfo[]
 			{
 				new FeatureDataInfo(typeof(FeatureGeneralInfo), new FeatureGeneralInfo(FeatureTypes.Unsupported, "New Unknown"))

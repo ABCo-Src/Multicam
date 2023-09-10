@@ -1,5 +1,6 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features;
+using ABCo.Multicam.Core.Features.Data;
 using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.Core.Features.Switchers.Data;
 using ABCo.Multicam.UI.ViewModels.Features;
@@ -7,7 +8,7 @@ using ABCo.Multicam.UI.ViewModels.Features.Switcher;
 
 namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 {
-    public interface ISwitcherVMFeaturePresenter : ISwitcherFeaturePresenter, IFeatureContentPresenterForVM, IParameteredService<IFeature> { }
+	public interface ISwitcherVMFeaturePresenter : ISwitcherFeaturePresenter, IFeatureContentPresenterForVM, IParameteredService<IFeature> { }
 	public class SwitcherFeaturePresenter : ISwitcherVMFeaturePresenter
 	{
 		readonly IServiceSource _servSource;
@@ -50,7 +51,6 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 				case SwitcherSpecs specs:
 					_connectionPresenter.OnSpecced(specs);
 					_mixBlocksPresenter.OnSpecced(specs);
-					_feature.RefreshData<SwitcherState>();
 					break;
 
 				case SwitcherState state:

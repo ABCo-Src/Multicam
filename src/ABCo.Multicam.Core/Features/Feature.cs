@@ -1,4 +1,4 @@
-﻿using ABCo.Multicam.Core.Features.Switchers;
+﻿using ABCo.Multicam.Core.Features.Data;
 using ABCo.Multicam.UI.ViewModels.Features;
 
 namespace ABCo.Multicam.Core.Features
@@ -45,32 +45,5 @@ namespace ABCo.Multicam.Core.Features
 		public void PerformAction(int id, object param) => InteractionHandler.PerformAction(id, param);
 		public void OnDataChange(FeatureData val) => UIPresenter.OnDataChange(val);
 		public void Dispose() => InteractionHandler.Dispose();
-	}
-
-	public class FeatureGeneralInfo : FeatureData
-	{
-		public override int DataId => 0;
-
-		public FeatureTypes Type { get; }
-		public string Title { get; }
-
-		public FeatureGeneralInfo(FeatureTypes type, string title)
-		{
-			Type = type;
-			Title = title;
-		}
-	}
-
-	public struct FeatureDataInfo
-	{
-		public Type Type;
-		public FeatureData DefaultValue;
-
-		public FeatureDataInfo(Type type, FeatureData defaultValue) => (Type, DefaultValue) = (type, defaultValue);
-	}
-
-	public abstract class FeatureData 
-	{ 
-		public abstract int DataId { get; }
 	}
 }

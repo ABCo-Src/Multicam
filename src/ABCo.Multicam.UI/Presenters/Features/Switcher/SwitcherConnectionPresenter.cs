@@ -4,11 +4,10 @@ using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.Core.Features.Switchers.Data;
 using ABCo.Multicam.Core.General;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher;
-using System.Data;
 
 namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 {
-    public interface ISwitcherConnectionPresenter : IParameteredService<IFeature>
+	public interface ISwitcherConnectionPresenter : IParameteredService<IFeature>
 	{
 		ISwitcherConnectionVM VM { get; }
 		void OnError(string? error);

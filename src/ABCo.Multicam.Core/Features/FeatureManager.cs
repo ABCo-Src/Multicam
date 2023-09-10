@@ -1,4 +1,6 @@
-﻿namespace ABCo.Multicam.Core.Features
+﻿using ABCo.Multicam.Core.Features.Data;
+
+namespace ABCo.Multicam.Core.Features
 {
 	/// <summary>
 	/// Manages all the (running) features in the current project.

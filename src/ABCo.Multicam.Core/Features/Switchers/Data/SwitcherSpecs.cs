@@ -1,10 +1,11 @@
-﻿using ABCo.Multicam.Core.Features.Switchers.Data;
+﻿using ABCo.Multicam.Core.Features.Data;
+using ABCo.Multicam.Core.Features.Switchers.Data;
 
 namespace ABCo.Multicam.Core.Features.Switchers
 {
-    public class SwitcherSpecs : FeatureData
+	public class SwitcherSpecs : FeatureData
     {
-		public override int DataId => SwitcherFragmentID.SPECS;
+		public override int DataId => SwitcherDataSpecs.SPECS;
 
         public readonly bool CanChangeConnection;
         public readonly IReadOnlyList<SwitcherMixBlock> MixBlocks;

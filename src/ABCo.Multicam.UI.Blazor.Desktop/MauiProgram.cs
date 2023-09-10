@@ -1,8 +1,5 @@
-﻿using ABCo.Multicam.Core;
-using ABCo.Multicam.Core.General;
+﻿using ABCo.Multicam.Core.General;
 using ABCo.Multicam.UI.Blazor.Services;
-using ABCo.Multicam.UI.Blazor.Web.Services;
-using ABCo.Multicam.UI.Services;
 using Microsoft.Extensions.Logging;
 
 namespace ABCo.Multicam.UI.Blazor.Desktop

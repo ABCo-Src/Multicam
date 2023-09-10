@@ -1,13 +1,9 @@
-﻿using ABCo.Multicam.Core.Features.Switchers;
+﻿using ABCo.Multicam.Core.Features.Data;
 using ABCo.Multicam.UI.ViewModels.Features;
-using BMDSwitcherAPI;
-using System.Diagnostics;
-using System.Numerics;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ABCo.Multicam.Core.Features
 {
-    // Interaction handler for a locally-running feature
+	// Interaction handler for a locally-running feature
 	public interface ILocalFeatureInteractionHandler : IFeatureInteractionHandler, IParameteredService<FeatureTypes, FeatureDataInfo[]> { }
 	public class LocalFeatureInteractionHandler : ILocalFeatureInteractionHandler, ILocalFragmentCollection
 	{

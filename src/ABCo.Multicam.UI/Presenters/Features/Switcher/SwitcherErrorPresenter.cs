@@ -2,15 +2,10 @@
 using ABCo.Multicam.Core.Features;
 using ABCo.Multicam.Core.Features.Switchers.Data;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 {
-    public interface ISwitcherErrorPresenter : IParameteredService<IFeature, Action>
+	public interface ISwitcherErrorPresenter : IParameteredService<IFeature, Action>
 	{
 		ISwitcherConnectionVM VM { get; }
 		void OnError(string? error);

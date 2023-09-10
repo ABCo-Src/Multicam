@@ -1,11 +1,10 @@
-﻿using ABCo.Multicam.Core.Features.Switchers.Data;
+﻿using ABCo.Multicam.Core.Features.Data;
+using ABCo.Multicam.Core.Features.Switchers.Data;
 using ABCo.Multicam.Core.Features.Switchers.Interaction;
-using ABCo.Multicam.Core.Features.Switchers.Types;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ABCo.Multicam.Core.Features.Switchers
 {
-    public interface ISwitcherEventHandler
+	public interface ISwitcherEventHandler
     {
         void OnProgramValueChange(SwitcherProgramChangeInfo info);
         void OnPreviewValueChange(SwitcherPreviewChangeInfo info);
@@ -103,7 +102,12 @@ namespace ABCo.Multicam.Core.Features.Switchers
 
         public void OnProgramValueChange(SwitcherProgramChangeInfo info) => OnMixBlockStateChange();
 		public void OnPreviewValueChange(SwitcherPreviewChangeInfo info) => OnMixBlockStateChange();
-		public void OnSpecsChange(SwitcherSpecs newSpecs) => _fragmentCollection.SetData(newSpecs);
+		public void OnSpecsChange(SwitcherSpecs newSpecs)
+		{
+			_fragmentCollection.SetData(newSpecs);
+			OnMixBlockStateChange();
+		}
+
 		public void OnConnectionStateChange(bool newState) => _fragmentCollection.SetData(new SwitcherConnection(newState));
 
 		public void OnFailure(SwitcherError error)

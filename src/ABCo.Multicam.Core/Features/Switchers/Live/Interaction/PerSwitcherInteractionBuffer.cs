@@ -1,4 +1,6 @@
-﻿namespace ABCo.Multicam.Core.Features.Switchers.Interaction
+﻿using ABCo.Multicam.Core.Features.Switchers.Data;
+
+namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 {
 	public interface IPerSwitcherInteractionBuffer : IParameteredService<SwitcherConfig>, ISwitcherEventHandler
     {

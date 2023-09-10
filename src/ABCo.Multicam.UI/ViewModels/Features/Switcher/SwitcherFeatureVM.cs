@@ -6,7 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
-    public interface ISwitcherFeatureVM : IFeatureContentVM, IParameteredService<IFeature>
+	public interface ISwitcherFeatureVM : IFeatureContentVM, IParameteredService<IFeature>
     {
 		ISwitcherMixBlockVM[] MixBlocks { get; set; }
 		ISwitcherConnectionVM Connection { get; set; }

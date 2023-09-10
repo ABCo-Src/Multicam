@@ -1,6 +1,4 @@
 ﻿using ABCo.Multicam.Core;
-using ABCo.Multicam.Core.Features.Switchers;
-using ABCo.Multicam.Core.General;
 using ABCo.Multicam.UI.Presenters.Features.Switcher;
 using CommunityToolkit.Mvvm.ComponentModel;
 

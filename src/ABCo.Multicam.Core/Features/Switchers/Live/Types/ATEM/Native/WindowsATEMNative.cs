@@ -1,4 +1,5 @@
-﻿using ABCo.Multicam.Core.Features.Switchers.Types.ATEM.Native;
+﻿using ABCo.Multicam.Core.Features.Switchers.Data;
+using ABCo.Multicam.Core.Features.Switchers.Types.ATEM.Native;
 using BMDSwitcherAPI;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;

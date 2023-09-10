@@ -7,7 +7,7 @@ using ABCo.Multicam.UI.ViewModels.Features.Switcher;
 
 namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 {
-    public interface ISwitcherMixBlocksPresenter : IParameteredService<ISwitcherFeatureVM, IFeature> 
+	public interface ISwitcherMixBlocksPresenter : IParameteredService<ISwitcherFeatureVM, IFeature> 
 	{
 		void OnSpecced(SwitcherSpecs specs);
 		void OnState(MixBlockState[] mixBlocks);
