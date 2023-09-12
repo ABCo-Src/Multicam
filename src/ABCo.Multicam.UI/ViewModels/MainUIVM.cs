@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.ViewModels
 {
-	public interface IMainUIVM : IParameteredService<IMainUIPresenter>, INotifyPropertyChanged
+	public interface IMainUIVM : IParameteredService<IMainUIPresenter>, INotifyPropertyChanged, IAnimationHandlingVM
 	{
 		ISideMenuEmbeddableVM? MenuVM { get; set; }
 		string MenuTitle { get; set; }
@@ -23,7 +23,20 @@ namespace ABCo.Multicam.UI.ViewModels
 	{
 		readonly IMainUIPresenter _presenter;
 
-		[ObservableProperty] ISideMenuEmbeddableVM? _menuVM;
+		ISideMenuEmbeddableVM? _menuVM;
+		public ISideMenuEmbeddableVM? MenuVM
+		{
+			get => _menuVM;
+			set => UpdateMenuVM(value);
+		}
+
+		public async void UpdateMenuVM(ISideMenuEmbeddableVM? newVal)
+		{
+			await WaitForAnimationHandler(nameof(MenuVM));
+			_menuVM = newVal;
+			OnPropertyChanged(new PropertyChangedEventArgs(nameof(MenuVM)));
+		}
+
 		[ObservableProperty] string _menuTitle = "";
 
 		public MainUIVM(IMainUIPresenter presenter)

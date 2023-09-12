@@ -4,7 +4,7 @@
 @using ABCo.Multicam.UI.Blazor.Views.Features;
 @using ABCo.Multicam.UI.ViewModels.Features;
 @using ABCo.Multicam.UI.Blazor.Views.Menus;
-@inherits VMBoundComponent<IMainUIVM>
+@inherits AnimBasedVMBoundComponent<IMainUIVM>
 @inject IFeatureManager manager
 
 <div class="mainView">
@@ -12,7 +12,7 @@
 	<!-- Side Menu -->
 	@if (VM.MenuVM != null)
 	{
-		<div class="sidePanel">
+		<div class="sidePanel @SidePanelClasses">
 			<SidePanel VM="VM" />
 		</div>
 	}
@@ -20,3 +20,23 @@
 	<!-- Main Content -->
 	<FeatureView VM="(ProjectFeaturesVM)((IProjectFeaturesPresenterForVM)manager.UIPresenter).VM"/>
 </div>
+
+@code {
+	string SidePanelClasses = "";
+
+	public override async Task PerformAnimationAndDelay(string propertyName)
+	{
+		if (VM.MenuVM != null)
+		{
+			if (propertyName is nameof(IMainUIVM.MenuVM) or nameof(IMainUIVM.MenuTitle))
+			{
+				SidePanelClasses = "noInteraction slideOut";
+				StateHasChanged();
+				await Task.Delay(200);
+			}
+		}
+		else SidePanelClasses = "";
+
+		await Task.CompletedTask;
+	}
+}
