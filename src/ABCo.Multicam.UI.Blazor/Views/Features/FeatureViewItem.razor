@@ -1,0 +1,20 @@
+﻿@using ABCo.Multicam.UI.Blazor.Views.Features.Switcher
+@using ABCo.Multicam.UI.ViewModels.Features;
+@using ABCo.Multicam.UI.ViewModels.Features.Switcher;
+@inherits VMBoundComponent<IProjectFeaturesListItemVM>
+
+<div class="edit btn btnBlueHint" @onclick="VM.ToggleEdit">
+	<p>@VM.EditBtnText</p>
+</div>
+
+<div class="strip"></div>
+<div class="content">
+	@if (VM.Feature.Content is SwitcherFeatureVM switcherVM)
+	{
+		<SwitcherFeature OuterVM="@VM.Feature" VM="switcherVM" />
+	}
+	else
+	{
+		<p>Unsupported feature!</p>
+	}
+</div>

@@ -1,0 +1,22 @@
+﻿@using ABCo.Multicam.Core.Features;
+@using ABCo.Multicam.UI.Presenters.Features;
+@using ABCo.Multicam.UI.ViewModels;
+@using ABCo.Multicam.UI.Blazor.Views.Features;
+@using ABCo.Multicam.UI.ViewModels.Features;
+@using ABCo.Multicam.UI.Blazor.Views.Menus;
+@inherits VMBoundComponent<IMainUIVM>
+@inject IFeatureManager manager
+
+<div class="mainView">
+
+	<!-- Side Menu -->
+	@if (VM.MenuVM != null)
+	{
+		<div class="sidePanel">
+			<SidePanel VM="VM" />
+		</div>
+	}
+
+	<!-- Main Content -->
+	<FeatureView VM="(ProjectFeaturesVM)((IProjectFeaturesPresenterForVM)manager.UIPresenter).VM"/>
+</div>

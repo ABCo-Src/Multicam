@@ -1,33 +1,4 @@
-﻿.featureView {
-    display: grid;
-    grid-template-rows: 1fr;
-    grid-template-columns: auto 1fr;
-    grid-template-areas: "editor items";
-
-    width: 100%;
-    height: 100%;
-}
-
-@keyframes editPanelSlideIn {
-    0% {
-        margin-left: -400px;
-    }
-    100% {
-        margin-left: 0;
-    }
-}
-
-@keyframes editPanelSlideOut {
-    0% {
-        margin-left: 0;
-    }
-
-    100% {
-        margin-left: -400px;
-    }
-}
-
-@keyframes newItemSlideDown {
+﻿@keyframes newItemSlideDown {
     0% {
         clip-path: inset(0px 100% 0px 0px);
     }
@@ -36,52 +7,41 @@
     }
 }
 
-.menu {
-    width: 400px;
-    grid-area: menu;
-    animation: editPanelSlideIn 0.2s ease-out;
-}
-
-.slideOut {
-    animation: editPanelSlideOut 0.2s ease-out forwards;
-}
-
 .items {
     position: relative;
     grid-area: items;
     padding-left: 10px;
 }
 
-.items .item {
+::deep .item {
     display: grid;
     grid-template-columns: 60px 6px 1fr;
     grid-template-areas: "edit strip contents";
     margin: 20px 0;
-
     animation: newItemSlideDown 0.2s ease-out;
     min-height: 50px;
 }
 
-.items .item .strip {
+::deep .item .strip {
     grid-area: strip;
     width: 100%;
     height: 100%;
     background-color: var(--col-accent);
 }
 
-.items .item .content {
+::deep .item .content {
     grid-area: contents;
     margin-left: 10px;
     width: calc(100% - 66px);
     max-width: max-content;
 }
 
-.items .item .edit {
+::deep .item .edit {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.items .item .edit p {
+::deep .item .edit p {
     transform: rotate(-90deg);
 }

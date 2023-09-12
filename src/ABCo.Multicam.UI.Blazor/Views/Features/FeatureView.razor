@@ -4,61 +4,17 @@
 @using ABCo.Multicam.UI.ViewModels.Features.Switcher;
 @inherits VMBoundComponent<ProjectFeaturesVM>
 
-<div class="featureView">
-	<!-- Edit Panel -->
-	@if (VM.ShowEditingPanel)
-	{
-		<div class="menu @EditPanelClass">
-			<FeatureEditPanel VM="VM.CurrentlyEditing" />
-		</div>
-	}
-
-	<!-- Items -->
-	<ul class="items">
-		@if (VM.Items != null)
-			@foreach (var item in VM.Items)
-			{
-				<li class="item">
-					<div class="edit btn btnBlueHint" @onclick="e => TogglePanelPrescence(item.ToggleEdit)">
-						<p>@item.EditBtnText</p>
-					</div>
-					<div class="strip"></div>
-					<div class="content">
-						@if (item.Feature.Content is SwitcherFeatureVM switcherVM)
-						{
-							<SwitcherFeature OuterVM="@item.Feature" VM="switcherVM" />
-						}
-						else
-						{
-							<p>Unsupported feature!</p>
-						}
-					</div>
-				</li>
-			}
-
-		<li class="item">
-			<div class="strip"></div>
-			<a class="content newBtn btn btnDashed" @onclick="e => VM.CreateFeature(new(e.ClientX, e.ClientY))">New Feature</a>
-		</li>
-	</ul>
-</div>
-
-@code {
-	public string EditPanelClass { get; set; } = "";
-
-	public async Task TogglePanelPrescence(Action act)
-	{
-		// If the panel is currently open, perform a slide-out first
-		if (VM.ShowEditingPanel)
+<ul class="items">
+	@if (VM.Items != null)
+		@foreach (var item in VM.Items)
 		{
-			EditPanelClass = "slideOut";
-			StateHasChanged();
-			await Task.Delay(200);
+			<li class="item">
+				<FeatureViewItem VM="item" />
+			</li>
 		}
 
-		// Now go ahead and perform the action like planned
-		EditPanelClass = "";
-		StateHasChanged();
-		act();
-	}
-}
+	<li class="item">
+		<div class="strip"></div>
+		<a class="content newBtn btn btnDashed" @onclick="e => VM.CreateFeature(new(e.ClientX, e.ClientY))">New Feature</a>
+	</li>
+</ul>

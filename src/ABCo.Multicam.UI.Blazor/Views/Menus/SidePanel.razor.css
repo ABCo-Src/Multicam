@@ -1,0 +1,75 @@
+﻿::deep .section {
+    padding: 10px;
+}
+
+::deep .sectionTitle {
+    text-decoration: underline;
+    text-align: center;
+    margin: 5px 0 20px 0;
+}
+
+::deep .sectionSeparator, .titlebarSeparator {
+    border: none;
+    height: 3px;
+    background: linear-gradient(90deg, var(--col-gradient3) 0%, var(--col-gradient4) 50%, var(--col-gradient3) 90%, var(--col-gradient1) 100%);
+}
+
+::deep .gridTitle {
+    font-weight: bold;
+}
+
+::deep .grid {
+    gap: 10px;
+    padding: 0 10px;
+}
+
+::deep .indexedListItem {
+    margin-top: 10px;
+    background-color: var(--col-panellistitem);
+    padding: 10px;
+}
+
+::deep .indexedListItem .index {
+    padding: 10px;
+    font-weight: bold;
+}
+
+.sidePanel {
+    width: 100%;
+    height: 100%;
+    background-color: var(--col-panelback);
+    display: grid;
+    grid-template-columns: 1fr 3px;
+    grid-template-areas: "content rightBorder";
+}
+
+.sidePanel .content {
+    grid-area: content;
+}
+
+.sidePanel .rightBorder {
+    grid-area: rightBorder;
+    background: linear-gradient(0deg, var(--col-gradient1) 0%, var(--col-gradient2) 50%, var(--col-gradient1) 100%);
+    height: 100%;
+}
+
+.titlebar {
+    background-color: var(--col-panelinnerback);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas: "title close";
+    align-items: center;
+}
+
+.titlebar .title {
+    grid-area: title;
+    padding-left: 10px;
+}
+
+.titlebar .close {
+    grid-area: close;
+}
+
+.titlebarSeparator {
+    margin: 0;
+}

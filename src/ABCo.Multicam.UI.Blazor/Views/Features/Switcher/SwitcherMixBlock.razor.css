@@ -1,5 +1,6 @@
 ﻿.grid {
     margin-top: 10px;
+    width: 100%;
     display: grid;
     gap: 10px;
 
@@ -35,4 +36,5 @@
 
 .control {
     grid-area: control;
+    float: right;
 }

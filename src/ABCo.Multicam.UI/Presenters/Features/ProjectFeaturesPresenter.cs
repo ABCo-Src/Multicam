@@ -19,6 +19,7 @@ namespace ABCo.Multicam.UI.Presenters.Features
 
 	public class ProjectFeaturesPresenter : IProjectFeaturesPresenterForVM
 	{
+		readonly IMainUIPresenter _sideMenuPresenter;
 		readonly IFeatureManager _manager;
 		readonly IServiceSource _servSource;
 		readonly IUIDialogHandler _dialogHandler;
@@ -31,6 +32,7 @@ namespace ABCo.Multicam.UI.Presenters.Features
 			_manager = manager;
 			_currentlyEditing = null;
 			_dialogHandler = servSource.Get<IUIDialogHandler>();
+			_sideMenuPresenter = servSource.Get<IMainUIPresenter>();
 			_servSource = servSource;
 			VM = servSource.Get<IProjectFeaturesVM, IProjectFeaturesPresenterForVM>(this);
 		}
@@ -50,7 +52,7 @@ namespace ABCo.Multicam.UI.Presenters.Features
 				{
 					var innerVM = ((IFeaturePresenterForVM)_manager.Features[i].UIPresenter).VM;
 					newItems[i] = _servSource.Get<IProjectFeaturesListItemVM, IProjectFeaturesPresenterForVM, IFeature, IFeatureVM>(this, _manager.Features[i], innerVM);
-					DisableEditing(newItems[i]);
+					newItems[i].EditBtnText = "Edit";
 				}
 				else
 					newItems[i] = oldItems[vm];
@@ -64,35 +66,34 @@ namespace ABCo.Multicam.UI.Presenters.Features
 
 		void EnsureCurrentlyEditingExists()
 		{
-			if (_currentlyEditing == null) return;
+			if (_currentlyEditing != null)
+			{
+				// Stop if this feature is still present in the new list
+				for (int i = 0; i < _manager.Features.Count; i++)
+					if (_manager.Features[i] == _currentlyEditing.NativeItem)
+						return;
 
-			// Stop if this feature is still present in the new list
-			for (int i = 0; i < _manager.Features.Count; i++)
-				if (_manager.Features[i] == _currentlyEditing.NativeItem)
-					return;
-
-			// Stop editing if we weren't stopped
-			ChangeCurrentlyEditing(null);
+				// Stop editing if we weren't stopped
+				_sideMenuPresenter.CloseMenu();
+			}
 		}
 
-		void ChangeCurrentlyEditing(IProjectFeaturesListItemVM? newValue)
+		public void ToggleEdit(IProjectFeaturesListItemVM vm)
 		{
-			var oldValue = _currentlyEditing;
-			VM.ShowEditingPanel = newValue != null;
+			if (_currentlyEditing == vm)
+				_sideMenuPresenter.CloseMenu();
+			else
+			{
+				_sideMenuPresenter.OpenMenu(vm, "Editing Feature", () =>
+				{
+					vm.EditBtnText = "Edit";
+					_currentlyEditing = null;
+				});
 
-			_currentlyEditing = newValue;
-
-			// Update the list item's VM to match this
-			if (oldValue != null) DisableEditing(oldValue);
-			if (newValue != null) EnableEditing(newValue);
-
-			VM.CurrentlyEditing = _currentlyEditing;
+				vm.EditBtnText = "Finish";
+				_currentlyEditing = vm;
+			}
 		}
-
-		void DisableEditing(IProjectFeaturesListItemVM vm) => vm.EditBtnText = "Edit";
-		void EnableEditing(IProjectFeaturesListItemVM vm) => vm.EditBtnText = "Finish";
-
-		public void ToggleEdit(IProjectFeaturesListItemVM vm) => ChangeCurrentlyEditing(_currentlyEditing == vm ? null : vm);
 
 		public void CreateFeature(CursorPosition pos)
 		{

@@ -1,12 +1,13 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features;
+using ABCo.Multicam.UI.Presenters;
 using ABCo.Multicam.UI.Presenters.Features;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.ComponentModel;
 
 namespace ABCo.Multicam.UI.ViewModels.Features
 {
-	public interface IProjectFeaturesListItemVM : IParameteredService<IProjectFeaturesPresenterForVM, IFeature, IFeatureVM>, INotifyPropertyChanged
+	public interface IProjectFeaturesListItemVM : IParameteredService<IProjectFeaturesPresenterForVM, IFeature, IFeatureVM>, INotifyPropertyChanged, ISideMenuEmbeddableVM
 	{
 		IFeature NativeItem { get; }
 		IFeatureVM Feature { get; }

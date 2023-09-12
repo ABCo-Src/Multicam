@@ -7,21 +7,16 @@ namespace ABCo.Multicam.UI.ViewModels.Features
 {
 	public interface IProjectFeaturesVM : IParameteredService<IProjectFeaturesPresenterForVM>
     {
-		IProjectFeaturesListItemVM? CurrentlyEditing { get; set; }
         IProjectFeaturesListItemVM[] Items { get; set; }
-        bool ShowEditingPanel { get; set; }
     }
 
     public partial class ProjectFeaturesVM : ViewModelBase, IProjectFeaturesVM
     {
 		readonly IProjectFeaturesPresenterForVM _presenter;
 
-		public ProjectFeaturesVM(IProjectFeaturesPresenterForVM presenter) => _presenter = presenter;
-
         [ObservableProperty] IProjectFeaturesListItemVM[] _items = Array.Empty<IProjectFeaturesListItemVM>();
-        [ObservableProperty] IProjectFeaturesListItemVM? _currentlyEditing;
-        [ObservableProperty] bool _showEditingPanel;
 
+		public ProjectFeaturesVM(IProjectFeaturesPresenterForVM presenter) => _presenter = presenter;
         public void CreateFeature(CursorPosition pos) => _presenter.CreateFeature(pos);
     }
 }

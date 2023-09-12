@@ -2,6 +2,7 @@
 using ABCo.Multicam.Core.Features;
 using ABCo.Multicam.Core.Features.Data;
 using ABCo.Multicam.Core.Features.Switchers;
+using ABCo.Multicam.UI.Presenters;
 using ABCo.Multicam.UI.Presenters.Features;
 using ABCo.Multicam.UI.Presenters.Features.Switcher;
 using ABCo.Multicam.UI.Presenters.Features.Switcher.Config;
@@ -9,6 +10,7 @@ using ABCo.Multicam.UI.ViewModels;
 using ABCo.Multicam.UI.ViewModels.Features;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher.Types;
+using Microsoft.Extensions.DependencyInjection;
 using System.Security.Cryptography;
 
 namespace ABCo.Multicam.UI
@@ -24,9 +26,9 @@ namespace ABCo.Multicam.UI
 			//    (f, i) => ServiceSource.N += $"Service requested: {i.GetType().Name}.   Thread: {Thread.CurrentThread.ManagedThreadId}\n"
 			//);
 
-			container.AddSingletonDirect<MainWindowVM>();
-
 			// Register presenters
+			container.AddSingleton<IMainUIPresenter, MainUIPresenter>();
+
 			container.AddTransient<IProjectFeaturesPresenter, IFeatureManager>((p1, s) => new ProjectFeaturesPresenter(p1, s));
             container.AddTransient<IFeaturePresenter, IFeature, FeatureTypes>((p1, p2, s) => new FeaturePresenter(p1, p2, s));
 			container.AddTransient<ISwitcherFeaturePresenter, IFeature>((p1, s) => new SwitcherFeaturePresenter(p1, s));
@@ -38,8 +40,7 @@ namespace ABCo.Multicam.UI
 			container.AddTransient<ISwitcherDummyConfigPresenter, IFeature>((p1, s) => new SwitcherDummyConfigPresenter(p1, s));
 
 			// Register view-models
-			container.AddTransient<IApplicationVM, ApplicationVM>();
-            container.AddTransient<IProjectVM, ProjectVM>();
+            container.AddTransient<IMainUIVM, IMainUIPresenter>((p1, s) => new MainUIVM(p1));
             container.AddTransient<IProjectFeaturesVM, IProjectFeaturesPresenterForVM>((p1, s) => new ProjectFeaturesVM(p1));
             container.AddTransient<IProjectFeaturesListItemVM, IProjectFeaturesPresenterForVM, IFeature, IFeatureVM>((p1, p2, p3, s) => new ProjectFeaturesListItemVM(p1, p2, p3));
             container.AddTransient<IFeatureVM, IFeaturePresenterForVM>((p1, s) => new FeatureVM(p1));

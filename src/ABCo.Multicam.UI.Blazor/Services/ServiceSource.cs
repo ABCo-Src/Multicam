@@ -1,5 +1,6 @@
 ﻿using ABCo.Multicam.Core;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ABCo.Multicam.UI.Blazor.Services
 {
@@ -48,6 +49,10 @@ namespace ABCo.Multicam.UI.Blazor.Services
 			where T : class 
 			where TTarget : class, T 
 			=> _normalContainer.AddTransient<T, TTarget>();
+
+		public void AddTransient<TTarget>(Func<IServiceProvider, TTarget> f)
+			where TTarget : class
+			=> _normalContainer.AddTransient<TTarget>(f);
 
 		public void AddTransient<T, T1>(Func<T1, IServiceSource, T> factory) where T : IParameteredService<T1> => 
 			ParameteredTransientStore<T>.Factory = factory;

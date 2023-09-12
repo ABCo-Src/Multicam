@@ -1,8 +1,4 @@
-﻿@page "/"
-@inject MainWindowVM VM
-@using ABCo.Multicam.UI.ViewModels;
-@using ABCo.Multicam.UI.Blazor.Views.Features;
-@using ABCo.Multicam.UI.ViewModels.Features;
+﻿@using ABCo.Multicam.UI.Presenters;
+@inject IMainUIPresenter presenter
 
-<!-- Content View -->
-<FeatureView VM="(ProjectFeaturesVM)VM.Application.Project.Features" />
+<MainView VM="presenter.VM" />

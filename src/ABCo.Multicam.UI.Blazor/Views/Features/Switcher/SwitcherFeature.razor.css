@@ -1,3 +1,10 @@
 ﻿.mixBlocks {
     margin-top: 10px;
+    width: 100%;
+    position: relative;
+}
+
+.mixBlocks li {
+    position: relative;
+    width: 100%;
 }
