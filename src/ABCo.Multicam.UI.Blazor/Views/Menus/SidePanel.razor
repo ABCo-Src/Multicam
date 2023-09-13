@@ -7,12 +7,12 @@
 <div class="sidePanel">
 	<div class="rightBorder"></div>
 	<div class="content">
-		<div class="titlebar">
+		<div class="appWideTitlebar titlebar">
 			<p class="title">@VM.MenuTitle</p>
 			<a class="close btn btnIcon" @onclick=VM.CloseMenuButton><img src="_content/ABCo.Multicam.UI.Blazor/img/icons/smallCloseButton.svg" /></a>
 		</div>
 
-		<hr class="titlebarSeparator" />
+		<hr class="appWideTitlebarSeparator" />
 
 		@if (VM.MenuVM is ProjectFeaturesListItemVM listViewItem)
 		{

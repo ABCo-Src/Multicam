@@ -7,6 +7,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features
 {
 	public interface IProjectFeaturesVM : IParameteredService<IProjectFeaturesPresenterForVM>
     {
+		IProjectFeaturesListItemVM? MobileView { get; set; }
         IProjectFeaturesListItemVM[] Items { get; set; }
     }
 
@@ -14,7 +15,8 @@ namespace ABCo.Multicam.UI.ViewModels.Features
     {
 		readonly IProjectFeaturesPresenterForVM _presenter;
 
-        [ObservableProperty] IProjectFeaturesListItemVM[] _items = Array.Empty<IProjectFeaturesListItemVM>();
+		[ObservableProperty] IProjectFeaturesListItemVM? _mobileView;
+		[ObservableProperty] IProjectFeaturesListItemVM[] _items = Array.Empty<IProjectFeaturesListItemVM>();
 
 		public ProjectFeaturesVM(IProjectFeaturesPresenterForVM presenter) => _presenter = presenter;
         public void CreateFeature(CursorPosition pos) => _presenter.CreateFeature(pos);

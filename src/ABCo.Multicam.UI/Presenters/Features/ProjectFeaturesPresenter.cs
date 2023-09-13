@@ -10,6 +10,8 @@ namespace ABCo.Multicam.UI.Presenters.Features
 	public interface IProjectFeaturesPresenterForVM : IProjectFeaturesPresenter, IParameteredService<IFeatureManager>
 	{
 		IProjectFeaturesVM VM { get; }
+		void OpenMobileMenu(IProjectFeaturesListItemVM vm);
+		void CloseMobileMenu();
 		void ToggleEdit(IProjectFeaturesListItemVM vm);
 		void MoveUp(IProjectFeaturesListItemVM vm);
 		void MoveDown(IProjectFeaturesListItemVM vm);
@@ -111,6 +113,8 @@ namespace ABCo.Multicam.UI.Presenters.Features
 			});
 		}
 
+		public void OpenMobileMenu(IProjectFeaturesListItemVM vm) => VM.MobileView = vm;
+		public void CloseMobileMenu() => VM.MobileView = null;
 		public void MoveUp(IProjectFeaturesListItemVM vm) => _manager.MoveUp(vm.NativeItem);
 		public void MoveDown(IProjectFeaturesListItemVM vm) => _manager.MoveDown(vm.NativeItem);
 		public void Delete(IProjectFeaturesListItemVM vm) => _manager.Delete(vm.NativeItem);

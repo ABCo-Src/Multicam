@@ -3,18 +3,30 @@
 @using ABCo.Multicam.UI.ViewModels.Features.Switcher;
 @inherits VMBoundComponent<IProjectFeaturesListItemVM>
 
-<div class="edit btn btnBlueHint" @onclick="VM.ToggleEdit">
-	<p>@VM.EditBtnText</p>
+<!-- Mobile appearance -->
+<div class="mobile">
+	<div class="strip"></div>
+	<div class="content btnLikeHighlight" @onclick=VM.OpenMobileView>
+		<p class="featureTitle">New Switcher</p>
+		<div class="rightArrow"><img src="_content/ABCo.Multicam.UI.Blazor/img/icons/smallRightArrow.svg" /></div>
+	</div>
 </div>
 
-<div class="strip"></div>
-<div class="content">
-	@if (VM.Feature.Content is SwitcherFeatureVM switcherVM)
-	{
-		<SwitcherFeature OuterVM="@VM.Feature" VM="switcherVM" />
-	}
-	else
-	{
-		<p>Unsupported feature!</p>
-	}
+<!-- Desktop appearance -->
+<div class="desktop">
+	<div class="edit btn btnBlueHint" @onclick="VM.ToggleEdit">
+		<p>@VM.EditBtnText</p>
+	</div>
+
+	<div class="strip"></div>
+	<div class="content">
+		@if (VM.Feature.Content is SwitcherFeatureVM switcherVM)
+		{
+			<SwitcherFeature OuterVM="@VM.Feature" VM="switcherVM" />
+		}
+		else
+		{
+			<p>Unsupported feature!</p>
+		}
+	</div>
 </div>

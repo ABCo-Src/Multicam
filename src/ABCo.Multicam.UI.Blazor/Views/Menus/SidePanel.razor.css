@@ -8,10 +8,10 @@
     margin: 5px 0 20px 0;
 }
 
-::deep .sectionSeparator, .titlebarSeparator {
+::deep .sectionSeparator {
     border: none;
     height: 3px;
-    background: linear-gradient(90deg, var(--col-gradient3) 0%, var(--col-gradient4) 50%, var(--col-gradient3) 90%, var(--col-gradient1) 100%);
+    background: var(--gradient-3431);
 }
 
 ::deep .gridTitle {
@@ -41,6 +41,8 @@
     display: grid;
     grid-template-columns: 1fr 3px;
     grid-template-areas: "content rightBorder";
+    max-height: 100%;
+    overflow-y: auto;
 }
 
 .sidePanel .content {
@@ -51,25 +53,4 @@
     grid-area: rightBorder;
     background: linear-gradient(0deg, var(--col-gradient1) 0%, var(--col-gradient2) 50%, var(--col-gradient1) 100%);
     height: 100%;
-}
-
-.titlebar {
-    background-color: var(--col-panelinnerback);
-    display: grid;
-    grid-template-columns: 1fr auto;
-    grid-template-areas: "title close";
-    align-items: center;
-}
-
-.titlebar .title {
-    grid-area: title;
-    padding-left: 10px;
-}
-
-.titlebar .close {
-    grid-area: close;
-}
-
-.titlebarSeparator {
-    margin: 0;
 }

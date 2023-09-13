@@ -1,0 +1,20 @@
+﻿.mobileView {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    height: 100%;
+}
+
+.content {
+    padding: 10px;
+    overflow: auto;
+    max-height: 100%;
+    box-sizing: border-box;
+}
+
+.editBtn {
+    padding-right: 5px;
+}
+
+::deep .content .rawFeatureTitle {
+    display: none;
+}

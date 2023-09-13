@@ -12,6 +12,8 @@ namespace ABCo.Multicam.UI.ViewModels.Features
 		IFeature NativeItem { get; }
 		IFeatureVM Feature { get; }
 		string EditBtnText { get; set; }
+		void OpenMobileView();
+		void CloseMobileView();
 		void ToggleEdit();
 		void MoveDown();
 		void MoveUp();
@@ -37,5 +39,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features
 		public void MoveDown() => _presenter.MoveDown(this);
 		public void MoveUp() => _presenter.MoveUp(this);
 		public void Delete() => _presenter.Delete(this);
+		public void OpenMobileView() => _presenter.OpenMobileMenu(this);
+		public void CloseMobileView() => _presenter.CloseMobileMenu();
 	}
 }
