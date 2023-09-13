@@ -2,7 +2,7 @@
 @using ABCo.Multicam.UI.Blazor.Views.Features.Switcher
 @using ABCo.Multicam.UI.ViewModels.Features;
 @using ABCo.Multicam.UI.ViewModels.Features.Switcher;
-@inherits VMBoundComponent<ProjectFeaturesVM>
+@inherits AnimBasedVMBoundComponent<ProjectFeaturesVM>
 
 <div class="featureView">
 	<div class="options">
@@ -14,7 +14,7 @@
 
 	@if (VM.MobileView != null)
 	{
-		<div class="mobileView">
+		<div class="mobileView @MobileViewClasses">
 			<FeatureMobileView VM="VM.MobileView" />
 		</div>
 	}
@@ -33,3 +33,24 @@
 		</li>
 	</ul>
 </div>
+
+@code {
+	// Animation code for mobile view menu
+	string MobileViewClasses = "";
+
+	public override async Task PerformAnimationAndDelay(string propertyName)
+	{
+		if (VM.MobileView != null)
+		{
+			if (propertyName == nameof(ProjectFeaturesVM.MobileView))
+			{
+				MobileViewClasses = "noInteraction slideOut";
+				StateHasChanged();
+				await Task.Delay(200);
+			}
+		}
+		else MobileViewClasses = "";
+
+		await Task.CompletedTask;
+	}
+}

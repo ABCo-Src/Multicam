@@ -1,4 +1,24 @@
-﻿.featureView {
+﻿@keyframes mobileViewSlideIn {
+    0% {
+        margin-left: 100%;
+    }
+
+    100% {
+        margin-left: 0;
+    }
+}
+
+@keyframes mobileViewSlideOut {
+    0% {
+        margin-left: 0;
+    }
+
+    100% {
+        margin-left: 100%;
+    }
+}
+
+.featureView {
     --feature-left-margin-size: 60px;
     width: 100%;
     height: 100%;
@@ -52,6 +72,11 @@
     height: 100%;
     z-index: 1;
     background-color: var(--col-appback);
+    animation: mobileViewSlideIn 0.2s ease-out;
+}
+
+.mobileView.slideOut {
+    animation: mobileViewSlideOut 0.2s ease-out;
 }
 
 @media (min-width: 550px) {
