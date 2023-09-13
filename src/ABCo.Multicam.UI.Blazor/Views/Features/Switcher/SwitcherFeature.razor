@@ -4,6 +4,11 @@
 
 <SwitcherConnectionStrip OuterVM="OuterVM" VM="(SwitcherConnectionVM)VM.Connection" />
 
+@if (VM.MixBlocks.Length == 0)
+{
+	<p>No specifications stored for this device, connect to load the buses.</p>
+}
+
 <ul class="mixBlocks">
 	@foreach (var mixBlock in VM.MixBlocks!)
 	{
