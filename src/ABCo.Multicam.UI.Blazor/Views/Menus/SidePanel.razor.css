@@ -1,5 +1,7 @@
 ﻿::deep .section {
     padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 ::deep .sectionTitle {
@@ -21,6 +23,8 @@
 ::deep .grid {
     gap: 10px;
     padding: 0 10px;
+    box-sizing: border-box;
+    width: 100%;
 }
 
 ::deep .indexedListItem {
@@ -47,6 +51,7 @@
 
 .sidePanel .content {
     grid-area: content;
+    /*overflow-x: hidden;*/
 }
 
 .sidePanel .rightBorder {

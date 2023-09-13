@@ -1,10 +1,10 @@
-﻿using ABCo.Multicam.Core.Features.Switchers.Types.ATEM.Native;
+﻿using ABCo.Multicam.Core.Features.Switchers.Data.Config;
+using ABCo.Multicam.Core.Features.Switchers.Types.ATEM.Native;
 using BMDSwitcherAPI;
-using static ABCo.Multicam.Core.Features.Switchers.Types.ATEM.ATEMSwitcher;
 
 namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 {
-	public interface IATEMConnection : IDisposable, IParameteredService<IATEMSwitcher>
+	public interface IATEMConnection : IDisposable, IParameteredService<ATEMSwitcherConfig, IATEMSwitcher>
 	{
 		SwitcherSpecs InvalidateCurrentSpecs();
 		long GetProgram(int mixBlock);
@@ -21,10 +21,10 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 		readonly INativeATEMSwitcher _nativeSwitcher;
 		INativeATEMMixBlock[] _nativeBlocks = Array.Empty<INativeATEMMixBlock>();
 
-		public ATEMConnection(IATEMSwitcher eventHandler, IServiceSource servSource)
+		public ATEMConnection(ATEMSwitcherConfig config, IATEMSwitcher eventHandler, IServiceSource servSource)
 		{
 			_servSource = servSource;
-			_nativeSwitcher = _servSource.Get<INativeATEMSwitcherDiscovery>().Connect("");
+			_nativeSwitcher = _servSource.Get<INativeATEMSwitcherDiscovery>().Connect(config.IP ?? "");
 			_callbackHandler = _servSource.Get<IATEMCallbackHandler, IATEMSwitcher>(eventHandler);
 			_callbackHandler.AttachToSwitcher(_nativeSwitcher);
 		}
@@ -137,5 +137,8 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 			_callbackHandler.DetachFromSwitcher(_nativeSwitcher);
 			_nativeSwitcher.Dispose();
 		}
+
+
+		public record struct RawInputData(long Id, string Name, byte MixBlockMask);
 	}
 }

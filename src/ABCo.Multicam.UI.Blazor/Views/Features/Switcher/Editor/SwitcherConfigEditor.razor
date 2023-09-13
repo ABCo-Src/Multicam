@@ -1,5 +1,7 @@
 ﻿@using ABCo.Multicam.Core.Features.Switchers;
+@using ABCo.Multicam.Core.Features.Switchers.Data.Config;
 @using ABCo.Multicam.UI.ViewModels.Features.Switcher;
+@using ABCo.Multicam.UI.ViewModels.Features.Switcher.Config.ATEM;
 @using ABCo.Multicam.UI.ViewModels.Features.Switcher.Types;
 @inherits VMBoundComponent<ISwitcherConfigVM>
 
@@ -14,12 +16,12 @@
 </div>
 
 <div class="inner">
-	@if (VM.CurrentConfig is DummySwitcherConfigVM dummyConfig)
+	@if (VM.CurrentConfig is SwitcherDummyConfigVM dummyConfig)
 	{
-		<DummyConfigEditor VM="dummyConfig" />
+        <DummyConfigEditor VM="dummyConfig" />
+    }
+    else if (VM.CurrentConfig is SwitcherATEMConfigVM atemConfig)
+    {
+		<ATEMConfigEditor VM="atemConfig" />
 	}
 </div>
-
-@code {
-
-}

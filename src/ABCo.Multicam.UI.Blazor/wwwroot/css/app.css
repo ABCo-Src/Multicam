@@ -124,13 +124,19 @@ body {
     border: solid 1px var(--col-border);
 }
 
+.textbox:disabled {
+    background-color: #444;
+}
+
 .textbox:focus, .combo:focus {
     border: solid 1px var(--col-border-focus);
     outline: none;
 }
 
 .combo {
-    min-width: 60px;
+    min-width: 100%;
+    width: max-content;
+    max-width: 100%;
 }
 
 /* Misc UI elements */

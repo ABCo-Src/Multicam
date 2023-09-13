@@ -10,6 +10,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 
 	public class ATEMSwitcher : Switcher, IATEMSwitcher
 	{
+		readonly ATEMSwitcherConfig _config;
 		readonly IMainThreadDispatcher _mainThreadDispatcher;
 		readonly IServiceSource _servSource;
 		readonly CatchingAndQueuedSTAThread<ATEMSwitcher> _interactionThread = new();
@@ -18,6 +19,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 
 		public ATEMSwitcher(ATEMSwitcherConfig config, IServiceSource servSource)
 		{
+			_config = config;
 			_servSource = servSource;
 			_mainThreadDispatcher = servSource.Get<IMainThreadDispatcher>();
 		}
@@ -26,7 +28,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 		{
 			_interactionThread.QueueTask(s =>
 			{
-				s._connection = s._servSource.Get<IATEMConnection, IATEMSwitcher>(s);
+				s._connection = s._servSource.Get<IATEMConnection, ATEMSwitcherConfig, IATEMSwitcher>(_config, s);
 				s._mainThreadDispatcher.QueueOnMainFeatureThread(() => s._eventHandler?.OnConnectionStateChange(true));
 			}, this);
 
@@ -120,7 +122,5 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 			_interactionThread.QueueTask(s => s._connection?.Dispose(), this);
 			_interactionThread.QueueFinish();
 		}
-
-		public record struct RawInputData(long Id, string Name, byte MixBlockMask);
 	}
 }

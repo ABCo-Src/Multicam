@@ -1,8 +1,9 @@
 ﻿.content {
     display: grid;
-    grid-template-columns: auto 1fr auto auto;
+    grid-template-columns: auto 1fr auto 60px;
     grid-template-areas: "index _ tag combo";
     align-items: center;
+    padding-right: 10px;
 }
 
 .content .index {

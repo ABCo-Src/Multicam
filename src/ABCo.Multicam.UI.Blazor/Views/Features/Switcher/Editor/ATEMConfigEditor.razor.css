@@ -1,0 +1,15 @@
+﻿.grid {
+    display: grid;
+    grid-template-columns: auto auto minmax(0, 1fr);
+    grid-template-areas: "tag combo ip";
+    align-items: center;
+    width: 100%;
+}
+
+.connectionTag { grid-area: tag; }
+.connectionType { grid-area: combo; }
+.ipBox {
+    grid-area: ip;
+    align-self: stretch;
+    max-width: 100%;
+}

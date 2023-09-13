@@ -15,14 +15,14 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher.Config
 {
 	public interface ISwitcherDummyConfigPresenter : ISwitcherSpecificConfigPresenter, IParameteredService<IFeature>
 	{
-		void OnChange();
+		void OnUIChange();
 	}
 
 	public class SwitcherDummyConfigPresenter : ISwitcherDummyConfigPresenter
 	{
 		readonly IServiceSource _servSource;
 		readonly IFeature _feature;
-		IDummySwitcherConfigVM _vm;
+		ISwitcherDummyConfigVM _vm;
 
 		public ISwitcherSpecificConfigVM VM => _vm;
 		
@@ -30,7 +30,7 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher.Config
 		{
 			_servSource = servSource;
 			_feature = feature;
-			_vm = servSource.Get<IDummySwitcherConfigVM, ISwitcherDummyConfigPresenter>(this);
+			_vm = servSource.Get<ISwitcherDummyConfigVM, ISwitcherDummyConfigPresenter>(this);
 		}
 
 		public void OnConfig(SwitcherConfig config)
@@ -41,17 +41,17 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher.Config
 			_vm.SelectedMixBlockCount = dummyConfig.MixBlocks.Length.ToString();
 
 			// Add the mix-blocks
-			var newMixBlocks = new IDummySwitcherConfigMixBlockVM[dummyConfig.MixBlocks.Length];
+			var newMixBlocks = new ISwitcherDummyConfigMixBlockVM[dummyConfig.MixBlocks.Length];
 			for (int i = 0; i < dummyConfig.MixBlocks.Length; i++)
 			{
-				newMixBlocks[i] = _servSource.Get<IDummySwitcherConfigMixBlockVM, ISwitcherDummyConfigPresenter>(this);
+				newMixBlocks[i] = _servSource.Get<ISwitcherDummyConfigMixBlockVM, ISwitcherDummyConfigPresenter>(this);
 				newMixBlocks[i].InputCount = dummyConfig.MixBlocks[i].ToString();
 				newMixBlocks[i].InputIndex = i + 1;
 			}
 			_vm.MixBlockVMs = newMixBlocks;
 		}
 
-		public void OnChange()
+		public void OnUIChange()
 		{
 			var chosenCount = int.Parse(_vm.SelectedMixBlockCount);
 			var newConfigMBs = new int[chosenCount];

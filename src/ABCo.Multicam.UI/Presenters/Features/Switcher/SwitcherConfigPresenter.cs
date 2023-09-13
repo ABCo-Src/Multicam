@@ -50,6 +50,7 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 			_currentConfigPresenter = type.Type switch
 			{
 				SwitcherType.Dummy => servSource.Get<ISwitcherDummyConfigPresenter, IFeature>(feature),
+				SwitcherType.ATEM => servSource.Get<ISwitcherATEMConfgPresenter, IFeature>(feature),
 				_ => null
 			};
 

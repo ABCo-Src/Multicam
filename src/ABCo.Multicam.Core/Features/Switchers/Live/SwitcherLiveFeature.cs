@@ -88,7 +88,7 @@ namespace ABCo.Multicam.Core.Features.Switchers
 					SwitcherConfig newDefaultConfig = newConfigType.Type switch
 					{
 						SwitcherType.Dummy => new DummySwitcherConfig(4),
-						SwitcherType.ATEM => new ATEMSwitcherConfig(),
+						SwitcherType.ATEM => new ATEMSwitcherConfig(null),
 						_ => throw new Exception("Currently unsupported switcher type!")
 					};
 

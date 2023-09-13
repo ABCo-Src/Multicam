@@ -9,6 +9,7 @@ using ABCo.Multicam.UI.Presenters.Features.Switcher.Config;
 using ABCo.Multicam.UI.ViewModels;
 using ABCo.Multicam.UI.ViewModels.Features;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher;
+using ABCo.Multicam.UI.ViewModels.Features.Switcher.Config.ATEM;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher.Types;
 using Microsoft.Extensions.DependencyInjection;
 using System.Security.Cryptography;
@@ -38,6 +39,7 @@ namespace ABCo.Multicam.UI
 
 			container.AddTransient<ISwitcherConfigPresenter, IFeature, SwitcherConfigType>((p1, p2, s) => new SwitcherConfigPresenter(p1, p2, s));
 			container.AddTransient<ISwitcherDummyConfigPresenter, IFeature>((p1, s) => new SwitcherDummyConfigPresenter(p1, s));
+			container.AddTransient<ISwitcherATEMConfgPresenter, IFeature>((p1, s) => new SwitcherATEMConfgPresenter(p1, s));
 
 			// Register view-models
             container.AddTransient<IMainUIVM, IMainUIPresenter>((p1, s) => new MainUIVM(p1));
@@ -52,8 +54,9 @@ namespace ABCo.Multicam.UI
 			container.AddTransient<ISwitcherConnectionVM, ISwitcherErrorPresenter>((p1, s) => new SwitcherConnectionVM(p1));
 
 			container.AddTransient<ISwitcherConfigVM, ISwitcherConfigPresenter>((p1, s) => new SwitcherConfigVM(p1));
-			container.AddTransient<IDummySwitcherConfigVM, ISwitcherDummyConfigPresenter>((p1, s) => new DummySwitcherConfigVM(p1));
-			container.AddTransient<IDummySwitcherConfigMixBlockVM, ISwitcherDummyConfigPresenter>((p1, s) => new DummySwitcherConfigMixBlockVM(p1));
+			container.AddTransient<ISwitcherDummyConfigVM, ISwitcherDummyConfigPresenter>((p1, s) => new SwitcherDummyConfigVM(p1));
+			container.AddTransient<ISwitcherDummyConfigMixBlockVM, ISwitcherDummyConfigPresenter>((p1, s) => new DummySwitcherConfigMixBlockVM(p1));
+			container.AddTransient<ISwitcherATEMConfigVM, ISwitcherATEMConfgPresenter>((p1, s) => new SwitcherATEMConfigVM(p1));
 
 			CoreStatics.Initialize(container);
         }

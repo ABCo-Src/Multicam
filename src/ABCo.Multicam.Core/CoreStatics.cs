@@ -33,7 +33,7 @@ namespace ABCo.Multicam.Core
 
             container.AddTransient<IDummySwitcher, DummySwitcherConfig>((p1, s) => new DummySwitcher(p1));
 			container.AddTransient<IATEMSwitcher, ATEMSwitcherConfig>((p1, s) => new ATEMSwitcher(p1, s));
-            container.AddTransient<IATEMConnection, IATEMSwitcher>((p1, s) => new ATEMConnection(p1, s));
+            container.AddTransient<IATEMConnection, ATEMSwitcherConfig, IATEMSwitcher>((p1, p2, s) => new ATEMConnection(p1, p2, s));
 			container.AddTransient<IATEMCallbackHandler, IATEMSwitcher>((p1, s) => new ATEMCallbackHandler(p1));
 
 #pragma warning disable

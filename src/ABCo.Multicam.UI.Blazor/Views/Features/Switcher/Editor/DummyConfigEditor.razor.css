@@ -1,6 +1,6 @@
 ﻿.grid {
     display: grid;
-    grid-template-columns: 1fr auto auto;
+    grid-template-columns: 1fr auto 60px;
     grid-template-areas: "_ tag combo";
     align-items: center;
 }

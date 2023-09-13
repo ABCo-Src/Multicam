@@ -9,5 +9,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Data.Config
 {
 	public class ATEMSwitcherConfig : SwitcherConfig
 	{
+		public readonly string? IP;
+		public ATEMSwitcherConfig(string? ip) => IP = ip;
 	}
 }

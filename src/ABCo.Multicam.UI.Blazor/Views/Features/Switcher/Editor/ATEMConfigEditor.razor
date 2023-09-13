@@ -1,0 +1,22 @@
+﻿@using ABCo.Multicam.UI.ViewModels.Features.Switcher.Config.ATEM;
+@inherits VMBoundComponent<ISwitcherATEMConfigVM>
+
+<div class="grid">
+	<p class="gridTitle connectionTag">Connection:</p>
+	<select class="combo connectionType" value="@VM.SelectedConnectionType" @onchange="e => { VM.SelectedConnectionType = (string)e.Value!; VM.OnSelectedTypeChange(); }">
+		@foreach (var item in VM.ConnectionTypes)
+		{
+			<option>@item</option>
+		}
+	</select>
+
+	@if (VM.IsIPAddressEditable)
+	{
+		<input class="textbox ipBox" type="text" @onchange="e => { VM.IpAddress = (string)e.Value!; VM.OnIPChange(); }" value="@VM.IpAddress" />
+	}
+	else 
+	{
+		<input class="textbox ipBox" type="text" value="@VM.IpAddress" disabled />
+	}
+	
+</div>

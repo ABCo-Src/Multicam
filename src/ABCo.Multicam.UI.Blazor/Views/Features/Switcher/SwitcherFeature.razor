@@ -6,10 +6,10 @@
 
 @if (VM.MixBlocks.Length == 0)
 {
-	<p>No specifications stored for this device, connect to load the buses.</p>
+	<p>Connect to the device to load buses.</p>
 }
-
 <ul class="mixBlocks">
+
 	@foreach (var mixBlock in VM.MixBlocks!)
 	{
 		<li>
