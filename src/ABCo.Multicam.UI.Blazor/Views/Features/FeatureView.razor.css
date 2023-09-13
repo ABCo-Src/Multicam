@@ -40,23 +40,31 @@
 }
 
 .options .connection {
-    padding: 10px 18px;
+    padding: 10px;
     background-color: var(--col-btn-appbackdefault);
     width: 100%;
     box-sizing: border-box;
     margin-bottom: 20px;
 }
 
+.options .firstOnARow {
+    padding-left: 18px;
+    padding-right: 18px;
+}
+
 .options .connection p {
     font-weight: bold;
 }
 
-.options .connection:hover:not(:active) {
-    background-color: var(--col-btn-highlight);
+.options .strip {
+    margin-bottom: 20px;
 }
 
-.options .connection:active {
-    background-color: var(--col-btn-pressed);
+.options .strip .stripOption {
+    border: 1px var(--col-border) solid;
+    background-color: var(--col-btn-appbackdefault);
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 .items {
