@@ -38,9 +38,9 @@ namespace ABCo.Multicam.UI.Presenters
 
 		public void OpenMenu(ISideMenuEmbeddableVM vm, string title, Action onClose)
 		{
-			_onClose = onClose;
+			if (_onClose != null) CloseMenu();
 
-			if (VM.MenuVM != null) CloseMenu();
+			_onClose = onClose;
 			VM.MenuTitle = title;
 			VM.MenuVM = vm;
 		}
