@@ -18,15 +18,15 @@ namespace ABCo.Multicam.Core.Features.Switchers
     public class SwitcherMixBlock
     {
         public readonly IReadOnlyList<SwitcherBusInput> ProgramInputs;
-        public readonly IReadOnlyList<SwitcherBusInput>? PreviewInputs;
+        public readonly IReadOnlyList<SwitcherBusInput> PreviewInputs;
 
         public readonly SwitcherMixBlockType NativeType;
         public readonly SwitcherMixBlockFeatures SupportedFeatures;
 
-        public SwitcherMixBlock() => (NativeType, ProgramInputs, PreviewInputs, SupportedFeatures) = (SwitcherMixBlockType.Unknown, Array.Empty<SwitcherBusInput>(), null, new());
+        public SwitcherMixBlock() => (NativeType, ProgramInputs, PreviewInputs, SupportedFeatures) = (SwitcherMixBlockType.Unknown, Array.Empty<SwitcherBusInput>(), Array.Empty<SwitcherBusInput>(), new());
 
         private SwitcherMixBlock(SwitcherMixBlockFeatures features, SwitcherBusInput[] programInputs) =>
-            (NativeType, ProgramInputs, PreviewInputs, SupportedFeatures) = (SwitcherMixBlockType.CutBus, programInputs, null, features);
+            (NativeType, ProgramInputs, PreviewInputs, SupportedFeatures) = (SwitcherMixBlockType.CutBus, programInputs, Array.Empty<SwitcherBusInput>(), features);
 
         private SwitcherMixBlock(SwitcherMixBlockFeatures features, SwitcherBusInput[] programInputs, params SwitcherBusInput[] previewInputs) => 
             (NativeType, ProgramInputs, PreviewInputs, SupportedFeatures) = (SwitcherMixBlockType.ProgramPreview, programInputs, previewInputs, features);

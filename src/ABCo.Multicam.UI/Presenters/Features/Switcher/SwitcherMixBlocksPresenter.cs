@@ -52,14 +52,11 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 			}
 
 			// Initialize the preview bus
-			if (mb.PreviewInputs != null)
+			vm.PreviewBus = new ISwitcherPreviewInputVM[mb.PreviewInputs.Count];
+			for (int i = 0; i < mb.PreviewInputs.Count; i++)
 			{
-				vm.PreviewBus = new ISwitcherPreviewInputVM[mb.PreviewInputs.Count];
-				for (int i = 0; i < mb.PreviewInputs.Count; i++)
-				{
-					vm.PreviewBus[i] = _servSource.Get<ISwitcherPreviewInputVM, ISwitcherMixBlocksPresenter, int, int>(this, mixBlockIndex, mb.PreviewInputs[i].Id);
-					PopulateInputVM(vm.PreviewBus[i], mb.PreviewInputs[i]);
-				}
+				vm.PreviewBus[i] = _servSource.Get<ISwitcherPreviewInputVM, ISwitcherMixBlocksPresenter, int, int>(this, mixBlockIndex, mb.PreviewInputs[i].Id);
+				PopulateInputVM(vm.PreviewBus[i], mb.PreviewInputs[i]);
 			}
 
 			// Initialize the cut button
