@@ -20,11 +20,15 @@
 
 .mainView {
     display: grid;
-    grid-template-rows: 1fr;
+    grid-template-rows: auto;
     grid-template-columns: auto 1fr;
-    grid-template-areas: "panel items";
+    grid-template-areas: "panel content";
     width: 100%;
     height: 100%;
+}
+
+.mainView .content {
+    grid-area: content;
 }
 
 .sidePanel {

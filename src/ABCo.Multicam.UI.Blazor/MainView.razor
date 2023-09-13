@@ -2,8 +2,8 @@
 @using ABCo.Multicam.UI.Presenters.Features;
 @using ABCo.Multicam.UI.ViewModels;
 @using ABCo.Multicam.UI.Blazor.Views.Features;
-@using ABCo.Multicam.UI.ViewModels.Features;
 @using ABCo.Multicam.UI.Blazor.Views.Menus;
+@using ABCo.Multicam.UI.ViewModels.Features;
 @inherits AnimBasedVMBoundComponent<IMainUIVM>
 @inject IFeatureManager manager
 
@@ -18,7 +18,9 @@
 	}
 
 	<!-- Main Content -->
-	<FeatureView VM="(ProjectFeaturesVM)((IProjectFeaturesPresenterForVM)manager.UIPresenter).VM"/>
+	<div class="content">
+		<FeatureView VM="(ProjectFeaturesVM)((IProjectFeaturesPresenterForVM)manager.UIPresenter).VM"/>
+	</div>
 </div>
 
 @code {

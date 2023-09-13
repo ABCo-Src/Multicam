@@ -4,17 +4,26 @@
 @using ABCo.Multicam.UI.ViewModels.Features.Switcher;
 @inherits VMBoundComponent<ProjectFeaturesVM>
 
-<ul class="items">
-	@if (VM.Items != null)
-		@foreach (var item in VM.Items)
-		{
-			<li class="item">
-				<FeatureViewItem VM="item" />
-			</li>
-		}
+<div class="featureView">
+	<div class="options">
 
-	<li class="item">
-		<div class="strip"></div>
-		<a class="content newBtn btn btnDashed" @onclick="e => VM.CreateFeature(new(e.ClientX, e.ClientY))">New Feature</a>
-	</li>
-</ul>
+		<div class="connection">
+			<p>No devices synced</p>
+		</div>
+	</div>
+
+	<ul class="items">
+		@if (VM.Items != null)
+			@foreach (var item in VM.Items)
+			{
+				<li class="item">
+					<FeatureViewItem VM="item" />
+				</li>
+			}
+
+		<li class="item">
+			<div class="strip"></div>
+			<a class="content newBtn btn btnDashed" @onclick="e => VM.CreateFeature(new(e.ClientX, e.ClientY))">New Feature</a>
+		</li>
+	</ul>
+</div>
