@@ -7,7 +7,6 @@ namespace ABCo.Multicam.Core.Features
     {
 		IInstantRetrievalDataSource _collection;
 
-		public static IUnsupportedLiveFeature New(IInstantRetrievalDataSource collection) => new UnsupportedLiveFeature(collection);
 		public UnsupportedLiveFeature(IInstantRetrievalDataSource collection) => _collection = collection;
 
 		public void Dispose() { }

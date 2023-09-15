@@ -22,7 +22,7 @@ namespace ABCo.Multicam.Core
 			container.AddSingleton<IFeatureContentFactory, FeatureContentFactory>();
 			container.AddTransient<IFeature, FeatureTypes, IFeatureDataSource, IFeatureActionTarget>((p1, p2, p3, s) => new Feature(p1, p2, p3, s));
 			container.AddTransient<ILocallyInitializedFeatureDataSource, FeatureDataInfo[]>((p1, s) => new LocallyInitializedFeatureDataSource(p1));
-			container.AddTransient<IUnsupportedLiveFeature, UnsupportedLiveFeature>();
+			container.AddTransient<IUnsupportedLiveFeature, IInstantRetrievalDataSource>((p1, s) => new UnsupportedLiveFeature(p1));
             container.AddTransient<ISwitcherLiveFeature, IInstantRetrievalDataSource>(SwitcherLiveFeature.New);
 
 			// Switcher
