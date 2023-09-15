@@ -1,5 +1,6 @@
 ﻿using ABCo.Multicam.Core.Features;
 using ABCo.Multicam.Core.Features.Data;
+using ABCo.Multicam.Core.Features.Interaction;
 using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.Core.Features.Switchers.Data.Config;
 using ABCo.Multicam.Core.Features.Switchers.Interaction;
@@ -17,12 +18,12 @@ namespace ABCo.Multicam.Core
         public static void Initialize(IParameteredServiceCollection container)
         {
 			// Features
-			container.AddSingleton<IFeatureManager, FeatureManager>();
+			container.AddSingleton<IMainFeatureCollection, MainFeatureCollection>();
 			container.AddSingleton<IFeatureContentFactory, FeatureContentFactory>();
-			container.AddTransient<IFeature, FeatureTypes>(Feature.New);
-			container.AddTransient<ILocalFeatureInteractionHandler, FeatureTypes, FeatureDataInfo[]>((p1, p2, s) => new LocalFeatureInteractionHandler(p1, p2, s));
+			container.AddTransient<IFeature, FeatureTypes, IFeatureDataSource, IFeatureActionTarget>((p1, p2, p3, s) => new Feature(p1, p2, p3, s));
+			container.AddTransient<ILocallyInitializedFeatureDataSource, FeatureDataInfo[]>((p1, s) => new LocallyInitializedFeatureDataSource(p1));
 			container.AddTransient<IUnsupportedLiveFeature, UnsupportedLiveFeature>();
-            container.AddTransient<ISwitcherLiveFeature, ILocalFragmentCollection>(SwitcherLiveFeature.New);
+            container.AddTransient<ISwitcherLiveFeature, IInstantRetrievalDataSource>(SwitcherLiveFeature.New);
 
 			// Switcher
 			container.AddTransient<ISwitcherFactory, SwitcherFactory>();

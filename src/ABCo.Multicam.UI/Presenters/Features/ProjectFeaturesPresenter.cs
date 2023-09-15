@@ -7,7 +7,7 @@ using ABCo.Multicam.UI.ViewModels.Features;
 
 namespace ABCo.Multicam.UI.Presenters.Features
 {
-	public interface IProjectFeaturesPresenterForVM : IProjectFeaturesPresenter, IParameteredService<IFeatureManager>
+	public interface IProjectFeaturesPresenterForVM : IProjectFeaturesPresenter, IParameteredService<IMainFeatureCollection>
 	{
 		IProjectFeaturesVM VM { get; }
 		void OpenMobileMenu(IProjectFeaturesListItemVM vm);
@@ -22,14 +22,14 @@ namespace ABCo.Multicam.UI.Presenters.Features
 	public class ProjectFeaturesPresenter : IProjectFeaturesPresenterForVM
 	{
 		readonly IMainUIPresenter _sideMenuPresenter;
-		readonly IFeatureManager _manager;
+		readonly IMainFeatureCollection _manager;
 		readonly IServiceSource _servSource;
 		readonly IUIDialogHandler _dialogHandler;
 
 		public IProjectFeaturesVM VM { get; }
 		IProjectFeaturesListItemVM? _currentlyEditing;
 
-		public ProjectFeaturesPresenter(IFeatureManager manager, IServiceSource servSource)
+		public ProjectFeaturesPresenter(IMainFeatureCollection manager, IServiceSource servSource)
 		{
 			_manager = manager;
 			_currentlyEditing = null;
@@ -105,7 +105,7 @@ namespace ABCo.Multicam.UI.Presenters.Features
 				"Tally"
 			}));
 
-			void HandleChoice(string choice) => _manager.CreateFeature(choice switch
+			void HandleChoice(string choice) => _manager.CreateLocalFeature(choice switch
 			{
 				"Switcher" => FeatureTypes.Switcher,
 				"Tally" => FeatureTypes.Tally,

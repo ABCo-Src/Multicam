@@ -15,7 +15,7 @@ namespace ABCo.Multicam.Core.Features.Switchers
         void OnFailure(SwitcherError error);
     }
 
-    public interface ISwitcherLiveFeature : ILiveFeature, IParameteredService<ILocalFragmentCollection> { }
+    public interface ISwitcherLiveFeature : ILiveFeature, IParameteredService<IInstantRetrievalDataSource> { }
     public interface ISwitcherFeaturePresenter : IFeaturePresenter, IParameteredService<IFeature> { }
 
 	public class SwitcherLiveFeature : ISwitcherLiveFeature, ISwitcherEventHandler
@@ -26,10 +26,10 @@ namespace ABCo.Multicam.Core.Features.Switchers
 		// The buffer that sits between the switcher and adds preview emulation, caching and more to all the switcher interactions.
 		// A new interaction buffer is created anytime the specs change, and the swapper facilitates for us.
 		readonly IHotSwappableSwitcherInteractionBuffer _buffer;        
-		readonly ILocalFragmentCollection _fragmentCollection;
+		readonly IInstantRetrievalDataSource _fragmentCollection;
 
-		public static ISwitcherLiveFeature New(ILocalFragmentCollection fragmentCollection, IServiceSource serviceSource) => new SwitcherLiveFeature(fragmentCollection, serviceSource);
-		public SwitcherLiveFeature(ILocalFragmentCollection fragmentCollection, IServiceSource serviceSource)
+		public static ISwitcherLiveFeature New(IInstantRetrievalDataSource fragmentCollection, IServiceSource serviceSource) => new SwitcherLiveFeature(fragmentCollection, serviceSource);
+		public SwitcherLiveFeature(IInstantRetrievalDataSource fragmentCollection, IServiceSource serviceSource)
         {
 			_fragmentCollection = fragmentCollection;
             _buffer = serviceSource.Get<IHotSwappableSwitcherInteractionBuffer, SwitcherConfig>(fragmentCollection.GetData<SwitcherConfig>());

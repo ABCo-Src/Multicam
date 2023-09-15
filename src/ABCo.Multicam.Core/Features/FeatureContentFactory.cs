@@ -8,8 +8,8 @@ namespace ABCo.Multicam.UI.ViewModels.Features
 {
 	public interface IFeatureContentFactory
 	{
-		ILiveFeature GetLiveFeature(FeatureTypes type, ILocalFragmentCollection collection);
-		FeatureDataInfo[] GetFeatureFragments(FeatureTypes type);
+		ILiveFeature GetLiveFeature(FeatureTypes type, IInstantRetrievalDataSource collection);
+		FeatureDataInfo[] GetFeatureDataEntries(FeatureTypes type);
 		IFeaturePresenter? GetFeaturePresenter(FeatureTypes type, IFeature feature);
 	}
 
@@ -18,7 +18,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features
 		IServiceSource _servSource;
 		public FeatureContentFactory(IServiceSource servSource) => _servSource = servSource;
 
-		public FeatureDataInfo[] GetFeatureFragments(FeatureTypes type) => type switch
+		public FeatureDataInfo[] GetFeatureDataEntries(FeatureTypes type) => type switch
 		{
 			FeatureTypes.Switcher => SwitcherDataSpecs.DataInfo,
 			_ => new FeatureDataInfo[]
@@ -27,10 +27,10 @@ namespace ABCo.Multicam.UI.ViewModels.Features
 			}
 		};
 
-		public ILiveFeature GetLiveFeature(FeatureTypes type, ILocalFragmentCollection collection) => type switch
+		public ILiveFeature GetLiveFeature(FeatureTypes type, IInstantRetrievalDataSource collection) => type switch
 		{
-			FeatureTypes.Switcher => _servSource.Get<ISwitcherLiveFeature, ILocalFragmentCollection>(collection),
-			_ => _servSource.Get<IUnsupportedLiveFeature, ILocalFragmentCollection>(collection)
+			FeatureTypes.Switcher => _servSource.Get<ISwitcherLiveFeature, IInstantRetrievalDataSource>(collection),
+			_ => _servSource.Get<IUnsupportedLiveFeature, IInstantRetrievalDataSource>(collection)
 		};
 
 		public IFeaturePresenter? GetFeaturePresenter(FeatureTypes type, IFeature feature) => type switch

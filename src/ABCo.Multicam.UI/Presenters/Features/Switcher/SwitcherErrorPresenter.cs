@@ -73,7 +73,7 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 		public void ButtonClick()
 		{
 			if (_currentError != null) 
-				_feature.InteractionHandler.PerformAction(SwitcherActionID.ACKNOWLEDGE_ERROR);
+				_feature.PerformAction(SwitcherActionID.ACKNOWLEDGE_ERROR);
 			else 
 				_noErrorClick();
 		}

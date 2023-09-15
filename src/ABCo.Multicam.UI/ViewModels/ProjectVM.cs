@@ -17,7 +17,7 @@ namespace ABCo.Multicam.UI.ViewModels
 
         public ProjectVM(IServiceSource servSource)
         {
-            var presenter = (IProjectFeaturesPresenterForVM)servSource.Get<IFeatureManager>().UIPresenter;
+            var presenter = (IProjectFeaturesPresenterForVM)servSource.Get<IMainFeatureCollection>().UIPresenter;
             _features = presenter.VM;
         }
     }

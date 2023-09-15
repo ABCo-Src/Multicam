@@ -30,7 +30,7 @@ namespace ABCo.Multicam.UI
 			// Register presenters
 			container.AddSingleton<IMainUIPresenter, MainUIPresenter>();
 
-			container.AddTransient<IProjectFeaturesPresenter, IFeatureManager>((p1, s) => new ProjectFeaturesPresenter(p1, s));
+			container.AddTransient<IProjectFeaturesPresenter, IMainFeatureCollection>((p1, s) => new ProjectFeaturesPresenter(p1, s));
             container.AddTransient<IFeaturePresenter, IFeature, FeatureTypes>((p1, p2, s) => new FeaturePresenter(p1, p2, s));
 			container.AddTransient<ISwitcherFeaturePresenter, IFeature>((p1, s) => new SwitcherFeaturePresenter(p1, s));
 			container.AddTransient<ISwitcherConnectionPresenter, IFeature>((p1, s) => new SwitcherConnectionPresenter(p1, s));

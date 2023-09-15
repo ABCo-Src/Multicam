@@ -24,6 +24,6 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 
 		public SwitcherFeatureVM(IFeature feature) => _feature = feature;
 
-		public void UpdateConfig(SwitcherConfig config) => _feature.InteractionHandler.PerformAction(SwitcherActionID.SET_CONFIG_TYPE, config);
+		public void UpdateConfig(SwitcherConfig config) => _feature.PerformAction(SwitcherActionID.SET_CONFIG_TYPE, config);
     }
 }

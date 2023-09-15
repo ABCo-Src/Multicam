@@ -2,13 +2,13 @@
 
 namespace ABCo.Multicam.Core.Features
 {
-	public interface IUnsupportedLiveFeature : ILiveFeature, IParameteredService<ILocalFragmentCollection> { }
+	public interface IUnsupportedLiveFeature : ILiveFeature, IParameteredService<IInstantRetrievalDataSource> { }
     public class UnsupportedLiveFeature : IUnsupportedLiveFeature
     {
-		ILocalFragmentCollection _collection;
+		IInstantRetrievalDataSource _collection;
 
-		public static IUnsupportedLiveFeature New(ILocalFragmentCollection collection) => new UnsupportedLiveFeature(collection);
-		public UnsupportedLiveFeature(ILocalFragmentCollection collection) => _collection = collection;
+		public static IUnsupportedLiveFeature New(IInstantRetrievalDataSource collection) => new UnsupportedLiveFeature(collection);
+		public UnsupportedLiveFeature(IInstantRetrievalDataSource collection) => _collection = collection;
 
 		public void Dispose() { }
 

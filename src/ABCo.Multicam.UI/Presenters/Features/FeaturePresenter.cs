@@ -22,7 +22,7 @@ namespace ABCo.Multicam.UI.Presenters.Features
 
 		public IFeatureVM VM { get; private set; }
 
-		IFeatureContentPresenterForVM? _contentPresenter;
+		readonly IFeatureContentPresenterForVM? _contentPresenter;
 		readonly IFeature _feature;
 
 		public FeaturePresenter(IFeature feature, FeatureTypes type, IServiceSource servSource)
@@ -49,6 +49,6 @@ namespace ABCo.Multicam.UI.Presenters.Features
 				_contentPresenter?.OnDataChange(structure);
 		}
 
-		public void OnTitleChange() => _feature.InteractionHandler.PerformAction(0, new FeatureGeneralInfo(_type, VM.FeatureTitle));
+		public void OnTitleChange() => _feature.PerformAction(0, new FeatureGeneralInfo(_type, VM.FeatureTitle));
 	}
 }

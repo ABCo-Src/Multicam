@@ -1,8 +1,8 @@
-﻿namespace ABCo.Multicam.Core.Features
+﻿using ABCo.Multicam.Core.Features.Interaction;
+
+namespace ABCo.Multicam.Core.Features
 {
-	public interface ILiveFeature : IDisposable
-    {
-        void PerformAction(int id);
-        void PerformAction(int id, object param);
+	public interface ILiveFeature : IFeatureActionTarget, IDisposable
+	{
     }
 }
