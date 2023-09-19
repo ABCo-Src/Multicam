@@ -1,5 +1,6 @@
 ﻿using ABCo.Multicam.Core.Features.Switchers.Data;
 using ABCo.Multicam.Core.Features.Switchers.Data.Config;
+using ABCo.Multicam.Core.Features.Switchers.Live.Types.ATEM;
 using ABCo.Multicam.Core.General;
 
 namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
@@ -13,7 +14,8 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 		readonly ATEMSwitcherConfig _config;
 		readonly IMainThreadDispatcher _mainThreadDispatcher;
 		readonly IServiceSource _servSource;
-		readonly CatchingAndQueuedSTAThread<ATEMSwitcher> _interactionThread = new();
+		readonly IATEMPlatformCompatibility _compatibility;
+		readonly CatchingAndQueuedSTAThread<ATEMSwitcher> _interactionThread;
 
 		IATEMConnection? _connection; // MUST always be used from the background queue
 
@@ -21,11 +23,20 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 		{
 			_config = config;
 			_servSource = servSource;
+			_interactionThread = new(servSource);
+			_compatibility = servSource.Get<IATEMPlatformCompatibility>();
 			_mainThreadDispatcher = servSource.Get<IMainThreadDispatcher>();
 		}
 
 		public override void Connect()
 		{
+			// If the platform isn't supposed, don't do anything and report that
+			if (_compatibility.GetCompatibility() != ATEMPlatformCompatibilityValue.Supported)
+			{
+				_eventHandler?.OnFailure(new SwitcherError("ATEM Switchers cannot currently be connected to, check the edit page for more info."));
+				return;
+			}
+
 			_interactionThread.QueueTask(s =>
 			{
 				s._connection = s._servSource.Get<IATEMConnection, ATEMSwitcherConfig, IATEMSwitcher>(_config, s);

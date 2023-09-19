@@ -1,15 +1,15 @@
 ﻿using ABCo.Multicam.Core.General;
+using ABCo.Multicam.UI.Blazor.Web;
 using Microsoft.AspNetCore.Components;
 
 namespace ABCo.Multicam.UI.Blazor.Services
 {
 	public class MainThreadDispatcher : IMainThreadDispatcher
 	{
-		public async void QueueOnMainFeatureThread(Action act)
+		public void QueueOnMainFeatureThread(Action act)
 		{
-			// TODO: Handle exceptions
-			var dispatcher = Dispatcher.CreateDefault();
-			await dispatcher.InvokeAsync(act);
+			// Threading doesn't exist on web
+			act();
 		}
 	}
 }

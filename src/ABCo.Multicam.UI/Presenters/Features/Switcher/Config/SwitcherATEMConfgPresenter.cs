@@ -3,6 +3,7 @@ using ABCo.Multicam.Core.Features;
 using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.Core.Features.Switchers.Data;
 using ABCo.Multicam.Core.Features.Switchers.Data.Config;
+using ABCo.Multicam.Core.Features.Switchers.Live.Types.ATEM;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher.Config.ATEM;
 using System;
@@ -28,6 +29,7 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher.Config
 		public SwitcherATEMConfgPresenter(IFeature feature, IServiceSource servSource)
 		{
 			_vm = servSource.Get<ISwitcherATEMConfigVM, ISwitcherATEMConfgPresenter>(this);
+			_vm.CompatibilityMessage = servSource.Get<IATEMPlatformCompatibility>().GetCompatibility();
 			_feature = feature;
 		}
 
@@ -35,7 +37,7 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher.Config
 		{
 			var atemConfig = (ATEMSwitcherConfig)config;
 
-			_vm.SelectedConnectionType = atemConfig.IP == null ? "USB" : "IP";
+			_vm.SelectedConnectionType = atemConfig.IP == null ? "USB" : "IP";			
 			if (atemConfig.IP != null)
 				_vm.IpAddress = atemConfig.IP;
 		}

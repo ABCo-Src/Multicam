@@ -1,5 +1,8 @@
-﻿@using ABCo.Multicam.UI.ViewModels.Features.Switcher.Config.ATEM;
+﻿@using ABCo.Multicam.Core.Features.Switchers.Live.Types.ATEM;
+@using ABCo.Multicam.Core.General;
+@using ABCo.Multicam.UI.ViewModels.Features.Switcher.Config.ATEM;
 @inherits VMBoundComponent<ISwitcherATEMConfigVM>
+@inject IPlatformInfo platformInfo
 
 <div class="grid">
 	<p class="gridTitle connectionTag">Connection:</p>
@@ -18,5 +21,36 @@
 	{
 		<input class="textbox ipBox" type="text" value="@VM.IpAddress" disabled />
 	}
-	
 </div>
+
+<!-- Compatibility box -->
+@if (VM.CompatibilityMessage != ATEMPlatformCompatibilityValue.Supported)
+{
+	<div class="compatibilityBox boxedPortion">
+		<p class="exclamation">!</p>
+		
+		@if (VM.CompatibilityMessage == ATEMPlatformCompatibilityValue.UnsupportedPlatform)
+		{
+			@if (platformInfo.GetPlatformType() == PlatformType.Web)
+			{
+				<p class="message">ATEM Switchers can't be connected to from the web. Install the program on this device to do this, or install on another device and sync up with it.</p>
+			}
+			else
+			{
+				<p class="message">ATEM Switchers can't be connected to from this platform. Install the program on a device of a different platform, and sync up to that.</p>
+			}
+		}
+		else
+		{
+			<p class="message">No drivers were found on the system for connecting to ATEM devices. Install the ATEM Switchers Software from Blackmagic Design's support page to add them.</p>
+		}
+	</div>
+}
+
+@if (VM.ShowOneProgramMessage)
+{
+	<div class="infoBox boxedPortion">
+		<p class="information">i</p>
+		<p class="message">When connected over USB, only one program at a time may control the ATEM switcher. Running ATEM Software Control in the background may result in unexpected disconnecting.</p>
+	</div>
+}

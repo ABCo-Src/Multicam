@@ -27,10 +27,15 @@
     width: 100%;
 }
 
+::deep .boxedPortion {
+    margin: 10px 10px 0 10px;
+    padding: 10px;
+}
+
 ::deep .indexedListItem {
     margin-top: 10px;
-    background-color: var(--col-panellistitem);
     padding: 10px;
+    background-color: var(--col-panellistitem);
 }
 
 ::deep .indexedListItem .index {

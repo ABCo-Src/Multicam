@@ -17,6 +17,7 @@ namespace ABCo.Multicam.UI.Blazor.Win32
 			services.AddWindowsFormsBlazorWebView();
 			services.AddBlazorWebViewDeveloperTools();
 			services.AddSingleton<IMainThreadDispatcher, MainThreadDispatcher>();
+			services.AddSingleton<IPlatformInfo, WindowsPlatformInfo>();
 			BlazorStatics.Initialize(services);
 
 			blazorWebView1.HostPage = "wwwroot\\index.html";

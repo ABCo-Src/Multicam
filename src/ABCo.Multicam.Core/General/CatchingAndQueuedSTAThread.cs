@@ -1,4 +1,6 @@
-﻿namespace ABCo.Multicam.Core.General
+﻿using System.Runtime.Versioning;
+
+namespace ABCo.Multicam.Core.General
 {
 	public interface ICatchingOrderedBackgroundQueue<T> where T : IErrorHandlingTarget
 	{
@@ -15,17 +17,23 @@
 	{
 		record struct QueueItem(Action<T>? ToPerform, T Target);
 
+		readonly IPlatformInfo _platformInfo;
 		readonly Queue<QueueItem> _taskQueue;
 
-		public CatchingAndQueuedSTAThread()
+		public CatchingAndQueuedSTAThread(IServiceSource servSource)
 		{
+			_platformInfo = servSource.Get<IPlatformInfo>();
 			_taskQueue = new();
 		}
 
 		public void StartExecution()
 		{
 			var thread = new Thread(DoWorkBackground);
-			thread.SetApartmentState(ApartmentState.STA);
+
+			// Only do the STA part if we're on Windows
+			if (OperatingSystem.IsWindows())
+				thread.SetApartmentState(ApartmentState.STA);
+
 			thread.Start();
 		}
 

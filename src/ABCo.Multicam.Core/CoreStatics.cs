@@ -4,6 +4,7 @@ using ABCo.Multicam.Core.Features.Interaction;
 using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.Core.Features.Switchers.Data.Config;
 using ABCo.Multicam.Core.Features.Switchers.Interaction;
+using ABCo.Multicam.Core.Features.Switchers.Live.Types.ATEM;
 using ABCo.Multicam.Core.Features.Switchers.Types;
 using ABCo.Multicam.Core.Features.Switchers.Types.ATEM;
 using ABCo.Multicam.Core.Features.Switchers.Types.ATEM.Native;
@@ -33,6 +34,7 @@ namespace ABCo.Multicam.Core
             container.AddSingleton<ISwitcherInteractionBufferFactory, SwitcherInteractionBufferFactory>();
 
             container.AddTransient<IDummySwitcher, DummySwitcherConfig>((p1, s) => new DummySwitcher(p1));
+			container.AddSingleton<IATEMPlatformCompatibility, ATEMPlatformCompatibility>();
 			container.AddTransient<IATEMSwitcher, ATEMSwitcherConfig>((p1, s) => new ATEMSwitcher(p1, s));
             container.AddTransient<IATEMConnection, ATEMSwitcherConfig, IATEMSwitcher>((p1, p2, s) => new ATEMConnection(p1, p2, s));
 			container.AddTransient<IATEMCallbackHandler, IATEMSwitcher>((p1, s) => new ATEMCallbackHandler(p1));
