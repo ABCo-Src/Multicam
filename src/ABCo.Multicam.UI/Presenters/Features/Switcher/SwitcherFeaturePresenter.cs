@@ -8,7 +8,7 @@ using ABCo.Multicam.UI.ViewModels.Features.Switcher;
 
 namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 {
-	public interface ISwitcherVMFeaturePresenter : ISwitcherFeaturePresenter, IFeatureContentPresenterForVM, IParameteredService<IFeature> { }
+	public interface ISwitcherVMFeaturePresenter : ISwitcherFeaturePresenter, IFeatureContentPresenterForVM { }
 	public class SwitcherFeaturePresenter : ISwitcherVMFeaturePresenter
 	{
 		readonly IServiceSource _servSource;
@@ -34,7 +34,7 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 
 		public IFeatureContentVM VM => _vm;
 
-		public void OnDataChange(FeatureData data)
+		public void OnDataChange(object data)
 		{
 			switch (data)
 			{
@@ -63,7 +63,6 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 				case SwitcherState state:
 					_mixBlocksPresenter.OnState(state.Data);
 					break;
-
 			}
 		}
 

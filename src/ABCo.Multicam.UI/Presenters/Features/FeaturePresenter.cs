@@ -1,11 +1,12 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features;
 using ABCo.Multicam.Core.Features.Data;
+using ABCo.Multicam.Core.Hosting.Scoping;
 using ABCo.Multicam.UI.ViewModels.Features;
 
 namespace ABCo.Multicam.UI.Presenters.Features
 {
-	public interface IFeaturePresenterForVM : IFeaturePresenter
+	public interface IMainFeaturePresenterForVM : IFeaturePresenter
     {
 		IFeatureVM VM { get; }
 		void OnTitleChange();
@@ -16,39 +17,40 @@ namespace ABCo.Multicam.UI.Presenters.Features
 		IFeatureContentVM VM { get; }
 	}
 
-	public class FeaturePresenter : IFeaturePresenterForVM, IParameteredService<IFeature, FeatureTypes>
+	public class FeaturePresenter : IMainFeaturePresenterForVM, IParameteredService<IFeature, IScopeInfo>
 	{
-		FeatureTypes _type;
-
 		public IFeatureVM VM { get; private set; }
 
-		readonly IFeatureContentPresenterForVM? _contentPresenter;
+		readonly IServiceSource _servSource;
+		readonly IScopeInfo _scopeInfo;
 		readonly IFeature _feature;
+		FeatureTypes? _type;
 
-		public FeaturePresenter(IFeature feature, FeatureTypes type, IServiceSource servSource)
+		public FeaturePresenter(IFeature feature, IScopeInfo scopeInfo, IServiceSource servSource)
 		{
-			_feature = feature;
-			_type = type;
-			_contentPresenter = (IFeatureContentPresenterForVM?)servSource.Get<IFeatureContentFactory>().GetFeaturePresenter(type, feature);
+			_servSource = servSource;
+			_scopeInfo = scopeInfo;
+            _feature = feature;
 
-			VM = servSource.Get<IFeatureVM, IFeaturePresenterForVM>(this);
-			if (_contentPresenter != null) VM.Content = _contentPresenter.VM;
-		}
+			VM = servSource.Get<IFeatureVM, IMainFeaturePresenterForVM>(this);
+        }
 
-		public void Init()
-		{
-			_feature.RefreshData<FeatureGeneralInfo>();
-			_contentPresenter?.Init();
-		}
+        public void Init() => _feature.RefreshData<FeatureGeneralInfo>();
 
-		public void OnDataChange(FeatureData structure)
+        public void OnDataChange(object structure)
 		{
 			if (structure is FeatureGeneralInfo info)
+			{
+				// Update the content presenter
+				_type = info.Type;
+                var newContentPresenter = (IFeatureContentPresenterForVM?)_servSource.Get<IFeatureContentFactory>().GetRelevantContentPresenterFromStore(info.Type, _feature.UIPresenters, _scopeInfo);
+                if (newContentPresenter != null) VM.Content = newContentPresenter.VM;
+
+				// Update the title
 				VM.FeatureTitle = info.Title;
-			else
-				_contentPresenter?.OnDataChange(structure);
+			}
 		}
 
-		public void OnTitleChange() => _feature.PerformAction(0, new FeatureGeneralInfo(_type, VM.FeatureTitle));
+		public void OnTitleChange() => _feature.PerformAction(0, new FeatureGeneralInfo(_type ?? throw new Exception("Uninitialized feature presenter asked to change title."), VM.FeatureTitle));
 	}
 }

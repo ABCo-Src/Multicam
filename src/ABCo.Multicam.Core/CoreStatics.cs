@@ -9,6 +9,7 @@ using ABCo.Multicam.Core.Features.Switchers.Types;
 using ABCo.Multicam.Core.Features.Switchers.Types.ATEM;
 using ABCo.Multicam.Core.Features.Switchers.Types.ATEM.Native;
 using ABCo.Multicam.Core.Features.Switchers.Types.ATEM.Windows;
+using ABCo.Multicam.Core.Hosting.Scoping;
 using ABCo.Multicam.UI.ViewModels.Features;
 using System.Security.Cryptography;
 
@@ -21,6 +22,8 @@ namespace ABCo.Multicam.Core
 			// Features
 			container.AddSingleton<IMainFeatureCollection, MainFeatureCollection>();
 			container.AddSingleton<IFeatureContentFactory, FeatureContentFactory>();
+			container.AddSingleton<IScopedConnectionManager, ScopedConnectionManager>();
+			container.AddSingleton<IScopedPresenterStoreFactory, ScopedPresenterStoreFactory>();
 			container.AddTransient<IFeature, FeatureTypes, IFeatureDataSource, IFeatureActionTarget>((p1, p2, p3, s) => new Feature(p1, p2, p3, s));
 			container.AddTransient<ILocallyInitializedFeatureDataSource, FeatureDataInfo[]>((p1, s) => new LocallyInitializedFeatureDataSource(p1));
 			container.AddTransient<IUnsupportedLiveFeature, IInstantRetrievalDataSource>((p1, s) => new UnsupportedLiveFeature(p1));

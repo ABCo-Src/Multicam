@@ -1,5 +1,6 @@
 ﻿using ABCo.Multicam.Core.Features.Data;
 using ABCo.Multicam.Core.Features.Interaction;
+using ABCo.Multicam.Core.Hosting.Scoping;
 using ABCo.Multicam.UI.ViewModels.Features;
 
 namespace ABCo.Multicam.Core.Features
@@ -12,13 +13,13 @@ namespace ABCo.Multicam.Core.Features
         IReadOnlyList<IFeature> Features { get; }
 		IProjectFeaturesPresenter UIPresenter { get; }
 
-        void CreateLocalFeature(FeatureTypes type);
+        void CreateFeature(FeatureTypes type);
         void MoveUp(IFeature feature);
         void MoveDown(IFeature feature);
         void Delete(IFeature feature);
     }
 
-	public interface IProjectFeaturesPresenter : IParameteredService<IMainFeatureCollection>
+	public interface IProjectFeaturesPresenter : IParameteredService<IMainFeatureCollection, IScopeInfo>
     {
         void OnItemsChange();
     }
@@ -36,10 +37,10 @@ namespace ABCo.Multicam.Core.Features
         {
             _servSource = source;
             _featureContentFactory = source.Get<IFeatureContentFactory>();
-			UIPresenter = source.Get<IProjectFeaturesPresenter, IMainFeatureCollection>(this);
+			UIPresenter = source.Get<IProjectFeaturesPresenter, IMainFeatureCollection, IScopeInfo>(this, _servSource.Get<IScopedConnectionManager>().CreateScope());
         }
 
-        public void CreateLocalFeature(FeatureTypes type)
+        public void CreateFeature(FeatureTypes type)
         {
             // Create the data store 
             var dataSpecs = _featureContentFactory.GetFeatureDataEntries(type);

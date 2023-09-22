@@ -1,13 +1,14 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features;
 using ABCo.Multicam.Core.Features.Data;
+using ABCo.Multicam.Core.Hosting.Scoping;
 using ABCo.Multicam.UI.Services;
 using ABCo.Multicam.UI.Structures;
 using ABCo.Multicam.UI.ViewModels.Features;
 
 namespace ABCo.Multicam.UI.Presenters.Features
 {
-	public interface IProjectFeaturesPresenterForVM : IProjectFeaturesPresenter, IParameteredService<IMainFeatureCollection>
+	public interface IProjectFeaturesPresenterForVM : IProjectFeaturesPresenter, IParameteredService<IMainFeatureCollection, IScopeInfo>
 	{
 		IProjectFeaturesVM VM { get; }
 		void OpenMobileMenu(IProjectFeaturesListItemVM vm);
@@ -24,18 +25,21 @@ namespace ABCo.Multicam.UI.Presenters.Features
 		readonly IMainUIPresenter _sideMenuPresenter;
 		readonly IMainFeatureCollection _manager;
 		readonly IServiceSource _servSource;
+		readonly IScopeInfo _scopeInfo;
 		readonly IUIDialogHandler _dialogHandler;
 
 		public IProjectFeaturesVM VM { get; }
 		IProjectFeaturesListItemVM? _currentlyEditing;
 
-		public ProjectFeaturesPresenter(IMainFeatureCollection manager, IServiceSource servSource)
+		public ProjectFeaturesPresenter(IMainFeatureCollection manager, IScopeInfo scopeInfo, IServiceSource servSource)
 		{
 			_manager = manager;
 			_currentlyEditing = null;
 			_dialogHandler = servSource.Get<IUIDialogHandler>();
 			_sideMenuPresenter = servSource.Get<IMainUIPresenter>();
 			_servSource = servSource;
+			_scopeInfo = scopeInfo;
+
 			VM = servSource.Get<IProjectFeaturesVM, IProjectFeaturesPresenterForVM>(this);
 		}
 
@@ -52,7 +56,7 @@ namespace ABCo.Multicam.UI.Presenters.Features
 
 				if (vm == -1)
 				{
-					var innerVM = ((IFeaturePresenterForVM)_manager.Features[i].UIPresenter).VM;
+					var innerVM = _manager.Features[i].UIPresenters.GetPresenter<IMainFeaturePresenterForVM>(_scopeInfo).VM;
 					newItems[i] = _servSource.Get<IProjectFeaturesListItemVM, IProjectFeaturesPresenterForVM, IFeature, IFeatureVM>(this, _manager.Features[i], innerVM);
 					newItems[i].EditBtnText = "Edit";
 				}
@@ -105,7 +109,7 @@ namespace ABCo.Multicam.UI.Presenters.Features
 				"Tally"
 			}));
 
-			void HandleChoice(string choice) => _manager.CreateLocalFeature(choice switch
+			void HandleChoice(string choice) => _manager.CreateFeature(choice switch
 			{
 				"Switcher" => FeatureTypes.Switcher,
 				"Tally" => FeatureTypes.Tally,
