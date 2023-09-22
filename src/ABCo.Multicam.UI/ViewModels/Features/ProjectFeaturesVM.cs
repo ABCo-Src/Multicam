@@ -8,15 +8,16 @@ using System;
 
 namespace ABCo.Multicam.UI.ViewModels.Features
 {
-	public interface IProjectFeaturesVM : IParameteredService<IProjectFeaturesPresenterForVM>, IAnimationHandlingVM
+	public interface IProjectFeaturesVM : IParameteredService<IProjectFeaturesPresenter>, IAnimationHandlingVM
     {
 		IProjectFeaturesListItemVM? MobileView { get; set; }
         IProjectFeaturesListItemVM[] Items { get; set; }
+		void CreateFeature(CursorPosition pos);
     }
 
     public partial class ProjectFeaturesVM : ViewModelBase, IProjectFeaturesVM
     {
-		readonly IProjectFeaturesPresenterForVM _presenter;
+		readonly IProjectFeaturesPresenter _presenter;
 
 		IProjectFeaturesListItemVM? _mobileView;
         public IProjectFeaturesListItemVM? MobileView
@@ -34,7 +35,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features
 
 		[ObservableProperty] IProjectFeaturesListItemVM[] _items = Array.Empty<IProjectFeaturesListItemVM>();
 
-		public ProjectFeaturesVM(IProjectFeaturesPresenterForVM presenter) => _presenter = presenter;
+		public ProjectFeaturesVM(IProjectFeaturesPresenter presenter) => _presenter = presenter;
         public void CreateFeature(CursorPosition pos) => _presenter.CreateFeature(pos);
     }
 }

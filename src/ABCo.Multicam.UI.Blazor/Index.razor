@@ -1,4 +1,8 @@
 ﻿@using ABCo.Multicam.UI.Presenters;
 @inject IMainUIPresenter presenter
 
+@{
+	presenter.Init();
+}
+
 <MainView VM="presenter.VM" />

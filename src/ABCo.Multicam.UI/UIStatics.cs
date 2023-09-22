@@ -44,8 +44,8 @@ namespace ABCo.Multicam.UI
 
 			// Register view-models
             container.AddTransient<IMainUIVM, IMainUIPresenter>((p1, s) => new MainUIVM(p1));
-            container.AddTransient<IProjectFeaturesVM, IProjectFeaturesPresenterForVM>((p1, s) => new ProjectFeaturesVM(p1));
-            container.AddTransient<IProjectFeaturesListItemVM, IProjectFeaturesPresenterForVM, IFeature, IFeatureVM>((p1, p2, p3, s) => new ProjectFeaturesListItemVM(p1, p2, p3));
+            container.AddTransient<IProjectFeaturesVM, IProjectFeaturesPresenter>((p1, s) => new ProjectFeaturesVM(p1));
+            container.AddTransient<IProjectFeaturesListItemVM, IProjectFeaturesPresenter, IFeature, IFeatureVM>((p1, p2, p3, s) => new ProjectFeaturesListItemVM(p1, p2, p3));
             container.AddTransient<IFeatureVM, IMainFeaturePresenterForVM>((p1, s) => new FeatureVM(p1));
 			container.AddTransient<ISwitcherFeatureVM, IFeature>((p1, s) => new SwitcherFeatureVM(p1));
             container.AddTransient<ISwitcherMixBlockVM, SwitcherMixBlockVM>();

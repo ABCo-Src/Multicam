@@ -7,7 +7,7 @@ using System.ComponentModel;
 
 namespace ABCo.Multicam.UI.ViewModels.Features
 {
-	public interface IProjectFeaturesListItemVM : IParameteredService<IProjectFeaturesPresenterForVM, IFeature, IFeatureVM>, INotifyPropertyChanged, ISideMenuEmbeddableVM
+	public interface IProjectFeaturesListItemVM : IParameteredService<IProjectFeaturesPresenter, IFeature, IFeatureVM>, INotifyPropertyChanged, ISideMenuEmbeddableVM
 	{
 		IFeature NativeItem { get; }
 		IFeatureVM Feature { get; }
@@ -24,11 +24,11 @@ namespace ABCo.Multicam.UI.ViewModels.Features
 	{
 		public IFeature NativeItem { get; }
 
-		readonly IProjectFeaturesPresenterForVM _presenter;
+		readonly IProjectFeaturesPresenter _presenter;
 		[ObservableProperty] IFeatureVM _feature;
 		[ObservableProperty] string _editBtnText = "";
 
-		public ProjectFeaturesListItemVM(IProjectFeaturesPresenterForVM presenter, IFeature nativeItem, IFeatureVM innerVM)
+		public ProjectFeaturesListItemVM(IProjectFeaturesPresenter presenter, IFeature nativeItem, IFeatureVM innerVM)
 		{
 			NativeItem = nativeItem;
 			_presenter = presenter;

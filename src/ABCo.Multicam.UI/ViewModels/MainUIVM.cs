@@ -14,7 +14,8 @@ namespace ABCo.Multicam.UI.ViewModels
 	public interface IMainUIVM : IParameteredService<IMainUIPresenter>, INotifyPropertyChanged, IAnimationHandlingVM
 	{
 		ISideMenuEmbeddableVM? MenuVM { get; set; }
-		string MenuTitle { get; set; }
+		IProjectFeaturesVM? ContentVM { get; set; }
+        string MenuTitle { get; set; }
 
 		void CloseMenuButton();
 	}
@@ -30,7 +31,9 @@ namespace ABCo.Multicam.UI.ViewModels
 			set => UpdateMenuVM(value);
 		}
 
-		public async void UpdateMenuVM(ISideMenuEmbeddableVM? newVal)
+        public IProjectFeaturesVM? ContentVM { get; set; }
+
+        public async void UpdateMenuVM(ISideMenuEmbeddableVM? newVal)
 		{
 			await WaitForAnimationHandler(nameof(MenuVM));
 			_menuVM = newVal;
@@ -42,7 +45,6 @@ namespace ABCo.Multicam.UI.ViewModels
 		public MainUIVM(IMainUIPresenter presenter)
 		{
 			_presenter = presenter;
-			//FeatureViewVM = featureViewVM;
 		}
 
 		public void CloseMenuButton() => _presenter.CloseMenu();

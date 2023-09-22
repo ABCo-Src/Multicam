@@ -11,17 +11,12 @@ namespace ABCo.Multicam.Core.Features
 	public interface IMainFeatureCollection : IDisposable
     {
         IReadOnlyList<IFeature> Features { get; }
-		IProjectFeaturesPresenter UIPresenter { get; }
+        IScopedPresenterStore<IMainFeatureCollection> UIPresenters { get; }
 
         void CreateFeature(FeatureTypes type);
         void MoveUp(IFeature feature);
         void MoveDown(IFeature feature);
         void Delete(IFeature feature);
-    }
-
-	public interface IProjectFeaturesPresenter : IParameteredService<IMainFeatureCollection, IScopeInfo>
-    {
-        void OnItemsChange();
     }
 
     public class MainFeatureCollection : IMainFeatureCollection
@@ -31,13 +26,13 @@ namespace ABCo.Multicam.Core.Features
         readonly List<IFeature> _features = new();
 
         public IReadOnlyList<IFeature> Features => _features;
-        public IProjectFeaturesPresenter UIPresenter { get; private set; }
+        public IScopedPresenterStore<IMainFeatureCollection> UIPresenters { get; }
 
         public MainFeatureCollection(IServiceSource source)
         {
             _servSource = source;
             _featureContentFactory = source.Get<IFeatureContentFactory>();
-			UIPresenter = source.Get<IProjectFeaturesPresenter, IMainFeatureCollection, IScopeInfo>(this, _servSource.Get<IScopedConnectionManager>().CreateScope());
+			UIPresenters = source.Get<IScopedPresenterStoreFactory>().Get((IMainFeatureCollection)this);
         }
 
         public void CreateFeature(FeatureTypes type)
@@ -51,7 +46,7 @@ namespace ABCo.Multicam.Core.Features
 
             // Add the feature
 			_features.Add(_servSource.Get<IFeature, FeatureTypes, IFeatureDataSource, IFeatureActionTarget>(type, dataStore, liveFeature));
-            UIPresenter.OnItemsChange();
+            UIPresenters.OnDataChange(_features);
         }
 
         public void MoveUp(IFeature feature)
@@ -63,7 +58,7 @@ namespace ABCo.Multicam.Core.Features
 
             (_features[indexOfFeature], _features[indexOfFeature - 1]) = (_features[indexOfFeature - 1], _features[indexOfFeature]);
 
-            UIPresenter.OnItemsChange();
+            UIPresenters.OnDataChange(_features);
         }
 
         public void MoveDown(IFeature feature)
@@ -75,7 +70,7 @@ namespace ABCo.Multicam.Core.Features
 
             (_features[indexOfFeature], _features[indexOfFeature + 1]) = (_features[indexOfFeature + 1], _features[indexOfFeature]);
 
-            UIPresenter.OnItemsChange();
+            UIPresenters.OnDataChange(_features);
         }
 
         public void Delete(IFeature feature)
@@ -83,7 +78,7 @@ namespace ABCo.Multicam.Core.Features
             _features.Remove(feature);
             feature.Dispose();
 
-            UIPresenter.OnItemsChange();
+            UIPresenters.OnDataChange(_features);
         }
 
         public void Dispose()

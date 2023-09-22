@@ -5,7 +5,6 @@
 @using ABCo.Multicam.UI.Blazor.Views.Menus;
 @using ABCo.Multicam.UI.ViewModels.Features;
 @inherits AnimBasedVMBoundComponent<IMainUIVM>
-@inject IMainFeatureCollection manager
 
 <div class="mainView">
 
@@ -19,7 +18,10 @@
 
 	<!-- Main Content -->
 	<div class="content">
-		<FeatureView VM="(ProjectFeaturesVM)((IProjectFeaturesPresenterForVM)manager.UIPresenter).VM"/>
+		@if (VM.ContentVM != null)
+		{
+			<FeatureView VM="VM.ContentVM" />
+		}
 	</div>
 </div>
 
