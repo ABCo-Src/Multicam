@@ -83,6 +83,8 @@ namespace ABCo.Multicam.Core.Features
 
         public void Dispose()
         {
+            UIPresenters.Dispose();
+
             for (int i = 0; i < _features.Count; i++)
                 _features[i].Dispose();
         }

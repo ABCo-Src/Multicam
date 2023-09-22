@@ -43,6 +43,10 @@ namespace ABCo.Multicam.Core.Features
 		public void PerformAction(int id, object param) => _actionTarget.PerformAction(id, param);
 		public void OnDataChange(FeatureData val) => UIPresenters.OnDataChange(val);
 
-		public void Dispose() => _actionTarget.Dispose();
+		public void Dispose()
+		{
+			UIPresenters.Dispose();
+			_actionTarget.Dispose();
+		}
 	}
 }
