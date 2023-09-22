@@ -6,18 +6,19 @@ using ABCo.Multicam.UI.ViewModels.Features;
 
 namespace ABCo.Multicam.UI.Presenters.Features
 {
-	public interface IMainFeaturePresenterForVM : IFeaturePresenter
+
+	public interface IMainFeaturePresenter : IFeaturePresenter
     {
 		IFeatureVM VM { get; }
 		void OnTitleChange();
 	}
 
-	public interface IFeatureContentPresenterForVM : IFeaturePresenter
+	public interface IFeatureContentPresenter : IFeaturePresenter
 	{
 		IFeatureContentVM VM { get; }
 	}
 
-	public class FeaturePresenter : IMainFeaturePresenterForVM, IParameteredService<IFeature, IScopeInfo>
+	public class FeaturePresenter : IMainFeaturePresenter, IParameteredService<IFeature, IScopeInfo>
 	{
 		public IFeatureVM VM { get; private set; }
 
@@ -32,7 +33,7 @@ namespace ABCo.Multicam.UI.Presenters.Features
 			_scopeInfo = scopeInfo;
             _feature = feature;
 
-			VM = servSource.Get<IFeatureVM, IMainFeaturePresenterForVM>(this);
+			VM = servSource.Get<IFeatureVM, IMainFeaturePresenter>(this);
         }
 
         public void Init() => _feature.RefreshData<FeatureGeneralInfo>();
@@ -43,7 +44,7 @@ namespace ABCo.Multicam.UI.Presenters.Features
 			{
 				// Update the content presenter
 				_type = info.Type;
-                var newContentPresenter = (IFeatureContentPresenterForVM?)_servSource.Get<IFeatureContentFactory>().GetRelevantContentPresenterFromStore(info.Type, _feature.UIPresenters, _scopeInfo);
+                var newContentPresenter = (IFeatureContentPresenter?)_servSource.Get<IFeatureContentFactory>().GetRelevantContentPresenterFromStore(info.Type, _feature.UIPresenters, _scopeInfo);
                 if (newContentPresenter != null) VM.Content = newContentPresenter.VM;
 
 				// Update the title

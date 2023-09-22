@@ -32,7 +32,7 @@ namespace ABCo.Multicam.UI
 			container.AddSingleton<IMainUIPresenter, MainUIPresenter>();
 
 			container.AddTransient<IProjectFeaturesPresenter, IMainFeatureCollection, IScopeInfo>((p1, p2, s) => new ProjectFeaturesPresenter(p1, p2, s));
-            container.AddTransient<IMainFeaturePresenterForVM, IFeature, IScopeInfo> ((p1, p2, s) => new FeaturePresenter(p1, p2, s));
+            container.AddTransient<IMainFeaturePresenter, IFeature, IScopeInfo> ((p1, p2, s) => new FeaturePresenter(p1, p2, s));
 			container.AddTransient<ISwitcherFeaturePresenter, IFeature, IScopeInfo>((p1, p2, s) => new SwitcherFeaturePresenter(p1, s));
 			container.AddTransient<ISwitcherConnectionPresenter, IFeature>((p1, s) => new SwitcherConnectionPresenter(p1, s));
 			container.AddTransient<ISwitcherErrorPresenter, IFeature, Action>((p1, p2, s) => new SwitcherErrorPresenter(p1, p2, s));
@@ -46,7 +46,7 @@ namespace ABCo.Multicam.UI
             container.AddTransient<IMainUIVM, IMainUIPresenter>((p1, s) => new MainUIVM(p1));
             container.AddTransient<IProjectFeaturesVM, IProjectFeaturesPresenter>((p1, s) => new ProjectFeaturesVM(p1));
             container.AddTransient<IProjectFeaturesListItemVM, IProjectFeaturesPresenter, IFeature, IFeatureVM>((p1, p2, p3, s) => new ProjectFeaturesListItemVM(p1, p2, p3));
-            container.AddTransient<IFeatureVM, IMainFeaturePresenterForVM>((p1, s) => new FeatureVM(p1));
+            container.AddTransient<IFeatureVM, IMainFeaturePresenter>((p1, s) => new FeatureVM(p1));
 			container.AddTransient<ISwitcherFeatureVM, IFeature>((p1, s) => new SwitcherFeatureVM(p1));
             container.AddTransient<ISwitcherMixBlockVM, SwitcherMixBlockVM>();
             container.AddTransient<ISwitcherCutButtonVM, ISwitcherMixBlocksPresenter, int>((p1, p2, s) => new SwitcherCutButtonVM(p1, p2));

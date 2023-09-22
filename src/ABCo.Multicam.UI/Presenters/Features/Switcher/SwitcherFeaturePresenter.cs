@@ -8,7 +8,7 @@ using ABCo.Multicam.UI.ViewModels.Features.Switcher;
 
 namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 {
-	public interface ISwitcherVMFeaturePresenter : ISwitcherFeaturePresenter, IFeatureContentPresenterForVM { }
+	public interface ISwitcherVMFeaturePresenter : ISwitcherFeaturePresenter, IFeatureContentPresenter { }
 	public class SwitcherFeaturePresenter : ISwitcherVMFeaturePresenter
 	{
 		readonly IServiceSource _servSource;

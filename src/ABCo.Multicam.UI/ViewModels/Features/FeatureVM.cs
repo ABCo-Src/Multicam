@@ -5,7 +5,7 @@ using System.ComponentModel;
 
 namespace ABCo.Multicam.UI.ViewModels.Features
 {
-	public interface IFeatureVM : IParameteredService<IMainFeaturePresenterForVM>, INotifyPropertyChanged
+	public interface IFeatureVM : IParameteredService<IMainFeaturePresenter>, INotifyPropertyChanged
     {
         IFeatureContentVM? Content { get; set; }
         public string FeatureTitle { get; set; }
@@ -20,14 +20,14 @@ namespace ABCo.Multicam.UI.ViewModels.Features
 
     public partial class FeatureVM : ViewModelBase, IFeatureVM
     {
-		readonly IMainFeaturePresenterForVM _presenter;
+		readonly IMainFeaturePresenter _presenter;
 
         [ObservableProperty] string _featureTitle = "";
         [ObservableProperty] IFeatureContentVM? _content;
 
 		public string EditPanelTitle => $"Editing: {FeatureTitle}";
 
-        public FeatureVM(IMainFeaturePresenterForVM presenter) => _presenter = presenter;
+        public FeatureVM(IMainFeaturePresenter presenter) => _presenter = presenter;
 
         public void OnTitleChange() => _presenter.OnTitleChange();
     }

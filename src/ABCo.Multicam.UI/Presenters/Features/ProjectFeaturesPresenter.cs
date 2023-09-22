@@ -59,7 +59,7 @@ namespace ABCo.Multicam.UI.Presenters.Features
 
                     if (vm == -1)
                     {
-                        var innerVM = _collection.Features[i].UIPresenters.GetPresenter<IMainFeaturePresenterForVM>(_scopeInfo).VM;
+                        var innerVM = _collection.Features[i].UIPresenters.GetPresenter<IMainFeaturePresenter>(_scopeInfo).VM;
                         newItems[i] = _servSource.Get<IProjectFeaturesListItemVM, IProjectFeaturesPresenter, IFeature, IFeatureVM>(this, _collection.Features[i], innerVM);
                         newItems[i].EditBtnText = "Edit";
                     }
