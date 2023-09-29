@@ -1,11 +1,13 @@
-﻿@using ABCo.Multicam.UI.Blazor.Services;
+﻿@using ABCo.Multicam.Core;
+@using ABCo.Multicam.UI.Blazor.Services;
 @using ABCo.Multicam.UI.Services;
+@inject IServiceSource servSource
 
 @code {
 
 	protected override void OnInitialized()
 	{
-		UIDialogHandler.System = this;
+		((UIDialogHandler)servSource.Get<IUIDialogHandler>()).Associate(this);
 	}
 
 	public void Cancel()

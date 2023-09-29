@@ -21,6 +21,8 @@ namespace ABCo.Multicam.Core.Features
 
     public class MainFeatureCollection : IMainFeatureCollection
     {
+        public static MainFeatureCollection? AppWideInstance { get; set; }
+
         readonly IServiceSource _servSource;
         readonly IFeatureContentFactory _featureContentFactory;
         readonly List<IFeature> _features = new();

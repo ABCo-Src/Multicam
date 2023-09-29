@@ -13,6 +13,6 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddSingleton<IPlatformInfo, WebPlatformInfo>();
 builder.Services.AddSingleton<IMainThreadDispatcher, MainThreadDispatcher>();
 
-BlazorStatics.Initialize(builder.Services);
+BlazorStatics.BuildServiceRegister(builder.Services);
 
 await builder.Build().RunAsync();

@@ -5,10 +5,9 @@ namespace ABCo.Multicam.Core
 {
 	public interface IParameteredServiceCollection
 	{
-		void AddSingletonDirect<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TTarget>() where TTarget : class;
-		void AddSingleton<T, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TTarget>() where T : class where TTarget : class, T;
-        void AddTransient<T, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TTarget>() where T : class where TTarget : class, T;
-        void AddTransient<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TTarget>(Func<IServiceProvider, TTarget> f) where TTarget : class;
+		void AddSingleton<T>(Func<IServiceSource, T> val) where T : class;
+		void AddScoped<T, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TTarget>() where T : class where TTarget : class, T;
+        void AddTransient<T>(Func<IServiceSource, T> f) where T : class;
 		void AddTransient<T, T1>(Func<T1, IServiceSource, T> factory) where T : IParameteredService<T1>;
         void AddTransient<T, T1, T2>(Func<T1, T2, IServiceSource, T> factory) where T : IParameteredService<T1, T2>;
         void AddTransient<T, T1, T2, T3>(Func<T1, T2, T3, IServiceSource, T> factory) where T : IParameteredService<T1, T2, T3>;

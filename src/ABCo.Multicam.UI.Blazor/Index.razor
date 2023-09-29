@@ -1,8 +1,23 @@
-﻿@using ABCo.Multicam.UI.Presenters;
+﻿@using ABCo.Multicam.Core.General;
+@using ABCo.Multicam.UI.Blazor.Views.Menus
+@using ABCo.Multicam.UI.Blazor.Win32.Services;
+@using ABCo.Multicam.UI.Presenters;
+@using ABCo.Multicam.UI.ViewModels;
 @inject IMainUIPresenter presenter
+@inject IMainThreadDispatcher dispatcher
 
 @{
-	presenter.Init();
+	((BlazorMainThreadDispatcher)dispatcher).Associate(InvokeAsync);
+	presenter.Init(dispatcher);
 }
 
-<MainView VM="presenter.VM" />
+<!-- Content -->
+<main>
+	@if (presenter.VM != null)
+	{
+		<MainView VM="presenter.VM" />
+	}
+</main>
+
+<!-- Menu -->
+<MenuHandler />

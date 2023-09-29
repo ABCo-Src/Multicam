@@ -5,12 +5,13 @@ namespace ABCo.Multicam.UI.Blazor.Services
 {
 	public class UIDialogHandler : IUIDialogHandler
 	{
-		public static MenuHandler? System { get; set; }
+		MenuHandler? _system;
 
+		public void Associate(MenuHandler system) => _system = system;
 		public void OpenContextMenu(ContextMenuDetails details)
 		{
-			if (System == null) throw new Exception("Menu handler not initialized!");
-			System.ContextMenu = details;
+			if (_system == null) throw new Exception("Menu handler not initialized!");
+			_system.ContextMenu = details;
 		}
 	}
 }

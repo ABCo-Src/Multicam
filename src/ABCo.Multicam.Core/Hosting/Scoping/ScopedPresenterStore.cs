@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ABCo.Multicam.Core.General;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,7 +24,7 @@ namespace ABCo.Multicam.Core.Hosting.Scoping
         IServiceSource _servSource;
         TPresenterParam _param;
 
-        Dictionary<int, List<IUIPresenter>> _registeredPresenters = new();
+        Dictionary<int, ScopePresenters> _registeredPresenters = new();
 
         public ScopedPresenterStore(TPresenterParam param, IServiceSource servSource)
         {
@@ -39,23 +40,23 @@ namespace ABCo.Multicam.Core.Hosting.Scoping
         public TPresenter GetPresenter<TPresenter>(IScopeInfo info) where TPresenter : class, IUIPresenter, IParameteredService<TPresenterParam, IScopeInfo>
         {
             // If there's nothing registered, add the item
-            if (!_registeredPresenters.TryGetValue(info.ConnectionID, out List<IUIPresenter>? val))
+            if (!_registeredPresenters.TryGetValue(info.ConnectionID, out ScopePresenters val))
             {
                 var newVal = ConstructNew();
-                _registeredPresenters.Add(info.ConnectionID, new List<IUIPresenter> { newVal });
+                _registeredPresenters.Add(info.ConnectionID, new ScopePresenters(info.Dispatcher, new List<IUIPresenter> { newVal }));
                 newVal.Init();
                 return newVal;
             }
 
             // If the item is in the registered list, return that
-            for (int i = 0; i < val.Count; i++)
-                if (val[i] is TPresenter presenter)
+            for (int i = 0; i < val.Presenters.Count; i++)
+                if (val.Presenters[i] is TPresenter presenter)
                     return presenter;
 
             // Otherwise, add it to the list
             {
                 var newVal = ConstructNew();
-                val.Add(newVal);
+                val.Presenters.Add(newVal);
                 newVal.Init();
                 return newVal;
             }
@@ -84,9 +85,17 @@ namespace ABCo.Multicam.Core.Hosting.Scoping
         public void OnDataChange(object obj)
         {
             foreach (var list in _registeredPresenters.Values)
-                for (int i = 0; i < list.Count; i++)
-                    list[i].OnDataChange(obj);
+            {
+                var presenters = list.Presenters;
+				list.Dispatcher.QueueOnUIThread(() =>
+                {
+					for (int i = 0; i < presenters.Count; i++)
+						presenters[i].OnDataChange(obj);
+				});
+			}
         }
+
+        public record struct ScopePresenters(IMainThreadDispatcher Dispatcher, List<IUIPresenter> Presenters);
 
         void OnScopeDestroy(IScopeInfo obj) => _registeredPresenters.Remove(obj.ConnectionID);
     }

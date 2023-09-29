@@ -25,7 +25,7 @@ namespace ABCo.Multicam.UI.Blazor.Desktop
 
 			builder.Services.AddSingleton<IMainThreadDispatcher, MainThreadDispatcher>();
 
-			BlazorStatics.Initialize(builder.Services);
+			BlazorStatics.BuildServiceRegister(builder.Services);
 
 			return builder.Build();
 		}

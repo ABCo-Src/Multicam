@@ -1,5 +1,6 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features;
+using ABCo.Multicam.Core.General;
 using ABCo.Multicam.Core.Hosting.Scoping;
 using ABCo.Multicam.UI.Presenters.Features;
 using ABCo.Multicam.UI.ViewModels;
@@ -15,7 +16,7 @@ namespace ABCo.Multicam.UI.Presenters
 {
 	public interface IMainUIPresenter : IFeatureSideMenuPresenter
 	{
-		void Init();
+		void Init(IMainThreadDispatcher dispatcher);
 		IMainUIVM VM { get; }
 	}
 
@@ -31,21 +32,21 @@ namespace ABCo.Multicam.UI.Presenters
 	{
 		Action? _onClose;
 		IServiceSource _servSource;
-		IScopeInfo _scope;
 
 		public IMainUIVM VM { get; }
 
         public MainUIPresenter(IServiceSource servSource)
         {
 			_servSource = servSource;
-            _scope = servSource.Get<IScopedConnectionManager>().CreateScope();
             VM = servSource.Get<IMainUIVM, IMainUIPresenter>(this);
         }
 
-        public void Init()
+        public void Init(IMainThreadDispatcher dispatcher)
 		{
             var mainFeaturesCollection = _servSource.Get<IMainFeatureCollection>();
-            VM.ContentVM = mainFeaturesCollection.UIPresenters.GetPresenter<IProjectFeaturesPresenter>(_scope).VM;
+			var scope = _servSource.Get<IScopedConnectionManager>().CreateScope(dispatcher);
+
+			VM.ContentVM = mainFeaturesCollection.UIPresenters.GetPresenter<IProjectFeaturesPresenter>(scope).VM;
         }
 
 		public void OpenMenu(ISideMenuEmbeddableVM vm, string title, Action onClose)

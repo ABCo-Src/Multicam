@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ABCo.Multicam.Core.General;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace ABCo.Multicam.Core.Hosting.Scoping
 {
     public interface IScopedConnectionManager
     {
-        IScopeInfo CreateScope();
+        IScopeInfo CreateScope(IMainThreadDispatcher dispatcher);
         void DestroyScope(IScopeInfo info);
 
         event Action<IScopeInfo> ScopeDestroyed;
@@ -21,6 +22,7 @@ namespace ABCo.Multicam.Core.Hosting.Scoping
     public interface IScopeInfo 
     {
         int ConnectionID { get; }
+		IMainThreadDispatcher Dispatcher { get; }
     }
 
     public class ScopedConnectionManager : IScopedConnectionManager
@@ -30,12 +32,15 @@ namespace ABCo.Multicam.Core.Hosting.Scoping
         public event Action<IScopeInfo> ScopeDestroyed = i => { };
 
         // TODO: Reusing ID may be smart at some point
-        public IScopeInfo CreateScope() => new ScopeInfo() { ConnectionID = _idCount++ };
+        public IScopeInfo CreateScope(IMainThreadDispatcher dispatcher) => new ScopeInfo(dispatcher) { ConnectionID = _idCount++ };
         public void DestroyScope(IScopeInfo info) => ScopeDestroyed(info);
 
         class ScopeInfo : IScopeInfo
         {
             public int ConnectionID { get; init; }
+            public IMainThreadDispatcher Dispatcher { get; init; }
+
+            public ScopeInfo(IMainThreadDispatcher dispatcher) => Dispatcher = dispatcher;
         }
     }
 }

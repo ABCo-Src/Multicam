@@ -3,5 +3,6 @@
 	public interface IMainThreadDispatcher 
 	{
 		void QueueOnMainFeatureThread(Action act);
+		void QueueOnUIThread(Action act);
 	}
 }
