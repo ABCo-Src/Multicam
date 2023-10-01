@@ -1,9 +1,8 @@
-﻿using ABCo.Multicam.Core;
-using ABCo.Multicam.Core.Features;
-using ABCo.Multicam.Core.Features.Data;
-using ABCo.Multicam.Core.Features.Switchers;
-using ABCo.Multicam.Core.Hosting.Scoping;
-using ABCo.Multicam.Server.General;
+﻿using ABCo.Multicam.Server;
+using ABCo.Multicam.Server.Features;
+using ABCo.Multicam.Server.Features.Data;
+using ABCo.Multicam.Server.Features.Switchers;
+using ABCo.Multicam.Server.Hosting;
 using ABCo.Multicam.UI.Presenters;
 using ABCo.Multicam.UI.Presenters.Features;
 using ABCo.Multicam.UI.Presenters.Features.Switcher;
@@ -18,7 +17,7 @@ using System.Security.Cryptography;
 
 namespace ABCo.Multicam.UI
 {
-	public static class ClientServicesRegister
+    public static class ClientServicesRegister
     {
         //public static string Log { get; set; }
 

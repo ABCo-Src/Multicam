@@ -1,16 +1,7 @@
-﻿using ABCo.Multicam.Core;
-using ABCo.Multicam.Core.Features;
-using ABCo.Multicam.Core.General;
-using ABCo.Multicam.Core.Hosting.Scoping;
+﻿using ABCo.Multicam.Server;
 using ABCo.Multicam.UI.Presenters.Features;
 using ABCo.Multicam.UI.ViewModels;
-using ABCo.Multicam.UI.ViewModels.Features;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.Presenters
 {

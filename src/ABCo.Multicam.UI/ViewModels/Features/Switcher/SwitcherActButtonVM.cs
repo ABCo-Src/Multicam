@@ -1,4 +1,4 @@
-﻿using ABCo.Multicam.Core;
+﻿using ABCo.Multicam.Server;
 using ABCo.Multicam.UI.Presenters.Features.Switcher;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher

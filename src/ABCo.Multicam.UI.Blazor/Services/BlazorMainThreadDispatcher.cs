@@ -1,4 +1,4 @@
-﻿using ABCo.Multicam.Core.General;
+﻿using ABCo.Multicam.Server.General;
 using ABCo.Multicam.UI.ViewModels;
 using Microsoft.AspNetCore.Components;
 

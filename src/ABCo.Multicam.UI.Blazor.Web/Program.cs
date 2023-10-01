@@ -1,4 +1,4 @@
-using ABCo.Multicam.Core.General;
+using ABCo.Multicam.Server.General;
 using ABCo.Multicam.UI.Blazor;
 using ABCo.Multicam.UI.Blazor.Services;
 using ABCo.Multicam.UI.Blazor.Web;

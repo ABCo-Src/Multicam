@@ -5,7 +5,7 @@ VisualStudioVersion = 17.5.33424.131
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ABCo.Multicam.Client", "src\ABCo.Multicam.UI\ABCo.Multicam.Client.csproj", "{A203C95F-5EB5-40E4-87AA-70FCA2E70177}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ABCo.Multicam.Server", "src\ABCo.Multicam.Core\ABCo.Multicam.Server.csproj", "{9B24EC47-6D83-46C6-83BF-80B0D44B3ED1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ABCo.Multicam.Server", "src\ABCo.Multicam.Server\ABCo.Multicam.Server.csproj", "{9B24EC47-6D83-46C6-83BF-80B0D44B3ED1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ABCo.Multicam.Tests", "tests\ABCo.Multicam.Tests\ABCo.Multicam.Tests.csproj", "{EF650F4A-0685-45EB-A06A-2BE2D8B59975}"
 EndProject

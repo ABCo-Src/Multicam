@@ -1,5 +1,5 @@
-﻿using ABCo.Multicam.Core;
-using ABCo.Multicam.Core.General;
+﻿using ABCo.Multicam.Server;
+using ABCo.Multicam.Server.General;
 using ABCo.Multicam.UI.Blazor.Services;
 using ABCo.Multicam.UI.Blazor.Win32.Services;
 using ABCo.Multicam.UI.Services;

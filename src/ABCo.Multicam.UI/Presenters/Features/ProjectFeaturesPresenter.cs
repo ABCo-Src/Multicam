@@ -1,16 +1,15 @@
-﻿using ABCo.Multicam.Core;
-using ABCo.Multicam.Core.Features;
-using ABCo.Multicam.Core.Features.Data;
-using ABCo.Multicam.Core.Hosting.Scoping;
+﻿using ABCo.Multicam.Server;
+using ABCo.Multicam.Server.Features;
 using ABCo.Multicam.Server.Features.Data;
-using ABCo.Multicam.Server.General;
+using ABCo.Multicam.Server.Features.Data;
+using ABCo.Multicam.Server.Hosting;
 using ABCo.Multicam.UI.Services;
 using ABCo.Multicam.UI.Structures;
 using ABCo.Multicam.UI.ViewModels.Features;
 
 namespace ABCo.Multicam.UI.Presenters.Features
 {
-	public interface IProjectFeaturesPresenter : IClientNotificationTarget
+    public interface IProjectFeaturesPresenter : IClientNotificationTarget
 	{
 		IProjectFeaturesVM VM { get; }
 		void OpenMobileMenu(IProjectFeaturesListItemVM vm);

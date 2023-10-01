@@ -1,4 +1,4 @@
-﻿using ABCo.Multicam.Core.General;
+﻿using ABCo.Multicam.Server.General;
 using System;
 using System.Collections.Generic;
 using System.Linq;

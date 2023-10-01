@@ -1,6 +1,5 @@
-﻿using ABCo.Multicam.Core;
-using ABCo.Multicam.Core.General;
-using ABCo.Multicam.Core.Hosting.Scoping;
+﻿using ABCo.Multicam.Server;
+using ABCo.Multicam.Server.General;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
 

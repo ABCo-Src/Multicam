@@ -1,6 +1,6 @@
-﻿using ABCo.Multicam.Core;
-using ABCo.Multicam.Core.Features;
-using ABCo.Multicam.Server.General;
+﻿using ABCo.Multicam.Server;
+using ABCo.Multicam.Server.Features;
+using ABCo.Multicam.Server.Hosting;
 using ABCo.Multicam.UI.Presenters;
 using ABCo.Multicam.UI.Presenters.Features;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -8,7 +8,7 @@ using System.ComponentModel;
 
 namespace ABCo.Multicam.UI.ViewModels.Features
 {
-	public interface IProjectFeaturesListItemVM : IClientService<IProjectFeaturesPresenter, IServerTarget, IFeatureVM>, INotifyPropertyChanged, ISideMenuEmbeddableVM
+    public interface IProjectFeaturesListItemVM : IClientService<IProjectFeaturesPresenter, IServerTarget, IFeatureVM>, INotifyPropertyChanged, ISideMenuEmbeddableVM
 	{
 		IServerTarget NativeItem { get; }
 		IFeatureVM Feature { get; }

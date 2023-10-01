@@ -1,6 +1,6 @@
-﻿using ABCo.Multicam.Core;
-using ABCo.Multicam.Core.General;
-using ABCo.Multicam.Core.Hosting.Server;
+﻿using ABCo.Multicam.Server;
+using ABCo.Multicam.Server.General;
+using ABCo.Multicam.Server.Hosting;
 
 namespace ABCo.Multicam.UI.Blazor.Win32.Services
 {

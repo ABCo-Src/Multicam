@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\ABCo.Multicam.Core\ABCo.Multicam.Server.csproj" />
+    <ProjectReference Include="..\..\src\ABCo.Multicam.Server\ABCo.Multicam.Server.csproj" />
   </ItemGroup>
 
 </Project>

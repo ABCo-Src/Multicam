@@ -1,5 +1,5 @@
-﻿//using ABCo.Multicam.Core;
-//using ABCo.Multicam.Core.Features;
+﻿//using ABCo.Multicam.Server;
+//using ABCo.Multicam.Server.Features;
 //using Moq;
 
 //namespace ABCo.Multicam.Tests.Features

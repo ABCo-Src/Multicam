@@ -1,13 +1,13 @@
-﻿using ABCo.Multicam.Core;
-using ABCo.Multicam.Core.Features;
-using ABCo.Multicam.Core.Features.Switchers;
-using ABCo.Multicam.Core.Features.Switchers.Data;
-using ABCo.Multicam.Server.General;
+﻿using ABCo.Multicam.Server;
+using ABCo.Multicam.Server.Features;
+using ABCo.Multicam.Server.Features.Switchers;
+using ABCo.Multicam.Server.Features.Switchers.Data;
+using ABCo.Multicam.Server.Hosting;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
-	public interface ISwitcherFeatureVM : IFeatureContentVM, IClientService<IServerTarget>
+    public interface ISwitcherFeatureVM : IFeatureContentVM, IClientService<IServerTarget>
     {
 		ISwitcherMixBlockVM[] MixBlocks { get; set; }
 		ISwitcherConnectionVM Connection { get; set; }

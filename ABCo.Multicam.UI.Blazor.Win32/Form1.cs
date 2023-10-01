@@ -1,6 +1,6 @@
-using ABCo.Multicam.Core;
-using ABCo.Multicam.Core.General;
-using ABCo.Multicam.Core.Hosting.Server;
+using ABCo.Multicam.Server;
+using ABCo.Multicam.Server.General;
+using ABCo.Multicam.Server.Hosting;
 using ABCo.Multicam.UI.Blazor.Win32.Services;
 using Microsoft.AspNetCore.Components.WebView.WindowsForms;
 using Microsoft.Extensions.DependencyInjection;
