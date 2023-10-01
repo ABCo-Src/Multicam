@@ -24,8 +24,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ABCo.Multicam.Server\ABCo.Multicam.Server.csproj" />
-    <ProjectReference Include="..\ABCo.Multicam.UI.Blazor\ABCo.Multicam.UI.Blazor.csproj" />
-    <ProjectReference Include="..\ABCo.Multicam.UI\ABCo.Multicam.Client.csproj" />
+    <ProjectReference Include="..\ABCo.Multicam.Client.Blazor\ABCo.Multicam.Client.Blazor.csproj" />
+    <ProjectReference Include="..\ABCo.Multicam.Client\ABCo.Multicam.Client.csproj" />
   </ItemGroup>
 
 </Project>

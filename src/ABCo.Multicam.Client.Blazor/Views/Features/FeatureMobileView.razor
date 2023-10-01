@@ -1,0 +1,27 @@
+﻿@using ABCo.Multicam.Client.Blazor.Views.Features.Switcher
+@using ABCo.Multicam.Client.ViewModels.Features;
+@using ABCo.Multicam.Client.ViewModels.Features.Switcher;
+@inherits VMBoundComponent<IProjectFeaturesListItemVM>
+
+<div class="mobileView">
+	<div class="appWideTitlebar titlebar">
+		<div class="title">
+			<FeatureTitle VM="VM.Feature" />
+		</div>
+		<a class="hyperlink editBtn" @onclick=VM.ToggleEdit>Edit</a>
+		<a class="close btn btnIcon" @onclick=VM.CloseMobileView><img src="_content/ABCo.Multicam.Client.Blazor/img/icons/smallCloseButton.svg" /></a>
+	</div>
+
+	<hr class="appWideTitlebarSeparator" />
+
+	<div class="content">
+		@if (VM.Feature.Content is SwitcherFeatureVM switcherVM)
+		{
+			<SwitcherFeature OuterVM="@VM.Feature" VM="switcherVM" />
+		}
+		else
+		{
+			<p>Unsupported feature!</p>
+		}
+	</div>
+</div>

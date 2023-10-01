@@ -1,0 +1,22 @@
+﻿@using ABCo.Multicam.Client.Presenters;
+@using ABCo.Multicam.Client.ViewModels;
+@using ABCo.Multicam.Client.ViewModels.Features;
+@using ABCo.Multicam.Client.Blazor.Views.Features;
+@inherits VMBoundComponent<IMainUIVM>
+
+<div class="sidePanel">
+	<div class="rightBorder"></div>
+	<div class="content">
+		<div class="appWideTitlebar titlebar">
+			<p class="title">@VM.MenuTitle</p>
+			<a class="close btn btnIcon" @onclick=VM.CloseMenuButton><img src="_content/ABCo.Multicam.Client.Blazor/img/icons/smallCloseButton.svg" /></a>
+		</div>
+
+		<hr class="appWideTitlebarSeparator" />
+
+		@if (VM.MenuVM is ProjectFeaturesListItemVM listViewItem)
+		{
+			<FeatureEditPanel VM="listViewItem" />
+		}
+	</div>
+</div>

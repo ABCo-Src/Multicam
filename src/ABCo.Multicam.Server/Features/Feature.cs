@@ -1,7 +1,7 @@
 ﻿using ABCo.Multicam.Server.Features.Data;
 using ABCo.Multicam.Server.Features.Interaction;
 using ABCo.Multicam.Server.Hosting;
-using ABCo.Multicam.UI.ViewModels.Features;
+using ABCo.Multicam.Client.ViewModels.Features;
 
 namespace ABCo.Multicam.Server.Features
 {

@@ -1,8 +1,8 @@
 using ABCo.Multicam.Server.General;
-using ABCo.Multicam.UI.Blazor;
-using ABCo.Multicam.UI.Blazor.Services;
-using ABCo.Multicam.UI.Blazor.Web;
-using ABCo.Multicam.UI.Blazor.Web.Services;
+using ABCo.Multicam.Client.Blazor;
+using ABCo.Multicam.Client.Blazor.Services;
+using ABCo.Multicam.Client.Blazor.Web;
+using ABCo.Multicam.Client.Blazor.Web.Services;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 

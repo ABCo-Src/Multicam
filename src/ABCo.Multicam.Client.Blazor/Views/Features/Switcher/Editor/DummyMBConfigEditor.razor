@@ -1,0 +1,15 @@
+﻿@using ABCo.Multicam.Client.ViewModels.Features.Switcher.Types;
+@inherits VMBoundComponent<DummySwitcherConfigMixBlockVM>
+
+<div class="content">
+	<div class="index">
+		<p>@VM.InputIndex</p>
+	</div>
+	<p class="tag">Input Count:</p>
+	<select class="combo" value="@VM.InputCount" @onchange="e => { VM.InputCount = (string)e.Value!; VM.InputCountChange(); }">
+		@foreach (var item in VM.InputCountItems)
+		{
+			<option>@item</option>
+		}
+	</select>
+</div>

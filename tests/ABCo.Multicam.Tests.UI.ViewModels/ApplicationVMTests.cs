@@ -1,5 +1,5 @@
 ﻿using ABCo.Multicam.Server;
-using ABCo.Multicam.UI.ViewModels;
+using ABCo.Multicam.Client.ViewModels;
 using Moq;
 
 namespace ABCo.Multicam.Tests.UI.ViewModels

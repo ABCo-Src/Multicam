@@ -11,7 +11,7 @@ using ABCo.Multicam.Server.Features.Switchers.Types.ATEM.Native;
 using ABCo.Multicam.Server.Features.Switchers.Types.ATEM.Windows;
 using ABCo.Multicam.Server.General;
 using ABCo.Multicam.Server.Hosting;
-using ABCo.Multicam.UI.ViewModels.Features;
+using ABCo.Multicam.Client.ViewModels.Features;
 using System.Security.Cryptography;
 
 namespace ABCo.Multicam.Server

@@ -1,8 +1,8 @@
 ﻿using ABCo.Multicam.Server.General;
-using ABCo.Multicam.UI.Blazor.Web;
+using ABCo.Multicam.Client.Blazor.Web;
 using Microsoft.AspNetCore.Components;
 
-namespace ABCo.Multicam.UI.Blazor.Services
+namespace ABCo.Multicam.Client.Blazor.Services
 {
 	public class MainThreadDispatcher : IThreadDispatcher
 	{

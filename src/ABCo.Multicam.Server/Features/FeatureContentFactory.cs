@@ -4,7 +4,7 @@ using ABCo.Multicam.Server;
 using ABCo.Multicam.Server.Features.Switchers.Data;
 using ABCo.Multicam.Server.Features.Data;
 
-namespace ABCo.Multicam.UI.ViewModels.Features
+namespace ABCo.Multicam.Client.ViewModels.Features
 {
 	public interface IFeatureContentFactory
 	{

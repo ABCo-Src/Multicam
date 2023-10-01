@@ -1,6 +1,6 @@
 ﻿using ABCo.Multicam.Server.General;
 
-namespace ABCo.Multicam.UI.Blazor.Web.Services
+namespace ABCo.Multicam.Client.Blazor.Web.Services
 {
 	public class WebPlatformInfo : IPlatformInfo
 	{
