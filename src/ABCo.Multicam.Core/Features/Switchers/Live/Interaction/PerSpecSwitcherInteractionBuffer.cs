@@ -1,6 +1,6 @@
 ﻿namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 {
-	public interface IPerSpecSwitcherInteractionBuffer : IParameteredService<SwitcherSpecs, ISwitcher>
+	public interface IPerSpecSwitcherInteractionBuffer : IServerService<SwitcherSpecs, ISwitcher>
     {
         SwitcherSpecs Specs { get; }
         void SetEventHandler(ISwitcherEventHandler? eventHandler);
@@ -23,7 +23,7 @@
 
         public SwitcherSpecs Specs { get; private set; }
 
-		public PerSpecSwitcherInteractionBuffer(SwitcherSpecs specs, ISwitcher switcher, IServiceSource servSource)
+		public PerSpecSwitcherInteractionBuffer(SwitcherSpecs specs, ISwitcher switcher, IServerInfo servSource)
 		{
 			_factory = servSource.Get<ISwitcherInteractionBufferFactory>();
 

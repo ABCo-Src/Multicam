@@ -8,7 +8,7 @@ using System;
 
 namespace ABCo.Multicam.UI.ViewModels.Features
 {
-	public interface IProjectFeaturesVM : IParameteredService<IProjectFeaturesPresenter>, IAnimationHandlingVM
+	public interface IProjectFeaturesVM : IClientService<IProjectFeaturesPresenter>, IAnimationHandlingVM
     {
 		IProjectFeaturesListItemVM? MobileView { get; set; }
         IProjectFeaturesListItemVM[] Items { get; set; }

@@ -11,12 +11,15 @@ using ABCo.Multicam.UI.ViewModels.Features.Switcher.Types;
 using ABCo.Multicam.UI.Presenters.Features.Switcher.Config;
 using ABCo.Multicam.Core.Features.Switchers.Data.Config;
 using ABCo.Multicam.Core.Features.Switchers.Data;
+using ABCo.Multicam.Server.General;
+using ABCo.Multicam.Server.Features.Switchers.Data;
 
 namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 {
-	public interface ISwitcherConfigPresenter : IParameteredService<IFeature, SwitcherConfigType>
+	public interface ISwitcherConfigPresenter : IClientService<IServerTarget, SwitcherConfigType>
 	{
 		void OnConfig(SwitcherConfig config);
+		void OnCompatibility(SwitcherCompatibility compatibility);
 		void SelectedChanged();
 		ISwitcherConfigVM VM { get; }
 	}
@@ -24,17 +27,18 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 	public interface ISwitcherSpecificConfigPresenter
 	{
 		void OnConfig(SwitcherConfig config);
+		void OnCompatibility(SwitcherCompatibility compatibility);
 		ISwitcherSpecificConfigVM VM { get; }
 	}
 
 	public class SwitcherConfigPresenter : ISwitcherConfigPresenter
 	{
-		readonly IFeature _feature;
+		readonly IServerTarget _feature;
 		ISwitcherSpecificConfigPresenter? _currentConfigPresenter;
 
 		public ISwitcherConfigVM VM { get; }
 
-		public SwitcherConfigPresenter(IFeature feature, SwitcherConfigType type, IServiceSource servSource)
+		public SwitcherConfigPresenter(IServerTarget feature, SwitcherConfigType type, IClientInfo servSource)
 		{
 			_feature = feature;
 			VM = servSource.Get<ISwitcherConfigVM, ISwitcherConfigPresenter>(this);
@@ -49,8 +53,8 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 			// Update the inner VM
 			_currentConfigPresenter = type.Type switch
 			{
-				SwitcherType.Dummy => servSource.Get<ISwitcherDummyConfigPresenter, IFeature>(feature),
-				SwitcherType.ATEM => servSource.Get<ISwitcherATEMConfgPresenter, IFeature>(feature),
+				SwitcherType.Dummy => servSource.Get<ISwitcherDummyConfigPresenter, IServerTarget>(feature),
+				SwitcherType.ATEM => servSource.Get<ISwitcherATEMConfigPresenter, IServerTarget>(feature),
 				_ => null
 			};
 
@@ -59,6 +63,7 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 		}
 
 		public void OnConfig(SwitcherConfig config) => _currentConfigPresenter?.OnConfig(config);
+		public void OnCompatibility(SwitcherCompatibility compatibility) => _currentConfigPresenter?.OnCompatibility(compatibility);
 
 		public void SelectedChanged()
 		{

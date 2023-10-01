@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.ViewModels
 {
-	public interface IMainUIVM : IParameteredService<IMainUIPresenter>, INotifyPropertyChanged, IAnimationHandlingVM
+	public interface IMainUIVM : IClientService<IMainUIPresenter>, INotifyPropertyChanged, IAnimationHandlingVM
 	{
 		ISideMenuEmbeddableVM? MenuVM { get; set; }
 		IProjectFeaturesVM? ContentVM { get; set; }

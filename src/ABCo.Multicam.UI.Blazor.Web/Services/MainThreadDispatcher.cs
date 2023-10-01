@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Components;
 
 namespace ABCo.Multicam.UI.Blazor.Services
 {
-	public class MainThreadDispatcher : IMainThreadDispatcher
+	public class MainThreadDispatcher : IThreadDispatcher
 	{
-		public void QueueOnMainFeatureThread(Action act)
+		public void Queue(Action act)
 		{
 			// Threading doesn't exist on web
 			act();

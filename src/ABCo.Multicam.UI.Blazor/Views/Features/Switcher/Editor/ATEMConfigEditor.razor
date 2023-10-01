@@ -1,12 +1,13 @@
 ﻿@using ABCo.Multicam.Core.Features.Switchers.Live.Types.ATEM;
 @using ABCo.Multicam.Core.General;
 @using ABCo.Multicam.Core;
+@using ABCo.Multicam.Server.Features.Switchers.Data;
 @using ABCo.Multicam.UI.ViewModels.Features.Switcher.Config.ATEM;
 @inherits VMBoundComponent<ISwitcherATEMConfigVM>
-@inject IServiceSource servSource
+@inject IClientInfo servSource
 
 @{
-	IPlatformInfo platformInfo = servSource.Get<IPlatformInfo>();
+	IPlatformInfo platformInfo = servSource.ServerConnection.GetPlatformInfo();
 }
 
 
@@ -30,12 +31,12 @@
 </div>
 
 <!-- Compatibility box -->
-@if (VM.CompatibilityMessage != ATEMPlatformCompatibilityValue.Supported)
+@if (VM.CompatibilityMessage != SwitcherPlatformCompatibilityValue.Supported)
 {
 	<div class="compatibilityBox boxedPortion">
 		<p class="exclamation">!</p>
-		
-		@if (VM.CompatibilityMessage == ATEMPlatformCompatibilityValue.UnsupportedPlatform)
+
+		@if (VM.CompatibilityMessage == SwitcherPlatformCompatibilityValue.UnsupportedPlatform)
 		{
 			@if (platformInfo.GetPlatformType() == PlatformType.Web)
 			{

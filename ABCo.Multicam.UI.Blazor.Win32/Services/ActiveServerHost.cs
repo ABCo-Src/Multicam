@@ -1,33 +1,30 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.General;
 using ABCo.Multicam.Core.Hosting.Server;
-using ABCo.Multicam.UI.Blazor.Services;
 
 namespace ABCo.Multicam.UI.Blazor.Win32.Services
 {
-	public class ActiveServerHost : IActiveServerHost
+    public class ActiveServerHost : IActiveServerHost
 	{
 		WebApplication _webApp;
 
-		public ActiveServerHost()
+		public ActiveServerHost(IServerInfo info)
 		{
 			var webApp = WebApplication.CreateBuilder(new WebApplicationOptions()
 			{
 				ContentRootPath = AppContext.BaseDirectory
 			});
 
-			// Blazor Service-specific services
+			// Setup services
+			var builder = new ClientServicesBuilder(webApp.Services);
 			webApp.Services.AddRazorPages();
 			webApp.Services.AddServerSideBlazor();
+			webApp.Services.AddScoped(p => builder.Build(p, new BlazorMainThreadDispatcher(), info.GetLocalClientConnection(), info.ClientsManager.NewConnectionId()));
+			ClientServicesRegister.AddServices(builder);
+			BlazorClientServicesRegister.AddServices(builder);
 
-			// Add app-wide services to collection
-			IServiceSource servSource = null!;
-			webApp.Services.AddSingleton(p => servSource);
-			AppWideServiceRegister.AddRegisteredScopedServicesTo(webApp.Services, false);
-
-			// Build
+			// Build the app
 			_webApp = webApp.Build();
-			servSource = AppWideServiceRegister.GetWithScopesFrom(_webApp.Services);
 		}
 
 		public async void Connect(string hostPath)

@@ -3,7 +3,7 @@ using ABCo.Multicam.UI.Presenters.Features.Switcher;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
-	public interface ISwitcherBusInputVM : IParameteredService<ISwitcherMixBlocksPresenter, int, int>, ISwitcherButtonVM
+	public interface ISwitcherBusInputVM : IClientService<ISwitcherMixBlocksPresenter, int, int>, ISwitcherButtonVM
     {
 		int BusId { get; }
 	}

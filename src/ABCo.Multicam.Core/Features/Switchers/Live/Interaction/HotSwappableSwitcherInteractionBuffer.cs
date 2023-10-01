@@ -1,6 +1,6 @@
 ﻿namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 {
-	public interface IHotSwappableSwitcherInteractionBuffer : IParameteredService<SwitcherConfig>, IDisposable
+	public interface IHotSwappableSwitcherInteractionBuffer : IServerService<SwitcherConfig>, IDisposable
 	{
 		void SetEventHandler(ISwitcherEventHandler? handler);
 		void ChangeSwitcher(SwitcherConfig config);
@@ -9,12 +9,12 @@
 
 	public class HotSwappableSwitcherInteractionBuffer : IHotSwappableSwitcherInteractionBuffer
 	{
-		readonly IServiceSource _servSource;
+		readonly IServerInfo _servSource;
 		ISwitcherEventHandler? _handler;
 
 		public IPerSwitcherInteractionBuffer CurrentBuffer { get; private set; } = null!;
 
-		public HotSwappableSwitcherInteractionBuffer(SwitcherConfig config, IServiceSource servSource)
+		public HotSwappableSwitcherInteractionBuffer(SwitcherConfig config, IServerInfo servSource)
 		{
 			_servSource = servSource;
 			CurrentBuffer = _servSource.Get<IPerSwitcherInteractionBuffer, SwitcherConfig>(config);

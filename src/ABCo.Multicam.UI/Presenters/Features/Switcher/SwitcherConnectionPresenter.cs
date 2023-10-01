@@ -3,11 +3,12 @@ using ABCo.Multicam.Core.Features;
 using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.Core.Features.Switchers.Data;
 using ABCo.Multicam.Core.General;
+using ABCo.Multicam.Server.General;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher;
 
 namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 {
-	public interface ISwitcherConnectionPresenter : IParameteredService<IFeature>
+	public interface ISwitcherConnectionPresenter : IClientService<IServerTarget>
 	{
 		ISwitcherConnectionVM VM { get; }
 		void OnError(string? error);
@@ -18,21 +19,21 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 	public class SwitcherConnectionPresenter : ISwitcherConnectionPresenter
 	{
 		ISwitcherErrorPresenter _errorPresenter;
-		IFeature _feature;
+		readonly IServerTarget _feature;
 
 		bool _isConnected = false;
 
-		readonly IMainThreadDispatcher _dispatcher;
+		readonly IThreadDispatcher _dispatcher;
 		Timer? _transitionTimer;
 		int _transitionState;
 
 		public ISwitcherConnectionVM VM => _errorPresenter.VM;
 
-		public SwitcherConnectionPresenter(IFeature feature, IServiceSource servSource)
+		public SwitcherConnectionPresenter(IServerTarget feature, IClientInfo clientInfo)
 		{
 			_feature = feature;
-			_errorPresenter = servSource.Get<ISwitcherErrorPresenter, IFeature, Action>(feature, ToggleConnection);
-			_dispatcher = servSource.Get<IMainThreadDispatcher>();
+			_errorPresenter = clientInfo.Get<ISwitcherErrorPresenter, IServerTarget, Action>(feature, ToggleConnection);
+			_dispatcher = clientInfo.Dispatcher;
 		}
 
 		public void OnError(string? error) => _errorPresenter.OnError(error);
@@ -101,7 +102,7 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 		{
 			_transitionTimer = new Timer(o =>
 			{
-				_dispatcher.QueueOnMainFeatureThread(() =>
+				_dispatcher.Queue(() =>
 				{
 					// If we cancelled between the dispatcher call, don't process (otherwise we'll override the actual thing)
 					if (_transitionTimer == null) return;

@@ -11,8 +11,8 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddSingleton<IPlatformInfo, WebPlatformInfo>();
-builder.Services.AddSingleton<IMainThreadDispatcher, MainThreadDispatcher>();
+builder.Services.AddSingleton<IThreadDispatcher, MainThreadDispatcher>();
 
-BlazorStatics.BuildServiceRegister(builder.Services);
+//BlazorClientServicesRegister.BuildServiceRegister(builder.Services);
 
 await builder.Build().RunAsync();

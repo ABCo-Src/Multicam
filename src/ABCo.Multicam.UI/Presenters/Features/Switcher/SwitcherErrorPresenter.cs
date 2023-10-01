@@ -1,11 +1,12 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features;
 using ABCo.Multicam.Core.Features.Switchers.Data;
+using ABCo.Multicam.Server.General;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher;
 
 namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 {
-	public interface ISwitcherErrorPresenter : IParameteredService<IFeature, Action>
+	public interface ISwitcherErrorPresenter : IClientService<IServerTarget, Action>
 	{
 		ISwitcherConnectionVM VM { get; }
 		void OnError(string? error);
@@ -17,13 +18,13 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 	
 	public class SwitcherErrorPresenter : ISwitcherErrorPresenter
 	{
-		IFeature _feature;
+		readonly IServerTarget _feature;
 		Action _noErrorClick;
 		string? _currentError = null;
 
 		public ISwitcherConnectionVM VM { get; }
 
-		public SwitcherErrorPresenter(IFeature feature, Action noErrorClick, IServiceSource servSource)
+		public SwitcherErrorPresenter(IServerTarget feature, Action noErrorClick, IClientInfo servSource)
 		{
 			_feature = feature;
 			_noErrorClick = noErrorClick;

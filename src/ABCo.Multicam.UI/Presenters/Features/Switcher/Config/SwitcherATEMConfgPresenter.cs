@@ -4,6 +4,8 @@ using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.Core.Features.Switchers.Data;
 using ABCo.Multicam.Core.Features.Switchers.Data.Config;
 using ABCo.Multicam.Core.Features.Switchers.Live.Types.ATEM;
+using ABCo.Multicam.Server.Features.Switchers.Data;
+using ABCo.Multicam.Server.General;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher.Config.ATEM;
 using System;
@@ -14,22 +16,21 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.Presenters.Features.Switcher.Config
 {
-	public interface ISwitcherATEMConfgPresenter : ISwitcherSpecificConfigPresenter, IParameteredService<IFeature>
+	public interface ISwitcherATEMConfigPresenter : ISwitcherSpecificConfigPresenter, IClientService<IServerTarget>
 	{
 		void OnUIChange();
 	}
 
-	public class SwitcherATEMConfgPresenter : ISwitcherATEMConfgPresenter
+	public class SwitcherATEMConfgPresenter : ISwitcherATEMConfigPresenter
 	{
-		readonly IFeature _feature;
+		readonly IServerTarget _feature;
 		readonly ISwitcherATEMConfigVM _vm;
 
 		public ISwitcherSpecificConfigVM VM => _vm;
 
-		public SwitcherATEMConfgPresenter(IFeature feature, IServiceSource servSource)
+		public SwitcherATEMConfgPresenter(IServerTarget feature, IClientInfo servSource)
 		{
-			_vm = servSource.Get<ISwitcherATEMConfigVM, ISwitcherATEMConfgPresenter>(this);
-			_vm.CompatibilityMessage = servSource.Get<IATEMPlatformCompatibility>().GetCompatibility();
+			_vm = servSource.Get<ISwitcherATEMConfigVM, ISwitcherATEMConfigPresenter>(this);
 			_feature = feature;
 		}
 
@@ -47,5 +48,7 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher.Config
 			var newATEMConfig = new ATEMSwitcherConfig(_vm.SelectedConnectionType == "USB" ? null : _vm.IpAddress);
 			_feature.PerformAction(SwitcherActionID.SET_CONFIG, newATEMConfig);
 		}
+
+		public void OnCompatibility(SwitcherCompatibility compatibility) => _vm.CompatibilityMessage = compatibility.Value;
 	}
 }

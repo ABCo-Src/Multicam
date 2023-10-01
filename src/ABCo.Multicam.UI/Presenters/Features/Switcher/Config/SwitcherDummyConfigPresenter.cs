@@ -3,6 +3,8 @@ using ABCo.Multicam.Core.Features;
 using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.Core.Features.Switchers.Data;
 using ABCo.Multicam.Core.Features.Switchers.Data.Config;
+using ABCo.Multicam.Server.Features.Switchers.Data;
+using ABCo.Multicam.Server.General;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher.Types;
 using System;
@@ -13,20 +15,20 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.Presenters.Features.Switcher.Config
 {
-	public interface ISwitcherDummyConfigPresenter : ISwitcherSpecificConfigPresenter, IParameteredService<IFeature>
+	public interface ISwitcherDummyConfigPresenter : ISwitcherSpecificConfigPresenter, IClientService<IServerTarget>
 	{
 		void OnUIChange();
 	}
 
 	public class SwitcherDummyConfigPresenter : ISwitcherDummyConfigPresenter
 	{
-		readonly IServiceSource _servSource;
-		readonly IFeature _feature;
+		readonly IClientInfo _servSource;
+		readonly IServerTarget _feature;
 		ISwitcherDummyConfigVM _vm;
 
 		public ISwitcherSpecificConfigVM VM => _vm;
 		
-		public SwitcherDummyConfigPresenter(IFeature feature, IServiceSource servSource)
+		public SwitcherDummyConfigPresenter(IServerTarget feature, IClientInfo servSource)
 		{
 			_servSource = servSource;
 			_feature = feature;
@@ -50,6 +52,8 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher.Config
 			}
 			_vm.MixBlockVMs = newMixBlocks;
 		}
+
+		public void OnCompatibility(SwitcherCompatibility compatibility) { }
 
 		public void OnUIChange()
 		{

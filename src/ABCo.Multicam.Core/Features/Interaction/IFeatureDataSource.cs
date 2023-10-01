@@ -1,25 +1,27 @@
 ﻿using ABCo.Multicam.Core.Features.Data;
+using ABCo.Multicam.Core.Hosting.Scoping;
+using ABCo.Multicam.Server.General;
 
 namespace ABCo.Multicam.Core.Features
 {
 	public interface IReadOnlyFeatureDataSource
 	{
 		void SetDataChangeHandler(IFeatureDataChangeEventHandler? eventHandler);
-		void RefreshData<T>() where T : FeatureData;
+		void RefreshData<T>() where T : ServerData;
 	}
 
 	public interface IFeatureDataSource : IReadOnlyFeatureDataSource
 	{
-		void SetData(FeatureData val);
+		void SetData(ServerData val);
 	}
 
 	public interface IInstantRetrievalDataSource : IFeatureDataSource
 	{
-		T GetData<T>() where T : FeatureData;
+		T GetData<T>();
 	}
 
 	public interface IFeatureDataChangeEventHandler
 	{
-		void OnDataChange(FeatureData val);
+		void OnDataChange(ServerData val);
 	}
 }

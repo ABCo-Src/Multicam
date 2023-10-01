@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace ABCo.Multicam.Core.Features.Switchers.Types.ATEM
 {
-	public interface IATEMCallbackHandler : IParameteredService<IATEMSwitcher>
+	public interface IATEMCallbackHandler : IServerService<IATEMSwitcher>
     {
         void AttachToSwitcher(INativeATEMSwitcher switcher);
 		void DetachFromSwitcher(INativeATEMSwitcher switcher);

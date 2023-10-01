@@ -2,7 +2,7 @@
 
 namespace ABCo.Multicam.Core.Features
 {
-	public interface IUnsupportedLiveFeature : ILiveFeature, IParameteredService<IInstantRetrievalDataSource> { }
+	public interface IUnsupportedLiveFeature : ILiveFeature, IServerService<IInstantRetrievalDataSource> { }
     public class UnsupportedLiveFeature : IUnsupportedLiveFeature
     {
 		IInstantRetrievalDataSource _collection;

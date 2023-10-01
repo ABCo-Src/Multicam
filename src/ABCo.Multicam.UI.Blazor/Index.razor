@@ -1,14 +1,16 @@
 ﻿@using ABCo.Multicam.Core.General;
+@using ABCo.Multicam.Core;
 @using ABCo.Multicam.UI.Blazor.Views.Menus
 @using ABCo.Multicam.UI.Blazor.Win32.Services;
 @using ABCo.Multicam.UI.Presenters;
 @using ABCo.Multicam.UI.ViewModels;
-@inject IMainUIPresenter presenter
-@inject IMainThreadDispatcher dispatcher
+@inject IClientInfo clientInfo
 
 @{
-	((BlazorMainThreadDispatcher)dispatcher).Associate(InvokeAsync);
-	presenter.Init(dispatcher);
+	((BlazorMainThreadDispatcher)clientInfo.Dispatcher).Associate(InvokeAsync);
+
+	var presenter = clientInfo.Get<IMainUIPresenter>();
+	presenter.Init();
 }
 
 <!-- Content -->

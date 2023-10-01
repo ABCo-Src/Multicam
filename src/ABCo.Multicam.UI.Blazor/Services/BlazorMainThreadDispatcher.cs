@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace ABCo.Multicam.UI.Blazor.Win32.Services
 {
-	public class BlazorMainThreadDispatcher : IMainThreadDispatcher
+	public class BlazorMainThreadDispatcher : IThreadDispatcher
 	{
 		Func<Action, Task> _invoker = null!;
 
@@ -15,7 +15,7 @@ namespace ABCo.Multicam.UI.Blazor.Win32.Services
 
 		public void Associate(Func<Action, Task> invoker) => _invoker = invoker;
 
-		public async void QueueOnMainFeatureThread(Action act) => await _invoker(act);
+		public async void Queue(Action act) => await _invoker(act);
 		public async void QueueOnUIThread(Action act) => await _invoker(act);
 	}
 }

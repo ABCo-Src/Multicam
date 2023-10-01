@@ -1,4 +1,4 @@
 ﻿@using ABCo.Multicam.UI.ViewModels.Features;
 @inherits VMBoundComponent<IFeatureVM>
 
-<input class="textbox titleBox" type="text" @bind="VM.FeatureTitle" />
+<input class="textbox titleBox" type="text" @onchange="e => { VM.FeatureTitle = (string)e.Value!; VM.OnTitleChange(); }" value="@VM.FeatureTitle" />

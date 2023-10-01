@@ -1,6 +1,8 @@
 ﻿using ABCo.Multicam.Core.Features.Data;
 using ABCo.Multicam.Core.Features.Switchers.Data.Config;
 using ABCo.Multicam.Core.Features.Switchers.Types;
+using ABCo.Multicam.Core.Hosting.Scoping;
+using ABCo.Multicam.Server.Features.Switchers.Data;
 
 namespace ABCo.Multicam.Core.Features.Switchers.Data
 {
@@ -24,7 +26,8 @@ namespace ABCo.Multicam.Core.Features.Switchers.Data
             new FeatureDataInfo(typeof(SwitcherSpecs), new SwitcherSpecs()),
             new FeatureDataInfo(typeof(SwitcherState), new SwitcherState(Array.Empty<MixBlockState>())),
             new FeatureDataInfo(typeof(SwitcherConnection), new SwitcherConnection(false)),
-            new FeatureDataInfo(typeof(SwitcherError), new SwitcherError(null))
+            new FeatureDataInfo(typeof(SwitcherError), new SwitcherError(null)),
+            new FeatureDataInfo(typeof(SwitcherCompatibility), new SwitcherCompatibility(SwitcherPlatformCompatibilityValue.Supported))
         };
 	}
 

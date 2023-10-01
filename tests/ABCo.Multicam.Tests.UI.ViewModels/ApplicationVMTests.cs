@@ -10,7 +10,7 @@ namespace ABCo.Multicam.Tests.UI.ViewModels
         [TestMethod]
         public void Ctor_Normal()
         {
-            var vm = new ApplicationVM(Mock.Of<IServiceSource>(m => m.Get<IProjectVM>() == Mock.Of<IProjectVM>()));
+            var vm = new ApplicationVM(Mock.Of<IServerInfo>(m => m.Get<IProjectVM>() == Mock.Of<IProjectVM>()));
             Assert.IsNotNull(vm.Project);
         }
     }

@@ -3,43 +3,46 @@ using ABCo.Multicam.Core.Features;
 using ABCo.Multicam.Core.Features.Data;
 using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.Core.Features.Switchers.Data;
+using ABCo.Multicam.Core.Hosting.Scoping;
+using ABCo.Multicam.Server.Features.Switchers.Data;
+using ABCo.Multicam.Server.General;
 using ABCo.Multicam.UI.ViewModels.Features;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher;
 
 namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 {
-	public interface ISwitcherVMFeaturePresenter : ISwitcherFeaturePresenter, IFeatureContentPresenter { }
-	public class SwitcherFeaturePresenter : ISwitcherVMFeaturePresenter
+	public interface ISwitcherFeaturePresenter : IFeatureContentPresenter { }
+	public class SwitcherFeaturePresenter : ISwitcherFeaturePresenter
 	{
-		readonly IServiceSource _servSource;
+		readonly IClientInfo _info;
 
-		readonly IFeature _feature;
+		readonly IServerTarget _feature;
 		readonly ISwitcherFeatureVM _vm;
 		readonly ISwitcherConnectionPresenter _connectionPresenter;
 		readonly ISwitcherMixBlocksPresenter _mixBlocksPresenter;
 		ISwitcherConfigPresenter? _configPresenter;
 
-		public SwitcherFeaturePresenter(IFeature baseFeature, IServiceSource servSource)
+		public SwitcherFeaturePresenter(IServerTarget baseFeature, IClientInfo info)
 		{
-			_servSource = servSource;
-			_vm = servSource.Get<ISwitcherFeatureVM, IFeature>(baseFeature);
+			_info = info;
+			_vm = info.Get<ISwitcherFeatureVM, IServerTarget>(baseFeature);
 
 			_feature = baseFeature;
 
-			_connectionPresenter = _servSource.Get<ISwitcherConnectionPresenter, IFeature>(_feature);
+			_connectionPresenter = _info.Get<ISwitcherConnectionPresenter, IServerTarget>(_feature);
 			_vm.Connection = _connectionPresenter.VM;
 
-			_mixBlocksPresenter = _servSource.Get<ISwitcherMixBlocksPresenter, ISwitcherFeatureVM, IFeature>(_vm, _feature);
+			_mixBlocksPresenter = _info.Get<ISwitcherMixBlocksPresenter, ISwitcherFeatureVM, IServerTarget>(_vm, _feature);
 		}
 
 		public IFeatureContentVM VM => _vm;
 
-		public void OnDataChange(object data)
+		public void OnDataChange(ServerData data)
 		{
 			switch (data)
 			{
 				case SwitcherConfigType configType:
-					_configPresenter = _servSource.Get<ISwitcherConfigPresenter, IFeature, SwitcherConfigType>(_feature, configType);
+					_configPresenter = _info.Get<ISwitcherConfigPresenter, IServerTarget, SwitcherConfigType>(_feature, configType);
 					_vm.Config = _configPresenter.VM;
 					break;
 
@@ -62,6 +65,10 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 
 				case SwitcherState state:
 					_mixBlocksPresenter.OnState(state.Data);
+					break;
+
+				case SwitcherCompatibility compatibility:
+					_configPresenter?.OnCompatibility(compatibility);
 					break;
 			}
 		}

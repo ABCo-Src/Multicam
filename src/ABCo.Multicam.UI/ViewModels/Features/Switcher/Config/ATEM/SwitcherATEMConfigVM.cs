@@ -1,5 +1,6 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features.Switchers.Live.Types.ATEM;
+using ABCo.Multicam.Server.Features.Switchers.Data;
 using ABCo.Multicam.UI.Presenters.Features.Switcher.Config;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
@@ -11,12 +12,12 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher.Config.ATEM
 {
-	public interface ISwitcherATEMConfigVM : IParameteredService<ISwitcherATEMConfgPresenter>, ISwitcherSpecificConfigVM, INotifyPropertyChanged 
+	public interface ISwitcherATEMConfigVM : IClientService<ISwitcherATEMConfigPresenter>, ISwitcherSpecificConfigVM, INotifyPropertyChanged 
 	{
 		string[] ConnectionTypes { get; }
 		bool IsIPAddressEditable { get; }
 		string SelectedConnectionType { get; set; }
-		ATEMPlatformCompatibilityValue CompatibilityMessage { get; set; }
+		SwitcherPlatformCompatibilityValue CompatibilityMessage { get; set; }
 		bool ShowOneProgramMessage { get; }
 		string IpAddress { get; set; }
 		void OnIPChange();
@@ -25,7 +26,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher.Config.ATEM
 
 	public partial class SwitcherATEMConfigVM : ViewModelBase, ISwitcherATEMConfigVM
 	{
-		readonly ISwitcherATEMConfgPresenter _presenter;
+		readonly ISwitcherATEMConfigPresenter _presenter;
 
 		public string[] ConnectionTypes => new string[]
 		{
@@ -38,10 +39,9 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher.Config.ATEM
 
 		[ObservableProperty] string _ipAddress = "";
 		[ObservableProperty] string _selectedConnectionType = "USB";
-		[ObservableProperty] ATEMPlatformCompatibilityValue _compatibilityMessage = ATEMPlatformCompatibilityValue.Supported;
+		[ObservableProperty] SwitcherPlatformCompatibilityValue _compatibilityMessage = SwitcherPlatformCompatibilityValue.Supported;
 
-
-		public SwitcherATEMConfigVM(ISwitcherATEMConfgPresenter presenter) => _presenter = presenter;
+		public SwitcherATEMConfigVM(ISwitcherATEMConfigPresenter presenter) => _presenter = presenter;
 
 		public void OnIPChange() => _presenter.OnUIChange();
 		public void OnSelectedTypeChange() => _presenter.OnUIChange();

@@ -16,7 +16,7 @@ namespace ABCo.Multicam.UI.Presenters
 {
 	public interface IMainUIPresenter : IFeatureSideMenuPresenter
 	{
-		void Init(IMainThreadDispatcher dispatcher);
+		void Init();
 		IMainUIVM VM { get; }
 	}
 
@@ -31,22 +31,20 @@ namespace ABCo.Multicam.UI.Presenters
 	public class MainUIPresenter : IMainUIPresenter, IFeatureSideMenuPresenter
 	{
 		Action? _onClose;
-		IServiceSource _servSource;
+		IClientInfo _info;
 
 		public IMainUIVM VM { get; }
 
-        public MainUIPresenter(IServiceSource servSource)
+        public MainUIPresenter(IClientInfo info)
         {
-			_servSource = servSource;
-            VM = servSource.Get<IMainUIVM, IMainUIPresenter>(this);
+			_info = info;
+            VM = info.Get<IMainUIVM, IMainUIPresenter>(this);
         }
 
-        public void Init(IMainThreadDispatcher dispatcher)
+        public void Init()
 		{
-            var mainFeaturesCollection = _servSource.Get<IMainFeatureCollection>();
-			var scope = _servSource.Get<IScopedConnectionManager>().CreateScope(dispatcher);
-
-			VM.ContentVM = mainFeaturesCollection.UIPresenters.GetPresenter<IProjectFeaturesPresenter>(scope).VM;
+            var mainFeaturesCollection = _info.ServerConnection.GetFeatures();
+			VM.ContentVM = mainFeaturesCollection.ClientMessageDispatcher.GetOrAddClientEndpoint<IProjectFeaturesPresenter>(_info).VM;
         }
 
 		public void OpenMenu(ISideMenuEmbeddableVM vm, string title, Action onClose)

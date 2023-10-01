@@ -3,6 +3,7 @@ using ABCo.Multicam.Core.Features.Switchers.Data;
 using ABCo.Multicam.Core.Features.Switchers.Data.Config;
 using ABCo.Multicam.Core.Features.Switchers.Interaction;
 using ABCo.Multicam.Core.Features.Switchers.Types;
+using ABCo.Multicam.Server.Features.Switchers.Data;
 
 namespace ABCo.Multicam.Core.Features.Switchers
 {
@@ -15,8 +16,7 @@ namespace ABCo.Multicam.Core.Features.Switchers
         void OnFailure(SwitcherError error);
     }
 
-    public interface ISwitcherLiveFeature : ILiveFeature, IParameteredService<IInstantRetrievalDataSource> { }
-    public interface ISwitcherFeaturePresenter : IFeaturePresenter { }
+    public interface ISwitcherLiveFeature : ILiveFeature, IServerService<IInstantRetrievalDataSource> { }
 
 	public class SwitcherLiveFeature : ISwitcherLiveFeature, ISwitcherEventHandler
     {
@@ -28,8 +28,8 @@ namespace ABCo.Multicam.Core.Features.Switchers
 		readonly IHotSwappableSwitcherInteractionBuffer _buffer;        
 		readonly IInstantRetrievalDataSource _dataCollection;
 
-		public static ISwitcherLiveFeature New(IInstantRetrievalDataSource fragmentCollection, IServiceSource serviceSource) => new SwitcherLiveFeature(fragmentCollection, serviceSource);
-		public SwitcherLiveFeature(IInstantRetrievalDataSource fragmentCollection, IServiceSource serviceSource)
+		public static ISwitcherLiveFeature New(IInstantRetrievalDataSource fragmentCollection, IServerInfo serviceSource) => new SwitcherLiveFeature(fragmentCollection, serviceSource);
+		public SwitcherLiveFeature(IInstantRetrievalDataSource fragmentCollection, IServerInfo serviceSource)
         {
 			_dataCollection = fragmentCollection;
             _buffer = serviceSource.Get<IHotSwappableSwitcherInteractionBuffer, SwitcherConfig>(fragmentCollection.GetData<SwitcherConfig>());
@@ -93,6 +93,7 @@ namespace ABCo.Multicam.Core.Features.Switchers
 					};
 
 					_buffer.ChangeSwitcher(newDefaultConfig);
+					_dataCollection.SetData(_buffer.CurrentBuffer.GetPlatformCompatibility());
 					_dataCollection.SetData(newConfigType);
 					_dataCollection.SetData(newDefaultConfig);
 					break;

@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
-	public interface ISwitcherConnectionVM : IParameteredService<ISwitcherErrorPresenter>
+	public interface ISwitcherConnectionVM : IClientService<ISwitcherErrorPresenter>
 	{
 		string StatusText { get; set; }
 		string StatusButtonText { get; set; }

@@ -9,7 +9,7 @@ using System.ComponentModel;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
 {
-	public interface ISwitcherConfigVM : IParameteredService<ISwitcherConfigPresenter>, INotifyPropertyChanged
+	public interface ISwitcherConfigVM : IClientService<ISwitcherConfigPresenter>, INotifyPropertyChanged
     {
 		string[] Items { get; }
         string SelectedItem { get; set; }
@@ -33,7 +33,7 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher
         };
 
         [ObservableProperty] string _selectedItem = "Dummy";
-        [ObservableProperty] ISwitcherSpecificConfigVM? _currentConfig;        
+        [ObservableProperty] ISwitcherSpecificConfigVM? _currentConfig;
 
         public SwitcherConfigVM(ISwitcherConfigPresenter presenter)
         {

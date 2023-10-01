@@ -5,7 +5,7 @@ using System.ComponentModel;
 
 namespace ABCo.Multicam.UI.ViewModels.Features
 {
-	public interface IFeatureVM : IParameteredService<IMainFeaturePresenter>, INotifyPropertyChanged
+	public interface IFeatureVM : IClientService<IMainFeaturePresenter>, INotifyPropertyChanged
     {
         IFeatureContentVM? Content { get; set; }
         public string FeatureTitle { get; set; }

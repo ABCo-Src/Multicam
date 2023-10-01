@@ -2,12 +2,13 @@
 using ABCo.Multicam.Core.Features;
 using ABCo.Multicam.Core.Features.Switchers;
 using ABCo.Multicam.Core.Features.Switchers.Data;
+using ABCo.Multicam.Server.General;
 using ABCo.Multicam.UI.Enumerations;
 using ABCo.Multicam.UI.ViewModels.Features.Switcher;
 
 namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 {
-	public interface ISwitcherMixBlocksPresenter : IParameteredService<ISwitcherFeatureVM, IFeature> 
+	public interface ISwitcherMixBlocksPresenter : IClientService<ISwitcherFeatureVM, IServerTarget> 
 	{
 		void OnSpecced(SwitcherSpecs specs);
 		void OnState(MixBlockState[] mixBlocks);
@@ -18,11 +19,11 @@ namespace ABCo.Multicam.UI.Presenters.Features.Switcher
 
 	public class SwitcherMixBlocksPresenter : ISwitcherMixBlocksPresenter
 	{
-		readonly IServiceSource _servSource;
+		readonly IClientInfo _servSource;
 		readonly ISwitcherFeatureVM _vm = null!;
-		readonly IFeature _feature = null!;
+		readonly IServerTarget _feature = null!;
 
-		public SwitcherMixBlocksPresenter(ISwitcherFeatureVM vm, IFeature feature, IServiceSource servSource)
+		public SwitcherMixBlocksPresenter(ISwitcherFeatureVM vm, IServerTarget feature, IClientInfo servSource)
 		{
 			_vm = vm;
 			_feature = feature;

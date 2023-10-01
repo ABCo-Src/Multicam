@@ -2,13 +2,15 @@
 using ABCo.Multicam.Core.Features;
 using ABCo.Multicam.Core.Features.Data;
 using ABCo.Multicam.Core.Hosting.Scoping;
+using ABCo.Multicam.Server.Features.Data;
+using ABCo.Multicam.Server.General;
 using ABCo.Multicam.UI.Services;
 using ABCo.Multicam.UI.Structures;
 using ABCo.Multicam.UI.ViewModels.Features;
 
 namespace ABCo.Multicam.UI.Presenters.Features
 {
-	public interface IProjectFeaturesPresenter : IUIPresenter, IParameteredService<IMainFeatureCollection, IScopeInfo>
+	public interface IProjectFeaturesPresenter : IClientNotificationTarget
 	{
 		IProjectFeaturesVM VM { get; }
 		void OpenMobileMenu(IProjectFeaturesListItemVM vm);
@@ -23,44 +25,43 @@ namespace ABCo.Multicam.UI.Presenters.Features
 	public class ProjectFeaturesPresenter : IProjectFeaturesPresenter
 	{
 		readonly IMainUIPresenter _sideMenuPresenter;
-		readonly IMainFeatureCollection _collection;
-		readonly IServiceSource _servSource;
-		readonly IScopeInfo _scopeInfo;
+		readonly IServerTarget _collection;
+		readonly IClientInfo _info;
 		readonly IUIDialogHandler _dialogHandler;
 
 		public IProjectFeaturesVM VM { get; }
 		IProjectFeaturesListItemVM? _currentlyEditing;
 
-		public ProjectFeaturesPresenter(IMainFeatureCollection manager, IScopeInfo scopeInfo, IServiceSource servSource)
+		public ProjectFeaturesPresenter(IServerTarget collection, IClientInfo client)
 		{
-			_collection = manager;
+			_collection = collection;
 			_currentlyEditing = null;
-			_dialogHandler = servSource.Get<IUIDialogHandler>();
-			_sideMenuPresenter = servSource.Get<IMainUIPresenter>();
-			_servSource = servSource;
-			_scopeInfo = scopeInfo;
+			_dialogHandler = client.Get<IUIDialogHandler>();
+			_sideMenuPresenter = client.Get<IMainUIPresenter>();
+			_info = client;
 
-			VM = servSource.Get<IProjectFeaturesVM, IProjectFeaturesPresenter>(this);
+			VM = client.Get<IProjectFeaturesVM, IProjectFeaturesPresenter>(this);
 		}
 
-        public void Init() => OnDataChange(_collection.Features);
-        public void OnDataChange(object obj)
+		public void Init() => _collection.RefreshData<FeaturesList>();
+        public void OnDataChange(ServerData obj)
         {
-            if (obj is IList<IFeature> currentFeatures)
+            if (obj is FeaturesList objList)
 			{
+				var currentFeatures = objList.Features;
 				var oldItems = VM.Items;
 
                 // Re-add each feature one-by-one, re-using the old VM if it still exists
-                var newItems = new IProjectFeaturesListItemVM[_collection.Features.Count];
-                for (int i = 0; i < _collection.Features.Count; i++)
+                var newItems = new IProjectFeaturesListItemVM[currentFeatures.Count];
+                for (int i = 0; i < currentFeatures.Count; i++)
                 {
                     // Re-use or create a new vm
-                    int vm = Array.FindIndex(oldItems, s => s.NativeItem == _collection.Features[i]);
+                    int vm = Array.FindIndex(oldItems, s => s.NativeItem == currentFeatures[i]);
 
                     if (vm == -1)
                     {
-                        var innerVM = _collection.Features[i].UIPresenters.GetPresenter<IMainFeaturePresenter>(_scopeInfo).VM;
-                        newItems[i] = _servSource.Get<IProjectFeaturesListItemVM, IProjectFeaturesPresenter, IFeature, IFeatureVM>(this, _collection.Features[i], innerVM);
+                        var innerVM = currentFeatures[i].ClientMessageDispatcher.GetOrAddClientEndpoint<IMainFeaturePresenter>(_info).VM;
+                        newItems[i] = _info.Get<IProjectFeaturesListItemVM, IProjectFeaturesPresenter, IServerTarget, IFeatureVM>(this, currentFeatures[i], innerVM);
                         newItems[i].EditBtnText = "Edit";
                     }
                     else
@@ -70,20 +71,17 @@ namespace ABCo.Multicam.UI.Presenters.Features
                 VM.Items = newItems;
 
                 // Stop editing if the vm associated with that has been removed
-                EnsureCurrentlyEditingExists();
+                EnsureCurrentlyEditingExists(currentFeatures);
             }
         }
 
-		// TODO: Remove unnecessary interfaces
-		// TODO: Implement proper dispose paths
-
-		void EnsureCurrentlyEditingExists()
+		void EnsureCurrentlyEditingExists(IList<IServerTarget> features)
 		{
 			if (_currentlyEditing != null)
 			{
 				// Stop if this feature is still present in the new list
-				for (int i = 0; i < _collection.Features.Count; i++)
-					if (_collection.Features[i] == _currentlyEditing.NativeItem)
+				for (int i = 0; i < features.Count; i++)
+					if (features[i] == _currentlyEditing.NativeItem)
 						return;
 
 				// Stop editing if we weren't stopped
@@ -116,7 +114,7 @@ namespace ABCo.Multicam.UI.Presenters.Features
 				"Tally"
 			}));
 
-			void HandleChoice(string choice) => _collection.CreateFeature(choice switch
+			void HandleChoice(string choice) => _collection.PerformAction(MainFeatureCollection.CREATE, choice switch
 			{
 				"Switcher" => FeatureTypes.Switcher,
 				"Tally" => FeatureTypes.Tally,
@@ -126,8 +124,8 @@ namespace ABCo.Multicam.UI.Presenters.Features
 
 		public void OpenMobileMenu(IProjectFeaturesListItemVM vm) => VM.MobileView = vm;
 		public void CloseMobileMenu() => VM.MobileView = null;
-		public void MoveUp(IProjectFeaturesListItemVM vm) => _collection.MoveUp(vm.NativeItem);
-		public void MoveDown(IProjectFeaturesListItemVM vm) => _collection.MoveDown(vm.NativeItem);
-		public void Delete(IProjectFeaturesListItemVM vm) => _collection.Delete(vm.NativeItem);
+		public void MoveUp(IProjectFeaturesListItemVM vm) => _collection.PerformAction(MainFeatureCollection.MOVE_UP, vm.NativeItem);
+		public void MoveDown(IProjectFeaturesListItemVM vm) => _collection.PerformAction(MainFeatureCollection.MOVE_DOWN, vm.NativeItem);
+		public void Delete(IProjectFeaturesListItemVM vm) => _collection.PerformAction(MainFeatureCollection.DELETE, vm.NativeItem);
     }
 }

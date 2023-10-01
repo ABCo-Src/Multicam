@@ -1,16 +1,18 @@
-﻿namespace ABCo.Multicam.Core.Features.Switchers
+﻿using ABCo.Multicam.Server.Features.Switchers.Data;
+
+namespace ABCo.Multicam.Core.Features.Switchers
 {
 	public class UnsupportedSwitcherBehaviourException : Exception
     {
         public UnsupportedSwitcherBehaviourException() : base("Switcher was asked to perform something it can't. Either switcher is reporting incorrect specs or something higher-up went wrong.") { }
     }
 
-    /// <summary>
-    /// Provides a base class to make implementing switchers easier that:
-    /// 1. Fails everything on the ISwitcher API unless overriden.
-    /// 2. Stores the assigned event handler in a protected field
-    /// </summary>
-    public abstract class Switcher : ISwitcher
+	/// <summary>
+	/// Provides a base class to make implementing switchers easier that:
+	/// 1. Fails everything on the ISwitcher API unless overriden.
+	/// 2. Stores the assigned event handler in a protected field
+	/// </summary>
+	public abstract class Switcher : ISwitcher
     {
         protected ISwitcherEventHandler? _eventHandler;
 
@@ -27,7 +29,8 @@
 
         public abstract void RefreshConnectionStatus();
         public abstract void RefreshSpecs();
-        public abstract void Dispose();
+		public abstract SwitcherCompatibility GetPlatformCompatibility();
+		public abstract void Dispose();
 
 		public virtual void SetEventHandler(ISwitcherEventHandler? eventHandler)
 		{

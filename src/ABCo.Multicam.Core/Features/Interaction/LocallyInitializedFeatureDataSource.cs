@@ -1,9 +1,11 @@
 ﻿using ABCo.Multicam.Core.Features.Data;
+using ABCo.Multicam.Core.Hosting.Scoping;
+using ABCo.Multicam.Server.General;
 using ABCo.Multicam.UI.ViewModels.Features;
 
 namespace ABCo.Multicam.Core.Features
 {
-	public interface ILocallyInitializedFeatureDataSource : IFeatureDataSource, IInstantRetrievalDataSource, IParameteredService<FeatureDataInfo[]> { }
+	public interface ILocallyInitializedFeatureDataSource : IFeatureDataSource, IInstantRetrievalDataSource, IServerService<FeatureDataInfo[]> { }
 	public class LocallyInitializedFeatureDataSource : ILocallyInitializedFeatureDataSource
 	{
         readonly Data[] _fragmentStore;
@@ -11,9 +13,9 @@ namespace ABCo.Multicam.Core.Features
 
 		public LocallyInitializedFeatureDataSource(FeatureDataInfo[] data) => _fragmentStore = data.Select(i => new Data(i.Type, i.DefaultValue)).ToArray();
 
-		public T GetData<T>() where T : FeatureData => (T)_fragmentStore.First(s => typeof(T).IsAssignableTo(s.Type)).Object;
-		public void RefreshData<T>() where T : FeatureData => _parentEventHandler?.OnDataChange(GetData<T>());
-		public void SetData(FeatureData newValue)
+		public T GetData<T>() => (T)_fragmentStore.First(s => typeof(T).IsAssignableTo(s.Type)).Object;
+		public void RefreshData<T>() where T : ServerData => _parentEventHandler?.OnDataChange(GetData<T>()!);
+		public void SetData(ServerData newValue)
 		{
 			var index = GetFragmentIndex(newValue);
 			_fragmentStore[index].Object = newValue;
@@ -22,7 +24,7 @@ namespace ABCo.Multicam.Core.Features
 
 		public void SetDataChangeHandler(IFeatureDataChangeEventHandler? eventHandler) => _parentEventHandler = eventHandler;
 
-		private int GetFragmentIndex(FeatureData data)
+		private int GetFragmentIndex(object data)
 		{
 			Type targetType = data.GetType();
 			int index = Array.FindIndex(_fragmentStore, s => targetType.IsAssignableTo(s.Type));
@@ -33,9 +35,9 @@ namespace ABCo.Multicam.Core.Features
 		public struct Data
 		{
 			public Type Type;
-			public FeatureData Object;
+			public object Object;
 
-			public Data(Type type, FeatureData obj) => (Type, Object) = (type, obj);
+			public Data(Type type, object obj) => (Type, Object) = (type, obj);
 		}
 	}
 }

@@ -1,11 +1,13 @@
 ﻿using ABCo.Multicam.Core.Features.Switchers.Data;
+using ABCo.Multicam.Server.Features.Switchers.Data;
 
 namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 {
-	public interface IPerSwitcherInteractionBuffer : IParameteredService<SwitcherConfig>, ISwitcherEventHandler
+	public interface IPerSwitcherInteractionBuffer : IServerService<SwitcherConfig>, ISwitcherEventHandler
     {
         bool IsConnected { get; }
         SwitcherSpecs Specs { get; }
+		SwitcherCompatibility GetPlatformCompatibility();
 		void Connect();
 		void Disconnect();
 		int GetProgram(int mixBlock);
@@ -20,7 +22,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
     public class PerSwitcherInteractionBuffer : IPerSwitcherInteractionBuffer
     {
 		// TODO: Handle interactions when disconnected
-		readonly IServiceSource _servSource;
+		readonly IServerInfo _servSource;
 		readonly ISwitcherFactory _factory;
 		IPerSpecSwitcherInteractionBuffer _currentBuffer = null!;
 		readonly ISwitcher _switcher = null!;
@@ -29,7 +31,7 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
         public bool IsConnected { get; private set; }
 		public SwitcherSpecs Specs => _currentBuffer.Specs;
 
-        public PerSwitcherInteractionBuffer(SwitcherConfig config, IServiceSource servSource)
+        public PerSwitcherInteractionBuffer(SwitcherConfig config, IServerInfo servSource)
         {
             _factory = servSource.Get<ISwitcherFactory>();
             _servSource = servSource;
@@ -106,7 +108,8 @@ namespace ABCo.Multicam.Core.Features.Switchers.Interaction
 		public void SendProgram(int mixBlock, int value) => _currentBuffer.SendProgram(mixBlock, value);
 		public void SendPreview(int mixBlock, int value) => _currentBuffer.SendPreview(mixBlock, value);
 		public void Cut(int mixBlock) => _currentBuffer.Cut(mixBlock);
+		public SwitcherCompatibility GetPlatformCompatibility() => _switcher.GetPlatformCompatibility();
 
 		public void Dispose() => _switcher.Dispose();
-    }
+	}
 }

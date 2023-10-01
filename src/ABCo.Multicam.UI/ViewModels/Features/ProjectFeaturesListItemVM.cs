@@ -1,5 +1,6 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features;
+using ABCo.Multicam.Server.General;
 using ABCo.Multicam.UI.Presenters;
 using ABCo.Multicam.UI.Presenters.Features;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -7,9 +8,9 @@ using System.ComponentModel;
 
 namespace ABCo.Multicam.UI.ViewModels.Features
 {
-	public interface IProjectFeaturesListItemVM : IParameteredService<IProjectFeaturesPresenter, IFeature, IFeatureVM>, INotifyPropertyChanged, ISideMenuEmbeddableVM
+	public interface IProjectFeaturesListItemVM : IClientService<IProjectFeaturesPresenter, IServerTarget, IFeatureVM>, INotifyPropertyChanged, ISideMenuEmbeddableVM
 	{
-		IFeature NativeItem { get; }
+		IServerTarget NativeItem { get; }
 		IFeatureVM Feature { get; }
 		string EditBtnText { get; set; }
 		void OpenMobileView();
@@ -22,13 +23,13 @@ namespace ABCo.Multicam.UI.ViewModels.Features
 
 	public partial class ProjectFeaturesListItemVM : ViewModelBase, IProjectFeaturesListItemVM
 	{
-		public IFeature NativeItem { get; }
+		public IServerTarget NativeItem { get; }
 
 		readonly IProjectFeaturesPresenter _presenter;
 		[ObservableProperty] IFeatureVM _feature;
 		[ObservableProperty] string _editBtnText = "";
 
-		public ProjectFeaturesListItemVM(IProjectFeaturesPresenter presenter, IFeature nativeItem, IFeatureVM innerVM)
+		public ProjectFeaturesListItemVM(IProjectFeaturesPresenter presenter, IServerTarget nativeItem, IFeatureVM innerVM)
 		{
 			NativeItem = nativeItem;
 			_presenter = presenter;

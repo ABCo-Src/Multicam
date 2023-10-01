@@ -1,6 +1,8 @@
 ﻿using ABCo.Multicam.Core.Features.Data;
 using ABCo.Multicam.Core.Features.Interaction;
 using ABCo.Multicam.Core.Hosting.Scoping;
+using ABCo.Multicam.Server.Features.Data;
+using ABCo.Multicam.Server.General;
 using ABCo.Multicam.UI.ViewModels.Features;
 
 namespace ABCo.Multicam.Core.Features
@@ -8,10 +10,9 @@ namespace ABCo.Multicam.Core.Features
 	/// <summary>
 	/// Manages all the (running) features in the current project.
 	/// </summary>
-	public interface IMainFeatureCollection : IDisposable
+	public interface IMainFeatureCollection : IServerTarget, IDisposable
     {
         IReadOnlyList<IFeature> Features { get; }
-        IScopedPresenterStore<IMainFeatureCollection> UIPresenters { get; }
 
         void CreateFeature(FeatureTypes type);
         void MoveUp(IFeature feature);
@@ -21,20 +22,26 @@ namespace ABCo.Multicam.Core.Features
 
     public class MainFeatureCollection : IMainFeatureCollection
     {
+        public const int CREATE = 0;
+        public const int MOVE_UP = 1;
+        public const int MOVE_DOWN = 2;
+        public const int DELETE = 3;
+
         public static MainFeatureCollection? AppWideInstance { get; set; }
 
-        readonly IServiceSource _servSource;
+        readonly IServerInfo _servSource;
         readonly IFeatureContentFactory _featureContentFactory;
-        readonly List<IFeature> _features = new();
+        readonly IClientNotifier _clientTargets;
+		readonly List<IFeature> _features = new();
 
         public IReadOnlyList<IFeature> Features => _features;
-        public IScopedPresenterStore<IMainFeatureCollection> UIPresenters { get; }
+		public IRemoteClientNotifier ClientMessageDispatcher => _clientTargets;
 
-        public MainFeatureCollection(IServiceSource source)
+		public MainFeatureCollection(IServerInfo source)
         {
             _servSource = source;
             _featureContentFactory = source.Get<IFeatureContentFactory>();
-			UIPresenters = source.Get<IScopedPresenterStoreFactory>().Get((IMainFeatureCollection)this);
+			_clientTargets = source.ClientsManager.NewClientsDataNotifier(this);
         }
 
         public void CreateFeature(FeatureTypes type)
@@ -48,8 +55,8 @@ namespace ABCo.Multicam.Core.Features
 
             // Add the feature
 			_features.Add(_servSource.Get<IFeature, FeatureTypes, IFeatureDataSource, IFeatureActionTarget>(type, dataStore, liveFeature));
-            UIPresenters.OnDataChange(_features);
-        }
+			RefreshFeaturesList();
+		}
 
         public void MoveUp(IFeature feature)
         {
@@ -60,7 +67,7 @@ namespace ABCo.Multicam.Core.Features
 
             (_features[indexOfFeature], _features[indexOfFeature - 1]) = (_features[indexOfFeature - 1], _features[indexOfFeature]);
 
-            UIPresenters.OnDataChange(_features);
+            RefreshFeaturesList();
         }
 
         public void MoveDown(IFeature feature)
@@ -72,23 +79,52 @@ namespace ABCo.Multicam.Core.Features
 
             (_features[indexOfFeature], _features[indexOfFeature + 1]) = (_features[indexOfFeature + 1], _features[indexOfFeature]);
 
-            UIPresenters.OnDataChange(_features);
-        }
+			RefreshFeaturesList();
+		}
 
         public void Delete(IFeature feature)
         {
             _features.Remove(feature);
             feature.Dispose();
 
-            UIPresenters.OnDataChange(_features);
-        }
+			RefreshFeaturesList();
+		}
 
         public void Dispose()
         {
-            UIPresenters.Dispose();
+			_clientTargets.Dispose();
 
             for (int i = 0; i < _features.Count; i++)
                 _features[i].Dispose();
         }
-    }
+
+        public void PerformAction(int id) => throw new NotSupportedException();
+		public void PerformAction(int id, object param)
+		{
+            switch (id)
+            {
+                case CREATE:
+                    CreateFeature((FeatureTypes)param);
+                    break;
+				case MOVE_UP:
+					MoveUp((IFeature)param);
+					break;
+				case MOVE_DOWN:
+					MoveDown((IFeature)param);
+					break;
+				case DELETE:
+					Delete((IFeature)param);
+					break;
+                default:
+					throw new NotSupportedException();
+			}
+		}
+
+		public void RefreshData<T>() where T : ServerData
+		{
+            if (typeof(T) == typeof(FeaturesList)) RefreshFeaturesList();
+		}
+
+        void RefreshFeaturesList() => _clientTargets.OnDataChange(new FeaturesList(_features.Cast<IServerTarget>().ToArray()));
+	}
 }

@@ -1,8 +1,9 @@
 ﻿using ABCo.Multicam.Core.Features.Switchers.Data.Config;
+using ABCo.Multicam.Server.Features.Switchers.Data;
 
 namespace ABCo.Multicam.Core.Features.Switchers.Types
 {
-	public interface IDummySwitcher : ISwitcher, IParameteredService<DummySwitcherConfig> { }
+	public interface IDummySwitcher : ISwitcher, IServerService<DummySwitcherConfig> { }
 
     public class DummySwitcher : Switcher, IDummySwitcher
     {
@@ -19,6 +20,8 @@ namespace ABCo.Multicam.Core.Features.Switchers.Types
         }
 
 		public override void RefreshSpecs() => _eventHandler?.OnSpecsChange(_specs);
+
+        public override SwitcherCompatibility GetPlatformCompatibility() => new(SwitcherPlatformCompatibilityValue.Supported);
 
 		public static SwitcherSpecs CreateSpecsFrom(int[] mixBlocks)
         {

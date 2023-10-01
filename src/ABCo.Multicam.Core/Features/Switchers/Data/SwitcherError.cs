@@ -1,4 +1,6 @@
 ﻿using ABCo.Multicam.Core.Features.Data;
+using ABCo.Multicam.Core.Hosting.Scoping;
+using ABCo.Multicam.Server.General;
 
 namespace ABCo.Multicam.Core.Features.Switchers.Data
 {
@@ -12,10 +14,8 @@ namespace ABCo.Multicam.Core.Features.Switchers.Data
         public UnexpectedSwitcherDisconnectionException() : base("Switcher was unexpectedly disconnected.") { }
     }
 
-    public class SwitcherError : FeatureData
+    public class SwitcherError : ServerData
     {
-        public override int DataId => SwitcherDataSpecs.PREVIOUS_ERROR;
-
         public string? Message { get; }
         public SwitcherError(string? message) => Message = message;
     }

@@ -1,5 +1,6 @@
 ﻿using ABCo.Multicam.Core;
 using ABCo.Multicam.Core.Features.Switchers;
+using ABCo.Multicam.Core.Features.Switchers.Data.Config;
 using ABCo.Multicam.Core.Features.Switchers.Types;
 using Moq;
 
@@ -9,7 +10,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers
     public class SwitcherFactoryTests
     {
         public record struct Mocks(
-            Mock<IServiceSource> ServSource,
+            Mock<IServerInfo> ServSource,
             Mock<IDummySwitcher> DummySwitcher
         );
 

@@ -1,9 +1,10 @@
-﻿namespace ABCo.Multicam.Core.Features.Data
-{
-	public class FeatureGeneralInfo : FeatureData
-	{
-		public override int DataId => 0;
+﻿using ABCo.Multicam.Core.Hosting.Scoping;
+using ABCo.Multicam.Server.General;
 
+namespace ABCo.Multicam.Core.Features.Data
+{
+	public class FeatureGeneralInfo : ServerData
+	{
 		public FeatureTypes Type { get; }
 		public string Title { get; }
 

@@ -25,9 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\ABCo.Multicam.Core\ABCo.Multicam.Core.csproj" />
+    <ProjectReference Include="..\src\ABCo.Multicam.Core\ABCo.Multicam.Server.csproj" />
     <ProjectReference Include="..\src\ABCo.Multicam.UI.Blazor\ABCo.Multicam.UI.Blazor.csproj" />
-    <ProjectReference Include="..\src\ABCo.Multicam.UI\ABCo.Multicam.UI.csproj" />
+    <ProjectReference Include="..\src\ABCo.Multicam.UI\ABCo.Multicam.Client.csproj" />
   </ItemGroup>
 
 </Project>

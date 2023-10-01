@@ -10,7 +10,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
     {
         public record struct Mocks(
             Mock<ISwitcher> Switcher,
-            Mock<IServiceSource> ServSource,
+            Mock<IServerInfo> ServSource,
             Mock<ISwitcherInteractionBufferFactory> Factory,
             Mock<IMixBlockInteractionBuffer>[] Buffers,
             Mock<ISwitcherEventHandler> EventHandler);

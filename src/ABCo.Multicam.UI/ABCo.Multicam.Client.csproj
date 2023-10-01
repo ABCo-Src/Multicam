@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ABCo.Multicam.Core\ABCo.Multicam.Core.csproj" />
+    <ProjectReference Include="..\ABCo.Multicam.Core\ABCo.Multicam.Server.csproj" />
   </ItemGroup>
 
 </Project>

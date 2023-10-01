@@ -6,7 +6,7 @@ using System.ComponentModel;
 
 namespace ABCo.Multicam.UI.ViewModels.Features.Switcher.Types
 {
-	public interface ISwitcherDummyConfigVM : ISwitcherSpecificConfigVM, IParameteredService<ISwitcherDummyConfigPresenter>, INotifyPropertyChanged
+	public interface ISwitcherDummyConfigVM : ISwitcherSpecificConfigVM, IClientService<ISwitcherDummyConfigPresenter>, INotifyPropertyChanged
     {
         string SelectedMixBlockCount { get; set; }
 		int[] MixBlockCountOptions { get; }
@@ -19,14 +19,14 @@ namespace ABCo.Multicam.UI.ViewModels.Features.Switcher.Types
         public int[] MixBlockCountOptions => new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
         [ObservableProperty] string _selectedMixBlockCount = "1";
-        [ObservableProperty] ISwitcherDummyConfigMixBlockVM[] _mixBlockVMs = null!;
+        [ObservableProperty] ISwitcherDummyConfigMixBlockVM[] _mixBlockVMs = Array.Empty<ISwitcherDummyConfigMixBlockVM>();
 
 		public SwitcherDummyConfigVM(ISwitcherDummyConfigPresenter presenter) => _presenter = presenter;
 
         public void MixBlockCountChange() => _presenter.OnUIChange();
     }
 
-    public interface ISwitcherDummyConfigMixBlockVM : IParameteredService<ISwitcherDummyConfigPresenter>
+    public interface ISwitcherDummyConfigMixBlockVM : IClientService<ISwitcherDummyConfigPresenter>
     { 
         string InputCount { get; set; }
         int InputIndex { get; set; }

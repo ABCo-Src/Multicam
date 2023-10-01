@@ -1,4 +1,5 @@
 ﻿using ABCo.Multicam.Core.General;
+using ABCo.Multicam.Server.Features.Switchers.Data;
 using BMDSwitcherAPI;
 using System;
 using System.Collections.Generic;
@@ -12,36 +13,29 @@ namespace ABCo.Multicam.Core.Features.Switchers.Live.Types.ATEM
 {
 	public interface IATEMPlatformCompatibility
 	{
-		ATEMPlatformCompatibilityValue GetCompatibility();
+		SwitcherPlatformCompatibilityValue GetCompatibility();
 	}
 
 	public class ATEMPlatformCompatibility : IATEMPlatformCompatibility
 	{
 		readonly IPlatformInfo _info;
-		public ATEMPlatformCompatibility(IServiceSource servSource) => _info = servSource.Get<IPlatformInfo>();
+		public ATEMPlatformCompatibility(IServerInfo servSource) => _info = servSource.Get<IPlatformInfo>();
 
 		[SupportedOSPlatform("windows")]
-		public ATEMPlatformCompatibilityValue GetCompatibility()
+		public SwitcherPlatformCompatibilityValue GetCompatibility()
 		{
-			if (_info.GetPlatformType() != PlatformType.Windows) return ATEMPlatformCompatibilityValue.UnsupportedPlatform;
+			if (_info.GetPlatformType() != PlatformType.Windows) return SwitcherPlatformCompatibilityValue.UnsupportedPlatform;
 
 			try
 			{
 				var discovery = new CBMDSwitcherDiscovery();
 				Marshal.ReleaseComObject(discovery);
-				return ATEMPlatformCompatibilityValue.Supported;
+				return SwitcherPlatformCompatibilityValue.Supported;
 			}
 			catch (COMException)
 			{
-				return ATEMPlatformCompatibilityValue.NoSoftware;
+				return SwitcherPlatformCompatibilityValue.NoSoftware;
 			}
 		}
-	}
-
-	public enum ATEMPlatformCompatibilityValue
-	{
-		Supported,
-		UnsupportedPlatform,
-		NoSoftware
 	}
 }

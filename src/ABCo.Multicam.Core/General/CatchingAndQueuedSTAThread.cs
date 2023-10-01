@@ -20,7 +20,7 @@ namespace ABCo.Multicam.Core.General
 		readonly IPlatformInfo _platformInfo;
 		readonly Queue<QueueItem> _taskQueue;
 
-		public CatchingAndQueuedSTAThread(IServiceSource servSource)
+		public CatchingAndQueuedSTAThread(IServerInfo servSource)
 		{
 			_platformInfo = servSource.Get<IPlatformInfo>();
 			_taskQueue = new();
