@@ -2,9 +2,9 @@
 using ABCo.Multicam.Server.Features;
 using ABCo.Multicam.Server.Features.Switchers;
 using ABCo.Multicam.Server.Features.Switchers.Data;
-using ABCo.Multicam.Server.Hosting;
 using ABCo.Multicam.Client.Enumerations;
 using ABCo.Multicam.Client.ViewModels.Features.Switcher;
+using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 {
@@ -20,8 +20,8 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 	public class SwitcherMixBlocksPresenter : ISwitcherMixBlocksPresenter
 	{
 		readonly IClientInfo _servSource;
-		readonly ISwitcherFeatureVM _vm = null!;
-		readonly IServerTarget _feature = null!;
+		readonly ISwitcherFeatureVM _vm;
+		readonly IServerTarget _feature;
 
 		public SwitcherMixBlocksPresenter(ISwitcherFeatureVM vm, IServerTarget feature, IClientInfo servSource)
 		{
@@ -40,6 +40,9 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 				PopulateMixBlockVM(newMixBlocks[i], specs.MixBlocks[i], i);
 			}
 			_vm.MixBlocks = newMixBlocks;
+
+			// Update mix block states
+			OnState(_feature.DataStore.GetData<SwitcherState>().Data);
 		}
 
 		void PopulateMixBlockVM(ISwitcherMixBlockVM vm, SwitcherMixBlock mb, int mixBlockIndex)
@@ -73,7 +76,9 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 
 		public void OnState(MixBlockState[] mixBlocks)
 		{
-			for (int i = 0; i < mixBlocks.Length; i++)
+			// Update as far as our current cache allows
+			int min = Math.Min(mixBlocks.Length, _vm.MixBlocks.Length);
+			for (int i = 0; i < min; i++)
 				UpdateMixBlockState(_vm.MixBlocks[i], mixBlocks[i]);
 		}
 
@@ -92,8 +97,8 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 			}
 		}
 
-		public void SetProgram(int mixBlock, int value) => _feature.PerformAction(SwitcherActionID.SET_PROGRAM, new BusChangeInfo(mixBlock, value));
-		public void SetPreview(int mixBlock, int value) => _feature.PerformAction(SwitcherActionID.SET_PREVIEW, new BusChangeInfo(mixBlock, value));
-		public void Cut(int mixBlock) => _feature.PerformAction(SwitcherActionID.CUT, mixBlock);
+		public void SetProgram(int mixBlock, int value) => _feature.PerformAction(SwitcherLiveFeature.SET_PROGRAM, new BusChangeInfo(mixBlock, value));
+		public void SetPreview(int mixBlock, int value) => _feature.PerformAction(SwitcherLiveFeature.SET_PREVIEW, new BusChangeInfo(mixBlock, value));
+		public void Cut(int mixBlock) => _feature.PerformAction(SwitcherLiveFeature.CUT, mixBlock);
 	}
 }

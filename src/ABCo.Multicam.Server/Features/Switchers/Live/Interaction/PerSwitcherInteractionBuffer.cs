@@ -24,8 +24,8 @@ namespace ABCo.Multicam.Server.Features.Switchers.Interaction
 		// TODO: Handle interactions when disconnected
 		readonly IServerInfo _servSource;
 		readonly ISwitcherFactory _factory;
-		IPerSpecSwitcherInteractionBuffer _currentBuffer = null!;
-		readonly ISwitcher _switcher = null!;
+		readonly ISwitcher _switcher;
+		IPerSpecSwitcherInteractionBuffer _currentBuffer;
         ISwitcherEventHandler? _eventHandler;
 
         public bool IsConnected { get; private set; }

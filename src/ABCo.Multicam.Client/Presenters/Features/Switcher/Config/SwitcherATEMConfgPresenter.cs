@@ -5,7 +5,6 @@ using ABCo.Multicam.Server.Features.Switchers.Data;
 using ABCo.Multicam.Server.Features.Switchers.Data.Config;
 using ABCo.Multicam.Server.Features.Switchers.Live.Types.ATEM;
 using ABCo.Multicam.Server.Features.Switchers.Data;
-using ABCo.Multicam.Server.Hosting;
 using ABCo.Multicam.Client.ViewModels.Features.Switcher;
 using ABCo.Multicam.Client.ViewModels.Features.Switcher.Config.ATEM;
 using System;
@@ -13,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Client.Presenters.Features.Switcher.Config
 {
@@ -46,7 +46,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher.Config
 		public void OnUIChange()
 		{
 			var newATEMConfig = new ATEMSwitcherConfig(_vm.SelectedConnectionType == "USB" ? null : _vm.IpAddress);
-			_feature.PerformAction(SwitcherActionID.SET_CONFIG, newATEMConfig);
+			_feature.PerformAction(SwitcherLiveFeature.SET_CONFIG, newATEMConfig);
 		}
 
 		public void OnCompatibility(SwitcherCompatibility compatibility) => _vm.CompatibilityMessage = compatibility.Value;

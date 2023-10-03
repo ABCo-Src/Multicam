@@ -12,7 +12,7 @@
 		readonly IServerInfo _servSource;
 		ISwitcherEventHandler? _handler;
 
-		public IPerSwitcherInteractionBuffer CurrentBuffer { get; private set; } = null!;
+		public IPerSwitcherInteractionBuffer CurrentBuffer { get; private set; }
 
 		public HotSwappableSwitcherInteractionBuffer(SwitcherConfig config, IServerInfo servSource)
 		{

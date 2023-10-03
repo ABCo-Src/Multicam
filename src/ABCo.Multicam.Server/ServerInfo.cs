@@ -1,7 +1,7 @@
 ﻿using ABCo.Multicam.Server;
 using ABCo.Multicam.Server.General;
 using ABCo.Multicam.Server.General;
-using ABCo.Multicam.Server.Hosting;
+using ABCo.Multicam.Server.Hosting.Clients;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
 
@@ -11,7 +11,7 @@ namespace ABCo.Multicam.Server
 	public interface IClientService<T, T2> { }
 	public interface IClientService<T, T2, T3> { }
 
-	public interface IClientInfo
+	public interface IClientInfo : IDisposable
 	{
 		int ConnectionID { get; }
 		IServerConnection ServerConnection { get; }

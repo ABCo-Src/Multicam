@@ -35,7 +35,7 @@ namespace ABCo.Multicam.Client.Presenters
         public void Init()
 		{
             var mainFeaturesCollection = _info.ServerConnection.GetFeatures();
-			VM.ContentVM = mainFeaturesCollection.ClientMessageDispatcher.GetOrAddClientEndpoint<IProjectFeaturesPresenter>(_info).VM;
+			VM.ContentVM = mainFeaturesCollection.DataStore.GetOrAddClientEndpoint<IProjectFeaturesPresenter>(_info).VM;
         }
 
 		public void OpenMenu(ISideMenuEmbeddableVM vm, string title, Action onClose)

@@ -1,17 +1,16 @@
-﻿using ABCo.Multicam.Server;
-using ABCo.Multicam.Server.General;
+﻿using ABCo.Multicam.Server.General;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ABCo.Multicam.Server.Hosting
+namespace ABCo.Multicam.Server.Hosting.Clients
 {
     public interface IConnectedClientsManager
     {
         int NewConnectionId();
-        IClientNotifier NewClientsDataNotifier(IServerTarget target);
+        IClientSyncedDataStore NewClientsDataNotifier(IServerTarget target);
         void OnClientDisconnected(IClientInfo info);
 
         event Action<IClientInfo> ClientDisconnected;
@@ -26,10 +25,10 @@ namespace ABCo.Multicam.Server.Hosting
 
         public ConnectedClientsManager(IServerInfo info) => _info = info;
 
-        public IClientNotifier NewClientsDataNotifier(IServerTarget target)
+        public IClientSyncedDataStore NewClientsDataNotifier(IServerTarget target)
         {
             // Create a client notifier
-            var notifier = _info.Get<IConnectedClientsBoundClientNotifier, IServerTarget>(target);
+            var notifier = _info.Get<IClientSyncedDataStoreWithClientsManagementBinding, IServerTarget>(target);
 
             // Register it so it's notified when a client is disconnected (and can remove all targets registered with that client)
             ClientDisconnected += notifier.OnClientDisconnect;

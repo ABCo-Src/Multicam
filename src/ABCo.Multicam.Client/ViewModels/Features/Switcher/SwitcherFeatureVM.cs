@@ -2,7 +2,7 @@
 using ABCo.Multicam.Server.Features;
 using ABCo.Multicam.Server.Features.Switchers;
 using ABCo.Multicam.Server.Features.Switchers.Data;
-using ABCo.Multicam.Server.Hosting;
+using ABCo.Multicam.Server.Hosting.Clients;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace ABCo.Multicam.Client.ViewModels.Features.Switcher
@@ -12,7 +12,6 @@ namespace ABCo.Multicam.Client.ViewModels.Features.Switcher
 		ISwitcherMixBlockVM[] MixBlocks { get; set; }
 		ISwitcherConnectionVM Connection { get; set; }
 		ISwitcherConfigVM? Config { get; set; }
-		void UpdateConfig(SwitcherConfig config);
 	}
 
     public partial class SwitcherFeatureVM : ViewModelBase, ISwitcherFeatureVM
@@ -24,7 +23,5 @@ namespace ABCo.Multicam.Client.ViewModels.Features.Switcher
         [ObservableProperty] ISwitcherConfigVM? _config;
 
 		public SwitcherFeatureVM(IServerTarget feature) => _feature = feature;
-
-		public void UpdateConfig(SwitcherConfig config) => _feature.PerformAction(SwitcherActionID.SET_CONFIG_TYPE, config);
     }
 }

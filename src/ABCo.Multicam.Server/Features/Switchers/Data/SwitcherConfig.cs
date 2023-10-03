@@ -1,17 +1,14 @@
 ﻿using ABCo.Multicam.Server.Features.Data;
 using ABCo.Multicam.Server.Features.Switchers.Data;
 using ABCo.Multicam.Server.General;
-using ABCo.Multicam.Server.Hosting;
+using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Server.Features.Switchers
 {
-    public class SwitcherConfigType : ServerData
+	public abstract class SwitcherConfig : ServerData 
     {
-		public SwitcherType Type { get; }
-		public SwitcherConfigType(SwitcherType type) => Type = type;
-	}
-
-	public abstract class SwitcherConfig : ServerData { }
+        public abstract SwitcherType Type { get; }
+    }
 
     public enum SwitcherType
     {

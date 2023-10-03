@@ -1,4 +1,4 @@
-﻿using ABCo.Multicam.Server.Hosting;
+﻿using ABCo.Multicam.Server.Hosting.Clients;
 using System;
 using System.Collections.Generic;
 using System.Linq;

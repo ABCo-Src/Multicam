@@ -5,13 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ABCo.Multicam.Server.Hosting
+namespace ABCo.Multicam.Server.Hosting.Clients
 {
     public interface IServerTarget
     {
-        IRemoteClientNotifier ClientMessageDispatcher { get; }
+        IRemoteDataStore DataStore { get; }
         void PerformAction(int id);
         void PerformAction(int id, object param);
-        void RefreshData<T>() where T : ServerData;
     }
 }

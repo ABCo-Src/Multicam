@@ -8,8 +8,7 @@ namespace ABCo.Multicam.Client.ViewModels.Features
 {
 	public interface IFeatureContentFactory
 	{
-		ILiveFeature GetLiveFeature(FeatureTypes type, IInstantRetrievalDataSource collection);
-		FeatureDataInfo[] GetFeatureDataEntries(FeatureTypes type);
+		ILiveFeature GetLiveFeature(FeatureTypes type, IFeatureDataStore collection);
 	}
 
 	public class FeatureContentFactory : IFeatureContentFactory
@@ -17,16 +16,10 @@ namespace ABCo.Multicam.Client.ViewModels.Features
 		IServerInfo _servSource;
 		public FeatureContentFactory(IServerInfo servSource) => _servSource = servSource;
 
-		public FeatureDataInfo[] GetFeatureDataEntries(FeatureTypes type) => type switch
+		public ILiveFeature GetLiveFeature(FeatureTypes type, IFeatureDataStore collection) => type switch
 		{
-			FeatureTypes.Switcher => SwitcherDataSpecs.DataInfo,
-			_ => new FeatureDataInfo[] { new(typeof(FeatureGeneralInfo), new FeatureGeneralInfo(FeatureTypes.Unsupported, "New Unknown")) }
-		};
-
-		public ILiveFeature GetLiveFeature(FeatureTypes type, IInstantRetrievalDataSource collection) => type switch
-		{
-			FeatureTypes.Switcher => _servSource.Get<ISwitcherLiveFeature, IInstantRetrievalDataSource>(collection),
-			_ => _servSource.Get<IUnsupportedLiveFeature, IInstantRetrievalDataSource>(collection)
+			FeatureTypes.Switcher => _servSource.Get<ISwitcherLiveFeature, IFeatureDataStore>(collection),
+			_ => _servSource.Get<IUnsupportedLiveFeature, IFeatureDataStore>(collection)
 		};
     }
 }

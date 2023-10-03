@@ -2,12 +2,16 @@
 
 namespace ABCo.Multicam.Server.Features
 {
-	public interface IUnsupportedLiveFeature : ILiveFeature, IServerService<IInstantRetrievalDataSource> { }
+	public interface IUnsupportedLiveFeature : ILiveFeature, IServerService<IFeatureDataStore> { }
     public class UnsupportedLiveFeature : IUnsupportedLiveFeature
     {
-		IInstantRetrievalDataSource _collection;
+		IFeatureDataStore _collection;
 
-		public UnsupportedLiveFeature(IInstantRetrievalDataSource collection) => _collection = collection;
+		public UnsupportedLiveFeature(IFeatureDataStore collection)
+		{
+			_collection = collection;
+			_collection.SetData<FeatureGeneralInfo>(new FeatureGeneralInfo(FeatureTypes.Unsupported, "New Unsupported Feature"));
+		}
 
 		public void Dispose() { }
 
@@ -15,7 +19,7 @@ namespace ABCo.Multicam.Server.Features
 		public void PerformAction(int code, object? param)
 		{
 			if (code == 0)
-				_collection.SetData((FeatureGeneralInfo)param!);
+				_collection.SetData<FeatureGeneralInfo>((FeatureGeneralInfo)param!);
 		}
 	}
 }

@@ -1,8 +1,8 @@
-﻿using ABCo.Multicam.Server.Features.Interaction;
-
-namespace ABCo.Multicam.Server.Features
+﻿namespace ABCo.Multicam.Server.Features
 {
-	public interface ILiveFeature : IFeatureActionTarget, IDisposable
+	public interface ILiveFeature : IDisposable
 	{
-    }
+		void PerformAction(int id);
+		void PerformAction(int id, object param);
+	}
 }

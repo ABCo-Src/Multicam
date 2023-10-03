@@ -3,8 +3,8 @@ using ABCo.Multicam.Server.Features;
 using ABCo.Multicam.Server.Features.Switchers;
 using ABCo.Multicam.Server.Features.Switchers.Data;
 using ABCo.Multicam.Server.General;
-using ABCo.Multicam.Server.Hosting;
 using ABCo.Multicam.Client.ViewModels.Features.Switcher;
+using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 {
@@ -60,13 +60,13 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 
 			// Handle connect/disconnect
 			if (_isConnected) 
-				_feature.PerformAction(SwitcherActionID.DISCONNECT);
+				_feature.PerformAction(SwitcherLiveFeature.DISCONNECT);
 			else
 			{
 				_errorPresenter.SetErrorlessButtonVisible(false);
 				StartNewTransitionTimer(GetConnectingText);
 
-				_feature.PerformAction(SwitcherActionID.CONNECT);
+				_feature.PerformAction(SwitcherLiveFeature.CONNECT);
 			}
 		}
 

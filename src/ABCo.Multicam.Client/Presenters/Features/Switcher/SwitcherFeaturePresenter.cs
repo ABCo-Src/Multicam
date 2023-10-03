@@ -4,9 +4,9 @@ using ABCo.Multicam.Server.Features.Data;
 using ABCo.Multicam.Server.Features.Switchers;
 using ABCo.Multicam.Server.Features.Switchers.Data;
 using ABCo.Multicam.Server.Features.Switchers.Data;
-using ABCo.Multicam.Server.Hosting;
 using ABCo.Multicam.Client.ViewModels.Features;
 using ABCo.Multicam.Client.ViewModels.Features.Switcher;
+using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 {
@@ -19,7 +19,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 		readonly ISwitcherFeatureVM _vm;
 		readonly ISwitcherConnectionPresenter _connectionPresenter;
 		readonly ISwitcherMixBlocksPresenter _mixBlocksPresenter;
-		ISwitcherConfigPresenter? _configPresenter;
+		readonly ISwitcherConfigPresenter _configPresenter;
 
 		public SwitcherFeaturePresenter(IServerTarget baseFeature, IClientInfo info)
 		{
@@ -32,6 +32,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 			_vm.Connection = _connectionPresenter.VM;
 
 			_mixBlocksPresenter = _info.Get<ISwitcherMixBlocksPresenter, ISwitcherFeatureVM, IServerTarget>(_vm, _feature);
+			_configPresenter = _info.Get<ISwitcherConfigPresenter, IServerTarget>(_feature);
 		}
 
 		public IFeatureContentVM VM => _vm;
@@ -40,13 +41,9 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 		{
 			switch (data)
 			{
-				case SwitcherConfigType configType:
-					_configPresenter = _info.Get<ISwitcherConfigPresenter, IServerTarget, SwitcherConfigType>(_feature, configType);
-					_vm.Config = _configPresenter.VM;
-					break;
-
 				case SwitcherConfig config:
-					_configPresenter?.OnConfig(config);
+					_configPresenter.OnConfig(config);
+					_vm.Config = _configPresenter.VM;
 					break;
 
 				case SwitcherConnection connection:
@@ -74,13 +71,6 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 
 		public void Init()
 		{
-			// Update config, then connection, then specs, then state, then error (order important for the presenter to track what's happening clearly)
-			_feature.RefreshData<SwitcherConfigType>();
-			_feature.RefreshData<SwitcherConfig>();
-			_feature.RefreshData<SwitcherConnection>();
-			_feature.RefreshData<SwitcherSpecs>();
-			_feature.RefreshData<SwitcherState>();
-			_feature.RefreshData<SwitcherError>();
 		}
 	}
 }

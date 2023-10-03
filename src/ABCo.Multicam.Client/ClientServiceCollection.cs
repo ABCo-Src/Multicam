@@ -1,5 +1,6 @@
 ﻿using ABCo.Multicam.Server;
 using ABCo.Multicam.Server.General;
+using ABCo.Multicam.Server.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
 
@@ -23,6 +24,7 @@ namespace ABCo.Multicam.Client
 		public IThreadDispatcher Dispatcher { get; }
         public IServerConnection ServerConnection { get; }
 
+        public void Dispose() => ServerConnection.Disconnect(this);
 		public T Get<T>() where T : class
         {
             // Check if it's a transient

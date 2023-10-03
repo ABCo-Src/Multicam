@@ -1,8 +1,7 @@
 ﻿using ABCo.Multicam.Server.Features.Data;
-using ABCo.Multicam.Server.Features.Interaction;
 using ABCo.Multicam.Server.Features.Data;
-using ABCo.Multicam.Server.Hosting;
 using ABCo.Multicam.Client.ViewModels.Features;
+using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Server.Features
 {
@@ -29,31 +28,22 @@ namespace ABCo.Multicam.Server.Features
         public static MainFeatureCollection? AppWideInstance { get; set; }
 
         readonly IServerInfo _servSource;
-        readonly IFeatureContentFactory _featureContentFactory;
-        readonly IClientNotifier _clientTargets;
+        readonly IClientSyncedDataStore _clientTargets;
 		readonly List<IFeature> _features = new();
 
         public IReadOnlyList<IFeature> Features => _features;
-		public IRemoteClientNotifier ClientMessageDispatcher => _clientTargets;
+		public IRemoteDataStore DataStore => _clientTargets;
 
 		public MainFeatureCollection(IServerInfo source)
         {
             _servSource = source;
-            _featureContentFactory = source.Get<IFeatureContentFactory>();
 			_clientTargets = source.ClientsManager.NewClientsDataNotifier(this);
-        }
+			RefreshFeaturesList();
+		}
 
         public void CreateFeature(FeatureTypes type)
         {
-            // Create the data store 
-            var dataSpecs = _featureContentFactory.GetFeatureDataEntries(type);
-			var dataStore = _servSource.Get<ILocallyInitializedFeatureDataSource, FeatureDataInfo[]>(dataSpecs);
-
-            // Create the live feature
-            var liveFeature = _featureContentFactory.GetLiveFeature(type, dataStore);
-
-            // Add the feature
-			_features.Add(_servSource.Get<IFeature, FeatureTypes, IFeatureDataSource, IFeatureActionTarget>(type, dataStore, liveFeature));
+			_features.Add(_servSource.Get<IFeature, FeatureTypes>(type));
 			RefreshFeaturesList();
 		}
 
@@ -119,11 +109,6 @@ namespace ABCo.Multicam.Server.Features
 			}
 		}
 
-		public void RefreshData<T>() where T : ServerData
-		{
-            if (typeof(T) == typeof(FeaturesList)) RefreshFeaturesList();
-		}
-
-        void RefreshFeaturesList() => _clientTargets.OnDataChange(new FeaturesList(_features.Cast<IServerTarget>().ToArray()));
+        void RefreshFeaturesList() => _clientTargets.SetData<FeaturesList>(new FeaturesList(_features.Cast<IServerTarget>().ToArray()));
 	}
 }

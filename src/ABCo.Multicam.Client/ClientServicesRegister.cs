@@ -2,7 +2,6 @@
 using ABCo.Multicam.Server.Features;
 using ABCo.Multicam.Server.Features.Data;
 using ABCo.Multicam.Server.Features.Switchers;
-using ABCo.Multicam.Server.Hosting;
 using ABCo.Multicam.Client.Presenters;
 using ABCo.Multicam.Client.Presenters.Features;
 using ABCo.Multicam.Client.Presenters.Features.Switcher;
@@ -14,6 +13,7 @@ using ABCo.Multicam.Client.ViewModels.Features.Switcher.Config.ATEM;
 using ABCo.Multicam.Client.ViewModels.Features.Switcher.Types;
 using Microsoft.Extensions.DependencyInjection;
 using System.Security.Cryptography;
+using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Client
 {
@@ -38,7 +38,7 @@ namespace ABCo.Multicam.Client
 			container.AddTransient<ISwitcherErrorPresenter, IServerTarget, Action>((p1, p2, s) => new SwitcherErrorPresenter(p1, p2, s));
 			container.AddTransient<ISwitcherMixBlocksPresenter, ISwitcherFeatureVM, IServerTarget>((p1, p2, s) => new SwitcherMixBlocksPresenter(p1, p2, s));
 
-			container.AddTransient<ISwitcherConfigPresenter, IServerTarget, SwitcherConfigType>((p1, p2, s) => new SwitcherConfigPresenter(p1, p2, s));
+			container.AddTransient<ISwitcherConfigPresenter, IServerTarget>((p1, s) => new SwitcherConfigPresenter(p1, s));
 			container.AddTransient<ISwitcherDummyConfigPresenter, IServerTarget>((p1, s) => new SwitcherDummyConfigPresenter(p1, s));
 			container.AddTransient<ISwitcherATEMConfigPresenter, IServerTarget>((p1, s) => new SwitcherATEMConfgPresenter(p1, s));
 

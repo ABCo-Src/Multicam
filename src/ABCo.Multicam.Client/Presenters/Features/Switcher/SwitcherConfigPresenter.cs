@@ -12,11 +12,12 @@ using ABCo.Multicam.Client.Presenters.Features.Switcher.Config;
 using ABCo.Multicam.Server.Features.Switchers.Data.Config;
 using ABCo.Multicam.Server.Features.Switchers.Data;
 using ABCo.Multicam.Server.Features.Switchers.Data;
-using ABCo.Multicam.Server.Hosting;
+using ABCo.Multicam.Server.Hosting.Clients;
+using ABCo.Multicam.Client.ViewModels.Features;
 
 namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 {
-    public interface ISwitcherConfigPresenter : IClientService<IServerTarget, SwitcherConfigType>
+    public interface ISwitcherConfigPresenter : IClientService<IServerTarget>
 	{
 		void OnConfig(SwitcherConfig config);
 		void OnCompatibility(SwitcherCompatibility compatibility);
@@ -34,45 +35,59 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 	public class SwitcherConfigPresenter : ISwitcherConfigPresenter
 	{
 		readonly IServerTarget _feature;
+		readonly IClientInfo _info;
+		SwitcherType? _oldType;
 		ISwitcherSpecificConfigPresenter? _currentConfigPresenter;
 
 		public ISwitcherConfigVM VM { get; }
 
-		public SwitcherConfigPresenter(IServerTarget feature, SwitcherConfigType type, IClientInfo servSource)
+		public SwitcherConfigPresenter(IServerTarget feature, IClientInfo info)
 		{
 			_feature = feature;
-			VM = servSource.Get<ISwitcherConfigVM, ISwitcherConfigPresenter>(this);
-
-			// Set the selected item
-			VM.SelectedItem = type.Type switch
-			{
-				SwitcherType.ATEM => "ATEM",
-				_ => "Dummy"
-			};
-
-			// Update the inner VM
-			_currentConfigPresenter = type.Type switch
-			{
-				SwitcherType.Dummy => servSource.Get<ISwitcherDummyConfigPresenter, IServerTarget>(feature),
-				SwitcherType.ATEM => servSource.Get<ISwitcherATEMConfigPresenter, IServerTarget>(feature),
-				_ => null
-			};
-
-			if (_currentConfigPresenter != null)
-				VM.CurrentConfig = _currentConfigPresenter.VM;
+			_info = info;
+			VM = info.Get<ISwitcherConfigVM, ISwitcherConfigPresenter>(this);
 		}
 
-		public void OnConfig(SwitcherConfig config) => _currentConfigPresenter?.OnConfig(config);
+		public void OnConfig(SwitcherConfig config) 
+		{
+			// If the type has changed, reinitialize everything
+			if (config.Type != _oldType)
+			{
+				_oldType = config.Type;
+
+				// Set the selected item
+				VM.SelectedItem = config.Type switch
+				{
+					SwitcherType.ATEM => "ATEM",
+					_ => "Dummy"
+				};
+
+				// Update the inner VM
+				_currentConfigPresenter = config.Type switch
+				{
+					SwitcherType.Dummy => _info.Get<ISwitcherDummyConfigPresenter, IServerTarget>(_feature),
+					SwitcherType.ATEM => _info.Get<ISwitcherATEMConfigPresenter, IServerTarget>(_feature),
+					_ => null
+				};
+
+				if (_currentConfigPresenter != null)
+					VM.CurrentConfig = _currentConfigPresenter.VM;
+			}
+
+			// Report the config change to the presenter
+			_currentConfigPresenter?.OnConfig(config);
+		}
+
 		public void OnCompatibility(SwitcherCompatibility compatibility) => _currentConfigPresenter?.OnCompatibility(compatibility);
 
 		public void SelectedChanged()
 		{
-			_feature.PerformAction(SwitcherActionID.SET_CONFIG_TYPE, new SwitcherConfigType(VM.SelectedItem switch
+			_feature.PerformAction(SwitcherLiveFeature.SET_CONFIG, VM.SelectedItem switch
 			{
-				"Dummy" => SwitcherType.Dummy,
-				"ATEM" => SwitcherType.ATEM,
+				"Dummy" => new DummySwitcherConfig(4),
+				"ATEM" => new ATEMSwitcherConfig(null),
 				_ => throw new Exception("Unsupported selected mode given")
-			}));
+			});
 		}
 	}
 }

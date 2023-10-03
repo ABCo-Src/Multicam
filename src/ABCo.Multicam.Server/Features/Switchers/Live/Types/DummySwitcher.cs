@@ -7,8 +7,8 @@ namespace ABCo.Multicam.Server.Features.Switchers.Types
 
     public class DummySwitcher : Switcher, IDummySwitcher
     {
-		readonly SwitcherSpecs _specs = null!;
-		readonly MixBlockState[] _states = null!;
+		readonly SwitcherSpecs _specs;
+		readonly MixBlockState[] _states;
 
         public DummySwitcher(DummySwitcherConfig config)
         {

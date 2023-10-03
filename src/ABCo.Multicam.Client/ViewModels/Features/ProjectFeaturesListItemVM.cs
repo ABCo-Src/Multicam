@@ -1,10 +1,10 @@
 ﻿using ABCo.Multicam.Server;
 using ABCo.Multicam.Server.Features;
-using ABCo.Multicam.Server.Hosting;
 using ABCo.Multicam.Client.Presenters;
 using ABCo.Multicam.Client.Presenters.Features;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.ComponentModel;
+using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Client.ViewModels.Features
 {

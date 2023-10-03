@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ABCo.Multicam.Server.Hosting
+namespace ABCo.Multicam.Server.Hosting.Management
 {
     public interface IActiveServerHost
     {

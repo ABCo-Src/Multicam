@@ -1,6 +1,5 @@
 ﻿using ABCo.Multicam.Server.Features;
 using ABCo.Multicam.Server.Features.Data;
-using ABCo.Multicam.Server.Features.Interaction;
 using ABCo.Multicam.Server.Features.Switchers;
 using ABCo.Multicam.Server.Features.Switchers.Data.Config;
 using ABCo.Multicam.Server.Features.Switchers.Interaction;
@@ -10,9 +9,10 @@ using ABCo.Multicam.Server.Features.Switchers.Types.ATEM;
 using ABCo.Multicam.Server.Features.Switchers.Types.ATEM.Native;
 using ABCo.Multicam.Server.Features.Switchers.Types.ATEM.Windows;
 using ABCo.Multicam.Server.General;
-using ABCo.Multicam.Server.Hosting;
 using ABCo.Multicam.Client.ViewModels.Features;
 using System.Security.Cryptography;
+using ABCo.Multicam.Server.Hosting.Clients;
+using ABCo.Multicam.Server.Hosting.Management;
 
 namespace ABCo.Multicam.Server
 {
@@ -20,6 +20,7 @@ namespace ABCo.Multicam.Server
 	{
 		IPlatformInfo GetPlatformInfo();
 		IServerTarget GetFeatures();
+		void Disconnect(IClientInfo info);
 	}
 
 	public class LocalMulticamServer : IServerConnection
@@ -40,16 +41,15 @@ namespace ABCo.Multicam.Server
 			container.AddSingleton(getPlatformInfo);
 			container.AddSingleton(getServerHost);
 			container.AddSingleton<IConnectedClientsManager>(s => new ConnectedClientsManager(s));
-			container.AddTransient<IConnectedClientsBoundClientNotifier, IServerTarget>((p1, s) => new ClientNotifier(p1, s));
+			container.AddTransient<IClientSyncedDataStoreWithClientsManagementBinding, IServerTarget>((p1, s) => new ClientSyncedDataStore(p1, s));
 			container.AddTransient<IDispatchingServerTarget, IServerTarget>((p1, s) => new DispatchingServerTarget(p1, s));
 
 			// Features
 			container.AddSingleton<IMainFeatureCollection>(s => new MainFeatureCollection(s));
 			container.AddSingleton<IFeatureContentFactory>(s => new FeatureContentFactory(s));
-			container.AddTransient<IFeature, FeatureTypes, IFeatureDataSource, IFeatureActionTarget>((p1, p2, p3, s) => new Feature(p1, p2, p3, s));
-			container.AddTransient<ILocallyInitializedFeatureDataSource, FeatureDataInfo[]>((p1, s) => new LocallyInitializedFeatureDataSource(p1));
-			container.AddTransient<IUnsupportedLiveFeature, IInstantRetrievalDataSource>((p1, s) => new UnsupportedLiveFeature(p1));
-            container.AddTransient<ISwitcherLiveFeature, IInstantRetrievalDataSource>(SwitcherLiveFeature.New);
+			container.AddTransient<IFeature, FeatureTypes>((p1, s) => new Feature(p1, s));
+			container.AddTransient<IUnsupportedLiveFeature, IFeatureDataStore>((p1, s) => new UnsupportedLiveFeature(p1));
+            container.AddTransient<ISwitcherLiveFeature, IFeatureDataStore>((p1, s) => new SwitcherLiveFeature(p1, s));
 
 			// Switcher
 			container.AddTransient<ISwitcherFactory>(s => new SwitcherFactory(s));
@@ -73,5 +73,6 @@ namespace ABCo.Multicam.Server
 
 		public IServerTarget GetFeatures() => ServerInfo.Get<IMainFeatureCollection>();
 		public IPlatformInfo GetPlatformInfo() => ServerInfo.Get<IPlatformInfo>();
+		public void Disconnect(IClientInfo info) => ServerInfo.Get<IConnectedClientsManager>().OnClientDisconnected(info);
 	}
 }

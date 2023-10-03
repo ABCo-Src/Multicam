@@ -2,14 +2,14 @@
 using ABCo.Multicam.Server.Features;
 using ABCo.Multicam.Server.Features.Data;
 using ABCo.Multicam.Server.Features.Data;
-using ABCo.Multicam.Server.Hosting;
 using ABCo.Multicam.Client.Services;
 using ABCo.Multicam.Client.Structures;
 using ABCo.Multicam.Client.ViewModels.Features;
+using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Client.Presenters.Features
 {
-    public interface IProjectFeaturesPresenter : IClientNotificationTarget
+    public interface IProjectFeaturesPresenter : IClientDataNotificationTarget
 	{
 		IProjectFeaturesVM VM { get; }
 		void OpenMobileMenu(IProjectFeaturesListItemVM vm);
@@ -42,7 +42,7 @@ namespace ABCo.Multicam.Client.Presenters.Features
 			VM = client.Get<IProjectFeaturesVM, IProjectFeaturesPresenter>(this);
 		}
 
-		public void Init() => _collection.RefreshData<FeaturesList>();
+		public void Init() { }
         public void OnDataChange(ServerData obj)
         {
             if (obj is FeaturesList objList)
@@ -59,7 +59,7 @@ namespace ABCo.Multicam.Client.Presenters.Features
 
                     if (vm == -1)
                     {
-                        var innerVM = currentFeatures[i].ClientMessageDispatcher.GetOrAddClientEndpoint<IMainFeaturePresenter>(_info).VM;
+                        var innerVM = currentFeatures[i].DataStore.GetOrAddClientEndpoint<IMainFeaturePresenter>(_info).VM;
                         newItems[i] = _info.Get<IProjectFeaturesListItemVM, IProjectFeaturesPresenter, IServerTarget, IFeatureVM>(this, currentFeatures[i], innerVM);
                         newItems[i].EditBtnText = "Edit";
                     }

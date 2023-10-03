@@ -14,4 +14,8 @@
     <ProjectReference Include="..\ABCo.Multicam.Server\ABCo.Multicam.Server.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Presenters\Hosting\" />
+  </ItemGroup>
+
 </Project>

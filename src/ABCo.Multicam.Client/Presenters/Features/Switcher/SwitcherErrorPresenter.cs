@@ -1,8 +1,9 @@
 ﻿using ABCo.Multicam.Server;
 using ABCo.Multicam.Server.Features;
 using ABCo.Multicam.Server.Features.Switchers.Data;
-using ABCo.Multicam.Server.Hosting;
 using ABCo.Multicam.Client.ViewModels.Features.Switcher;
+using ABCo.Multicam.Server.Hosting.Clients;
+using ABCo.Multicam.Server.Features.Switchers;
 
 namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 {
@@ -74,7 +75,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 		public void ButtonClick()
 		{
 			if (_currentError != null) 
-				_feature.PerformAction(SwitcherActionID.ACKNOWLEDGE_ERROR);
+				_feature.PerformAction(SwitcherLiveFeature.ACKNOWLEDGE_ERROR);
 			else 
 				_noErrorClick();
 		}

@@ -1,20 +1,20 @@
 ﻿using ABCo.Multicam.Server;
 using ABCo.Multicam.Server.Features;
 using ABCo.Multicam.Server.Features.Data;
-using ABCo.Multicam.Server.Hosting;
 using ABCo.Multicam.Client.Presenters.Features.Switcher;
 using ABCo.Multicam.Client.ViewModels.Features;
+using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Client.Presenters.Features
 {
 
-    public interface IMainFeaturePresenter : IClientNotificationTarget
+    public interface IMainFeaturePresenter : IClientDataNotificationTarget
 	{
 		IFeatureVM VM { get; }
 		void OnTitleChange();
 	}
 
-	public interface IFeatureContentPresenter : IClientNotificationTarget
+	public interface IFeatureContentPresenter : IClientDataNotificationTarget
 	{
 		IFeatureContentVM VM { get; }
 	}
@@ -35,7 +35,7 @@ namespace ABCo.Multicam.Client.Presenters.Features
 			VM = info.Get<IFeatureVM, IMainFeaturePresenter>(this);
         }
 
-        public void Init() => _feature.RefreshData<FeatureGeneralInfo>();
+		public void Init() { }
 
         public void OnDataChange(ServerData structure)
 		{
@@ -46,7 +46,7 @@ namespace ABCo.Multicam.Client.Presenters.Features
 
                 var newContentPresenter = _type switch
 				{
-					FeatureTypes.Switcher => _feature.ClientMessageDispatcher.GetOrAddClientEndpoint<ISwitcherFeaturePresenter>(_info),
+					FeatureTypes.Switcher => _feature.DataStore.GetOrAddClientEndpoint<ISwitcherFeaturePresenter>(_info),
 					_ => null
 				};
 

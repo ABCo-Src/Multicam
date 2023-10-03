@@ -5,7 +5,11 @@
 
 <div class="section">
 	<p class="sectionTitle">Switcher Settings</p>
-	<SwitcherConfigEditor VM="VM.Config" />
+
+	@if (VM.Config != null)
+	{
+		<SwitcherConfigEditor VM="VM.Config" />
+	}
 </div>
 
 <hr class="sectionSeparator" />

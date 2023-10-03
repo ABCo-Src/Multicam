@@ -4,7 +4,6 @@ using ABCo.Multicam.Server.Features.Switchers;
 using ABCo.Multicam.Server.Features.Switchers.Data;
 using ABCo.Multicam.Server.Features.Switchers.Data.Config;
 using ABCo.Multicam.Server.Features.Switchers.Data;
-using ABCo.Multicam.Server.Hosting;
 using ABCo.Multicam.Client.ViewModels.Features.Switcher;
 using ABCo.Multicam.Client.ViewModels.Features.Switcher.Types;
 using System;
@@ -12,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Client.Presenters.Features.Switcher.Config
 {
@@ -68,7 +68,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher.Config
 			for (int i = 0; i < end; i++)
 				newConfigMBs[i] = int.Parse(_vm.MixBlockVMs[i].InputCount);
 
-			_feature.PerformAction(SwitcherActionID.SET_CONFIG, new DummySwitcherConfig(newConfigMBs));
+			_feature.PerformAction(SwitcherLiveFeature.SET_CONFIG, new DummySwitcherConfig(newConfigMBs));
 		}
 	}
 }

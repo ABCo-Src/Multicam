@@ -4,6 +4,7 @@ using ABCo.Multicam.Server.Features.Switchers.Data.Config;
 using ABCo.Multicam.Server.Features.Switchers.Interaction;
 using ABCo.Multicam.Server.Features.Switchers.Types;
 using ABCo.Multicam.Server.Features.Switchers.Data;
+using System.Data.Common;
 
 namespace ABCo.Multicam.Server.Features.Switchers
 {
@@ -16,27 +17,44 @@ namespace ABCo.Multicam.Server.Features.Switchers
         void OnFailure(SwitcherError error);
     }
 
-    public interface ISwitcherLiveFeature : ILiveFeature, IServerService<IInstantRetrievalDataSource> { }
+    public interface ISwitcherLiveFeature : ILiveFeature, IServerService<IFeatureDataStore> { }
+
+	public record class BusChangeInfo(int MB, int Val);
 
 	public class SwitcherLiveFeature : ISwitcherLiveFeature, ISwitcherEventHandler
     {
+		public const int SET_GENERALINFO = 0;
+		public const int ACKNOWLEDGE_ERROR = 1;
+		public const int CONNECT = 2;
+		public const int DISCONNECT = 3;
+		public const int SET_CONFIG = 4;
+		public const int SET_PROGRAM = 5;
+		public const int SET_PREVIEW = 6;
+		public const int CUT = 7;
+
 		// TODO: Add slamming protection
 		// TODO: Add error handling
 
 		// The buffer that sits between the switcher and adds preview emulation, caching and more to all the switcher interactions.
 		// A new interaction buffer is created anytime the specs change, and the swapper facilitates for us.
 		readonly IHotSwappableSwitcherInteractionBuffer _buffer;        
-		readonly IInstantRetrievalDataSource _dataCollection;
+		readonly IFeatureDataStore _dataCollection;
 
-		public static ISwitcherLiveFeature New(IInstantRetrievalDataSource fragmentCollection, IServerInfo serviceSource) => new SwitcherLiveFeature(fragmentCollection, serviceSource);
-		public SwitcherLiveFeature(IInstantRetrievalDataSource fragmentCollection, IServerInfo serviceSource)
+		public SwitcherLiveFeature(IFeatureDataStore fragmentCollection, IServerInfo serviceSource)
         {
+			var defaultConfig = new DummySwitcherConfig(4);
+
 			_dataCollection = fragmentCollection;
-            _buffer = serviceSource.Get<IHotSwappableSwitcherInteractionBuffer, SwitcherConfig>(fragmentCollection.GetData<SwitcherConfig>());
+            _buffer = serviceSource.Get<IHotSwappableSwitcherInteractionBuffer, SwitcherConfig>(defaultConfig);
 			_buffer.SetEventHandler(this);
 
-			OnConnectionStateChange(_buffer.CurrentBuffer.IsConnected);
-			OnSpecsChange(_buffer.CurrentBuffer.Specs);
+			// Setup default data values
+			fragmentCollection.SetData<FeatureGeneralInfo>(new FeatureGeneralInfo(FeatureTypes.Switcher, "New Switcher"));
+			fragmentCollection.SetData<SwitcherCompatibility>(new SwitcherCompatibility(SwitcherPlatformCompatibilityValue.Supported));
+			fragmentCollection.SetData<SwitcherConfig>(defaultConfig);
+			fragmentCollection.SetData<SwitcherConnection>(new SwitcherConnection(_buffer.CurrentBuffer.IsConnected));
+			fragmentCollection.SetData<SwitcherSpecs>(_buffer.CurrentBuffer.Specs);
+			fragmentCollection.SetData<SwitcherError>(new SwitcherError(null));
 			OnMixBlockStateChange();
 		}
 
@@ -45,15 +63,15 @@ namespace ABCo.Multicam.Server.Features.Switchers
 		{
 			switch (id)
 			{
-				case SwitcherActionID.ACKNOWLEDGE_ERROR:
-					_dataCollection.SetData(new SwitcherError(null));
+				case ACKNOWLEDGE_ERROR:
+					_dataCollection.SetData<SwitcherError>(new SwitcherError(null));
 					break;
 
-				case SwitcherActionID.CONNECT:
+				case CONNECT:
 					_buffer.CurrentBuffer.Connect();
 					break;
 
-				case SwitcherActionID.DISCONNECT:
+				case DISCONNECT:
 					_buffer.CurrentBuffer.Disconnect();
 					break;
 
@@ -64,44 +82,30 @@ namespace ABCo.Multicam.Server.Features.Switchers
         {
             switch (id)
             {
-				case SwitcherActionID.SET_GENERALINFO:
-					_dataCollection.SetData((FeatureGeneralInfo)param);
+				case SET_GENERALINFO:
+					_dataCollection.SetData<FeatureGeneralInfo>((FeatureGeneralInfo)param);
 					break;
 
-				case SwitcherActionID.SET_PROGRAM:
+				case SET_PROGRAM:
                     var setProgStruct = (BusChangeInfo)param;
 					_buffer.CurrentBuffer.SendProgram(setProgStruct.MB, setProgStruct.Val);
 					break;
 
-				case SwitcherActionID.SET_PREVIEW:
+				case SET_PREVIEW:
 					var setPrevStruct = (BusChangeInfo)param;
 					_buffer.CurrentBuffer.SendPreview(setPrevStruct.MB, setPrevStruct.Val);
 					break;
 
-				case SwitcherActionID.CUT:
+				case CUT:
 					_buffer.CurrentBuffer.Cut((int)param);
 					break;
 
-				case SwitcherActionID.SET_CONFIG_TYPE:
-					var newConfigType = (SwitcherConfigType)param;
-
-					SwitcherConfig newDefaultConfig = newConfigType.Type switch
-					{
-						SwitcherType.Dummy => new DummySwitcherConfig(4),
-						SwitcherType.ATEM => new ATEMSwitcherConfig(null),
-						_ => throw new Exception("Currently unsupported switcher type!")
-					};
-
-					_buffer.ChangeSwitcher(newDefaultConfig);
-					_dataCollection.SetData(_buffer.CurrentBuffer.GetPlatformCompatibility());
-					_dataCollection.SetData(newConfigType);
-					_dataCollection.SetData(newDefaultConfig);
-					break;
-
-				case SwitcherActionID.SET_CONFIG:
+				case SET_CONFIG:
 					var newConfig = (SwitcherConfig)param;
+
 					_buffer.ChangeSwitcher(newConfig);
-					_dataCollection.SetData(newConfig);
+					_dataCollection.SetData<SwitcherCompatibility>(_buffer.CurrentBuffer.GetPlatformCompatibility());;
+					_dataCollection.SetData<SwitcherConfig>(newConfig);
 					break;
 			}
         }
@@ -115,7 +119,7 @@ namespace ABCo.Multicam.Server.Features.Switchers
             for (int i = 0; i < specs.MixBlocks.Count; i++)
                 res[i] = new MixBlockState(_buffer.CurrentBuffer.GetProgram(i), _buffer.CurrentBuffer.GetPreview(i));
 
-            _dataCollection.SetData(new SwitcherState(res));
+            _dataCollection.SetData<SwitcherState>(new SwitcherState(res));
         }
 
         public void OnProgramValueChange(SwitcherProgramChangeInfo info) => OnMixBlockStateChange();
@@ -123,17 +127,17 @@ namespace ABCo.Multicam.Server.Features.Switchers
 
 		public void OnSpecsChange(SwitcherSpecs newSpecs)
 		{
-			_dataCollection.SetData(newSpecs);
+			_dataCollection.SetData<SwitcherSpecs>(newSpecs);
 			OnMixBlockStateChange();
 		}
 
-		public void OnConnectionStateChange(bool newState) => _dataCollection.SetData(new SwitcherConnection(newState));
+		public void OnConnectionStateChange(bool newState) => _dataCollection.SetData<SwitcherConnection>(new SwitcherConnection(newState));
 
 		public void OnFailure(SwitcherError error)
 		{
             // Create a new buffer
             _buffer.ChangeSwitcher(_dataCollection.GetData<SwitcherConfig>());
-			_dataCollection.SetData(error);
+			_dataCollection.SetData<SwitcherError>(error);
 		}
 
 		// Dispose:
