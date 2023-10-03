@@ -1,6 +1,4 @@
 ﻿using ABCo.Multicam.Server.General;
-using ABCo.Multicam.Client.ViewModels;
-using Microsoft.AspNetCore.Components;
 
 namespace ABCo.Multicam.App.Win32.Services
 {

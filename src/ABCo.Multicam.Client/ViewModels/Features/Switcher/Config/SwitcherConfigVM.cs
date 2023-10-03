@@ -1,9 +1,5 @@
 ﻿using ABCo.Multicam.Server;
-using ABCo.Multicam.Server.Features.Switchers;
-using ABCo.Multicam.Server.Features.Switchers.Types;
-using ABCo.Multicam.Server.Features.Switchers.Types.ATEM;
 using ABCo.Multicam.Client.Presenters.Features.Switcher;
-using ABCo.Multicam.Client.ViewModels.Features.Switcher.Types;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.ComponentModel;
 

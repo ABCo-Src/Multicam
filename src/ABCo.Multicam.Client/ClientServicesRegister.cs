@@ -1,8 +1,4 @@
-﻿using ABCo.Multicam.Server;
-using ABCo.Multicam.Server.Features;
-using ABCo.Multicam.Server.Features.Data;
-using ABCo.Multicam.Server.Features.Switchers;
-using ABCo.Multicam.Client.Presenters;
+﻿using ABCo.Multicam.Client.Presenters;
 using ABCo.Multicam.Client.Presenters.Features;
 using ABCo.Multicam.Client.Presenters.Features.Switcher;
 using ABCo.Multicam.Client.Presenters.Features.Switcher.Config;
@@ -11,13 +7,11 @@ using ABCo.Multicam.Client.ViewModels.Features;
 using ABCo.Multicam.Client.ViewModels.Features.Switcher;
 using ABCo.Multicam.Client.ViewModels.Features.Switcher.Config.ATEM;
 using ABCo.Multicam.Client.ViewModels.Features.Switcher.Types;
-using Microsoft.Extensions.DependencyInjection;
-using System.Security.Cryptography;
 using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Client
 {
-    public static class ClientServicesRegister
+	public static class ClientServicesRegister
     {
         //public static string Log { get; set; }
 
@@ -47,7 +41,7 @@ namespace ABCo.Multicam.Client
             container.AddTransient<IProjectFeaturesVM, IProjectFeaturesPresenter>((p1, s) => new ProjectFeaturesVM(p1));
             container.AddTransient<IProjectFeaturesListItemVM, IProjectFeaturesPresenter, IServerTarget, IFeatureVM>((p1, p2, p3, s) => new ProjectFeaturesListItemVM(p1, p2, p3));
             container.AddTransient<IFeatureVM, IMainFeaturePresenter>((p1, s) => new FeatureVM(p1));
-			container.AddTransient<ISwitcherFeatureVM, IServerTarget>((p1, s) => new SwitcherFeatureVM(p1));
+			container.AddTransient<ISwitcherFeatureVM>(s => new SwitcherFeatureVM());
             container.AddTransient<ISwitcherMixBlockVM>(s => new SwitcherMixBlockVM());
             container.AddTransient<ISwitcherCutButtonVM, ISwitcherMixBlocksPresenter, int>((p1, p2, s) => new SwitcherCutButtonVM(p1, p2));
             container.AddTransient<ISwitcherProgramInputVM, ISwitcherMixBlocksPresenter, int, int>((p1, p2, p3, s) => new SwitcherProgramInputVM(p1, p2, p3));

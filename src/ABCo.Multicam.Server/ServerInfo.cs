@@ -1,13 +1,9 @@
-﻿using ABCo.Multicam.Server;
-using ABCo.Multicam.Server.General;
-using ABCo.Multicam.Server.General;
+﻿using ABCo.Multicam.Server.General;
 using ABCo.Multicam.Server.Hosting.Clients;
-using Microsoft.Extensions.DependencyInjection;
-using System.Diagnostics.CodeAnalysis;
 
 namespace ABCo.Multicam.Server
 {
-    public interface IClientService<T> { }
+	public interface IClientService<T> { }
 	public interface IClientService<T, T2> { }
 	public interface IClientService<T, T2, T3> { }
 
@@ -41,7 +37,7 @@ namespace ABCo.Multicam.Server
 
 	public class ServerInfo : IServerInfo
 	{
-		IServerConnection _localClientConnection;
+		readonly IServerConnection _localClientConnection;
 
 		public IThreadDispatcher Dispatcher { get; }
 		public IConnectedClientsManager ClientsManager => Get<IConnectedClientsManager>();
@@ -95,20 +91,20 @@ namespace ABCo.Multicam.Server
 			return castedFactory(param1, param2, param3, this);
 		}
 
-		public void AddSingleton<T>(Func<IServerInfo, T> val)
+		public static void AddSingleton<T>(Func<IServerInfo, T> val)
 			where T : class
 			=> ServerWideServiceRegisterSingletonStore<T>.Factory = val;
 
-		public void AddTransient<T>(Func<IServerInfo, T> f) where T : class
+		public static void AddTransient<T>(Func<IServerInfo, T> f) where T : class
 			=> ServerWideServiceRegisterTransientStore<T>.Factory = f;
 
-		public void AddTransient<T, T1>(Func<T1, IServerInfo, T> factory) where T : IServerService<T1> =>
+		public static void AddTransient<T, T1>(Func<T1, IServerInfo, T> factory) where T : IServerService<T1> =>
 			ServerWideServiceRegisterTransientStore<T>.Factory = factory;
 
-		public void AddTransient<T, T1, T2>(Func<T1, T2, IServerInfo, T> factory) where T : IServerService<T1, T2> =>
+		public static void AddTransient<T, T1, T2>(Func<T1, T2, IServerInfo, T> factory) where T : IServerService<T1, T2> =>
 			ServerWideServiceRegisterTransientStore<T>.Factory = factory;
 
-		public void AddTransient<T, T1, T2, T3>(Func<T1, T2, T3, IServerInfo, T> factory) where T : IServerService<T1, T2, T3> =>
+		public static void AddTransient<T, T1, T2, T3>(Func<T1, T2, T3, IServerInfo, T> factory) where T : IServerService<T1, T2, T3> =>
 			ServerWideServiceRegisterTransientStore<T>.Factory = factory;
 	}
 

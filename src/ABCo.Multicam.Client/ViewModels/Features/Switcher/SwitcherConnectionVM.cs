@@ -13,7 +13,7 @@ namespace ABCo.Multicam.Client.ViewModels.Features.Switcher
 
 	public partial class SwitcherConnectionVM : ViewModelBase, ISwitcherConnectionVM
 	{
-		ISwitcherErrorPresenter _errorPresenter;		
+		readonly ISwitcherErrorPresenter _errorPresenter;		
 
 		public SwitcherConnectionVM(ISwitcherErrorPresenter errorPresenter) => _errorPresenter = errorPresenter;
 

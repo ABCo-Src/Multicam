@@ -1,14 +1,8 @@
 ﻿using ABCo.Multicam.Server;
-using ABCo.Multicam.Server.Features.Switchers.Live.Types.ATEM;
 using ABCo.Multicam.Server.Features.Switchers.Data;
 using ABCo.Multicam.Client.Presenters.Features.Switcher.Config;
 using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Client.ViewModels.Features.Switcher.Config.ATEM
 {

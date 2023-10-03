@@ -1,22 +1,14 @@
 ﻿using ABCo.Multicam.Server;
-using ABCo.Multicam.Server.Features;
 using ABCo.Multicam.Server.Features.Switchers;
 using ABCo.Multicam.Server.Features.Switchers.Data;
 using ABCo.Multicam.Server.Features.Switchers.Data.Config;
-using ABCo.Multicam.Server.Features.Switchers.Live.Types.ATEM;
-using ABCo.Multicam.Server.Features.Switchers.Data;
 using ABCo.Multicam.Client.ViewModels.Features.Switcher;
 using ABCo.Multicam.Client.ViewModels.Features.Switcher.Config.ATEM;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Client.Presenters.Features.Switcher.Config
 {
-    public interface ISwitcherATEMConfigPresenter : ISwitcherSpecificConfigPresenter, IClientService<IServerTarget>
+	public interface ISwitcherATEMConfigPresenter : ISwitcherSpecificConfigPresenter, IClientService<IServerTarget>
 	{
 		void OnUIChange();
 	}

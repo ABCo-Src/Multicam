@@ -1,13 +1,8 @@
 ﻿using ABCo.Multicam.Server.General;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Server.Hosting.Clients
 {
-    public interface IRemoteDataStore
+	public interface IRemoteDataStore
     {
 		T GetData<T>() where T : ServerData;
 		T GetOrAddClientEndpoint<T>(IClientInfo info) where T : class, IClientDataNotificationTarget;

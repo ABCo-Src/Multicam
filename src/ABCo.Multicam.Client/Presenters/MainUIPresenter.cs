@@ -22,7 +22,7 @@ namespace ABCo.Multicam.Client.Presenters
 	public class MainUIPresenter : IMainUIPresenter, IFeatureSideMenuPresenter
 	{
 		Action? _onClose;
-		IClientInfo _info;
+		readonly IClientInfo _info;
 
 		public IMainUIVM VM { get; }
 

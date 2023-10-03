@@ -1,9 +1,8 @@
-﻿using ABCo.Multicam.Server.General;
-using ABCo.Multicam.Server.Hosting.Clients;
+﻿using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Server.Features.Data
 {
-    public class FeatureGeneralInfo : ServerData
+	public class FeatureGeneralInfo : ServerData
 	{
 		public FeatureTypes Type { get; }
 		public string Title { get; }

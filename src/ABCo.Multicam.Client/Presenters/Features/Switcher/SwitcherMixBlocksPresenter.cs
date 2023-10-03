@@ -1,5 +1,4 @@
 ﻿using ABCo.Multicam.Server;
-using ABCo.Multicam.Server.Features;
 using ABCo.Multicam.Server.Features.Switchers;
 using ABCo.Multicam.Server.Features.Switchers.Data;
 using ABCo.Multicam.Client.Enumerations;
@@ -8,7 +7,7 @@ using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 {
-    public interface ISwitcherMixBlocksPresenter : IClientService<ISwitcherFeatureVM, IServerTarget> 
+	public interface ISwitcherMixBlocksPresenter : IClientService<ISwitcherFeatureVM, IServerTarget> 
 	{
 		void OnSpecced(SwitcherSpecs specs);
 		void OnState(MixBlockState[] mixBlocks);

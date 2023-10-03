@@ -1,5 +1,4 @@
 ﻿using ABCo.Multicam.Server.Features.Switchers.Data;
-using ABCo.Multicam.Server.Features.Switchers.Data;
 
 namespace ABCo.Multicam.Server.Features.Switchers.Interaction
 {

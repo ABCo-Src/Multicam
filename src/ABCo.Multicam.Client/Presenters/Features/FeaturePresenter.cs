@@ -1,5 +1,4 @@
 ﻿using ABCo.Multicam.Server;
-using ABCo.Multicam.Server.Features;
 using ABCo.Multicam.Server.Features.Data;
 using ABCo.Multicam.Client.Presenters.Features.Switcher;
 using ABCo.Multicam.Client.ViewModels.Features;
@@ -8,7 +7,7 @@ using ABCo.Multicam.Server.Hosting.Clients;
 namespace ABCo.Multicam.Client.Presenters.Features
 {
 
-    public interface IMainFeaturePresenter : IClientDataNotificationTarget
+	public interface IMainFeaturePresenter : IClientDataNotificationTarget
 	{
 		IFeatureVM VM { get; }
 		void OnTitleChange();

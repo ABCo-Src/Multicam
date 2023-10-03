@@ -16,7 +16,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             Mock<ISwitcherEventHandler> EventHandler);
 
         SwitcherSpecs _switcherSpecs = new();
-        bool _isConnected;
+		readonly bool _isConnected;
         Mocks _mocks = new();
 
         [TestInitialize]

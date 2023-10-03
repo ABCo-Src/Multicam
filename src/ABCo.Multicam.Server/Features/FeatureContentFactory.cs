@@ -1,7 +1,6 @@
 ﻿using ABCo.Multicam.Server.Features;
 using ABCo.Multicam.Server.Features.Switchers;
 using ABCo.Multicam.Server;
-using ABCo.Multicam.Server.Features.Switchers.Data;
 using ABCo.Multicam.Server.Features.Data;
 
 namespace ABCo.Multicam.Client.ViewModels.Features
@@ -13,7 +12,7 @@ namespace ABCo.Multicam.Client.ViewModels.Features
 
 	public class FeatureContentFactory : IFeatureContentFactory
 	{
-		IServerInfo _servSource;
+		readonly IServerInfo _servSource;
 		public FeatureContentFactory(IServerInfo servSource) => _servSource = servSource;
 
 		public ILiveFeature GetLiveFeature(FeatureTypes type, IFeatureDataStore collection) => type switch

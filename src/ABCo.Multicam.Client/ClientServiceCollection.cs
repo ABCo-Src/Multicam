@@ -1,15 +1,13 @@
 ﻿using ABCo.Multicam.Server;
 using ABCo.Multicam.Server.General;
-using ABCo.Multicam.Server.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using System.Diagnostics.CodeAnalysis;
 
 namespace ABCo.Multicam.Client
 {
-    public class ClientServices : IClientInfo
+	public class ClientServices : IClientInfo
     {
-        Dictionary<Type, Delegate> _transientDict = new();
-        IServiceProvider _provider;
+		readonly Dictionary<Type, Delegate> _transientDict = new();
+		readonly IServiceProvider _provider;
 
 		internal ClientServices(IServiceProvider provider, int connectionId, IThreadDispatcher dispatcher, IServerConnection serverConnection, Dictionary<Type, Delegate> transientDict)
 		{
@@ -62,9 +60,9 @@ namespace ABCo.Multicam.Client
 
     public class ClientServicesBuilder
     {
-        Dictionary<Type, Delegate> _transientDict = new();
-        IServiceCollection _collection;
-        bool _registerScopedAsSingletons;
+		readonly Dictionary<Type, Delegate> _transientDict = new();
+		readonly IServiceCollection _collection;
+		readonly bool _registerScopedAsSingletons;
 
         public ClientServicesBuilder(IServiceCollection collection, bool registerScopedAsSingletons = false)
         {

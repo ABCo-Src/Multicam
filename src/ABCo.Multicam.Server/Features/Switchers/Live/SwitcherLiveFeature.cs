@@ -2,9 +2,6 @@
 using ABCo.Multicam.Server.Features.Switchers.Data;
 using ABCo.Multicam.Server.Features.Switchers.Data.Config;
 using ABCo.Multicam.Server.Features.Switchers.Interaction;
-using ABCo.Multicam.Server.Features.Switchers.Types;
-using ABCo.Multicam.Server.Features.Switchers.Data;
-using System.Data.Common;
 
 namespace ABCo.Multicam.Server.Features.Switchers
 {

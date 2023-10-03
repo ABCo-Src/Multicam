@@ -1,6 +1,4 @@
 ﻿using ABCo.Multicam.Server.General;
-using ABCo.Multicam.Client.Blazor.Web;
-using Microsoft.AspNetCore.Components;
 
 namespace ABCo.Multicam.Client.Blazor.Services
 {

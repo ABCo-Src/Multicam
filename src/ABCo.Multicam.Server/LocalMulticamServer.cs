@@ -10,13 +10,12 @@ using ABCo.Multicam.Server.Features.Switchers.Types.ATEM.Native;
 using ABCo.Multicam.Server.Features.Switchers.Types.ATEM.Windows;
 using ABCo.Multicam.Server.General;
 using ABCo.Multicam.Client.ViewModels.Features;
-using System.Security.Cryptography;
 using ABCo.Multicam.Server.Hosting.Clients;
 using ABCo.Multicam.Server.Hosting.Management;
 
 namespace ABCo.Multicam.Server
 {
-    public interface IServerConnection
+	public interface IServerConnection
 	{
 		IPlatformInfo GetPlatformInfo();
 		IServerTarget GetFeatures();
@@ -38,34 +37,34 @@ namespace ABCo.Multicam.Server
 			var container = new ServerInfo(dispatcher, this); // NOTE: For now, this is really a singleton internally
 
 			// Hosting/general
-			container.AddSingleton(getPlatformInfo);
-			container.AddSingleton(getServerHost);
-			container.AddSingleton<IConnectedClientsManager>(s => new ConnectedClientsManager(s));
-			container.AddTransient<IClientSyncedDataStoreWithClientsManagementBinding, IServerTarget>((p1, s) => new ClientSyncedDataStore(p1, s));
-			container.AddTransient<IDispatchingServerTarget, IServerTarget>((p1, s) => new DispatchingServerTarget(p1, s));
+			Server.ServerInfo.AddSingleton(getPlatformInfo);
+			Server.ServerInfo.AddSingleton(getServerHost);
+			Server.ServerInfo.AddSingleton<IConnectedClientsManager>(s => new ConnectedClientsManager(s));
+			Server.ServerInfo.AddTransient<IClientSyncedDataStoreWithClientsManagementBinding, IServerTarget>((p1, s) => new ClientSyncedDataStore(p1, s));
+			Server.ServerInfo.AddTransient<IDispatchingServerTarget, IServerTarget>((p1, s) => new DispatchingServerTarget(p1, s));
 
 			// Features
-			container.AddSingleton<IMainFeatureCollection>(s => new MainFeatureCollection(s));
-			container.AddSingleton<IFeatureContentFactory>(s => new FeatureContentFactory(s));
-			container.AddTransient<IFeature, FeatureTypes>((p1, s) => new Feature(p1, s));
-			container.AddTransient<IUnsupportedLiveFeature, IFeatureDataStore>((p1, s) => new UnsupportedLiveFeature(p1));
-            container.AddTransient<ISwitcherLiveFeature, IFeatureDataStore>((p1, s) => new SwitcherLiveFeature(p1, s));
+			Server.ServerInfo.AddSingleton<IMainFeatureCollection>(s => new MainFeatureCollection(s));
+			Server.ServerInfo.AddSingleton<IFeatureContentFactory>(s => new FeatureContentFactory(s));
+			Server.ServerInfo.AddTransient<IFeature, FeatureTypes>((p1, s) => new Feature(p1, s));
+			Server.ServerInfo.AddTransient<IUnsupportedLiveFeature, IFeatureDataStore>((p1, s) => new UnsupportedLiveFeature(p1));
+			Server.ServerInfo.AddTransient<ISwitcherLiveFeature, IFeatureDataStore>((p1, s) => new SwitcherLiveFeature(p1, s));
 
 			// Switcher
-			container.AddTransient<ISwitcherFactory>(s => new SwitcherFactory(s));
-            container.AddTransient<IHotSwappableSwitcherInteractionBuffer, SwitcherConfig>((p, s) => new HotSwappableSwitcherInteractionBuffer(p, s));
-			container.AddTransient<IPerSwitcherInteractionBuffer, SwitcherConfig>((p, s) => new PerSwitcherInteractionBuffer(p, s));
-            container.AddTransient<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, ISwitcher>((p1, p2, s) => new PerSpecSwitcherInteractionBuffer(p1, p2, s));
-            container.AddSingleton<ISwitcherInteractionBufferFactory>(s => new SwitcherInteractionBufferFactory());
+			Server.ServerInfo.AddTransient<ISwitcherFactory>(s => new SwitcherFactory(s));
+			Server.ServerInfo.AddTransient<IHotSwappableSwitcherInteractionBuffer, SwitcherConfig>((p, s) => new HotSwappableSwitcherInteractionBuffer(p, s));
+			Server.ServerInfo.AddTransient<IPerSwitcherInteractionBuffer, SwitcherConfig>((p, s) => new PerSwitcherInteractionBuffer(p, s));
+			Server.ServerInfo.AddTransient<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, ISwitcher>((p1, p2, s) => new PerSpecSwitcherInteractionBuffer(p1, p2, s));
+			Server.ServerInfo.AddSingleton<ISwitcherInteractionBufferFactory>(s => new SwitcherInteractionBufferFactory());
 
-            container.AddTransient<IDummySwitcher, DummySwitcherConfig>((p1, s) => new DummySwitcher(p1));
-			container.AddSingleton<IATEMPlatformCompatibility>(s => new ATEMPlatformCompatibility(s));
-			container.AddTransient<IATEMSwitcher, ATEMSwitcherConfig>((p1, s) => new ATEMSwitcher(p1, s));
-            container.AddTransient<IATEMConnection, ATEMSwitcherConfig, IATEMSwitcher>((p1, p2, s) => new ATEMConnection(p1, p2, s));
-			container.AddTransient<IATEMCallbackHandler, IATEMSwitcher>((p1, s) => new ATEMCallbackHandler(p1));
+			Server.ServerInfo.AddTransient<IDummySwitcher, DummySwitcherConfig>((p1, s) => new DummySwitcher(p1));
+			Server.ServerInfo.AddSingleton<IATEMPlatformCompatibility>(s => new ATEMPlatformCompatibility(s));
+			Server.ServerInfo.AddTransient<IATEMSwitcher, ATEMSwitcherConfig>((p1, s) => new ATEMSwitcher(p1, s));
+			Server.ServerInfo.AddTransient<IATEMConnection, ATEMSwitcherConfig, IATEMSwitcher>((p1, p2, s) => new ATEMConnection(p1, p2, s));
+			Server.ServerInfo.AddTransient<IATEMCallbackHandler, IATEMSwitcher>((p1, s) => new ATEMCallbackHandler(p1));
 
 #pragma warning disable
-			container.AddSingleton<INativeATEMSwitcherDiscovery>(s => new WindowsNativeATEMSwitcherDiscovery());
+			Server.ServerInfo.AddSingleton<INativeATEMSwitcherDiscovery>(s => new WindowsNativeATEMSwitcherDiscovery());
 #pragma warning enable
 
 			return container;

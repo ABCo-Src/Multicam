@@ -1,17 +1,12 @@
 ﻿using ABCo.Multicam.Server.General;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Server.Hosting.Clients
 {
-    public interface IDispatchingServerTarget : IServerTarget, IServerService<IServerTarget> { }
+	public interface IDispatchingServerTarget : IServerTarget, IServerService<IServerTarget> { }
     public class DispatchingServerTarget : IDispatchingServerTarget
     {
-        IServerTarget _native;
-        IThreadDispatcher _dispatcher;
+		readonly IServerTarget _native;
+		readonly IThreadDispatcher _dispatcher;
 
         public DispatchingServerTarget(IServerTarget native, IServerInfo service)
         {

@@ -1,21 +1,14 @@
 ﻿using ABCo.Multicam.Server;
-using ABCo.Multicam.Server.Features;
 using ABCo.Multicam.Server.Features.Switchers;
 using ABCo.Multicam.Server.Features.Switchers.Data;
 using ABCo.Multicam.Server.Features.Switchers.Data.Config;
-using ABCo.Multicam.Server.Features.Switchers.Data;
 using ABCo.Multicam.Client.ViewModels.Features.Switcher;
 using ABCo.Multicam.Client.ViewModels.Features.Switcher.Types;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Client.Presenters.Features.Switcher.Config
 {
-    public interface ISwitcherDummyConfigPresenter : ISwitcherSpecificConfigPresenter, IClientService<IServerTarget>
+	public interface ISwitcherDummyConfigPresenter : ISwitcherSpecificConfigPresenter, IClientService<IServerTarget>
 	{
 		void OnUIChange();
 	}
@@ -24,7 +17,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher.Config
 	{
 		readonly IClientInfo _servSource;
 		readonly IServerTarget _feature;
-		ISwitcherDummyConfigVM _vm;
+		readonly ISwitcherDummyConfigVM _vm;
 
 		public ISwitcherSpecificConfigVM VM => _vm;
 		

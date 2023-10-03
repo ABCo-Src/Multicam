@@ -1,13 +1,6 @@
-﻿using ABCo.Multicam.Server.General;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ABCo.Multicam.Server.Hosting.Clients
+﻿namespace ABCo.Multicam.Server.Hosting.Clients
 {
-    public interface IConnectedClientsManager
+	public interface IConnectedClientsManager
     {
         int NewConnectionId();
         IClientSyncedDataStore NewClientsDataNotifier(IServerTarget target);
@@ -18,7 +11,7 @@ namespace ABCo.Multicam.Server.Hosting.Clients
 
     public class ConnectedClientsManager : IConnectedClientsManager
     {
-        IServerInfo _info;
+		readonly IServerInfo _info;
         int _idCount;
 
         public event Action<IClientInfo> ClientDisconnected = i => { };

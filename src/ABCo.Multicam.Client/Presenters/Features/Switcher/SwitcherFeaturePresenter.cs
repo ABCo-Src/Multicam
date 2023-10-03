@@ -1,8 +1,5 @@
 ﻿using ABCo.Multicam.Server;
-using ABCo.Multicam.Server.Features;
-using ABCo.Multicam.Server.Features.Data;
 using ABCo.Multicam.Server.Features.Switchers;
-using ABCo.Multicam.Server.Features.Switchers.Data;
 using ABCo.Multicam.Server.Features.Switchers.Data;
 using ABCo.Multicam.Client.ViewModels.Features;
 using ABCo.Multicam.Client.ViewModels.Features.Switcher;
@@ -10,7 +7,7 @@ using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 {
-    public interface ISwitcherFeaturePresenter : IFeatureContentPresenter { }
+	public interface ISwitcherFeaturePresenter : IFeatureContentPresenter { }
 	public class SwitcherFeaturePresenter : ISwitcherFeaturePresenter
 	{
 		readonly IClientInfo _info;
@@ -24,7 +21,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 		public SwitcherFeaturePresenter(IServerTarget baseFeature, IClientInfo info)
 		{
 			_info = info;
-			_vm = info.Get<ISwitcherFeatureVM, IServerTarget>(baseFeature);
+			_vm = info.Get<ISwitcherFeatureVM>();
 
 			_feature = baseFeature;
 

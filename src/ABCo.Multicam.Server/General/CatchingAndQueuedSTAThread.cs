@@ -1,6 +1,4 @@
-﻿using System.Runtime.Versioning;
-
-namespace ABCo.Multicam.Server.General
+﻿namespace ABCo.Multicam.Server.General
 {
 	public interface ICatchingOrderedBackgroundQueue<T> where T : IErrorHandlingTarget
 	{

@@ -1,6 +1,4 @@
-﻿using ABCo.Multicam.Server.General;
-
-namespace ABCo.Multicam.Server.Features.Data
+﻿namespace ABCo.Multicam.Server.Features.Data
 {
 	public struct FeatureDataInfo
 	{

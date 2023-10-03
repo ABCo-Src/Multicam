@@ -2,7 +2,6 @@
 using ABCo.Multicam.Server.Features.Switchers.Data.Config;
 using ABCo.Multicam.Server.Features.Switchers.Live.Types.ATEM;
 using ABCo.Multicam.Server.General;
-using ABCo.Multicam.Server.Features.Switchers.Data;
 
 namespace ABCo.Multicam.Server.Features.Switchers.Types.ATEM
 {

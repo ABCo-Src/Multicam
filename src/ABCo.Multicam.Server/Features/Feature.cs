@@ -4,11 +4,11 @@ using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Server.Features
 {
-    /// <summary>
-    /// Represents a feature currently loaded, whether running locally on this system or remotely.
-    /// Introduces the entire data fragments system, as well as fragments like the "Title" or "Item" within there
-    /// </summary>
-    public interface IFeature : IServerService<FeatureTypes>, IServerTarget, IDisposable
+	/// <summary>
+	/// Represents a feature currently loaded, whether running locally on this system or remotely.
+	/// Introduces the entire data fragments system, as well as fragments like the "Title" or "Item" within there
+	/// </summary>
+	public interface IFeature : IServerService<FeatureTypes>, IServerTarget, IDisposable
 	{
 	}
 

@@ -1,14 +1,12 @@
 ﻿using ABCo.Multicam.Server.Features.Data;
-using ABCo.Multicam.Server.Features.Data;
-using ABCo.Multicam.Client.ViewModels.Features;
 using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Server.Features
 {
-    /// <summary>
-    /// Manages all the (running) features in the current project.
-    /// </summary>
-    public interface IMainFeatureCollection : IServerTarget, IDisposable
+	/// <summary>
+	/// Manages all the (running) features in the current project.
+	/// </summary>
+	public interface IMainFeatureCollection : IServerTarget, IDisposable
     {
         IReadOnlyList<IFeature> Features { get; }
 

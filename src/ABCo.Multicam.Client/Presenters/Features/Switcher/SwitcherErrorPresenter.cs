@@ -1,13 +1,11 @@
 ﻿using ABCo.Multicam.Server;
-using ABCo.Multicam.Server.Features;
-using ABCo.Multicam.Server.Features.Switchers.Data;
 using ABCo.Multicam.Client.ViewModels.Features.Switcher;
 using ABCo.Multicam.Server.Hosting.Clients;
 using ABCo.Multicam.Server.Features.Switchers;
 
 namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 {
-    public interface ISwitcherErrorPresenter : IClientService<IServerTarget, Action>
+	public interface ISwitcherErrorPresenter : IClientService<IServerTarget, Action>
 	{
 		ISwitcherConnectionVM VM { get; }
 		void OnError(string? error);
@@ -20,7 +18,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 	public class SwitcherErrorPresenter : ISwitcherErrorPresenter
 	{
 		readonly IServerTarget _feature;
-		Action _noErrorClick;
+		readonly Action _noErrorClick;
 		string? _currentError = null;
 
 		public ISwitcherConnectionVM VM { get; }

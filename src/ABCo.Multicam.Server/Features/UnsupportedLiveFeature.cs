@@ -5,7 +5,7 @@ namespace ABCo.Multicam.Server.Features
 	public interface IUnsupportedLiveFeature : ILiveFeature, IServerService<IFeatureDataStore> { }
     public class UnsupportedLiveFeature : IUnsupportedLiveFeature
     {
-		IFeatureDataStore _collection;
+		readonly IFeatureDataStore _collection;
 
 		public UnsupportedLiveFeature(IFeatureDataStore collection)
 		{

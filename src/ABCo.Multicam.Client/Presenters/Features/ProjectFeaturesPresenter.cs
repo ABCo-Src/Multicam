@@ -1,7 +1,6 @@
 ﻿using ABCo.Multicam.Server;
 using ABCo.Multicam.Server.Features;
 using ABCo.Multicam.Server.Features.Data;
-using ABCo.Multicam.Server.Features.Data;
 using ABCo.Multicam.Client.Services;
 using ABCo.Multicam.Client.Structures;
 using ABCo.Multicam.Client.ViewModels.Features;
@@ -9,7 +8,7 @@ using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Client.Presenters.Features
 {
-    public interface IProjectFeaturesPresenter : IClientDataNotificationTarget
+	public interface IProjectFeaturesPresenter : IClientDataNotificationTarget
 	{
 		IProjectFeaturesVM VM { get; }
 		void OpenMobileMenu(IProjectFeaturesListItemVM vm);
