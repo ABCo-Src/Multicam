@@ -9,7 +9,6 @@ namespace ABCo.Multicam.Client.ViewModels.Features
     {
         IFeatureContentVM? Content { get; set; }
         public string FeatureTitle { get; set; }
-        public string EditPanelTitle { get; }
         void OnTitleChange();
 	}
 
@@ -24,8 +23,6 @@ namespace ABCo.Multicam.Client.ViewModels.Features
 
         [ObservableProperty] string _featureTitle = "";
         [ObservableProperty] IFeatureContentVM? _content;
-
-		public string EditPanelTitle => $"Editing: {FeatureTitle}";
 
         public FeatureVM(IMainFeaturePresenter presenter) => _presenter = presenter;
 

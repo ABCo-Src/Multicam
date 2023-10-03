@@ -81,17 +81,20 @@ namespace ABCo.Multicam.Server.Hosting
 
         public void OnDataChange(ServerData obj)
         {
-            foreach (var list in _registeredPresenters.Values)
+            lock (this)
             {
-                // Thread safety: It's better to have the for inside the dispatch,
-                // as the only way the list can be changed is *by* the client changing it, so we don't get conflicts accesses like this
-                var presenters = list.Presenters;
-                list.Dispatcher.Queue(() =>
-                {
-                    for (int i = 0; i < presenters.Count; i++)
-                        presenters[i].OnDataChange(obj);
-                });
-            }
+				foreach (var list in _registeredPresenters.Values)
+				{
+					// Thread safety: It's better to have the for inside the dispatch, as the only way the list can be
+					// changed is *by* the client appending to it (which the loop is fine with), so we don't get cross-thread accesses like this
+					var presenters = list.Presenters;
+					list.Dispatcher.Queue(() =>
+					{
+						for (int i = 0; i < presenters.Count; i++)
+							presenters[i].OnDataChange(obj);
+					});
+				}
+			}
         }
 
         public record struct ScopePresenters(IThreadDispatcher Dispatcher, List<IClientNotificationTarget> Presenters);
