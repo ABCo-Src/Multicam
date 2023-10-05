@@ -9,7 +9,8 @@ namespace ABCo.Multicam.Client.ViewModels
 	public interface IMainUIVM : IClientService<IMainUIPresenter>, INotifyPropertyChanged, IAnimationHandlingVM
 	{
 		ISideMenuEmbeddableVM? MenuVM { get; set; }
-		IProjectFeaturesVM? ContentVM { get; set; }
+		IProjectFeaturesVM? FeaturesVM { get; set; }
+		IProjectFeaturesListItemVM? MobileFeatureViewSelectedVM { get; set; }
         string MenuTitle { get; set; }
 
 		void CloseMenuButton();
@@ -26,7 +27,7 @@ namespace ABCo.Multicam.Client.ViewModels
 			set => UpdateMenuVM(value);
 		}
 
-        public IProjectFeaturesVM? ContentVM { get; set; }
+        public IProjectFeaturesVM? FeaturesVM { get; set; }
 
         public async void UpdateMenuVM(ISideMenuEmbeddableVM? newVal)
 		{

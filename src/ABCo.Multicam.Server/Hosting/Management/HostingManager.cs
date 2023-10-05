@@ -1,4 +1,5 @@
 ﻿using ABCo.Multicam.Server.Hosting.Clients;
+using ABCo.Multicam.Server.Hosting.Management.Data;
 using System.Net;
 
 namespace ABCo.Multicam.Server.Hosting.Management
@@ -9,31 +10,48 @@ namespace ABCo.Multicam.Server.Hosting.Management
 
     public class HostingManager : IHostingManager
     {
-        public const int UPDATE_CONFIG = 1;
+        public const int TOGGLE_ONOFF = 1;
+		public const int SET_CONFIG = 2;
 
-        IActiveServerHost _localNetworkHost;
+        readonly IServerInfo _info;
+		readonly IClientSyncedDataStore _data;
+		INativeServerHost? _localNetworkHost;
+        bool _isConnected;
 
-        public IRemoteDataStore DataStore => throw new NotImplementedException();
+        public IRemoteDataStore DataStore => _data;
 
-        public void PerformAction(int id)
+        public HostingManager(IServerInfo info)
         {
-            throw new NotImplementedException();
+            _info = info;
+            _data = info.Get<IClientSyncedDataStore>();
+        }
+
+        public async void PerformAction(int id) 
+        {
+            if (id == TOGGLE_ONOFF)
+            {
+                // If not initialized, initialize now.
+                _localNetworkHost ??= _info.Get<INativeServerHost>();
+
+				if (_isConnected)
+                {
+                    await _localNetworkHost.Stop();
+					_isConnected = false;
+				}
+                else
+                {
+                    // TODO: Error handling
+                    // TODO: Slam protection - make synchronous and put server on background thread?
+					await _localNetworkHost.Start(_data.GetData<HostingConfig>());
+					_isConnected = true;
+				}
+			}
         }
 
         public void PerformAction(int id, object param)
         {
-            throw new NotImplementedException();
+            if (id == SET_CONFIG)
+                _data.SetData<HostingConfig>((HostingConfig)param);
         }
-
-        public void RefreshData<T>() where T : ServerData
-        {
-            throw new NotImplementedException();
-        }
-
-        void UpdateConfiguration(IPAddress address)
-        {
-
-        }
-
     }
 }

@@ -19,6 +19,7 @@ namespace ABCo.Multicam.Server
 	{
 		IPlatformInfo GetPlatformInfo();
 		IServerTarget GetFeatures();
+		IHostingManager GetHostingManager();
 		void Disconnect(IClientInfo info);
 	}
 
@@ -26,13 +27,13 @@ namespace ABCo.Multicam.Server
     {
 		public IServerInfo ServerInfo { get; }
 
-		public LocalMulticamServer(Func<IServerInfo, IPlatformInfo> getPlatformInfo, Func<IServerInfo, IActiveServerHost> getServerHost, IThreadDispatcher dispatcher)
+		public LocalMulticamServer(Func<IServerInfo, IPlatformInfo> getPlatformInfo, Func<IServerInfo, INativeServerHost> getServerHost, IThreadDispatcher dispatcher)
 		{
 			// Initialize our services
 			ServerInfo = InitializeServices(getPlatformInfo, getServerHost, dispatcher);
 		}
 
-        public IServerInfo InitializeServices(Func<IServerInfo, IPlatformInfo> getPlatformInfo, Func<IServerInfo, IActiveServerHost> getServerHost, IThreadDispatcher dispatcher)
+        public IServerInfo InitializeServices(Func<IServerInfo, IPlatformInfo> getPlatformInfo, Func<IServerInfo, INativeServerHost> getServerHost, IThreadDispatcher dispatcher)
         {
 			var container = new ServerInfo(dispatcher, this); // NOTE: For now, this is really a singleton internally
 
@@ -40,6 +41,7 @@ namespace ABCo.Multicam.Server
 			Server.ServerInfo.AddSingleton(getPlatformInfo);
 			Server.ServerInfo.AddSingleton(getServerHost);
 			Server.ServerInfo.AddSingleton<IConnectedClientsManager>(s => new ConnectedClientsManager(s));
+			Server.ServerInfo.AddSingleton<IHostingManager>(s => new HostingManager(s));
 			Server.ServerInfo.AddTransient<IClientSyncedDataStoreWithClientsManagementBinding, IServerTarget>((p1, s) => new ClientSyncedDataStore(p1, s));
 			Server.ServerInfo.AddTransient<IDispatchingServerTarget, IServerTarget>((p1, s) => new DispatchingServerTarget(p1, s));
 
@@ -71,6 +73,7 @@ namespace ABCo.Multicam.Server
 		}
 
 		public IServerTarget GetFeatures() => ServerInfo.Get<IMainFeatureCollection>();
+		public IHostingManager GetHostingManager() => ServerInfo.Get<IHostingManager>();
 		public IPlatformInfo GetPlatformInfo() => ServerInfo.Get<IPlatformInfo>();
 		public void Disconnect(IClientInfo info) => ServerInfo.Get<IConnectedClientsManager>().OnClientDisconnected(info);
 	}

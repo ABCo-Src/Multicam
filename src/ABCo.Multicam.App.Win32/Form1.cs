@@ -15,7 +15,7 @@ namespace ABCo.Multicam.App.Win32
 
 			// Setup a server
 			var blazorDispatcher = new BlazorMainThreadDispatcher();
-			var server = new LocalMulticamServer(s => new WindowsPlatformInfo(), s => new ActiveServerHost(s), blazorDispatcher);
+			var server = new LocalMulticamServer(s => new WindowsPlatformInfo(), s => new NativeServerHost(s), blazorDispatcher);
 
 			// Setup our desktop client services
 			var desktopServiceCollection = new ServiceCollection();
@@ -31,9 +31,6 @@ namespace ABCo.Multicam.App.Win32
 			blazorWebView1.HostPage = "wwwroot\\index.html";
 			blazorWebView1.Services = builtProvider;
 			blazorWebView1.RootComponents.Add<Client.Blazor.Index>("#app");
-
-			var serverHost = server.ServerInfo.Get<IActiveServerHost>();
-			serverHost.Connect("http://10.149.237.129:4000");
 		}
 
 		//class FormDispatcher : IThreadDispatcher

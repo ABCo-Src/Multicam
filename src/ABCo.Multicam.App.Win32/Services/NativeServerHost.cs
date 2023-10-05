@@ -2,14 +2,15 @@
 using ABCo.Multicam.Client.Blazor;
 using ABCo.Multicam.Server;
 using ABCo.Multicam.Server.Hosting.Management;
+using ABCo.Multicam.Server.Hosting.Management.Data;
 
 namespace ABCo.Multicam.App.Win32.Services
 {
-	public class ActiveServerHost : IActiveServerHost
+	public class NativeServerHost : INativeServerHost
 	{
 		readonly WebApplication _webApp;
 
-		public ActiveServerHost(IServerInfo info)
+		public NativeServerHost(IServerInfo info)
 		{
 			var webApp = WebApplication.CreateBuilder(new WebApplicationOptions()
 			{
@@ -26,10 +27,7 @@ namespace ABCo.Multicam.App.Win32.Services
 
 			// Build the app
 			_webApp = webApp.Build();
-		}
 
-		public async void Connect(string hostPath)
-		{
 			// Configure the HTTP request pipeline.
 			if (!_webApp.Environment.IsDevelopment())
 			{
@@ -43,7 +41,21 @@ namespace ABCo.Multicam.App.Win32.Services
 			_webApp.UseRouting();
 			_webApp.MapBlazorHub();
 			_webApp.MapFallbackToPage("/_ClientWebIndex");
-			await _webApp.RunAsync(hostPath);
+		}
+
+		public async Task Start(HostingConfig config)
+		{
+			// Set the host name
+			_webApp.Urls.Clear();
+			for (int i = 0; i < config.HostNames.Length; i++)
+				_webApp.Urls.Add(config.HostNames[i]);
+
+			await _webApp.StartAsync();
+		}
+
+		public async Task Stop()
+		{
+			await _webApp.StopAsync();
 		}
 	}
 }
