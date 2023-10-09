@@ -3,10 +3,11 @@ using ABCo.Multicam.Server.Hosting.Management.Data;
 
 namespace ABCo.Multicam.Server.Hosting.Management
 {
-    
-	public interface INativeServerHost : IServerService<IHostingManager>
-    {
-		Task Start(HostingConfig config);
+    public record struct NativeServerHostConfig(string Host);
+
+	public interface INativeServerHost : IServerService<NativeServerHostConfig>, IAsyncDisposable
+	{
+		Task Start();
 		Task Stop();
-    }
+	}
 }

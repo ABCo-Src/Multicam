@@ -10,7 +10,7 @@ namespace ABCo.Multicam.App.Win32.Services
 	{
 		readonly WebApplication _webApp;
 
-		public NativeServerHost(IServerInfo info)
+		public NativeServerHost(NativeServerHostConfig config, IServerInfo info)
 		{
 			var webApp = WebApplication.CreateBuilder(new WebApplicationOptions()
 			{
@@ -41,21 +41,14 @@ namespace ABCo.Multicam.App.Win32.Services
 			_webApp.UseRouting();
 			_webApp.MapBlazorHub();
 			_webApp.MapFallbackToPage("/_ClientWebIndex");
-		}
 
-		public async Task Start(HostingConfig config)
-		{
 			// Set the host name
 			_webApp.Urls.Clear();
-			for (int i = 0; i < config.HostNames.Length; i++)
-				_webApp.Urls.Add(config.HostNames[i]);
-
-			await _webApp.StartAsync();
+			_webApp.Urls.Add(config.Host);
 		}
 
-		public async Task Stop()
-		{
-			await _webApp.StopAsync();
-		}
+		public async Task Start() => await _webApp.StartAsync();
+		public async Task Stop() => await _webApp.StopAsync();
+		public ValueTask DisposeAsync() => _webApp.DisposeAsync();
 	}
 }

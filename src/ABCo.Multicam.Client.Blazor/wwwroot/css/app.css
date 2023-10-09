@@ -16,6 +16,9 @@ h1:focus, p:focus {
     --col-border: #999;
     --col-border-focus: white;
     --col-btn-appbackdefault: #333;
+    --col-foreground-darker: #bbb;
+    --col-disabledtextbox: #444;
+    --col-disabledbutton: #333;
     color: white;
 }
 
@@ -82,6 +85,10 @@ body {
     padding: 15px;
 }
 
+.btnDisabled {
+    background-color: darkgray;
+}
+
 .btnBlueHint {
     color: lightblue;
 }
@@ -96,12 +103,16 @@ body {
     cursor: pointer;
 }
 
-.btn:hover:not(:active), .btnLikeHighlight:hover:not(:active) {
+.btn:not(.btnDisabled):hover:not(:active), .btnLikeHighlight:not(.btnDisabled):hover:not(:active) {
     background-color: var(--col-btn-highlight) !important;
 }
 
-.btn:active, .btnLikeHighlight:active {
+.btn:not(.btnDisabled):active, .btnLikeHighlight:not(.btnDisabled):active {
     background-color: var(--col-btn-pressed) !important;
+}
+
+.btn.btnDisabled {
+    background-color: var(--col-disabledbutton);
 }
 
 .btnDashed {
@@ -127,7 +138,7 @@ body {
 }
 
 .textbox:disabled {
-    background-color: #444;
+    background-color: var(--col-disabledtextbox);
 }
 
 .textbox:focus, .combo:focus {

@@ -15,7 +15,11 @@ namespace ABCo.Multicam.App.Win32
 
 			// Setup a server
 			var blazorDispatcher = new BlazorMainThreadDispatcher();
-			var server = new LocalMulticamServer(s => new WindowsPlatformInfo(), s => new NativeServerHost(s), blazorDispatcher);
+			var server = new LocalMulticamServer(
+				s => new WindowsPlatformInfo(),
+				(c, s) => new NativeServerHost(c, s), 
+				(a, s) => new AvailableIPCollection(a), 
+				blazorDispatcher);
 
 			// Setup our desktop client services
 			var desktopServiceCollection = new ServiceCollection();

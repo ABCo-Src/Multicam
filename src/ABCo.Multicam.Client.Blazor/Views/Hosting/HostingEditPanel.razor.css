@@ -1,0 +1,55 @@
+﻿.modeSelection {
+    display: grid;
+    align-items: center;
+    grid-template-columns: auto auto 1fr;
+    grid-template-areas:
+        "modeTag modeCombo modeCombo";
+}
+
+.automaticSuggestionInfo {
+    width: 100%;
+    display: flex;
+    justify-content: right;
+    margin-top: 5px;
+}
+
+.customHostSelection {
+    margin-top: 5px;
+    display: grid;
+    align-items: center;
+    grid-template-columns: auto auto 1fr;
+    grid-template-areas:
+        "hostTag hostLeadIn hostTxt";
+}
+
+.modeTag {
+    font-weight: bold;
+    grid-area: modeTag;
+}
+
+.autoDecidedText {
+    font-style: italic;
+    color: var(--col-foreground-darker);
+}
+
+.modeCombo {
+    grid-area: modeCombo;
+}
+
+.hostTag {
+    font-weight: bold;
+    grid-area: hostTag;
+}
+
+.hostLeadIn {
+    margin-left: 5px;
+    grid-area: hostLeadIn;
+}
+
+.hostTxt {
+    grid-area: hostTxt;
+}
+
+.connectionBtn {
+    margin-top: 10px;
+}

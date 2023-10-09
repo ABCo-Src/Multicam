@@ -1,0 +1,11 @@
+﻿.hosting {
+    padding: 10px;
+    background-color: var(--col-btn-appbackdefault);
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+}
+
+.hosting p {
+    font-weight: bold;
+}

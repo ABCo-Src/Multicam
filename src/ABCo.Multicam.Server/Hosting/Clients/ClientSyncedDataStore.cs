@@ -94,12 +94,13 @@ namespace ABCo.Multicam.Server.Hosting.Clients
         public void SetData<T>(ServerData data) where T : ServerData
         {
             // Update the value
-            if (!data.GetType().IsAssignableTo(typeof(T))) throw new Exception("Generic arguemnt does not match data given!");
-            _fragmentStore[typeof(T)] = data;
+            if (!data.GetType().IsAssignableTo(typeof(T))) throw new Exception("Generic argument does not match data given!");
 
             // Notify of the change
 			lock (this)
 			{
+				_fragmentStore[typeof(T)] = data;
+
 				foreach (var list in _registeredPresenters.Values)
 				{
 					// Thread safety: It's better to have the for inside the dispatch, as the only way the list can be

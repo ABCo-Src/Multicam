@@ -18,10 +18,7 @@
 
 	<!-- Main Content -->
 	<div class="content">
-		@if (VM.ContentVM != null)
-		{
-			<FeatureView VM="VM.ContentVM" />
-		}
+		<FeatureView VM="VM.FeaturesVM" HostingVM="VM.HostingVM" />
 	</div>
 </div>
 

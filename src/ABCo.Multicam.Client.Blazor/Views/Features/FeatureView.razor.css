@@ -39,21 +39,9 @@
     }
 }
 
-.options .connection {
-    padding: 10px;
-    background-color: var(--col-btn-appbackdefault);
-    width: 100%;
-    box-sizing: border-box;
-    margin-bottom: 20px;
-}
-
-.options .firstOnARow {
+::deep .options .firstOnARow {
     padding-left: 18px;
     padding-right: 18px;
-}
-
-.options .connection p {
-    font-weight: bold;
 }
 
 .options .strip {

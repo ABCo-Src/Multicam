@@ -2,11 +2,13 @@
 using ABCo.Multicam.Client.Presenters.Features;
 using ABCo.Multicam.Client.Presenters.Features.Switcher;
 using ABCo.Multicam.Client.Presenters.Features.Switcher.Config;
+using ABCo.Multicam.Client.Presenters.Hosting;
 using ABCo.Multicam.Client.ViewModels;
 using ABCo.Multicam.Client.ViewModels.Features;
 using ABCo.Multicam.Client.ViewModels.Features.Switcher;
 using ABCo.Multicam.Client.ViewModels.Features.Switcher.Config.ATEM;
 using ABCo.Multicam.Client.ViewModels.Features.Switcher.Types;
+using ABCo.Multicam.Client.ViewModels.Hosting;
 using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Client
@@ -25,6 +27,7 @@ namespace ABCo.Multicam.Client
 			// Register presenters
 			container.AddScoped<IMainUIPresenter, MainUIPresenter>();
 
+			container.AddTransient<IHostingPresenter, IServerTarget>((p1, s) => new HostingPresenter(p1, s));
 			container.AddTransient<IProjectFeaturesPresenter, IServerTarget>((p1, s) => new ProjectFeaturesPresenter(p1, s));
             container.AddTransient<IMainFeaturePresenter, IServerTarget> ((p1, s) => new FeaturePresenter(p1, s));
 			container.AddTransient<ISwitcherFeaturePresenter, IServerTarget>((p1, s) => new SwitcherFeaturePresenter(p1, s));
@@ -37,7 +40,8 @@ namespace ABCo.Multicam.Client
 			container.AddTransient<ISwitcherATEMConfigPresenter, IServerTarget>((p1, s) => new SwitcherATEMConfgPresenter(p1, s));
 
 			// Register view-models
-            container.AddTransient<IMainUIVM, IMainUIPresenter>((p1, s) => new MainUIVM(p1));
+            container.AddTransient<IMainUIVM, IMainUIPresenter, IProjectFeaturesVM, IServerHostingVM>((p1, p2, p3, s) => new MainUIVM(p1, p2, p3));
+            container.AddTransient<IServerHostingVM, IHostingPresenter>((p1, s) => new ServerHostingVM(p1));
             container.AddTransient<IProjectFeaturesVM, IProjectFeaturesPresenter>((p1, s) => new ProjectFeaturesVM(p1));
             container.AddTransient<IProjectFeaturesListItemVM, IProjectFeaturesPresenter, IServerTarget, IFeatureVM>((p1, p2, p3, s) => new ProjectFeaturesListItemVM(p1, p2, p3));
             container.AddTransient<IFeatureVM, IMainFeaturePresenter>((p1, s) => new FeatureVM(p1));

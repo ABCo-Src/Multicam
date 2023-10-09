@@ -1,4 +1,6 @@
-﻿@using ABCo.Multicam.Server.Features;
+﻿@using ABCo.Multicam.Client.Blazor.Views.Hosting
+@using ABCo.Multicam.Client.ViewModels.Hosting;
+@using ABCo.Multicam.Server.Features;
 @using ABCo.Multicam.Client.Blazor.Views.Features.Switcher
 @using ABCo.Multicam.Client.ViewModels.Features;
 @using ABCo.Multicam.Client.ViewModels.Features.Switcher;
@@ -6,10 +8,10 @@
 
 <div class="featureView">
 	<div class="options">
-		<div class="connection firstOnARow btnLikeHighlight">
-			<p>No devices synced</p>
-		</div>
+		<!-- Hosting -->
+		<HostingMainViewButton VM="HostingVM" />
 
+		<!-- Feature Buttons -->
 		<div class="strip">
 			<a class="stripOption firstOnARow btnLikeHighlight" @onclick="e => VM.CreateFeature(new(e.ClientX, e.ClientY))">
 				New Feature
@@ -18,6 +20,7 @@
 		</div>
 	</div>
 
+	<!-- Feature Mobile View -->
 	@if (VM.MobileView != null)
 	{
 		<div class="mobileView @MobileViewClasses">
@@ -25,6 +28,7 @@
 		</div>
 	}
 
+	<!-- Main Features List -->
 	<ul class="items">
 		@foreach (var item in VM.Items)
 		{
@@ -36,6 +40,10 @@
 </div>
 
 @code {
+
+	[Parameter]
+	public IServerHostingVM HostingVM { get; set; } = null!;
+
 	// Animation code for mobile view menu
 	string MobileViewClasses = "";
 

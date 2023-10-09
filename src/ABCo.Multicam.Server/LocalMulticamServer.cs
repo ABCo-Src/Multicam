@@ -27,19 +27,20 @@ namespace ABCo.Multicam.Server
     {
 		public IServerInfo ServerInfo { get; }
 
-		public LocalMulticamServer(Func<IServerInfo, IPlatformInfo> getPlatformInfo, Func<IServerInfo, INativeServerHost> getServerHost, IThreadDispatcher dispatcher)
+		public LocalMulticamServer(Func<IServerInfo, IPlatformInfo> getPlatformInfo, Func<NativeServerHostConfig, IServerInfo, INativeServerHost> getServerHost, Func<Action, IServerInfo, ILocalIPCollection> getAvaIP, IThreadDispatcher dispatcher)
 		{
 			// Initialize our services
-			ServerInfo = InitializeServices(getPlatformInfo, getServerHost, dispatcher);
+			ServerInfo = InitializeServices(getPlatformInfo, getServerHost, getAvaIP, dispatcher);
 		}
 
-        public IServerInfo InitializeServices(Func<IServerInfo, IPlatformInfo> getPlatformInfo, Func<IServerInfo, INativeServerHost> getServerHost, IThreadDispatcher dispatcher)
+        public IServerInfo InitializeServices(Func<IServerInfo, IPlatformInfo> getPlatformInfo, Func<NativeServerHostConfig, IServerInfo, INativeServerHost> getServerHost, Func<Action, IServerInfo, ILocalIPCollection> getAvaIP, IThreadDispatcher dispatcher)
         {
 			var container = new ServerInfo(dispatcher, this); // NOTE: For now, this is really a singleton internally
 
 			// Hosting/general
 			Server.ServerInfo.AddSingleton(getPlatformInfo);
-			Server.ServerInfo.AddSingleton(getServerHost);
+			Server.ServerInfo.AddTransient(getServerHost);
+			Server.ServerInfo.AddTransient(getAvaIP);
 			Server.ServerInfo.AddSingleton<IConnectedClientsManager>(s => new ConnectedClientsManager(s));
 			Server.ServerInfo.AddSingleton<IHostingManager>(s => new HostingManager(s));
 			Server.ServerInfo.AddTransient<IClientSyncedDataStoreWithClientsManagementBinding, IServerTarget>((p1, s) => new ClientSyncedDataStore(p1, s));
