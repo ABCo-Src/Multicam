@@ -11,50 +11,27 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Client.ViewModels.Hosting
 {
-	public interface IServerHostingVM : INotifyPropertyChanged, IClientService<IHostingPresenter>, ISideMenuEmbeddableVM
+	public interface IServerHostingVM : INotifyPropertyChanged, IClientService<IHostingPresenter, IHostnameConfigVM, IHostingExecutionVM>, ISideMenuEmbeddableVM
 	{
-		string[] ModeValues { get; }
-		string SelectedMode { get; set; }
-		string AutomaticCaption { get; set; }
-		string CustomHostName { get; set; }
-		string StartStopButtonText { get; set; }
-		bool ShowAutomaticCaption { get; }
-		bool ShowCustomHostSelection { get; }
-		bool CanStartStop { get; set; }
+		IHostnameConfigVM HostnameVM { get; }
+		IHostingExecutionVM ExecutionVM { get; }
 		void ToggleHostingMenu();
-		void UpdateHostingMode();
-		void UpdateCustomHostName();
-		void ToggleConnection();
-	}
-
-	public interface IConnectedHostingVM
-	{
-
 	}
 
 	public partial class ServerHostingVM : ViewModelBase, IServerHostingVM
 	{
 		readonly IHostingPresenter _presenter;
+		
+		public IHostnameConfigVM HostnameVM { get; }
+		public IHostingExecutionVM ExecutionVM { get; }
 
-		public string[] ModeValues => new string[]
+		public ServerHostingVM(IHostingPresenter presenter, IHostnameConfigVM hostnameVM, IHostingExecutionVM activeVM)
 		{
-			"Automatic",
-			"Custom"
-		};
+			_presenter = presenter;
+			HostnameVM = hostnameVM;
+			ExecutionVM = activeVM;
+		}
 
-		[ObservableProperty][NotifyPropertyChangedFor(nameof(ShowCustomHostSelection), nameof(ShowAutomaticCaption))] string _selectedMode = "Automatic";
-		[ObservableProperty] string _automaticCaption = "";
-		[ObservableProperty] string _customHostName = "";
-		[ObservableProperty] string _startStopButtonText = "";
-		[ObservableProperty] bool _canStartStop = false;
-
-		public bool ShowCustomHostSelection => SelectedMode == "Custom";
-		public bool ShowAutomaticCaption => SelectedMode == "Automatic";
-
-		public ServerHostingVM(IHostingPresenter presenter) => _presenter = presenter;
 		public void ToggleHostingMenu() => _presenter.OnHostingMenuToggle();
-		public void UpdateHostingMode() => _presenter.OnHostingModeChange();
-		public void UpdateCustomHostName() => _presenter.OnCustomHostNameChange();
-		public void ToggleConnection() => _presenter.ToggleConnection();
 	}
 }

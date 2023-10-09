@@ -1,0 +1,17 @@
+﻿@using ABCo.Multicam.Client.ViewModels.Hosting;
+@inherits VMBoundComponent<IHostingExecutionVM>
+
+<div class="section">
+	@if (VM.CanStartStop)
+	{
+		<div class="btn btnNormal connectionBtn" @onclick=VM.ToggleConnection>
+			<p>@VM.StartStopButtonText</p>
+		</div>
+	}
+	else
+	{
+		<div class="btn btnNormal btnDisabled connectionBtn">
+			<p>@VM.StartStopButtonText</p>
+		</div>
+	}
+</div>

@@ -41,7 +41,9 @@ namespace ABCo.Multicam.Client
 
 			// Register view-models
             container.AddTransient<IMainUIVM, IMainUIPresenter, IProjectFeaturesVM, IServerHostingVM>((p1, p2, p3, s) => new MainUIVM(p1, p2, p3));
-            container.AddTransient<IServerHostingVM, IHostingPresenter>((p1, s) => new ServerHostingVM(p1));
+            container.AddTransient<IServerHostingVM, IHostingPresenter, IHostnameConfigVM, IHostingExecutionVM>((p1, p2, p3, s) => new ServerHostingVM(p1, p2, p3));
+            container.AddTransient<IHostnameConfigVM, IHostingPresenter>((p1, s) => new HostnameConfigVM(p1));
+            container.AddTransient<IHostingExecutionVM, IHostingPresenter>((p1, s) => new HostingExecutionVM(p1));
             container.AddTransient<IProjectFeaturesVM, IProjectFeaturesPresenter>((p1, s) => new ProjectFeaturesVM(p1));
             container.AddTransient<IProjectFeaturesListItemVM, IProjectFeaturesPresenter, IServerTarget, IFeatureVM>((p1, p2, p3, s) => new ProjectFeaturesListItemVM(p1, p2, p3));
             container.AddTransient<IFeatureVM, IMainFeaturePresenter>((p1, s) => new FeatureVM(p1));

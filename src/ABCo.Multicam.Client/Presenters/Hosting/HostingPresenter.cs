@@ -16,7 +16,7 @@ namespace ABCo.Multicam.Client.Presenters.Hosting
 		void OnHostingMenuToggle();
 		void OnHostingModeChange();
 		void OnCustomHostNameChange();
-		void ToggleConnection();
+		void OnToggleConnection();
 		IServerHostingVM VM { get; }
 	}
 
@@ -32,7 +32,10 @@ namespace ABCo.Multicam.Client.Presenters.Hosting
 		{
 			_target = target;
 			_mainUI = info.Get<IMainUIPresenter>();
-			VM = info.Get<IServerHostingVM, IHostingPresenter>(this);
+
+			var hostnameConfigVM = info.Get<IHostnameConfigVM, IHostingPresenter>(this);
+			var hostingExecutionVM = info.Get<IHostingExecutionVM, IHostingPresenter>(this);
+			VM = info.Get<IServerHostingVM, IHostingPresenter, IHostnameConfigVM, IHostingExecutionVM>(this, hostnameConfigVM, hostingExecutionVM);
 		}
 
 		public void Init()
@@ -45,26 +48,26 @@ namespace ABCo.Multicam.Client.Presenters.Hosting
 			switch (obj)
 			{
 				case HostingConfigMode config:
-					VM.SelectedMode = config.IsAutomatic ? "Automatic" : "Custom";
+					VM.HostnameVM.SelectedMode = config.IsAutomatic ? "Automatic" : "Custom";
 					break;
 				case HostingCustomModeConfig customConfig:
 					var hostName = customConfig.HostNames.Count > 0 ? customConfig.HostNames[0] : "";
-					VM.CustomHostName = hostName.StartsWith("http://") ? hostName[7..] : hostName;
+					VM.HostnameVM.CustomHostName = hostName.StartsWith("http://") ? hostName[7..] : hostName;
 					break;
 				case HostingExecutionStatus execStatus:
-					VM.StartStopButtonText = execStatus.IsConnected ? "Stop Hosting" : "Start Hosting";
+					VM.ExecutionVM.StartStopButtonText = execStatus.IsConnected ? "Stop Hosting" : "Start Hosting";
 					break;
 				case HostingActiveConfig activeConfig:
 
 					if (activeConfig.HostName == null)
 					{
-						VM.AutomaticCaption = "Scanning hosts (ensure you're connected to a network)...";
-						VM.CanStartStop = false;
+						VM.HostnameVM.AutomaticCaption = "Scanning hosts (ensure you're connected to a network)...";
+						VM.ExecutionVM.CanStartStop = false;
 					}
 					else
 					{
-						VM.AutomaticCaption = $"Using {activeConfig.HostName}";
-						VM.CanStartStop = true;
+						VM.HostnameVM.AutomaticCaption = $"Using {activeConfig.HostName}";
+						VM.ExecutionVM.CanStartStop = true;
 					}
 
 					break;
@@ -82,13 +85,13 @@ namespace ABCo.Multicam.Client.Presenters.Hosting
 			}
 		}
 
-		public void OnHostingModeChange() => _target.PerformAction(HostingManager.SET_MODE, new HostingConfigMode(VM.SelectedMode == "Automatic"));
+		public void OnHostingModeChange() => _target.PerformAction(HostingManager.SET_MODE, new HostingConfigMode(VM.HostnameVM.SelectedMode == "Automatic"));
 		public void OnCustomHostNameChange()
 		{
-			var adaptedHostName = VM.CustomHostName.StartsWith("http://") ? VM.CustomHostName : $"http://{VM.CustomHostName}";
+			var adaptedHostName = VM.HostnameVM.SelectedMode.StartsWith("http://") ? VM.HostnameVM.SelectedMode : $"http://{VM.HostnameVM.SelectedMode}";
 			_target.PerformAction(HostingManager.SET_CUSTOM_CONFIG, new HostingCustomModeConfig(new string[] { adaptedHostName }));
 		}
 
-		public void ToggleConnection() => _target.PerformAction(HostingManager.TOGGLE_ONOFF);
+		public void OnToggleConnection() => _target.PerformAction(HostingManager.TOGGLE_ONOFF);
 	}
 }
