@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.WebView.WindowsForms;
 using ABCo.Multicam.Client;
 using ABCo.Multicam.Client.Blazor;
 using ABCo.Multicam.Server.Hosting.Management;
+using System.Reflection.Metadata;
 
 namespace ABCo.Multicam.App.Win32
 {
@@ -17,8 +18,8 @@ namespace ABCo.Multicam.App.Win32
 			var blazorDispatcher = new BlazorMainThreadDispatcher();
 			var server = new LocalMulticamServer(
 				s => new WindowsPlatformInfo(),
-				(c, s) => new NativeServerHost(c, s), 
-				(a, s) => new AvailableIPCollection(a), 
+				(c, s) => new NativeServerHost(c, s),
+				(a, s) => new AvailableIPCollection(a),
 				blazorDispatcher);
 
 			// Setup our desktop client services
@@ -35,6 +36,14 @@ namespace ABCo.Multicam.App.Win32
 			blazorWebView1.HostPage = "wwwroot\\index.html";
 			blazorWebView1.Services = builtProvider;
 			blazorWebView1.RootComponents.Add<Client.Blazor.Index>("#app");
+		}
+
+		// Workaround to fix the, currently broken, Blazor combobox down-drops when the window moves.
+		private void Form1_ResizeEnd(object sender, EventArgs e)
+		{
+			blazorWebView1.Padding = new Padding(1);
+			blazorWebView1.PerformLayout();
+			blazorWebView1.Padding = new Padding(0);
 		}
 
 		//class FormDispatcher : IThreadDispatcher

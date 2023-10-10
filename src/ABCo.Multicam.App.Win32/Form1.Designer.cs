@@ -48,6 +48,7 @@
 			Controls.Add(blazorWebView1);
 			Name = "Form1";
 			Text = "Form1";
+			ResizeEnd += Form1_ResizeEnd;
 			ResumeLayout(false);
 		}
 
