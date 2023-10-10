@@ -44,19 +44,25 @@
 }
 
 .sidePanel {
+    position: relative;
     width: 100%;
     height: 100%;
     background-color: var(--col-panelback);
     display: grid;
     grid-template-columns: 1fr 3px;
+    grid-template-rows: 100%;
     grid-template-areas: "content rightBorder";
-    max-height: 100%;
-    overflow-y: auto;
 }
 
 .sidePanel .content {
     grid-area: content;
+    display: flex;
+    flex-direction: column;
     /*overflow-x: hidden;*/
+}
+
+.sidePanel .scrollArea {
+    overflow-y: auto;
 }
 
 .sidePanel .rightBorder {

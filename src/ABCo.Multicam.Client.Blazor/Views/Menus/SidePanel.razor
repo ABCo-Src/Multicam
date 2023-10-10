@@ -14,15 +14,17 @@
 			<a class="close btn btnIcon" @onclick=VM.CloseMenuButton><img src="_content/ABCo.Multicam.Client.Blazor/img/icons/smallCloseButton.svg" /></a>
 		</div>
 
-		<hr class="appWideTitlebarSeparator" />
+		<hr class="appWideTitlebarSeparator titlebarSeparator" />
 
-		@if (VM.MenuVM is ProjectFeaturesListItemVM listViewItem)
-		{
-			<FeatureEditPanel VM="listViewItem" />
-		}
-		else if (VM.MenuVM is IServerHostingVM hostingVM)
-		{
-			<HostingEditPanel VM="hostingVM" />
-		}
+		<div class="scrollArea">
+			@if (VM.MenuVM is ProjectFeaturesListItemVM listViewItem)
+			{
+				<FeatureEditPanel VM="listViewItem" />
+			}
+			else if (VM.MenuVM is IServerHostingVM hostingVM)
+			{
+				<HostingEditPanel VM="hostingVM" />
+			}
+		</div>
 	</div>
 </div>
