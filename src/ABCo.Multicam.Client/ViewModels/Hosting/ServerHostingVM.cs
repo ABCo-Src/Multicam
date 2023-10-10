@@ -15,6 +15,7 @@ namespace ABCo.Multicam.Client.ViewModels.Hosting
 	{
 		IHostnameConfigVM HostnameVM { get; }
 		IHostingExecutionVM ExecutionVM { get; }
+		bool ShowConfigOptions { get; set; }
 		void ToggleHostingMenu();
 	}
 
@@ -24,6 +25,8 @@ namespace ABCo.Multicam.Client.ViewModels.Hosting
 		
 		public IHostnameConfigVM HostnameVM { get; }
 		public IHostingExecutionVM ExecutionVM { get; }
+
+		[ObservableProperty] bool _showConfigOptions;
 
 		public ServerHostingVM(IHostingPresenter presenter, IHostnameConfigVM hostnameVM, IHostingExecutionVM activeVM)
 		{

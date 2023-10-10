@@ -27,7 +27,7 @@
 		<div class="grid customHostSelection">
 			<p class="hostTag">Host:</p>
 			<p class="hostLeadIn">http(s)://</p>
-			<input class="textbox hostTxt" type="text" @onchange="e => { VM.CustomHostName = (string)e.Value!; VM.UpdateHostingMode(); }" value="@VM.CustomHostName" />
+			<input class="textbox hostTxt" type="text" @onchange="e => { VM.CustomHostName = (string)e.Value!; VM.UpdateCustomHostName(); }" value="@VM.CustomHostName" />
 		</div>
 	}
 </div>

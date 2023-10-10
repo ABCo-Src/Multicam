@@ -43,6 +43,7 @@ h1:focus, p:focus {
 p, a {
     margin: 0;
     user-select: none;
+    color: white;
 }
 
 a img {

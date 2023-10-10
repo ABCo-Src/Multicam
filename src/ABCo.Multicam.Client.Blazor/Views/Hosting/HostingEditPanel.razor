@@ -2,7 +2,14 @@
 @inherits VMBoundComponent<IServerHostingVM>
 
 <!-- Config Change -->
-<HostingHostnameEditor VM="VM.HostnameVM" />
+@if (VM.ShowConfigOptions)
+{
+	<HostingHostnameEditor VM="VM.HostnameVM" />
+}
+else
+{
+	<HostingActiveView VM="VM.ExecutionVM" />
+}
 
 <hr class="sectionSeparator" />
 <HostingEditPanelStartStopBtn VM="VM.ExecutionVM" />

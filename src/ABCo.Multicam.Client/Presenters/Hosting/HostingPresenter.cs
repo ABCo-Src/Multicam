@@ -52,27 +52,32 @@ namespace ABCo.Multicam.Client.Presenters.Hosting
 					break;
 				case HostingCustomModeConfig customConfig:
 					var hostName = customConfig.HostNames.Count > 0 ? customConfig.HostNames[0] : "";
-					VM.HostnameVM.CustomHostName = hostName.StartsWith("http://") ? hostName[7..] : hostName;
+					VM.HostnameVM.CustomHostName = TrimLinkStart(hostName);
 					break;
 				case HostingExecutionStatus execStatus:
+					VM.ShowConfigOptions = !execStatus.IsConnected;
 					VM.ExecutionVM.StartStopButtonText = execStatus.IsConnected ? "Stop Hosting" : "Start Hosting";
 					break;
 				case HostingActiveConfig activeConfig:
 
 					if (activeConfig.HostName == null)
 					{
-						VM.HostnameVM.AutomaticCaption = "Scanning hosts (ensure you're connected to a network)...";
+						VM.HostnameVM.AutomaticCaption = "Scanning hosts (ensure you're connected to a network)..."; 
 						VM.ExecutionVM.CanStartStop = false;
 					}
 					else
 					{
 						VM.HostnameVM.AutomaticCaption = $"Using {activeConfig.HostName}";
+						VM.ExecutionVM.LinkText = TrimLinkStart(activeConfig.HostName);
+						VM.ExecutionVM.LinkHyperlink = activeConfig.HostName;
 						VM.ExecutionVM.CanStartStop = true;
 					}
 
 					break;
 			}
 		}
+
+		public static string TrimLinkStart(string str) => str.StartsWith("http://") ? str[7..] : str;
 
 		public void OnHostingMenuToggle()
 		{
@@ -88,7 +93,7 @@ namespace ABCo.Multicam.Client.Presenters.Hosting
 		public void OnHostingModeChange() => _target.PerformAction(HostingManager.SET_MODE, new HostingConfigMode(VM.HostnameVM.SelectedMode == "Automatic"));
 		public void OnCustomHostNameChange()
 		{
-			var adaptedHostName = VM.HostnameVM.SelectedMode.StartsWith("http://") ? VM.HostnameVM.SelectedMode : $"http://{VM.HostnameVM.SelectedMode}";
+			var adaptedHostName = VM.HostnameVM.CustomHostName.StartsWith("http://") ? VM.HostnameVM.CustomHostName : $"http://{VM.HostnameVM.CustomHostName}";
 			_target.PerformAction(HostingManager.SET_CUSTOM_CONFIG, new HostingCustomModeConfig(new string[] { adaptedHostName }));
 		}
 

@@ -33,7 +33,18 @@ namespace ABCo.Multicam.Server.Hosting.Management
             _data.SetData<HostingExecutionStatus>(new HostingExecutionStatus(false));
         }
 
-        void HandleIPCollectionChange()
+		void UpdateCurrentlyActiveConfig()
+		{
+			if (_data.GetData<HostingConfigMode>().IsAutomatic) 
+                SetActiveConfigToAutomaticValue();
+			else
+			{
+				var config = _data.GetData<HostingCustomModeConfig>();
+				_data.SetData<HostingActiveConfig>(new HostingActiveConfig(config.HostNames.Count == 0 ? null : config.HostNames[0]));
+			}
+		}
+
+		void HandleIPCollectionChange()
         {
             // If we're in the automatic mode, then this impacts our current config.
             if (_data.GetData<HostingConfigMode>().IsAutomatic)
@@ -127,8 +138,10 @@ namespace ABCo.Multicam.Server.Hosting.Management
 				_data.SetData<HostingConfigMode>((HostingConfigMode)param);
 			else if (id == SET_CUSTOM_CONFIG)
 			    _data.SetData<HostingCustomModeConfig>((HostingCustomModeConfig)param);
+
+			UpdateCurrentlyActiveConfig();
 		}
 
-        public void Dispose() => _localIPAddresses.Dispose();
+		public void Dispose() => _localIPAddresses.Dispose();
 	}
 }

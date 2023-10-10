@@ -12,6 +12,8 @@ namespace ABCo.Multicam.Client.ViewModels.Hosting
 {
 	public interface IHostingExecutionVM : INotifyPropertyChanged, IClientService<IHostingPresenter>
 	{
+		string LinkText { get; set; }
+		string LinkHyperlink { get; set; }
 		string StartStopButtonText { get; set; }
 		bool CanStartStop { get; set; }
 		void ToggleConnection();
@@ -21,6 +23,8 @@ namespace ABCo.Multicam.Client.ViewModels.Hosting
 	{
 		readonly IHostingPresenter _presenter;
 
+		[ObservableProperty] string _linkText = "";
+		[ObservableProperty] string _linkHyperlink = "";
 		[ObservableProperty] string _startStopButtonText = "";
 		[ObservableProperty] bool _canStartStop = false;
 
