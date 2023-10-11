@@ -35,7 +35,7 @@
 ::deep .indexedListItem {
     margin-top: 10px;
     padding: 10px;
-    background-color: var(--col-panellistitem);
+    background-color: var(--col-bigboxback);
 }
 
 ::deep .indexedListItem .index {

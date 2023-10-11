@@ -3,13 +3,14 @@ h1:focus, p:focus {
 }
 
 :root {
+    --col-boxback: black;
+    --col-bigboxback: rgba(0, 0, 0, 0.8);
     --col-appback: #111;
-    --col-panelback: #222;
-    --col-panelinnerback: #333;
-    --col-panellistitem: #000;
+    --col-panelback: rgba(40, 40, 40, 0.6);
+    --col-panelinnerback: rgba(255, 255, 255, 0.1);
     --col-panelredbox: #aa0000;
     --col-panelbluebox: #000055;
-    --col-alwaysinner: #4E4E4E;
+    --col-alwaysinner: rgba(120, 120, 120, 0.6);
     --col-accent: #006900;
     --col-btn-highlight: #777;
     --col-btn-pressed: #666;
@@ -23,7 +24,7 @@ h1:focus, p:focus {
 }
 
 :root {
-    --col-switcherbtn-default: rgba(200, 200, 200, 0.2);
+    --col-switcherbtn-default: rgba(255, 255, 255, 0.1);
     --col-switcherbtn-program: darkred;
     --col-switcherbtn-programhover: #9b4444;
     --col-switcherbtn-programactive: #7b2222;
@@ -62,9 +63,11 @@ body {
     position: absolute;
     width: 100%;
     height: 100%;
-    
-    background-image: url('../img/CloudBg.png');
-    background-repeat: repeat;
+    background-image: url('../img/Unblurred_BGChalk.png');
+    background-size: cover;
+    backdrop-filter: blur(40px);
+
+    filter: drop-shadow(0 0 5px black);
 }
 
 #app, main {
@@ -132,7 +135,7 @@ body {
 
 /* Text/Combo Boxes */
 .textbox, .combo {
-    background-color: black;
+    background-color: var(--col-boxback);
     color: white;
     padding: 8px;
     border: solid 1px var(--col-border);
