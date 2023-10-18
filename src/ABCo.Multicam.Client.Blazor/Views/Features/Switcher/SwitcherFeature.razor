@@ -2,7 +2,7 @@
 @using ABCo.Multicam.Client.ViewModels.Features.Switcher;
 @inherits VMBoundComponent<SwitcherFeatureVM>
 
-<SwitcherConnectionStrip OuterVM="OuterVM" VM="(SwitcherConnectionVM)VM.Connection" />
+<SwitcherConnectionStrip VM="(SwitcherConnectionVM)VM.Connection" />
 
 @if (VM.MixBlocks.Length == 0)
 {
@@ -17,8 +17,3 @@
 		</li>
 	}
 </ul>
-
-@code {
-	[Parameter]
-	public IFeatureVM OuterVM { get; set; } = null!;
-}

@@ -6,12 +6,13 @@ h1:focus, p:focus {
     --col-boxback: black;
     --col-bigboxback: rgba(0, 0, 0, 0.8);
     --col-appback: #111;
-    --col-panelback: rgba(40, 40, 40, 0.6);
     --col-panelinnerback: rgba(255, 255, 255, 0.1);
+    --col-panelback: #222; /* Mobile color */
     --col-panelredbox: #aa0000;
     --col-panelbluebox: #000055;
     --col-alwaysinner: rgba(120, 120, 120, 0.6);
     --col-accent: #006900;
+    --col-dark-accent: #004900;
     --col-btn-highlight: #777;
     --col-btn-pressed: #666;
     --col-border: #999;
@@ -21,6 +22,12 @@ h1:focus, p:focus {
     --col-disabledtextbox: #444;
     --col-disabledbutton: #333;
     color: white;
+}
+
+@media (min-width: 800px) {
+    :root {
+        --col-panelback: rgba(40, 40, 40, 0.6);
+    }
 }
 
 :root {

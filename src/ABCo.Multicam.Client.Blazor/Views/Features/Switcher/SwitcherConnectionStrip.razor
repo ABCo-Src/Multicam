@@ -4,8 +4,6 @@
 @inherits VMBoundComponent<SwitcherConnectionVM>
 
 <div class="top">
-	<FeatureTitle VM="OuterVM" />
-
 	<p class="linkText">@VM.StatusText</p>
 
 	@if (VM.ShowConnectionButton)
@@ -13,8 +11,3 @@
 		<a class="connectBtn hyperlink" @onclick=VM.ToggleConnection>@VM.StatusButtonText</a>
 	}
 </div>
-
-@code {
-	[Parameter]
-	public IFeatureVM OuterVM { get; set; } = null!;
-}
