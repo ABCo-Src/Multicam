@@ -3,39 +3,59 @@ using ABCo.Multicam.Server.Features.Switchers;
 using ABCo.Multicam.Server.General;
 using ABCo.Multicam.Client.ViewModels.Features.Switcher;
 using ABCo.Multicam.Server.Hosting.Clients;
+using System.Data;
 
 namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 {
-	public interface ISwitcherConnectionPresenter : IClientService<Dispatched<ISwitcherFeature>>
+	public class SwitcherConnectionPresenter
 	{
-		ISwitcherConnectionVM VM { get; }
-		void OnError(string? error);
-		void OnConnection(bool state);
-		void OnSpecced(SwitcherSpecs specs);
-	}
-
-	public class SwitcherConnectionPresenter : ISwitcherConnectionPresenter
-	{
-		readonly ISwitcherErrorPresenter _errorPresenter;
 		readonly Dispatched<ISwitcherFeature> _feature;
-
-		bool _lastKnownConnection = false;
-		bool _isWaitingForConnection;
-
 		readonly IThreadDispatcher _dispatcher;
-		Timer? _transitionTimer;
 		int _transitionState;
 
-		public ISwitcherConnectionVM VM => _errorPresenter.VM;
+		public ISwitcherConnectionVM VM { get; }
 
 		public SwitcherConnectionPresenter(Dispatched<ISwitcherFeature> feature, IClientInfo clientInfo)
 		{
 			_feature = feature;
-			_errorPresenter = clientInfo.Get<ISwitcherErrorPresenter, Dispatched<ISwitcherFeature>, Action>(feature, ToggleConnection);
+			VM = clientInfo.Get<ISwitcherConnectionVM, SwitcherConnectionPresenter>(this);
 			_dispatcher = clientInfo.Dispatcher;
 		}
 
-		public void OnError(string? error) => _errorPresenter.OnError(error);
+		public void Refresh()
+		{
+			// With error
+			var error = _feature.Get(f => f.ErrorMessage);
+			if (error != null)
+			{
+				VM.StatusButtonText = "OK";
+				VM.ShowConnectionButton = true;
+				VM.StatusText = $"Communication Error: {error}";
+			}
+
+			// No error
+			else
+			{
+				switch (_feature.Get(f => f.ConnectionStatus))
+				{
+					case SwitcherConnectionStatus.NotConnected:
+						VM.StatusButtonText = "Connect";
+						VM.ShowConnectionButton = true;
+						VM.StatusText = "Disconnected.";
+						break;
+					case SwitcherConnectionStatus.Connecting:
+						MoveDotsAndRefreshAfterInterval();
+						VM.StatusText = GetConnectingText();
+						VM.ShowConnectionButton = false;
+						break;
+					case SwitcherConnectionStatus.Connected:
+						VM.StatusButtonText = "Disconnect";
+						VM.ShowConnectionButton = _feature.Get(f => f.SpecsInfo).Specs.CanChangeConnection;
+						VM.StatusText = "Connected.";
+						break;
+				}
+			}
+		}
 
 		string GetConnectingText() => _transitionState switch
 		{
@@ -45,83 +65,26 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 			_ => throw new Exception("Unsupported UI transition state")
 		};
 
-		string GetReceivingDetailsText() => _transitionState switch
-		{
-			0 => "Retrieving Specs.",
-			1 => "Retrieving Specs..",
-			2 => "Retrieving Specs...",
-			_ => throw new Exception("Unsupported UI transition state")
-		};
-
 		public void ToggleConnection()
 		{
-			StopTransitionTimer();
-
 			// Handle connect/disconnect
-			if (_lastKnownConnection) 
+			if (_feature.Get(f => f.ConnectionStatus) == SwitcherConnectionStatus.Connected) 
 				_feature.CallDispatched(f => f.Disconnect());
 			else
 			{
-				_errorPresenter.SetErrorlessButtonVisible(false);
-				StartNewTransitionTimer(GetConnectingText);
-
+				VM.ShowConnectionButton = false;
 				_feature.CallDispatched(f => f.Connect());
 			}
 		}
 
-		public void OnConnection(bool state)
+		async void MoveDotsAndRefreshAfterInterval()
 		{
-			StopTransitionTimer();
-			_lastKnownConnection = state;
+			await Task.Delay(300);
 
-			if (_lastKnownConnection)
-			{
-				_errorPresenter.SetErrorlessButtonVisible(false);
-				StartNewTransitionTimer(GetReceivingDetailsText);
-			}
-			else
-			{
-				_errorPresenter.SetErrorlessButtonText("Connect");
-				_errorPresenter.SetErrorlessStatus("Disconnected.");
-				_errorPresenter.SetErrorlessButtonVisible(true);
-			}
-		}
+			_transitionState++;
+			if (_transitionState == 3) _transitionState = 0;
 
-		public void OnSpecced(SwitcherSpecs specs)
-		{
-			if (!_lastKnownConnection) return;
-
-			StopTransitionTimer();
-			_errorPresenter.SetErrorlessButtonText("Disconnect");
-			_errorPresenter.SetErrorlessStatus("Connected.");
-			_errorPresenter.SetErrorlessButtonVisible(specs.CanChangeConnection);
-		}
-
-		void StartNewTransitionTimer(Func<string> updateText)
-		{
-			_transitionTimer = new Timer(o =>
-			{
-				_dispatcher.Queue(() =>
-				{
-					// If we cancelled between the dispatcher call, don't process (otherwise we'll override the actual thing)
-					if (_transitionTimer == null) return;
-
-					_transitionState++;
-					if (_transitionState == 3) _transitionState = 0;
-
-					_errorPresenter.SetErrorlessStatus(updateText());
-				});
-
-			}, null, 0, 300);
-		}
-
-		void StopTransitionTimer()
-		{
-			if (_transitionTimer != null)
-			{
-				_transitionTimer.Dispose();
-				_transitionTimer = null;
-			}
+			Refresh();
 		}
 	}
 }

@@ -34,8 +34,6 @@ namespace ABCo.Multicam.Client
 			container.AddTransient<IMainFeatureCollectionPresenter, Dispatched<IMainFeatureCollection>>((p1, s) => new MainFeatureCollectionPresenter(p1, s));
             container.AddTransient<IFeaturePresenter, Dispatched<IFeature>>((p1, s) => new FeaturePresenter(p1, s));
 			container.AddTransient<ISwitcherFeaturePresenter, Dispatched<IFeature>>((p1, s) => new SwitcherFeaturePresenter(p1, s));
-			container.AddTransient<ISwitcherConnectionPresenter, Dispatched<ISwitcherFeature>> ((p1, s) => new SwitcherConnectionPresenter(p1, s));
-			container.AddTransient<ISwitcherErrorPresenter, Dispatched<ISwitcherFeature>, Action>((p1, p2, s) => new SwitcherErrorPresenter(p1, p2, s));
 			container.AddTransient<ISwitcherMixBlocksPresenter, ISwitcherFeatureVM, Dispatched<ISwitcherFeature>>((p1, p2, s) => new SwitcherMixBlocksPresenter(p1, p2, s));
 
 			container.AddTransient<ISwitcherConfigPresenter, Dispatched<ISwitcherFeature>>((p1, s) => new SwitcherConfigPresenter(p1, s));
@@ -55,7 +53,7 @@ namespace ABCo.Multicam.Client
             container.AddTransient<ISwitcherCutButtonVM, ISwitcherMixBlocksPresenter, int>((p1, p2, s) => new SwitcherCutButtonVM(p1, p2));
             container.AddTransient<ISwitcherProgramInputVM, ISwitcherMixBlocksPresenter, int, int>((p1, p2, p3, s) => new SwitcherProgramInputVM(p1, p2, p3));
 			container.AddTransient<ISwitcherPreviewInputVM, ISwitcherMixBlocksPresenter, int, int>((p1, p2, p3, s) => new SwitcherPreviewInputVM(p1, p2, p3));
-			container.AddTransient<ISwitcherConnectionVM, ISwitcherErrorPresenter>((p1, s) => new SwitcherConnectionVM(p1));
+			container.AddTransient<ISwitcherConnectionVM, SwitcherConnectionPresenter>((p1, s) => new SwitcherConnectionVM(p1));
 
 			container.AddTransient<ISwitcherConfigVM, ISwitcherConfigPresenter>((p1, s) => new SwitcherConfigVM(p1));
 			container.AddTransient<ISwitcherDummyConfigVM, ISwitcherDummyConfigPresenter>((p1, s) => new SwitcherDummyConfigVM(p1));

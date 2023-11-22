@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace ABCo.Multicam.Client.ViewModels.Features.Switcher
 {
-	public interface ISwitcherConnectionVM : IClientService<ISwitcherErrorPresenter>
+	public interface ISwitcherConnectionVM : IClientService<SwitcherConnectionPresenter>
 	{
 		string StatusText { get; set; }
 		string StatusButtonText { get; set; }
@@ -13,14 +13,14 @@ namespace ABCo.Multicam.Client.ViewModels.Features.Switcher
 
 	public partial class SwitcherConnectionVM : ViewModelBase, ISwitcherConnectionVM
 	{
-		readonly ISwitcherErrorPresenter _errorPresenter;		
+		readonly SwitcherConnectionPresenter _connectionPresenter;
 
-		public SwitcherConnectionVM(ISwitcherErrorPresenter errorPresenter) => _errorPresenter = errorPresenter;
+		public SwitcherConnectionVM(SwitcherConnectionPresenter connectionPresenter) => _connectionPresenter = connectionPresenter;
 
 		[ObservableProperty] string _statusText = "";
 		[ObservableProperty] string _statusButtonText = "";
 		[ObservableProperty] bool _showConnectionButton;
 
-		public void ToggleConnection() => _errorPresenter.ButtonClick();
+		public void ToggleConnection() => _connectionPresenter.ToggleConnection();
 	}
 }

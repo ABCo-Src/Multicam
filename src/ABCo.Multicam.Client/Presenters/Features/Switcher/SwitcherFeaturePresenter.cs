@@ -15,7 +15,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 
 		readonly Dispatched<ISwitcherFeature> _feature;
 		readonly ISwitcherFeatureVM _vm;
-		readonly ISwitcherConnectionPresenter _connectionPresenter;
+		readonly SwitcherConnectionPresenter _connectionPresenter;
 		readonly ISwitcherMixBlocksPresenter _mixBlocksPresenter;
 		readonly ISwitcherConfigPresenter _configPresenter;
 
@@ -26,11 +26,13 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 
 			_feature = feature.CastTo<ISwitcherFeature>();
 
-			_connectionPresenter = _info.Get<ISwitcherConnectionPresenter, Dispatched<ISwitcherFeature>>(_feature);
+			_connectionPresenter = new SwitcherConnectionPresenter(_feature, info);
 			_vm.Connection = _connectionPresenter.VM;
 
 			_mixBlocksPresenter = _info.Get<ISwitcherMixBlocksPresenter, ISwitcherFeatureVM, Dispatched<ISwitcherFeature>>(_vm, _feature);
+
 			_configPresenter = _info.Get<ISwitcherConfigPresenter, Dispatched<ISwitcherFeature>>(_feature);
+			_vm.Config = _configPresenter.VM;
 
 			OnServerStateChange(null); // Refresh everything
 		}
@@ -39,22 +41,9 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 
 		public void OnServerStateChange(string? changedProp)
 		{
-			// Refresh config
 			_configPresenter.Refresh(_feature.Get(f => f.Config), _feature.Get(f => f.PlatformCompatibility));
-
-			// Refresh mix blocks/state
 			_mixBlocksPresenter.Refresh(_feature.Get(f => f.SpecsInfo));
-
-			// Inform the connection presenter things has changed - only if they have though, otherwise its "in-progress" indicator gets confused.
-			// (TODO: Redo that entire thing... A good idea would be to merge "IsConnected" and "ErrorMessage" into one atomic thing for best results.)
-			if (changedProp is null or nameof(ISwitcherFeature.IsConnected))
-				_connectionPresenter.OnConnection(_feature.Get(f => f.IsConnected));
-			if (changedProp is null or nameof(ISwitcherFeature.ErrorMessage))
-				_connectionPresenter.OnError(_feature.Get(f => f.ErrorMessage));
-			if (changedProp is null or nameof(ISwitcherFeature.SpecsInfo))
-				_connectionPresenter.OnSpecced(_feature.Get(f => f.SpecsInfo).Specs);
-
-			_connectionPresenter.OnConnection(_feature.Get(f => f.IsConnected));
+			_connectionPresenter.Refresh();
 		}
 
 		public void Init()
