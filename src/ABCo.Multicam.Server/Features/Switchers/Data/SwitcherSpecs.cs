@@ -1,6 +1,4 @@
-﻿using ABCo.Multicam.Server.Hosting.Clients;
-
-namespace ABCo.Multicam.Server.Features.Switchers
+﻿namespace ABCo.Multicam.Server.Features.Switchers
 {
 	public class SwitcherSpecs
     {

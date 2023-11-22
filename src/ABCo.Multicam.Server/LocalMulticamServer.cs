@@ -1,16 +1,14 @@
 ﻿using ABCo.Multicam.Server.Features;
 using ABCo.Multicam.Server.Features.Switchers;
 using ABCo.Multicam.Server.Features.Switchers.Data.Config;
-using ABCo.Multicam.Server.Features.Switchers.Interaction;
-using ABCo.Multicam.Server.Features.Switchers.Live.Types.ATEM;
-using ABCo.Multicam.Server.Features.Switchers.Types;
-using ABCo.Multicam.Server.Features.Switchers.Types.ATEM;
-using ABCo.Multicam.Server.Features.Switchers.Types.ATEM.Native;
-using ABCo.Multicam.Server.Features.Switchers.Types.ATEM.Windows;
 using ABCo.Multicam.Server.General;
 using ABCo.Multicam.Client.ViewModels.Features;
 using ABCo.Multicam.Server.Hosting.Clients;
 using ABCo.Multicam.Server.Hosting.Management;
+using ABCo.Multicam.Server.Features.Switchers.Buffering;
+using ABCo.Multicam.Server.Features.Switchers.Core;
+using ABCo.Multicam.Server.Features.Switchers.Core.ATEM;
+using ABCo.Multicam.Server.Features.Switchers.Core.ATEM.Native;
 
 namespace ABCo.Multicam.Server
 {

@@ -1,6 +1,4 @@
-﻿using ABCo.Multicam.Server.Hosting.Clients;
-
-namespace ABCo.Multicam.Server.Features
+﻿namespace ABCo.Multicam.Server.Features
 {
 	/// <summary>
 	/// Represents a feature currently loaded.

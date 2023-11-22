@@ -1,18 +1,17 @@
-﻿using ABCo.Multicam.Server.Features.Switchers.Data.Config;
-using ABCo.Multicam.Server.Features.Switchers.Types;
-using ABCo.Multicam.Server.Features.Switchers.Types.ATEM;
+﻿using ABCo.Multicam.Server.Features.Switchers.Core.ATEM;
+using ABCo.Multicam.Server.Features.Switchers.Data.Config;
 
-namespace ABCo.Multicam.Server.Features.Switchers
+namespace ABCo.Multicam.Server.Features.Switchers.Core
 {
 	// Creates a switcher from a given config
-	public interface ISwitcherFactory 
+	public interface ISwitcherFactory
     {
         ISwitcher GetSwitcher(SwitcherConfig config);
     }
 
     public class SwitcherFactory : ISwitcherFactory
     {
-		readonly IServerInfo _servSource;
+        readonly IServerInfo _servSource;
         public SwitcherFactory(IServerInfo servSource) => _servSource = servSource;
 
         public ISwitcher GetSwitcher(SwitcherConfig config)

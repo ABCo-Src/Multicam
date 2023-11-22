@@ -1,5 +1,5 @@
 ﻿using ABCo.Multicam.Server.Features.Switchers;
-using ABCo.Multicam.Server.Features.Switchers.Interaction;
+using ABCo.Multicam.Server.Features.Switchers.Buffering;
 using Moq;
 
 namespace ABCo.Multicam.Tests.Features.Switchers.Interaction

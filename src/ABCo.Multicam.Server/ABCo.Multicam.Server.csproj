@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 	<WarningsAsErrors>MVVMTK0034</WarningsAsErrors>
+	<Platforms>AnyCPU;x86</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,8 +15,9 @@
       <Guid>8a92b919-156c-4d61-94ef-03f9be4004b0</Guid>
       <Lcid>0</Lcid>
       <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>false</Isolated>
+      <Isolated>False</Isolated>
       <EmbedInteropTypes>true</EmbedInteropTypes>
+      <Private>True</Private>
     </COMReference>
   </ItemGroup>
 

@@ -1,13 +1,13 @@
 ﻿using ABCo.Multicam.Server.Features.Switchers.Data.Config;
 
-namespace ABCo.Multicam.Server.Features.Switchers.Types
+namespace ABCo.Multicam.Server.Features.Switchers.Core
 {
 	public interface IDummySwitcher : ISwitcher, IServerService<DummySwitcherConfig> { }
 
     public class DummySwitcher : Switcher, IDummySwitcher
     {
-		readonly SwitcherSpecs _specs;
-		readonly MixBlockState[] _states;
+        readonly SwitcherSpecs _specs;
+        readonly MixBlockState[] _states;
 
         public DummySwitcher(DummySwitcherConfig config)
         {
@@ -18,11 +18,11 @@ namespace ABCo.Multicam.Server.Features.Switchers.Types
             Array.Fill(_states, new MixBlockState(1, 1));
         }
 
-		public override void RefreshSpecs() => _eventHandler?.OnSpecsChange(_specs);
+        public override void RefreshSpecs() => _eventHandler?.OnSpecsChange(_specs);
 
         public override SwitcherPlatformCompatibilityValue GetPlatformCompatibility() => SwitcherPlatformCompatibilityValue.Supported;
 
-		public static SwitcherSpecs CreateSpecsFrom(int[] mixBlocks)
+        public static SwitcherSpecs CreateSpecsFrom(int[] mixBlocks)
         {
             var mixBlocksArray = new SwitcherMixBlock[mixBlocks.Length];
 
@@ -94,7 +94,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Types
 
         void ValidateMixBlock(int mixBlock)
         {
-            if (mixBlock < 0 || mixBlock >= _specs.MixBlocks.Count) 
+            if (mixBlock < 0 || mixBlock >= _specs.MixBlocks.Count)
                 throw new ArgumentException("Invalid mix block given to DummySwitcher");
         }
 

@@ -1,6 +1,8 @@
-﻿namespace ABCo.Multicam.Server.Features.Switchers.Interaction
+﻿using ABCo.Multicam.Server.Features.Switchers.Core;
+
+namespace ABCo.Multicam.Server.Features.Switchers.Buffering
 {
-	public interface IMixBlockInteractionBuffer 
+	public interface IMixBlockInteractionBuffer
     {
         int Program { get; }
         int Preview { get; }
@@ -42,7 +44,7 @@
 
         public void SetEventHandler(ISwitcherEventHandler? eventHandler) => _eventHandler = eventHandler;
 
-		public void RefreshValues()
+        public void RefreshValues()
         {
             _switcher.RefreshProgram(_mixBlockIdx);
 

@@ -3,7 +3,6 @@ using ABCo.Multicam.Client.Presenters;
 using ABCo.Multicam.Client.Presenters.Features;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.ComponentModel;
-using ABCo.Multicam.Server.Hosting.Clients;
 using ABCo.Multicam.Server.Features;
 
 namespace ABCo.Multicam.Client.ViewModels.Features

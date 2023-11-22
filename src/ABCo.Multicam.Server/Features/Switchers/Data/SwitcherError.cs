@@ -1,6 +1,4 @@
-﻿using ABCo.Multicam.Server.Hosting.Clients;
-
-namespace ABCo.Multicam.Server.Features.Switchers.Data
+﻿namespace ABCo.Multicam.Server.Features.Switchers.Data
 {
 	public class SwitcherErrorException : Exception
     {

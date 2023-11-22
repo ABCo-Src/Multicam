@@ -1,6 +1,5 @@
 ﻿using ABCo.Multicam.Server;
 using ABCo.Multicam.Server.Features.Switchers;
-using ABCo.Multicam.Server.Features.Switchers.Data;
 using ABCo.Multicam.Client.ViewModels.Features;
 using ABCo.Multicam.Client.ViewModels.Features.Switcher;
 using ABCo.Multicam.Server.Hosting.Clients;

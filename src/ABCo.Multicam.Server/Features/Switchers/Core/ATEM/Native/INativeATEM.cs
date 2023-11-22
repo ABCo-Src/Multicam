@@ -1,55 +1,55 @@
 ﻿using BMDSwitcherAPI;
 
-namespace ABCo.Multicam.Server.Features.Switchers.Types.ATEM.Native
+namespace ABCo.Multicam.Server.Features.Switchers.Core.ATEM.Native
 {
 	public interface INativeATEMSwitcherDiscovery
     {
         INativeATEMSwitcher Connect(string address);
-	}
+    }
 
     public interface INativeATEMSwitcher : IDisposable
     {
         INativeATEMBlockIterator CreateMixBlockIterator();
-		INativeATEMInputIterator CreateInputIterator();
+        INativeATEMInputIterator CreateInputIterator();
         void AddCallback(INativeATEMSwitcherCallbackHandler callback);
         void ClearCallback();
     }
 
     public interface INativeATEMBlockIterator : IDisposable
-	{
+    {
         bool MoveNext(out INativeATEMMixBlock item);
     }
 
     public interface INativeATEMInputIterator : IDisposable
     {
-		bool MoveNext(out INativeATEMInput item);
-	}
+        bool MoveNext(out INativeATEMInput item);
+    }
 
     public interface INativeATEMMixBlock : IDisposable
-	{
-		void AddCallback(INativeATEMBlockCallbackHandler handler);
-		void ClearCallback();
+    {
+        void AddCallback(INativeATEMBlockCallbackHandler handler);
+        void ClearCallback();
         long GetProgramInput();
         long GetPreviewInput();
         void SetProgramInput(long val);
         void SetPreviewInput(long val);
         void Cut();
-	}
+    }
 
     public interface INativeATEMInput : IDisposable
-	{
-		long GetID();
-		string GetShortName();
-		_BMDSwitcherInputAvailability GetAvailability();
-	}
+    {
+        long GetID();
+        string GetShortName();
+        _BMDSwitcherInputAvailability GetAvailability();
+    }
 
     public interface INativeATEMSwitcherCallbackHandler
     {
         void Notify(_BMDSwitcherEventType type, _BMDSwitcherVideoMode videoMode);
-	}
+    }
 
-	public interface INativeATEMBlockCallbackHandler
-	{
+    public interface INativeATEMBlockCallbackHandler
+    {
         void Notify(_BMDSwitcherMixEffectBlockEventType eventType);
-	}
+    }
 }

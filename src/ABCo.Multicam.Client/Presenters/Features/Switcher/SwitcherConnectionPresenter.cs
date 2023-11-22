@@ -3,7 +3,6 @@ using ABCo.Multicam.Server.Features.Switchers;
 using ABCo.Multicam.Server.General;
 using ABCo.Multicam.Client.ViewModels.Features.Switcher;
 using ABCo.Multicam.Server.Hosting.Clients;
-using System.Data;
 
 namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 {
@@ -67,6 +66,13 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 
 		public void ToggleConnection()
 		{
+			// Handle an error
+			if (_feature.Get(f => f.ErrorMessage) != null)
+			{
+				_feature.CallDispatched(f => f.AcknowledgeError());
+				return;
+			}
+
 			// Handle connect/disconnect
 			if (_feature.Get(f => f.ConnectionStatus) == SwitcherConnectionStatus.Connected) 
 				_feature.CallDispatched(f => f.Disconnect());

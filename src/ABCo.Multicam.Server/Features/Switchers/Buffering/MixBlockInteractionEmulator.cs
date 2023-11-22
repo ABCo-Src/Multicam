@@ -1,6 +1,8 @@
-﻿namespace ABCo.Multicam.Server.Features.Switchers.Interaction
+﻿using ABCo.Multicam.Server.Features.Switchers.Core;
+
+namespace ABCo.Multicam.Server.Features.Switchers.Buffering
 {
-	public interface IMixBlockInteractionEmulator 
+	public interface IMixBlockInteractionEmulator
     {
         bool TrySetProgWithPreviewThenCut(int val);
         bool TrySetProgWithCutBusCut(int val);
@@ -17,7 +19,7 @@
         readonly ISwitcher _switcher;
         readonly IMixBlockInteractionBuffer _parent;
 
-        public MixBlockInteractionEmulator(SwitcherMixBlock mixBlock, int mixBlockIdx, ISwitcher switcher, IMixBlockInteractionBuffer parent) 
+        public MixBlockInteractionEmulator(SwitcherMixBlock mixBlock, int mixBlockIdx, ISwitcher switcher, IMixBlockInteractionBuffer parent)
         {
             _mixBlock = mixBlock;
             _mixBlockIdx = mixBlockIdx;
@@ -47,7 +49,7 @@
 
         public bool TrySetProgWithCutBusAuto(int val)
         {
-            if (_mixBlock.SupportedFeatures.SupportsCutBusSwitching && _mixBlock.SupportedFeatures.SupportsCutBusAutoMode)            
+            if (_mixBlock.SupportedFeatures.SupportsCutBusSwitching && _mixBlock.SupportedFeatures.SupportsCutBusAutoMode)
                 return UseCutBusWithMode(CutBusMode.Auto, val);
 
             return false;

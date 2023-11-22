@@ -1,7 +1,6 @@
 ﻿using ABCo.Multicam.Server;
-using ABCo.Multicam.Server.Features.Switchers;
+using ABCo.Multicam.Server.Features.Switchers.Core;
 using ABCo.Multicam.Server.Features.Switchers.Data.Config;
-using ABCo.Multicam.Server.Features.Switchers.Types;
 using Moq;
 
 namespace ABCo.Multicam.Tests.Features.Switchers

@@ -11,6 +11,7 @@
 	  <!-- (Minimal improvement) -->
 	  <InvariantGlobalization>true</InvariantGlobalization>
 	  <BlazorEnableTimeZoneSupport>false</BlazorEnableTimeZoneSupport>
+	  <Platforms>AnyCPU;x86</Platforms>
   </PropertyGroup>
 
 	<ItemGroup>
