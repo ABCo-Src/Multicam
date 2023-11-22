@@ -5,7 +5,7 @@ using System.ComponentModel;
 
 namespace ABCo.Multicam.Client.ViewModels.Features
 {
-	public interface IFeatureVM : IClientService<IMainFeaturePresenter>, INotifyPropertyChanged
+	public interface IFeatureVM : IClientService<IFeaturePresenter>, INotifyPropertyChanged
     {
         IFeatureContentVM? Content { get; set; }
         public string FeatureTitle { get; set; }
@@ -19,12 +19,12 @@ namespace ABCo.Multicam.Client.ViewModels.Features
 
     public partial class FeatureVM : ViewModelBase, IFeatureVM
     {
-		readonly IMainFeaturePresenter _presenter;
+		readonly IFeaturePresenter _presenter;
 
         [ObservableProperty] string _featureTitle = "";
         [ObservableProperty] IFeatureContentVM? _content;
 
-        public FeatureVM(IMainFeaturePresenter presenter) => _presenter = presenter;
+        public FeatureVM(IFeaturePresenter presenter) => _presenter = presenter;
 
         public void OnTitleChange() => _presenter.OnTitleChange();
     }

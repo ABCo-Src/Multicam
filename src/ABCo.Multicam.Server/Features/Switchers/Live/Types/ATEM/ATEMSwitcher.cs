@@ -28,7 +28,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Types.ATEM
 			_mainThreadDispatcher = servSource.Dispatcher;
 		}
 
-		public override SwitcherCompatibility GetPlatformCompatibility() => new(_compatibility.GetCompatibility());
+		public override SwitcherPlatformCompatibilityValue GetPlatformCompatibility() => _compatibility.GetCompatibility();
 
 		public override void Connect()
 		{

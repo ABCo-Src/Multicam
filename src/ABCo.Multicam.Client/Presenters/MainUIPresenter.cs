@@ -33,8 +33,8 @@ namespace ABCo.Multicam.Client.Presenters
 
 		public void Init()
 		{			
-			var featuresVM = _info.ServerConnection.GetFeatures().DataStore.GetOrAddClientEndpoint<IProjectFeaturesPresenter>(_info).VM;
-			var hostingVM = _info.ServerConnection.GetHostingManager().DataStore.GetOrAddClientEndpoint<IHostingPresenter>(_info).VM;
+			var featuresVM = _info.ServerConnection.GetFeatures().ClientNotifier.GetOrAddClientEndpoint<IMainFeatureCollectionPresenter>(_info).VM;
+			var hostingVM = _info.ServerConnection.GetHostingManager().ClientNotifier.GetOrAddClientEndpoint<IHostingPresenter>(_info).VM;
 			VM = _info.Get<IMainUIVM, IMainUIPresenter, IProjectFeaturesVM, IServerHostingVM>(this, featuresVM, hostingVM);
         }
 

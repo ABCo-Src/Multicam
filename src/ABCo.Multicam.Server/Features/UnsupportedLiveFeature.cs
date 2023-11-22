@@ -1,25 +1,29 @@
-﻿using ABCo.Multicam.Server.Features.Data;
+﻿using ABCo.Multicam.Server.Hosting.Clients;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace ABCo.Multicam.Server.Features
 {
-	public interface IUnsupportedLiveFeature : ILiveFeature, IServerService<IFeatureDataStore> { }
+	public interface IUnsupportedLiveFeature : IFeature { }
     public class UnsupportedLiveFeature : IUnsupportedLiveFeature
     {
-		readonly IFeatureDataStore _collection;
+		readonly UnsupportedLiveFeatureState _state;
 
-		public UnsupportedLiveFeature(IFeatureDataStore collection)
-		{
-			_collection = collection;
-			_collection.SetData<FeatureGeneralInfo>(new FeatureGeneralInfo(FeatureTypes.Unsupported, "New Unsupported Feature"));
-		}
+		public IFeatureState State => _state;
 
+		public UnsupportedLiveFeature(IServerInfo info) => _state = new UnsupportedLiveFeatureState(this, info);
+
+		public void Rename(string name) => _state.Name = name;
 		public void Dispose() { }
+	}
 
-		public void PerformAction(int id) { }
-		public void PerformAction(int code, object? param)
-		{
-			if (code == 0)
-				_collection.SetData<FeatureGeneralInfo>((FeatureGeneralInfo)param!);
-		}
+	public interface IUnsupportedLiveFeatureState : IFeatureState { }
+	public partial class UnsupportedLiveFeatureState : ServerComponentState<IFeatureState, IFeature>, IUnsupportedLiveFeatureState
+	{
+		[ObservableProperty] string _name = "New Unsupported Feature";
+
+		public UnsupportedLiveFeatureState(IUnsupportedLiveFeature component, IServerInfo info) : base(component, info) { }
+
+		public FeatureTypes Type => FeatureTypes.Switcher;
+		public IFeature Feature => _component;
 	}
 }

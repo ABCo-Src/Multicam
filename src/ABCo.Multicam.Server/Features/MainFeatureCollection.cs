@@ -1,16 +1,15 @@
-﻿using ABCo.Multicam.Server.Features.Data;
-using ABCo.Multicam.Server.Hosting.Clients;
+﻿using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Server.Features
 {
 	/// <summary>
 	/// Manages all the (running) features in the current project.
 	/// </summary>
-	public interface IMainFeatureCollection : IServerTarget, IDisposable
+	public interface IMainFeatureCollection : IServerComponent, IDisposable
     {
-        IReadOnlyList<IFeature> Features { get; }
+        IClientNotifier<IMainFeatureCollectionState, IMainFeatureCollection> ClientNotifier { get; }
 
-        void CreateFeature(FeatureTypes type);
+		void CreateFeature(FeatureTypes type);
         void MoveUp(IFeature feature);
         void MoveDown(IFeature feature);
         void Delete(IFeature feature);
@@ -18,30 +17,23 @@ namespace ABCo.Multicam.Server.Features
 
     public class MainFeatureCollection : IMainFeatureCollection
     {
-        public const int CREATE = 0;
-        public const int MOVE_UP = 1;
-        public const int MOVE_DOWN = 2;
-        public const int DELETE = 3;
+        readonly IMainFeatureCollectionState _state;
+		readonly IServerInfo _info;
+        readonly List<IFeature> _features;
 
-        public static MainFeatureCollection? AppWideInstance { get; set; }
+        public IClientNotifier<IMainFeatureCollectionState, IMainFeatureCollection> ClientNotifier => _state.ClientNotifier;
 
-        readonly IServerInfo _servSource;
-        readonly IClientSyncedDataStore _clientTargets;
-		readonly List<IFeature> _features = new();
-
-        public IReadOnlyList<IFeature> Features => _features;
-		public IRemoteDataStore DataStore => _clientTargets;
-
-		public MainFeatureCollection(IServerInfo source)
+		public MainFeatureCollection(IServerInfo info)
         {
-            _servSource = source;
-			_clientTargets = source.ClientsManager.NewClientsDataNotifier(this);
+            _info = info;
+            _state = info.Get<IMainFeatureCollectionState, IMainFeatureCollection>(this);
+            _features = new();
 			RefreshFeaturesList();
 		}
 
         public void CreateFeature(FeatureTypes type)
         {
-			_features.Add(_servSource.Get<IFeature, FeatureTypes>(type));
+			_features.Add(_info.Get<IFeature, FeatureTypes>(type));
 			RefreshFeaturesList();
 		}
 
@@ -79,34 +71,12 @@ namespace ABCo.Multicam.Server.Features
 
         public void Dispose()
         {
-			_clientTargets.Dispose();
+			_state.Dispose();
 
             for (int i = 0; i < _features.Count; i++)
                 _features[i].Dispose();
         }
 
-        public void PerformAction(int id) => throw new NotSupportedException();
-		public void PerformAction(int id, object param)
-		{
-            switch (id)
-            {
-                case CREATE:
-                    CreateFeature((FeatureTypes)param);
-                    break;
-				case MOVE_UP:
-					MoveUp((IFeature)param);
-					break;
-				case MOVE_DOWN:
-					MoveDown((IFeature)param);
-					break;
-				case DELETE:
-					Delete((IFeature)param);
-					break;
-                default:
-					throw new NotSupportedException();
-			}
-		}
-
-        void RefreshFeaturesList() => _clientTargets.SetData<FeaturesList>(new FeaturesList(_features.Cast<IServerTarget>().ToArray()));
+        void RefreshFeaturesList() => _state.Features = _features.Select(f => f.State).ToArray();
 	}
 }

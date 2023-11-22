@@ -1,5 +1,4 @@
 ﻿using ABCo.Multicam.Server.Features.Switchers.Fading;
-using ABCo.Multicam.Server.Features.Switchers.Data;
 
 namespace ABCo.Multicam.Server.Features.Switchers
 {
@@ -18,7 +17,7 @@ namespace ABCo.Multicam.Server.Features.Switchers
         void Disconnect();
         void RefreshConnectionStatus();
         void RefreshSpecs();
-        SwitcherCompatibility GetPlatformCompatibility();
+        SwitcherPlatformCompatibilityValue GetPlatformCompatibility();
 
         // Program/Preview:
         void RefreshProgram(int mixBlock);

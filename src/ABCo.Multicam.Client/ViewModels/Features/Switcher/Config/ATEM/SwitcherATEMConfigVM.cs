@@ -1,8 +1,8 @@
 ﻿using ABCo.Multicam.Server;
-using ABCo.Multicam.Server.Features.Switchers.Data;
 using ABCo.Multicam.Client.Presenters.Features.Switcher.Config;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.ComponentModel;
+using ABCo.Multicam.Server.Features.Switchers;
 
 namespace ABCo.Multicam.Client.ViewModels.Features.Switcher.Config.ATEM
 {

@@ -6,7 +6,7 @@ using System.ComponentModel;
 
 namespace ABCo.Multicam.Client.ViewModels.Features
 {
-	public interface IProjectFeaturesVM : IClientService<IProjectFeaturesPresenter>, IAnimationHandlingVM
+	public interface IProjectFeaturesVM : IClientService<IMainFeatureCollectionPresenter>, IAnimationHandlingVM
     {
 		IProjectFeaturesListItemVM? MobileView { get; set; }
         IProjectFeaturesListItemVM[] Items { get; set; }
@@ -15,7 +15,7 @@ namespace ABCo.Multicam.Client.ViewModels.Features
 
     public partial class ProjectFeaturesVM : ViewModelBase, IProjectFeaturesVM
     {
-		readonly IProjectFeaturesPresenter _presenter;
+		readonly IMainFeatureCollectionPresenter _presenter;
 
 		IProjectFeaturesListItemVM? _mobileView;
         public IProjectFeaturesListItemVM? MobileView
@@ -33,7 +33,7 @@ namespace ABCo.Multicam.Client.ViewModels.Features
 
 		[ObservableProperty] IProjectFeaturesListItemVM[] _items = Array.Empty<IProjectFeaturesListItemVM>();
 
-		public ProjectFeaturesVM(IProjectFeaturesPresenter presenter) => _presenter = presenter;
+		public ProjectFeaturesVM(IMainFeatureCollectionPresenter presenter) => _presenter = presenter;
         public void CreateFeature(CursorPosition pos) => _presenter.CreateFeature(pos);
     }
 }

@@ -1,5 +1,4 @@
 ﻿using ABCo.Multicam.Server.Features;
-using ABCo.Multicam.Server.Features.Data;
 using ABCo.Multicam.Server.Features.Switchers;
 using ABCo.Multicam.Server.Features.Switchers.Data.Config;
 using ABCo.Multicam.Server.Features.Switchers.Interaction;
@@ -18,7 +17,7 @@ namespace ABCo.Multicam.Server
 	public interface IServerConnection
 	{
 		IPlatformInfo GetPlatformInfo();
-		IServerTarget GetFeatures();
+		IMainFeatureCollection GetFeatures();
 		IHostingManager GetHostingManager();
 		void Disconnect(IClientInfo info);
 	}
@@ -43,15 +42,13 @@ namespace ABCo.Multicam.Server
 			Server.ServerInfo.AddTransient(getAvaIP);
 			Server.ServerInfo.AddSingleton<IConnectedClientsManager>(s => new ConnectedClientsManager(s));
 			Server.ServerInfo.AddSingleton<IHostingManager>(s => new HostingManager(s));
-			Server.ServerInfo.AddTransient<IClientSyncedDataStoreWithClientsManagementBinding, IServerTarget>((p1, s) => new ClientSyncedDataStore(p1, s));
-			Server.ServerInfo.AddTransient<IDispatchingServerTarget, IServerTarget>((p1, s) => new DispatchingServerTarget(p1, s));
 
 			// Features
 			Server.ServerInfo.AddSingleton<IMainFeatureCollection>(s => new MainFeatureCollection(s));
+			Server.ServerInfo.AddTransient<IMainFeatureCollectionState, IMainFeatureCollection>((p1, s) => new MainFeatureCollectionState(p1, s));
 			Server.ServerInfo.AddSingleton<IFeatureContentFactory>(s => new FeatureContentFactory(s));
-			Server.ServerInfo.AddTransient<IFeature, FeatureTypes>((p1, s) => new Feature(p1, s));
-			Server.ServerInfo.AddTransient<IUnsupportedLiveFeature, IFeatureDataStore>((p1, s) => new UnsupportedLiveFeature(p1));
-			Server.ServerInfo.AddTransient<ISwitcherLiveFeature, IFeatureDataStore>((p1, s) => new SwitcherLiveFeature(p1, s));
+			Server.ServerInfo.AddTransient<IUnsupportedLiveFeature>((s) => new UnsupportedLiveFeature(s));
+			Server.ServerInfo.AddTransient<ISwitcherFeature>((s) => new SwitcherFeature(s));
 
 			// Switcher
 			Server.ServerInfo.AddTransient<ISwitcherFactory>(s => new SwitcherFactory(s));
@@ -73,7 +70,7 @@ namespace ABCo.Multicam.Server
 			return container;
 		}
 
-		public IServerTarget GetFeatures() => ServerInfo.Get<IMainFeatureCollection>();
+		public IMainFeatureCollection GetFeatures() => ServerInfo.Get<IMainFeatureCollection>();
 		public IHostingManager GetHostingManager() => ServerInfo.Get<IHostingManager>();
 		public IPlatformInfo GetPlatformInfo() => ServerInfo.Get<IPlatformInfo>();
 		public void Disconnect(IClientInfo info) => ServerInfo.Get<IConnectedClientsManager>().OnClientDisconnected(info);

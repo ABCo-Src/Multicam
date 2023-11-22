@@ -1,5 +1,4 @@
 ﻿using ABCo.Multicam.Server.Features.Switchers.Data.Config;
-using ABCo.Multicam.Server.Features.Switchers.Data;
 
 namespace ABCo.Multicam.Server.Features.Switchers.Types
 {
@@ -21,7 +20,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Types
 
 		public override void RefreshSpecs() => _eventHandler?.OnSpecsChange(_specs);
 
-        public override SwitcherCompatibility GetPlatformCompatibility() => new(SwitcherPlatformCompatibilityValue.Supported);
+        public override SwitcherPlatformCompatibilityValue GetPlatformCompatibility() => SwitcherPlatformCompatibilityValue.Supported;
 
 		public static SwitcherSpecs CreateSpecsFrom(int[] mixBlocks)
         {

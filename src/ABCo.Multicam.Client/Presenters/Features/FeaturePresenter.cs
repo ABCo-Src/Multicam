@@ -1,61 +1,62 @@
 ﻿using ABCo.Multicam.Server;
-using ABCo.Multicam.Server.Features.Data;
 using ABCo.Multicam.Client.Presenters.Features.Switcher;
 using ABCo.Multicam.Client.ViewModels.Features;
 using ABCo.Multicam.Server.Hosting.Clients;
+using ABCo.Multicam.Server.Features;
 
 namespace ABCo.Multicam.Client.Presenters.Features
 {
 
-	public interface IMainFeaturePresenter : IClientDataNotificationTarget
+	public interface IFeaturePresenter : IClientDataNotificationTarget<IFeatureState, IFeature>
 	{
 		IFeatureVM VM { get; }
 		void OnTitleChange();
 	}
 
-	public interface IFeatureContentPresenter : IClientDataNotificationTarget
+	public interface IFeatureContentPresenter
 	{
 		IFeatureContentVM VM { get; }
 	}
 
-	public class FeaturePresenter : IMainFeaturePresenter
+	public class FeaturePresenter : IFeaturePresenter
 	{
 		public IFeatureVM VM { get; private set; }
 
 		readonly IClientInfo _info;
-		readonly IServerTarget _feature;
-		FeatureTypes? _type;
+		readonly IDispatchedServerComponent<IFeature> _feature;
+		readonly IFeatureState _state;
+		readonly IFeatureContentPresenter _contentPresenter;
 
-		public FeaturePresenter(IServerTarget feature, IClientInfo info)
+		public FeaturePresenter(IFeatureState state, IDispatchedServerComponent<IFeature> feature, IClientInfo info)
 		{
 			_info = info;
             _feature = feature;
 
-			VM = info.Get<IFeatureVM, IMainFeaturePresenter>(this);
-        }
+			VM = info.Get<IFeatureVM, IFeaturePresenter>(this);
+
+			_contentPresenter = state.Type switch
+			{
+				FeatureTypes.Switcher => state.ClientNotifier.GetOrAddClientEndpoint<ISwitcherFeaturePresenter>(_info),
+				_ => null
+			};
+		}
 
 		public void Init() { }
 
-        public void OnDataChange(ServerData structure)
+		public void OnServerStateChange(string? changedProp)
 		{
-			if (structure is FeatureGeneralInfo info)
+			// Update the title
+			VM.FeatureTitle = _state.Name;
+
+			// Inform the content presenter of the change
+			switch (_state.Type)
 			{
-				// Update the content presenter
-				_type = info.Type;
-
-                var newContentPresenter = _type switch
-				{
-					FeatureTypes.Switcher => _feature.DataStore.GetOrAddClientEndpoint<ISwitcherFeaturePresenter>(_info),
-					_ => null
-				};
-
-                if (newContentPresenter != null) VM.Content = newContentPresenter.VM;
-
-				// Update the title
-				VM.FeatureTitle = info.Title;
+				case FeatureTypes.Switcher:
+					((ISwitcherFeaturePresenter)_contentPresenter).OnServerStateChange(changedProp);
+					break;
 			}
 		}
 
-		public void OnTitleChange() => _feature.PerformAction(0, new FeatureGeneralInfo(_type ?? throw new Exception("Uninitialized feature presenter asked to change title."), VM.FeatureTitle));
+		public void OnTitleChange() => _feature.CallDispatched(f => f.Rename(VM.FeatureTitle));
 	}
 }

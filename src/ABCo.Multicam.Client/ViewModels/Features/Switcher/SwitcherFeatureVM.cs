@@ -1,6 +1,4 @@
-﻿using ABCo.Multicam.Server;
-using ABCo.Multicam.Server.Hosting.Clients;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace ABCo.Multicam.Client.ViewModels.Features.Switcher
 {

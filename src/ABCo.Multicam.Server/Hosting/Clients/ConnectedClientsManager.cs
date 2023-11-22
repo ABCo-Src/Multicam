@@ -3,7 +3,7 @@
 	public interface IConnectedClientsManager
     {
         int NewConnectionId();
-        IClientSyncedDataStore NewClientsDataNotifier(IServerTarget target);
+        IClientNotifier<TServerComponentState, TServerComponent> NewClientsDataNotifier<TServerComponentState, TServerComponent>(TServerComponentState state, TServerComponent component);
         void OnClientDisconnected(IClientInfo info);
 
         event Action<IClientInfo> ClientDisconnected;
@@ -18,12 +18,12 @@
 
         public ConnectedClientsManager(IServerInfo info) => _info = info;
 
-        public IClientSyncedDataStore NewClientsDataNotifier(IServerTarget target)
+        public IClientNotifier<TServerComponentState, TServerComponent> NewClientsDataNotifier<TServerComponentState, TServerComponent>(TServerComponentState state, TServerComponent component)
         {
             // Create a client notifier
-            var notifier = _info.Get<IClientSyncedDataStoreWithClientsManagementBinding, IServerTarget>(target);
+            var notifier = new ClientNotifier<TServerComponentState, TServerComponent>(component, state, _info);
 
-            // Register it so it's notified when a client is disconnected (and can remove all targets registered with that client)
+            // Register it so it's notified when a client is disconnected (and can remove the target registered with that client in response)
             ClientDisconnected += notifier.OnClientDisconnect;
 
             // Set it so it gets deregistered when disposed

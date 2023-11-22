@@ -6,7 +6,7 @@ using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 {
-	public interface ISwitcherConnectionPresenter : IClientService<IServerTarget>
+	public interface ISwitcherConnectionPresenter : IClientService<IDispatchedServerComponent<ISwitcherFeature>>
 	{
 		ISwitcherConnectionVM VM { get; }
 		void OnError(string? error);
@@ -17,9 +17,10 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 	public class SwitcherConnectionPresenter : ISwitcherConnectionPresenter
 	{
 		readonly ISwitcherErrorPresenter _errorPresenter;
-		readonly IServerTarget _feature;
+		readonly IDispatchedServerComponent<ISwitcherFeature> _feature;
 
-		bool _isConnected = false;
+		bool _lastKnownConnection = false;
+		bool _isWaitingForConnection;
 
 		readonly IThreadDispatcher _dispatcher;
 		Timer? _transitionTimer;
@@ -27,10 +28,10 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 
 		public ISwitcherConnectionVM VM => _errorPresenter.VM;
 
-		public SwitcherConnectionPresenter(IServerTarget feature, IClientInfo clientInfo)
+		public SwitcherConnectionPresenter(IDispatchedServerComponent<ISwitcherFeature> feature, IClientInfo clientInfo)
 		{
 			_feature = feature;
-			_errorPresenter = clientInfo.Get<ISwitcherErrorPresenter, IServerTarget, Action>(feature, ToggleConnection);
+			_errorPresenter = clientInfo.Get<ISwitcherErrorPresenter, IDispatchedServerComponent<ISwitcherFeature>, Action>(feature, ToggleConnection);
 			_dispatcher = clientInfo.Dispatcher;
 		}
 
@@ -57,23 +58,23 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 			StopTransitionTimer();
 
 			// Handle connect/disconnect
-			if (_isConnected) 
-				_feature.PerformAction(SwitcherLiveFeature.DISCONNECT);
+			if (_lastKnownConnection) 
+				_feature.CallDispatched(f => f.Disconnect());
 			else
 			{
 				_errorPresenter.SetErrorlessButtonVisible(false);
 				StartNewTransitionTimer(GetConnectingText);
 
-				_feature.PerformAction(SwitcherLiveFeature.CONNECT);
+				_feature.CallDispatched(f => f.Connect());
 			}
 		}
 
 		public void OnConnection(bool state)
 		{
 			StopTransitionTimer();
-			_isConnected = state;
+			_lastKnownConnection = state;
 
-			if (_isConnected)
+			if (_lastKnownConnection)
 			{
 				_errorPresenter.SetErrorlessButtonVisible(false);
 				StartNewTransitionTimer(GetReceivingDetailsText);
@@ -88,7 +89,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 
 		public void OnSpecced(SwitcherSpecs specs)
 		{
-			if (!_isConnected) return;
+			if (!_lastKnownConnection) return;
 
 			StopTransitionTimer();
 			_errorPresenter.SetErrorlessButtonText("Disconnect");

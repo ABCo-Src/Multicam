@@ -1,16 +1,14 @@
 ﻿using ABCo.Multicam.Server;
 using ABCo.Multicam.Server.Features.Switchers;
-using ABCo.Multicam.Server.Features.Switchers.Data;
 using ABCo.Multicam.Client.Enumerations;
 using ABCo.Multicam.Client.ViewModels.Features.Switcher;
 using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 {
-	public interface ISwitcherMixBlocksPresenter : IClientService<ISwitcherFeatureVM, IServerTarget> 
+	public interface ISwitcherMixBlocksPresenter : IClientService<ISwitcherFeatureVM, IDispatchedServerComponent<ISwitcherFeature>> 
 	{
-		void OnSpecced(SwitcherSpecs specs);
-		void OnState(MixBlockState[] mixBlocks);
+		void Refresh(SpecsSpecificInfo info);
 		void SetProgram(int mixBlock, int value);
 		void SetPreview(int mixBlock, int value);
 		void Cut(int mixBlock);
@@ -20,28 +18,35 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 	{
 		readonly IClientInfo _servSource;
 		readonly ISwitcherFeatureVM _vm;
-		readonly IServerTarget _feature;
+		readonly IDispatchedServerComponent<ISwitcherFeature> _feature;
+		SwitcherSpecs? _lastSeenSpecs = null;
 
-		public SwitcherMixBlocksPresenter(ISwitcherFeatureVM vm, IServerTarget feature, IClientInfo servSource)
+		public SwitcherMixBlocksPresenter(ISwitcherFeatureVM vm, IDispatchedServerComponent<ISwitcherFeature> feature, IClientInfo servSource)
 		{
 			_vm = vm;
 			_feature = feature;
 			_servSource = servSource;
 		}
 
-		public void OnSpecced(SwitcherSpecs specs)
+		public void Refresh(SpecsSpecificInfo specs)
 		{
-			// Update mix-blocks
-			var newMixBlocks = new ISwitcherMixBlockVM[specs.MixBlocks.Count];
-			for (int i = 0; i < newMixBlocks.Length; i++)
+			// If the specs have changed from what we remember, recreate everything
+			if (_lastSeenSpecs != specs.Specs)
 			{
-				newMixBlocks[i] = _servSource.Get<ISwitcherMixBlockVM>();
-				PopulateMixBlockVM(newMixBlocks[i], specs.MixBlocks[i], i);
-			}
-			_vm.MixBlocks = newMixBlocks;
+				_lastSeenSpecs = specs.Specs;
 
-			// Update mix block states
-			OnState(_feature.DataStore.GetData<SwitcherState>().Data);
+				var newMixBlocks = new ISwitcherMixBlockVM[_lastSeenSpecs.MixBlocks.Count];
+				for (int i = 0; i < newMixBlocks.Length; i++)
+				{
+					newMixBlocks[i] = _servSource.Get<ISwitcherMixBlockVM>();
+					PopulateMixBlockVM(newMixBlocks[i], _lastSeenSpecs.MixBlocks[i], i);
+				}
+				_vm.MixBlocks = newMixBlocks;
+			}
+
+			// Update the state
+			for (int i = 0; i < _vm.MixBlocks.Length; i++)
+				UpdateMixBlockState(_vm.MixBlocks[i], specs.State[i]);
 		}
 
 		void PopulateMixBlockVM(ISwitcherMixBlockVM vm, SwitcherMixBlock mb, int mixBlockIndex)
@@ -73,14 +78,6 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 
 		void PopulateInputVM(ISwitcherBusInputVM vm, SwitcherBusInput input) => vm.Text = input.Name;
 
-		public void OnState(MixBlockState[] mixBlocks)
-		{
-			// Update as far as our current cache allows
-			int min = Math.Min(mixBlocks.Length, _vm.MixBlocks.Length);
-			for (int i = 0; i < min; i++)
-				UpdateMixBlockState(_vm.MixBlocks[i], mixBlocks[i]);
-		}
-
 		void UpdateMixBlockState(ISwitcherMixBlockVM vm, MixBlockState newState)
 		{
 			for (int i = 0; i < vm.ProgramBus.Length; i++)
@@ -96,8 +93,8 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 			}
 		}
 
-		public void SetProgram(int mixBlock, int value) => _feature.PerformAction(SwitcherLiveFeature.SET_PROGRAM, new BusChangeInfo(mixBlock, value));
-		public void SetPreview(int mixBlock, int value) => _feature.PerformAction(SwitcherLiveFeature.SET_PREVIEW, new BusChangeInfo(mixBlock, value));
-		public void Cut(int mixBlock) => _feature.PerformAction(SwitcherLiveFeature.CUT, mixBlock);
+		public void SetProgram(int mixBlock, int value) => _feature.CallDispatched(f => f.SetProgram(mixBlock, value));
+		public void SetPreview(int mixBlock, int value) => _feature.CallDispatched(f => f.SetPreview(mixBlock, value));
+		public void Cut(int mixBlock) => _feature.CallDispatched(f => f.Cut(mixBlock));
 	}
 }

@@ -6,7 +6,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Interaction
     {
         bool IsConnected { get; }
         SwitcherSpecs Specs { get; }
-		SwitcherCompatibility GetPlatformCompatibility();
+		SwitcherPlatformCompatibilityValue GetPlatformCompatibility();
 		void Connect();
 		void Disconnect();
 		int GetProgram(int mixBlock);
@@ -107,7 +107,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Interaction
 		public void SendProgram(int mixBlock, int value) => _currentBuffer.SendProgram(mixBlock, value);
 		public void SendPreview(int mixBlock, int value) => _currentBuffer.SendPreview(mixBlock, value);
 		public void Cut(int mixBlock) => _currentBuffer.Cut(mixBlock);
-		public SwitcherCompatibility GetPlatformCompatibility() => _switcher.GetPlatformCompatibility();
+		public SwitcherPlatformCompatibilityValue GetPlatformCompatibility() => _switcher.GetPlatformCompatibility();
 
 		public void Dispose() => _switcher.Dispose();
 	}

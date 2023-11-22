@@ -1,6 +1,4 @@
-﻿using ABCo.Multicam.Server.Features.Switchers.Data;
-
-namespace ABCo.Multicam.Server.Features.Switchers
+﻿namespace ABCo.Multicam.Server.Features.Switchers
 {
 	public class UnsupportedSwitcherBehaviourException : Exception
     {
@@ -29,7 +27,7 @@ namespace ABCo.Multicam.Server.Features.Switchers
 
         public abstract void RefreshConnectionStatus();
         public abstract void RefreshSpecs();
-		public abstract SwitcherCompatibility GetPlatformCompatibility();
+		public abstract SwitcherPlatformCompatibilityValue GetPlatformCompatibility();
 		public abstract void Dispose();
 
 		public virtual void SetEventHandler(ISwitcherEventHandler? eventHandler)

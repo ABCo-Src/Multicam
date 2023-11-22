@@ -3,8 +3,6 @@ using ABCo.Multicam.App.Win32.Services;
 using Microsoft.AspNetCore.Components.WebView.WindowsForms;
 using ABCo.Multicam.Client;
 using ABCo.Multicam.Client.Blazor;
-using ABCo.Multicam.Server.Hosting.Management;
-using System.Reflection.Metadata;
 
 namespace ABCo.Multicam.App.Win32
 {

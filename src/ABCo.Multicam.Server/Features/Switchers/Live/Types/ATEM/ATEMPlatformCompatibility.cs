@@ -1,5 +1,4 @@
 ﻿using ABCo.Multicam.Server.General;
-using ABCo.Multicam.Server.Features.Switchers.Data;
 using BMDSwitcherAPI;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;

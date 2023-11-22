@@ -1,13 +1,17 @@
-﻿using ABCo.Multicam.Server.Hosting.Clients;
-using ABCo.Multicam.Server.Hosting.Management.Data;
+﻿using ABCo.Multicam.Server.Features;
+using ABCo.Multicam.Server.Hosting.Clients;
 using System.Net;
 using System.Net.Sockets;
 
 namespace ABCo.Multicam.Server.Hosting.Management
 {
-	public interface IHostingManager : IServerTarget, IDisposable
+	public interface IHostingManager : IServerComponent, IDisposable
     {
-    }
+		IClientNotifier<IHostingManagerState, IHostingManager> ClientNotifier { get; }
+		void ToggleOnOff();
+        void SetMode(bool isAutomatic);
+        void SetCustomModeConfig(string[] customModeConfig);
+	}
 
     public class HostingManager : IHostingManager
     {
@@ -15,39 +19,35 @@ namespace ABCo.Multicam.Server.Hosting.Management
 		public const int SET_MODE = 2;
 		public const int SET_CUSTOM_CONFIG = 3;
 
+        readonly IHostingManagerState _state;
         readonly IServerInfo _info;
         readonly ILocalIPCollection _localIPAddresses;
-		readonly IClientSyncedDataStore _data;
 		INativeServerHost? _localNetworkHost;
 
-        public IRemoteDataStore DataStore => _data;
+		public IClientNotifier<IHostingManagerState, IHostingManager> ClientNotifier => _state.ClientNotifier;
 
-        public HostingManager(IServerInfo info)
+		public HostingManager(IServerInfo info)
         {
             _info = info;
             _localIPAddresses = info.Get<ILocalIPCollection, Action>(HandleIPCollectionChange);
-            _data = info.ClientsManager.NewClientsDataNotifier(this);
-            _data.SetData<HostingConfigMode>(new HostingConfigMode(true));
-            _data.SetData<HostingCustomModeConfig>(new HostingCustomModeConfig(new string[] { "http://127.0.0.1:800" }));
-            _data.SetData<HostingActiveConfig>(new HostingActiveConfig(null));
-            _data.SetData<HostingExecutionStatus>(new HostingExecutionStatus(false));
+			_state = info.Get<IHostingManagerState, IHostingManager>(this);
         }
 
 		void UpdateCurrentlyActiveConfig()
 		{
-			if (_data.GetData<HostingConfigMode>().IsAutomatic) 
+			if (_state.IsAutomatic)
                 SetActiveConfigToAutomaticValue();
 			else
 			{
-				var config = _data.GetData<HostingCustomModeConfig>();
-				_data.SetData<HostingActiveConfig>(new HostingActiveConfig(config.HostNames.Count == 0 ? null : config.HostNames[0]));
+				var config = _state.CustomModeHostNames;
+				_state.ActiveHostName = config.Count == 0 ? null : config[0];
 			}
 		}
 
 		void HandleIPCollectionChange()
         {
             // If we're in the automatic mode, then this impacts our current config.
-            if (_data.GetData<HostingConfigMode>().IsAutomatic)
+            if (_state.IsAutomatic)
                 SetActiveConfigToAutomaticValue();
         }
 
@@ -70,14 +70,14 @@ namespace ABCo.Multicam.Server.Hosting.Management
             }
 
             // If successful, setup the config
-            _data.SetData<HostingActiveConfig>(new HostingActiveConfig(bestIP.AddressFamily switch
+            _state.ActiveHostName = bestIP.AddressFamily switch
 			{
 				AddressFamily.InterNetwork => $"http://{bestIP}:800",
 				AddressFamily.InterNetworkV6 => $"http://[{bestIP}]:800",
 				_ => throw new Exception()
-			}));
+			};
 
-            void SetUnusable() => _data.SetData<HostingActiveConfig>(new HostingActiveConfig(null));
+            void SetUnusable() => _state.ActiveHostName = null;
 		}
 
 		static IPAddress? SelectBestAutomaticIP(IPAddress[] ips)
@@ -104,41 +104,39 @@ namespace ABCo.Multicam.Server.Hosting.Management
             return null;
 		}
 
-		public async void PerformAction(int id) 
+		public async void ToggleOnOff()
         {
-            if (id == TOGGLE_ONOFF)
+            // If not initialized, initialize now.
+			if (_state.IsConnected)
             {
-                // If not initialized, initialize now.
-				if (_data.GetData<HostingExecutionStatus>().IsConnected)
-                {
-                    await _localNetworkHost!.Stop();
-                    await _localNetworkHost.DisposeAsync();
-                    _localNetworkHost = null;
-					_data.SetData<HostingExecutionStatus>(new HostingExecutionStatus(false));
-				}
-                else
-                {
-                    // TODO: Error handling
-                    // TODO: Slam protection - make synchronous and put server on background thread?
-                    var activeConfig = _data.GetData<HostingActiveConfig>();
-					if (activeConfig.HostName == null) throw new Exception("Cannot start server with unstartable settings.");
+                await _localNetworkHost!.Stop();
+                await _localNetworkHost.DisposeAsync();
+                _localNetworkHost = null;
+				_state.IsConnected = false;
+			}
+            else
+            {
+                // TODO: Error handling
+                // TODO: Slam protection - make synchronous and put server on background thread?
+                var activeConfig = _state.ActiveHostName ?? throw new Exception("Cannot start server with unstartable settings.");
 
-                    // Create/start a new host
-                    _localNetworkHost = _info.Get<INativeServerHost, NativeServerHostConfig>(new(activeConfig.HostName));
-					await _localNetworkHost.Start();
+				// Create/start a new host
+				_localNetworkHost = _info.Get<INativeServerHost, NativeServerHostConfig>(new(activeConfig));
+				await _localNetworkHost.Start();
 
-					_data.SetData<HostingExecutionStatus>(new HostingExecutionStatus(true));
-				}
+                _state.IsConnected = true;
 			}
         }
 
-		public void PerformAction(int id, object param)
-        {
-            if (id == SET_MODE)
-				_data.SetData<HostingConfigMode>((HostingConfigMode)param);
-			else if (id == SET_CUSTOM_CONFIG)
-			    _data.SetData<HostingCustomModeConfig>((HostingCustomModeConfig)param);
+		public void SetMode(bool isAutomatic)
+		{
+			_state.IsAutomatic = isAutomatic;
+			UpdateCurrentlyActiveConfig();
+		}
 
+		public void SetCustomModeConfig(string[] customModeConfig)
+		{
+			_state.CustomModeHostNames = customModeConfig;
 			UpdateCurrentlyActiveConfig();
 		}
 

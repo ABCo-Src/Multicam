@@ -1,6 +1,5 @@
 ﻿using ABCo.Multicam.Server;
 using ABCo.Multicam.Server.Features.Switchers;
-using ABCo.Multicam.Server.Features.Switchers.Data;
 using ABCo.Multicam.Server.Features.Switchers.Data.Config;
 using ABCo.Multicam.Client.ViewModels.Features.Switcher;
 using ABCo.Multicam.Client.ViewModels.Features.Switcher.Types;
@@ -8,7 +7,7 @@ using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Client.Presenters.Features.Switcher.Config
 {
-	public interface ISwitcherDummyConfigPresenter : ISwitcherSpecificConfigPresenter, IClientService<IServerTarget>
+	public interface ISwitcherDummyConfigPresenter : ISwitcherSpecificConfigPresenter, IClientService<IDispatchedServerComponent<ISwitcherFeature>>
 	{
 		void OnUIChange();
 	}
@@ -16,19 +15,19 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher.Config
 	public class SwitcherDummyConfigPresenter : ISwitcherDummyConfigPresenter
 	{
 		readonly IClientInfo _servSource;
-		readonly IServerTarget _feature;
+		readonly IDispatchedServerComponent<ISwitcherFeature> _feature;
 		readonly ISwitcherDummyConfigVM _vm;
 
 		public ISwitcherSpecificConfigVM VM => _vm;
 		
-		public SwitcherDummyConfigPresenter(IServerTarget feature, IClientInfo servSource)
+		public SwitcherDummyConfigPresenter(IDispatchedServerComponent<ISwitcherFeature> feature, IClientInfo servSource)
 		{
 			_servSource = servSource;
 			_feature = feature;
 			_vm = servSource.Get<ISwitcherDummyConfigVM, ISwitcherDummyConfigPresenter>(this);
 		}
 
-		public void OnConfig(SwitcherConfig config)
+		public void Refresh(SwitcherConfig config)
 		{
 			var dummyConfig = (DummySwitcherConfig)config;
 
@@ -46,7 +45,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher.Config
 			_vm.MixBlockVMs = newMixBlocks;
 		}
 
-		public void OnCompatibility(SwitcherCompatibility compatibility) { }
+		public void OnCompatibility(SwitcherPlatformCompatibilityValue compatibility) { }
 
 		public void OnUIChange()
 		{
@@ -61,7 +60,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher.Config
 			for (int i = 0; i < end; i++)
 				newConfigMBs[i] = int.Parse(_vm.MixBlockVMs[i].InputCount);
 
-			_feature.PerformAction(SwitcherLiveFeature.SET_CONFIG, new DummySwitcherConfig(newConfigMBs));
+			_feature.CallDispatched(f => f.ChangeConfig(new DummySwitcherConfig(newConfigMBs)));
 		}
 	}
 }

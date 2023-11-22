@@ -1,6 +1,5 @@
 ﻿using ABCo.Multicam.Server;
 using ABCo.Multicam.Server.Features.Switchers;
-using ABCo.Multicam.Server.Features.Switchers.Data;
 using ABCo.Multicam.Server.Features.Switchers.Data.Config;
 using ABCo.Multicam.Client.ViewModels.Features.Switcher;
 using ABCo.Multicam.Client.ViewModels.Features.Switcher.Config.ATEM;
@@ -8,25 +7,25 @@ using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Client.Presenters.Features.Switcher.Config
 {
-	public interface ISwitcherATEMConfigPresenter : ISwitcherSpecificConfigPresenter, IClientService<IServerTarget>
+	public interface ISwitcherATEMConfigPresenter : ISwitcherSpecificConfigPresenter, IClientService<IDispatchedServerComponent<ISwitcherFeature>>
 	{
 		void OnUIChange();
 	}
 
 	public class SwitcherATEMConfgPresenter : ISwitcherATEMConfigPresenter
 	{
-		readonly IServerTarget _feature;
+		readonly IDispatchedServerComponent<ISwitcherFeature> _feature;
 		readonly ISwitcherATEMConfigVM _vm;
 
 		public ISwitcherSpecificConfigVM VM => _vm;
 
-		public SwitcherATEMConfgPresenter(IServerTarget feature, IClientInfo servSource)
+		public SwitcherATEMConfgPresenter(IDispatchedServerComponent<ISwitcherFeature> feature, IClientInfo servSource)
 		{
 			_vm = servSource.Get<ISwitcherATEMConfigVM, ISwitcherATEMConfigPresenter>(this);
 			_feature = feature;
 		}
 
-		public void OnConfig(SwitcherConfig config)
+		public void Refresh(SwitcherConfig config)
 		{
 			var atemConfig = (ATEMSwitcherConfig)config;
 
@@ -38,9 +37,9 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher.Config
 		public void OnUIChange()
 		{
 			var newATEMConfig = new ATEMSwitcherConfig(_vm.SelectedConnectionType == "USB" ? null : _vm.IpAddress);
-			_feature.PerformAction(SwitcherLiveFeature.SET_CONFIG, newATEMConfig);
+			_feature.CallDispatched(f => f.ChangeConfig(newATEMConfig));
 		}
 
-		public void OnCompatibility(SwitcherCompatibility compatibility) => _vm.CompatibilityMessage = compatibility.Value;
+		public void OnCompatibility(SwitcherPlatformCompatibilityValue compatibility) => _vm.CompatibilityMessage = compatibility;
 	}
 }
