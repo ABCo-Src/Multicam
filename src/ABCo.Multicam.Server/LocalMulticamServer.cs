@@ -45,7 +45,6 @@ namespace ABCo.Multicam.Server
 
 			// Features
 			Server.ServerInfo.AddSingleton<IMainFeatureCollection>(s => new MainFeatureCollection(s));
-			Server.ServerInfo.AddTransient<IMainFeatureCollectionState, IMainFeatureCollection>((p1, s) => new MainFeatureCollectionState(p1, s));
 			Server.ServerInfo.AddSingleton<IFeatureContentFactory>(s => new FeatureContentFactory(s));
 			Server.ServerInfo.AddTransient<IUnsupportedLiveFeature>((s) => new UnsupportedLiveFeature(s));
 			Server.ServerInfo.AddTransient<ISwitcherFeature>((s) => new SwitcherFeature(s));

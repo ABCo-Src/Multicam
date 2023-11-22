@@ -8,9 +8,9 @@ using ABCo.Multicam.Server.Features;
 
 namespace ABCo.Multicam.Client.ViewModels.Features
 {
-	public interface IProjectFeaturesListItemVM : IClientService<IMainFeatureCollectionPresenter, IFeatureState, IFeatureVM>, INotifyPropertyChanged, ISideMenuEmbeddableVM
+	public interface IProjectFeaturesListItemVM : IClientService<IMainFeatureCollectionPresenter, IFeature, IFeatureVM>, INotifyPropertyChanged, ISideMenuEmbeddableVM
 	{
-		IFeatureState NativeItem { get; }
+		IFeature NativeItem { get; }
 		IFeatureVM Feature { get; }
 		string EditBtnText { get; set; }
 		void OpenMobileView();
@@ -23,13 +23,13 @@ namespace ABCo.Multicam.Client.ViewModels.Features
 
 	public partial class ProjectFeaturesListItemVM : ViewModelBase, IProjectFeaturesListItemVM
 	{
-		public IFeatureState NativeItem { get; }
+		public IFeature NativeItem { get; }
 
 		readonly IMainFeatureCollectionPresenter _presenter;
 		[ObservableProperty] IFeatureVM _feature;
 		[ObservableProperty] string _editBtnText = "";
 
-		public ProjectFeaturesListItemVM(IMainFeatureCollectionPresenter presenter, IFeatureState nativeItem, IFeatureVM innerVM)
+		public ProjectFeaturesListItemVM(IMainFeatureCollectionPresenter presenter, IFeature nativeItem, IFeatureVM innerVM)
 		{
 			NativeItem = nativeItem;
 			_presenter = presenter;

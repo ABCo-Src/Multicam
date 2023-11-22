@@ -7,7 +7,7 @@ using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Client.Presenters.Features.Switcher.Config
 {
-	public interface ISwitcherDummyConfigPresenter : ISwitcherSpecificConfigPresenter, IClientService<IDispatchedServerComponent<ISwitcherFeature>>
+	public interface ISwitcherDummyConfigPresenter : ISwitcherSpecificConfigPresenter, IClientService<Dispatched<ISwitcherFeature>>
 	{
 		void OnUIChange();
 	}
@@ -15,12 +15,12 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher.Config
 	public class SwitcherDummyConfigPresenter : ISwitcherDummyConfigPresenter
 	{
 		readonly IClientInfo _servSource;
-		readonly IDispatchedServerComponent<ISwitcherFeature> _feature;
+		readonly Dispatched<ISwitcherFeature> _feature;
 		readonly ISwitcherDummyConfigVM _vm;
 
 		public ISwitcherSpecificConfigVM VM => _vm;
 		
-		public SwitcherDummyConfigPresenter(IDispatchedServerComponent<ISwitcherFeature> feature, IClientInfo servSource)
+		public SwitcherDummyConfigPresenter(Dispatched<ISwitcherFeature> feature, IClientInfo servSource)
 		{
 			_servSource = servSource;
 			_feature = feature;

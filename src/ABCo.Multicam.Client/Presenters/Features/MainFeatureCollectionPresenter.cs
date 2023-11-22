@@ -7,7 +7,7 @@ using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Client.Presenters.Features
 {
-	public interface IMainFeatureCollectionPresenter : IClientDataNotificationTarget<IMainFeatureCollectionState, IMainFeatureCollection>
+	public interface IMainFeatureCollectionPresenter : IClientDataNotificationTarget<IMainFeatureCollection>
 	{
 		IProjectFeaturesVM VM { get; }
 		void OpenMobileMenu(IProjectFeaturesListItemVM vm);
@@ -19,18 +19,17 @@ namespace ABCo.Multicam.Client.Presenters.Features
 		void CreateFeature(CursorPosition pos);
 	}
 
-	public class ProjectFeaturesPresenter : IMainFeatureCollectionPresenter
+	public class MainFeatureCollectionPresenter : IMainFeatureCollectionPresenter
 	{
 		readonly IMainUIPresenter _sideMenuPresenter;
-		readonly IDispatchedServerComponent<IMainFeatureCollection> _collection;
-		readonly IMainFeatureCollectionState _state;
+		readonly Dispatched<IMainFeatureCollection> _collection;
 		readonly IClientInfo _info;
 		readonly IUIDialogHandler _dialogHandler;
 
 		public IProjectFeaturesVM VM { get; }
 		IProjectFeaturesListItemVM? _currentlyEditing;
 
-		public ProjectFeaturesPresenter(IMainFeatureCollectionState state, IDispatchedServerComponent<IMainFeatureCollection> collection, IClientInfo client)
+		public MainFeatureCollectionPresenter(Dispatched<IMainFeatureCollection> collection, IClientInfo client)
 		{
 			_collection = collection;
 			_currentlyEditing = null;
@@ -44,7 +43,7 @@ namespace ABCo.Multicam.Client.Presenters.Features
 		public void Init() { }
 		public void OnServerStateChange(string? changedProp)
 		{
-			var currentFeatures = _state.Features;
+			var currentFeatures = _collection.Get(c => c.Features);
 			var oldItems = VM.Items;
 
 			// Re-add each feature one-by-one, re-using the old VM if it still exists
@@ -57,7 +56,7 @@ namespace ABCo.Multicam.Client.Presenters.Features
 				if (vm == -1)
 				{
 					var innerVM = currentFeatures[i].ClientNotifier.GetOrAddClientEndpoint<IFeaturePresenter>(_info).VM;
-					newItems[i] = _info.Get<IProjectFeaturesListItemVM, IMainFeatureCollectionPresenter, IFeatureState, IFeatureVM>(this, currentFeatures[i], innerVM);
+					newItems[i] = _info.Get<IProjectFeaturesListItemVM, IMainFeatureCollectionPresenter, IFeature, IFeatureVM>(this, currentFeatures[i], innerVM);
 					newItems[i].EditBtnText = "Edit";
 				}
 				else
@@ -70,7 +69,7 @@ namespace ABCo.Multicam.Client.Presenters.Features
 			EnsureCurrentlyEditingExists(currentFeatures);
 		}
 
-		void EnsureCurrentlyEditingExists(IReadOnlyList<IFeatureState> features)
+		void EnsureCurrentlyEditingExists(IReadOnlyList<IFeature> features)
 		{
 			if (_currentlyEditing != null)
 			{
@@ -120,8 +119,8 @@ namespace ABCo.Multicam.Client.Presenters.Features
 		public void OpenMobileMenu(IProjectFeaturesListItemVM vm) => VM.MobileView = vm;
 		public void CloseMobileMenu() => VM.MobileView = null;
 
-		public void MoveUp(IProjectFeaturesListItemVM vm) => _collection.CallDispatched(c => c.MoveUp(vm.NativeItem.Feature));
-		public void MoveDown(IProjectFeaturesListItemVM vm) => _collection.CallDispatched(c => c.MoveDown(vm.NativeItem.Feature));
-		public void Delete(IProjectFeaturesListItemVM vm) => _collection.CallDispatched(c => c.Delete(vm.NativeItem.Feature));
+		public void MoveUp(IProjectFeaturesListItemVM vm) => _collection.CallDispatched(c => c.MoveUp(vm.NativeItem));
+		public void MoveDown(IProjectFeaturesListItemVM vm) => _collection.CallDispatched(c => c.MoveDown(vm.NativeItem));
+		public void Delete(IProjectFeaturesListItemVM vm) => _collection.CallDispatched(c => c.Delete(vm.NativeItem));
 	}
 }

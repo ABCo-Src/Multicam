@@ -5,21 +5,11 @@ namespace ABCo.Multicam.Server.Features
 	/// <summary>
 	/// Represents a feature currently loaded.
 	/// </summary>
-	public interface IFeature : IServerService<FeatureTypes>, IServerComponent, IDisposable
+	public interface IFeature : IBindableServerComponent<IFeature>, IDisposable
 	{
-		IFeatureState State { get; }
-		void Rename(string name);
-	}
-
-	public interface IFeatureState : IServerComponentState<IFeatureState, IFeature>
-	{
-		string Name { get; internal set; }
+		string Name { get; }
 		FeatureTypes Type { get; }
-
-		// ======
-		// TODO: This is the worst thing ever
-		// ======
-		IFeature Feature { get; }
+		void Rename(string name);
 	}
 
 	public enum FeatureTypes

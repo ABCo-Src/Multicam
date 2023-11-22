@@ -6,7 +6,7 @@ using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 {
-	public interface ISwitcherConnectionPresenter : IClientService<IDispatchedServerComponent<ISwitcherFeature>>
+	public interface ISwitcherConnectionPresenter : IClientService<Dispatched<ISwitcherFeature>>
 	{
 		ISwitcherConnectionVM VM { get; }
 		void OnError(string? error);
@@ -17,7 +17,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 	public class SwitcherConnectionPresenter : ISwitcherConnectionPresenter
 	{
 		readonly ISwitcherErrorPresenter _errorPresenter;
-		readonly IDispatchedServerComponent<ISwitcherFeature> _feature;
+		readonly Dispatched<ISwitcherFeature> _feature;
 
 		bool _lastKnownConnection = false;
 		bool _isWaitingForConnection;
@@ -28,10 +28,10 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 
 		public ISwitcherConnectionVM VM => _errorPresenter.VM;
 
-		public SwitcherConnectionPresenter(IDispatchedServerComponent<ISwitcherFeature> feature, IClientInfo clientInfo)
+		public SwitcherConnectionPresenter(Dispatched<ISwitcherFeature> feature, IClientInfo clientInfo)
 		{
 			_feature = feature;
-			_errorPresenter = clientInfo.Get<ISwitcherErrorPresenter, IDispatchedServerComponent<ISwitcherFeature>, Action>(feature, ToggleConnection);
+			_errorPresenter = clientInfo.Get<ISwitcherErrorPresenter, Dispatched<ISwitcherFeature>, Action>(feature, ToggleConnection);
 			_dispatcher = clientInfo.Dispatcher;
 		}
 

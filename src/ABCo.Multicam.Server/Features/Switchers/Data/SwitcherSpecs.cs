@@ -2,7 +2,7 @@
 
 namespace ABCo.Multicam.Server.Features.Switchers
 {
-	public class SwitcherSpecs : ServerData
+	public class SwitcherSpecs
     {
         public readonly bool CanChangeConnection;
         public readonly IReadOnlyList<SwitcherMixBlock> MixBlocks;

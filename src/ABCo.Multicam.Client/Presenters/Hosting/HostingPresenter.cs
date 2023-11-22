@@ -6,7 +6,7 @@ using ABCo.Multicam.Server.Hosting.Management;
 
 namespace ABCo.Multicam.Client.Presenters.Hosting
 {
-	public interface IHostingPresenter : IClientDataNotificationTarget<IHostingManagerState, IHostingManager>
+	public interface IHostingPresenter : IClientDataNotificationTarget<IHostingManager>
 	{
 		void OnHostingMenuToggle();
 		void OnHostingModeChange();
@@ -15,18 +15,16 @@ namespace ABCo.Multicam.Client.Presenters.Hosting
 		IServerHostingVM VM { get; }
 	}
 
-	public class HostingPresenter : IHostingPresenter, IClientService<IServerComponent>
+	public class HostingPresenter : IHostingPresenter
 	{
 		bool _menuOpen = false;
 		readonly IMainUIPresenter _mainUI;
-		readonly IHostingManagerState _state;
-		readonly IDispatchedServerComponent<IHostingManager> _manager;
+		readonly Dispatched<IHostingManager> _manager;
 
 		public IServerHostingVM VM { get; }
 
-		public HostingPresenter(IHostingManagerState state, IDispatchedServerComponent<IHostingManager> manager, IClientInfo info)
+		public HostingPresenter(Dispatched<IHostingManager> manager, IClientInfo info)
 		{
-			_state = state;
 			_manager = manager;
 			_mainUI = info.Get<IMainUIPresenter>();
 
@@ -65,27 +63,28 @@ namespace ABCo.Multicam.Client.Presenters.Hosting
 		public void OnServerStateChange(string? changedProp)
 		{
 			// Update the mode
-			VM.HostnameVM.SelectedMode = _state.IsAutomatic ? "Automatic" : "Custom";
+			VM.HostnameVM.SelectedMode = _manager.Get(m => m.IsAutomatic) ? "Automatic" : "Custom";
 
 			// Update the custom host name
-			var hostName = _state.CustomModeHostNames.Count > 0 ? _state.CustomModeHostNames[0] : "";
+			var hostName = _manager.Get(m => m.CustomModeHostNames).Count > 0 ? _manager.Get(m => m.CustomModeHostNames)[0] : "";
 			VM.HostnameVM.CustomHostName = TrimLinkStart(hostName);
 
 			// Update the execution status.
-			VM.ShowConfigOptions = !_state.IsConnected;
-			VM.ExecutionVM.StartStopButtonText = _state.IsConnected ? "Stop Hosting" : "Start Hosting";
+			VM.ShowConfigOptions = !_manager.Get(m => m.IsConnected);
+			VM.ExecutionVM.StartStopButtonText = _manager.Get(m => m.IsConnected) ? "Stop Hosting" : "Start Hosting";
 
 			// Update the active config text
-			if (_state.ActiveHostName == null)
+			var activeHostName = _manager.Get(m => m.ActiveHostName);
+			if (activeHostName == null)
 			{
 				VM.HostnameVM.AutomaticCaption = "Scanning hosts (ensure you're connected to a network)...";
 				VM.ExecutionVM.CanStartStop = false;
 			}
 			else
 			{
-				VM.HostnameVM.AutomaticCaption = $"Using {_state.ActiveHostName}";
-				VM.ExecutionVM.LinkText = TrimLinkStart(_state.ActiveHostName);
-				VM.ExecutionVM.LinkHyperlink = _state.ActiveHostName;
+				VM.HostnameVM.AutomaticCaption = $"Using {activeHostName}";
+				VM.ExecutionVM.LinkText = TrimLinkStart(activeHostName);
+				VM.ExecutionVM.LinkHyperlink = activeHostName;
 				VM.ExecutionVM.CanStartStop = true;
 			}
 		}

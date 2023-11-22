@@ -7,19 +7,19 @@ using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Client.Presenters.Features.Switcher.Config
 {
-	public interface ISwitcherATEMConfigPresenter : ISwitcherSpecificConfigPresenter, IClientService<IDispatchedServerComponent<ISwitcherFeature>>
+	public interface ISwitcherATEMConfigPresenter : ISwitcherSpecificConfigPresenter, IClientService<Dispatched<ISwitcherFeature>>
 	{
 		void OnUIChange();
 	}
 
-	public class SwitcherATEMConfgPresenter : ISwitcherATEMConfigPresenter
+	public class SwitcherATEMConfigPresenter : ISwitcherATEMConfigPresenter
 	{
-		readonly IDispatchedServerComponent<ISwitcherFeature> _feature;
+		readonly Dispatched<ISwitcherFeature> _feature;
 		readonly ISwitcherATEMConfigVM _vm;
 
 		public ISwitcherSpecificConfigVM VM => _vm;
 
-		public SwitcherATEMConfgPresenter(IDispatchedServerComponent<ISwitcherFeature> feature, IClientInfo servSource)
+		public SwitcherATEMConfigPresenter(Dispatched<ISwitcherFeature> feature, IClientInfo servSource)
 		{
 			_vm = servSource.Get<ISwitcherATEMConfigVM, ISwitcherATEMConfigPresenter>(this);
 			_feature = feature;

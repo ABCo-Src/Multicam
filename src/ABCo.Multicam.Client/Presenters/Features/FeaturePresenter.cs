@@ -7,7 +7,7 @@ using ABCo.Multicam.Server.Features;
 namespace ABCo.Multicam.Client.Presenters.Features
 {
 
-	public interface IFeaturePresenter : IClientDataNotificationTarget<IFeatureState, IFeature>
+	public interface IFeaturePresenter : IClientDataNotificationTarget<IFeature>
 	{
 		IFeatureVM VM { get; }
 		void OnTitleChange();
@@ -23,22 +23,23 @@ namespace ABCo.Multicam.Client.Presenters.Features
 		public IFeatureVM VM { get; private set; }
 
 		readonly IClientInfo _info;
-		readonly IDispatchedServerComponent<IFeature> _feature;
-		readonly IFeatureState _state;
+		readonly Dispatched<IFeature> _feature;
 		readonly IFeatureContentPresenter _contentPresenter;
 
-		public FeaturePresenter(IFeatureState state, IDispatchedServerComponent<IFeature> feature, IClientInfo info)
+		public FeaturePresenter(Dispatched<IFeature> feature, IClientInfo info)
 		{
 			_info = info;
             _feature = feature;
 
 			VM = info.Get<IFeatureVM, IFeaturePresenter>(this);
 
-			_contentPresenter = state.Type switch
+			_contentPresenter = _feature.Get(f => f.Type) switch
 			{
-				FeatureTypes.Switcher => state.ClientNotifier.GetOrAddClientEndpoint<ISwitcherFeaturePresenter>(_info),
-				_ => null
+				FeatureTypes.Switcher => info.Get<ISwitcherFeaturePresenter, Dispatched<IFeature>>(feature),
+				_ => throw new Exception("Unsupported!")
 			};
+
+			VM.Content = _contentPresenter.VM;
 		}
 
 		public void Init() { }
@@ -46,10 +47,10 @@ namespace ABCo.Multicam.Client.Presenters.Features
 		public void OnServerStateChange(string? changedProp)
 		{
 			// Update the title
-			VM.FeatureTitle = _state.Name;
+			VM.FeatureTitle = _feature.Get(f => f.Name);
 
 			// Inform the content presenter of the change
-			switch (_state.Type)
+			switch (_feature.Get(f => f.Type))
 			{
 				case FeatureTypes.Switcher:
 					((ISwitcherFeaturePresenter)_contentPresenter).OnServerStateChange(changedProp);

@@ -5,7 +5,7 @@ using ABCo.Multicam.Server.Features.Switchers;
 
 namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 {
-	public interface ISwitcherErrorPresenter : IClientService<IDispatchedServerComponent<ISwitcherFeature>, Action>
+	public interface ISwitcherErrorPresenter : IClientService<Dispatched<ISwitcherFeature>, Action>
 	{
 		ISwitcherConnectionVM VM { get; }
 		void OnError(string? error);
@@ -17,13 +17,13 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 	
 	public class SwitcherErrorPresenter : ISwitcherErrorPresenter
 	{
-		readonly IDispatchedServerComponent<ISwitcherFeature> _feature;
+		readonly Dispatched<ISwitcherFeature> _feature;
 		readonly Action _noErrorClick;
 		string? _currentError = null;
 
 		public ISwitcherConnectionVM VM { get; }
 
-		public SwitcherErrorPresenter(IDispatchedServerComponent<ISwitcherFeature> feature, Action noErrorClick, IClientInfo servSource)
+		public SwitcherErrorPresenter(Dispatched<ISwitcherFeature> feature, Action noErrorClick, IClientInfo servSource)
 		{
 			_feature = feature;
 			_noErrorClick = noErrorClick;

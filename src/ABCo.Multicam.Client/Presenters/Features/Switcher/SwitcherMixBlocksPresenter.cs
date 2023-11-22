@@ -6,7 +6,7 @@ using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 {
-	public interface ISwitcherMixBlocksPresenter : IClientService<ISwitcherFeatureVM, IDispatchedServerComponent<ISwitcherFeature>> 
+	public interface ISwitcherMixBlocksPresenter : IClientService<ISwitcherFeatureVM, Dispatched<ISwitcherFeature>> 
 	{
 		void Refresh(SpecsSpecificInfo info);
 		void SetProgram(int mixBlock, int value);
@@ -18,10 +18,10 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 	{
 		readonly IClientInfo _servSource;
 		readonly ISwitcherFeatureVM _vm;
-		readonly IDispatchedServerComponent<ISwitcherFeature> _feature;
+		readonly Dispatched<ISwitcherFeature> _feature;
 		SwitcherSpecs? _lastSeenSpecs = null;
 
-		public SwitcherMixBlocksPresenter(ISwitcherFeatureVM vm, IDispatchedServerComponent<ISwitcherFeature> feature, IClientInfo servSource)
+		public SwitcherMixBlocksPresenter(ISwitcherFeatureVM vm, Dispatched<ISwitcherFeature> feature, IClientInfo servSource)
 		{
 			_vm = vm;
 			_feature = feature;

@@ -3,7 +3,7 @@
 	public interface IConnectedClientsManager
     {
         int NewConnectionId();
-        IClientNotifier<TServerComponentState, TServerComponent> NewClientsDataNotifier<TServerComponentState, TServerComponent>(TServerComponentState state, TServerComponent component);
+        IClientNotifier<T> NewClientsDataNotifier<T>(T component);
         void OnClientDisconnected(IClientInfo info);
 
         event Action<IClientInfo> ClientDisconnected;
@@ -18,10 +18,10 @@
 
         public ConnectedClientsManager(IServerInfo info) => _info = info;
 
-        public IClientNotifier<TServerComponentState, TServerComponent> NewClientsDataNotifier<TServerComponentState, TServerComponent>(TServerComponentState state, TServerComponent component)
+        public IClientNotifier<T> NewClientsDataNotifier<T>(T component)
         {
             // Create a client notifier
-            var notifier = new ClientNotifier<TServerComponentState, TServerComponent>(component, state, _info);
+            var notifier = new ClientNotifier<T>(component, _info);
 
             // Register it so it's notified when a client is disconnected (and can remove the target registered with that client in response)
             ClientDisconnected += notifier.OnClientDisconnect;

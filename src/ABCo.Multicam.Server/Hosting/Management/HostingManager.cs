@@ -1,53 +1,56 @@
 ﻿using ABCo.Multicam.Server.Features;
 using ABCo.Multicam.Server.Hosting.Clients;
+using CommunityToolkit.Mvvm.ComponentModel;
 using System.Net;
 using System.Net.Sockets;
 
 namespace ABCo.Multicam.Server.Hosting.Management
 {
-	public interface IHostingManager : IServerComponent, IDisposable
+	public interface IHostingManager : IDisposable
     {
-		IClientNotifier<IHostingManagerState, IHostingManager> ClientNotifier { get; }
+		bool IsAutomatic { get; }
+		IReadOnlyList<string> CustomModeHostNames { get; }
+		string? ActiveHostName { get; }
+		bool IsConnected { get; }
+
+		IClientNotifier<IHostingManager> ClientNotifier { get; }
 		void ToggleOnOff();
         void SetMode(bool isAutomatic);
         void SetCustomModeConfig(string[] customModeConfig);
 	}
 
-    public class HostingManager : IHostingManager
+    public partial class HostingManager : BindableServerComponent<IHostingManager>, IHostingManager
     {
-        public const int TOGGLE_ONOFF = 1;
-		public const int SET_MODE = 2;
-		public const int SET_CUSTOM_CONFIG = 3;
+		[ObservableProperty] bool _isAutomatic = true;
+		[ObservableProperty] string? _activeHostName;
+		[ObservableProperty] IReadOnlyList<string> _customModeHostNames = new string[] { "http://127.0.0.1:800" };
+		[ObservableProperty] bool _isConnected;
 
-        readonly IHostingManagerState _state;
         readonly IServerInfo _info;
         readonly ILocalIPCollection _localIPAddresses;
 		INativeServerHost? _localNetworkHost;
 
-		public IClientNotifier<IHostingManagerState, IHostingManager> ClientNotifier => _state.ClientNotifier;
-
-		public HostingManager(IServerInfo info)
+		public HostingManager(IServerInfo info) : base(info)
         {
             _info = info;
             _localIPAddresses = info.Get<ILocalIPCollection, Action>(HandleIPCollectionChange);
-			_state = info.Get<IHostingManagerState, IHostingManager>(this);
         }
 
 		void UpdateCurrentlyActiveConfig()
 		{
-			if (_state.IsAutomatic)
+			if (IsAutomatic)
                 SetActiveConfigToAutomaticValue();
 			else
 			{
-				var config = _state.CustomModeHostNames;
-				_state.ActiveHostName = config.Count == 0 ? null : config[0];
+				var config = CustomModeHostNames;
+				ActiveHostName = config.Count == 0 ? null : config[0];
 			}
 		}
 
 		void HandleIPCollectionChange()
         {
             // If we're in the automatic mode, then this impacts our current config.
-            if (_state.IsAutomatic)
+            if (IsAutomatic)
                 SetActiveConfigToAutomaticValue();
         }
 
@@ -70,14 +73,14 @@ namespace ABCo.Multicam.Server.Hosting.Management
             }
 
             // If successful, setup the config
-            _state.ActiveHostName = bestIP.AddressFamily switch
+            ActiveHostName = bestIP.AddressFamily switch
 			{
 				AddressFamily.InterNetwork => $"http://{bestIP}:800",
 				AddressFamily.InterNetworkV6 => $"http://[{bestIP}]:800",
 				_ => throw new Exception()
 			};
 
-            void SetUnusable() => _state.ActiveHostName = null;
+            void SetUnusable() => ActiveHostName = null;
 		}
 
 		static IPAddress? SelectBestAutomaticIP(IPAddress[] ips)
@@ -107,39 +110,39 @@ namespace ABCo.Multicam.Server.Hosting.Management
 		public async void ToggleOnOff()
         {
             // If not initialized, initialize now.
-			if (_state.IsConnected)
+			if (IsConnected)
             {
                 await _localNetworkHost!.Stop();
                 await _localNetworkHost.DisposeAsync();
                 _localNetworkHost = null;
-				_state.IsConnected = false;
+				IsConnected = false;
 			}
             else
             {
                 // TODO: Error handling
                 // TODO: Slam protection - make synchronous and put server on background thread?
-                var activeConfig = _state.ActiveHostName ?? throw new Exception("Cannot start server with unstartable settings.");
+                var activeConfig = ActiveHostName ?? throw new Exception("Cannot start server with unstartable settings.");
 
 				// Create/start a new host
 				_localNetworkHost = _info.Get<INativeServerHost, NativeServerHostConfig>(new(activeConfig));
 				await _localNetworkHost.Start();
 
-                _state.IsConnected = true;
+                IsConnected = true;
 			}
         }
 
 		public void SetMode(bool isAutomatic)
 		{
-			_state.IsAutomatic = isAutomatic;
+			IsAutomatic = isAutomatic;
 			UpdateCurrentlyActiveConfig();
 		}
 
 		public void SetCustomModeConfig(string[] customModeConfig)
 		{
-			_state.CustomModeHostNames = customModeConfig;
+			CustomModeHostNames = customModeConfig;
 			UpdateCurrentlyActiveConfig();
 		}
 
-		public void Dispose() => _localIPAddresses.Dispose();
+		public override void DisposeComponent() => _localIPAddresses.Dispose();
 	}
 }

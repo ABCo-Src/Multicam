@@ -1,13 +1,15 @@
-﻿using ABCo.Multicam.Server.Hosting.Clients;
+﻿using ABCo.Multicam.Client.ViewModels.Features;
+using ABCo.Multicam.Server.Hosting.Clients;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace ABCo.Multicam.Server.Features
 {
 	/// <summary>
 	/// Manages all the (running) features in the current project.
 	/// </summary>
-	public interface IMainFeatureCollection : IServerComponent, IDisposable
+	public interface IMainFeatureCollection : IBindableServerComponent<IMainFeatureCollection>, IDisposable
     {
-        IClientNotifier<IMainFeatureCollectionState, IMainFeatureCollection> ClientNotifier { get; }
+		IReadOnlyList<IFeature> Features { get; }
 
 		void CreateFeature(FeatureTypes type);
         void MoveUp(IFeature feature);
@@ -15,68 +17,64 @@ namespace ABCo.Multicam.Server.Features
         void Delete(IFeature feature);
     }
 
-    public class MainFeatureCollection : IMainFeatureCollection
+    public partial class MainFeatureCollection : BindableServerComponent<IMainFeatureCollection>, IMainFeatureCollection
     {
-        readonly IMainFeatureCollectionState _state;
+		[ObservableProperty] IReadOnlyList<IFeature> _features = Array.Empty<IFeature>();
+
+        List<IFeature> _workingList;
 		readonly IServerInfo _info;
-        readonly List<IFeature> _features;
 
-        public IClientNotifier<IMainFeatureCollectionState, IMainFeatureCollection> ClientNotifier => _state.ClientNotifier;
-
-		public MainFeatureCollection(IServerInfo info)
+		public MainFeatureCollection(IServerInfo info) : base(info)
         {
             _info = info;
-            _state = info.Get<IMainFeatureCollectionState, IMainFeatureCollection>(this);
-            _features = new();
+			_workingList = new List<IFeature>();
 			RefreshFeaturesList();
 		}
 
         public void CreateFeature(FeatureTypes type)
         {
-			_features.Add(_info.Get<IFeature, FeatureTypes>(type));
+			_workingList.Add(_info.Get<IFeatureContentFactory>().GetLiveFeature(type));
 			RefreshFeaturesList();
 		}
 
         public void MoveUp(IFeature feature)
         {
-            int indexOfFeature = _features.IndexOf(feature);
+            int indexOfFeature = _workingList.IndexOf(feature);
 
             // Don't do anything if it's at the start
             if (indexOfFeature == 0) return;
 
-            (_features[indexOfFeature], _features[indexOfFeature - 1]) = (_features[indexOfFeature - 1], _features[indexOfFeature]);
+            (_workingList[indexOfFeature], _workingList[indexOfFeature - 1]) = (_workingList[indexOfFeature - 1], _workingList[indexOfFeature]);
 
             RefreshFeaturesList();
         }
 
         public void MoveDown(IFeature feature)
         {
-            int indexOfFeature = _features.IndexOf(feature);
+            int indexOfFeature = _workingList.IndexOf(feature);
 
             // Don't do anything if it's at the end
-            if (indexOfFeature == _features.Count - 1) return;
+            if (indexOfFeature == _workingList.Count - 1) return;
 
-            (_features[indexOfFeature], _features[indexOfFeature + 1]) = (_features[indexOfFeature + 1], _features[indexOfFeature]);
+            (_workingList[indexOfFeature], _workingList[indexOfFeature + 1]) = (_workingList[indexOfFeature + 1], _workingList[indexOfFeature]);
 
 			RefreshFeaturesList();
 		}
 
         public void Delete(IFeature feature)
         {
-            _features.Remove(feature);
+            _workingList.Remove(feature);
             feature.Dispose();
 
 			RefreshFeaturesList();
 		}
 
-        public void Dispose()
-        {
-			_state.Dispose();
+		public override void DisposeComponent()
+		{
+			for (int i = 0; i < _workingList.Count; i++)
+				_workingList[i].Dispose();
+		}
 
-            for (int i = 0; i < _features.Count; i++)
-                _features[i].Dispose();
-        }
-
-        void RefreshFeaturesList() => _state.Features = _features.Select(f => f.State).ToArray();
+        void RefreshFeaturesList() => Features = _workingList.ToArray();
 	}
 }

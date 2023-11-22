@@ -7,7 +7,7 @@ using ABCo.Multicam.Server.Hosting.Clients;
 
 namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 {
-	public interface ISwitcherConfigPresenter : IClientService<IDispatchedServerComponent<ISwitcherFeature>>
+	public interface ISwitcherConfigPresenter : IClientService<Dispatched<ISwitcherFeature>>
 	{
 		void Refresh(SwitcherConfig config, SwitcherPlatformCompatibilityValue compatibility);
 		void SelectedChanged();
@@ -23,14 +23,14 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 
 	public class SwitcherConfigPresenter : ISwitcherConfigPresenter
 	{
-		readonly IDispatchedServerComponent<ISwitcherFeature> _feature;
+		readonly Dispatched<ISwitcherFeature> _feature;
 		readonly IClientInfo _info;
 		SwitcherType? _oldType;
 		ISwitcherSpecificConfigPresenter? _currentConfigPresenter;
 
 		public ISwitcherConfigVM VM { get; }
 
-		public SwitcherConfigPresenter(IDispatchedServerComponent<ISwitcherFeature> feature, IClientInfo info)
+		public SwitcherConfigPresenter(Dispatched<ISwitcherFeature> feature, IClientInfo info)
 		{
 			_feature = feature;
 			_info = info;
@@ -54,8 +54,8 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switcher
 				// Update the inner VM
 				_currentConfigPresenter = config.Type switch
 				{
-					SwitcherType.Dummy => _info.Get<ISwitcherDummyConfigPresenter, IDispatchedServerComponent<ISwitcherFeature>>(_feature),
-					SwitcherType.ATEM => _info.Get<ISwitcherATEMConfigPresenter, IDispatchedServerComponent<ISwitcherFeature>>(_feature),
+					SwitcherType.Dummy => _info.Get<ISwitcherDummyConfigPresenter, Dispatched<ISwitcherFeature>>(_feature),
+					SwitcherType.ATEM => _info.Get<ISwitcherATEMConfigPresenter, Dispatched<ISwitcherFeature>>(_feature),
 					_ => null
 				};
 
