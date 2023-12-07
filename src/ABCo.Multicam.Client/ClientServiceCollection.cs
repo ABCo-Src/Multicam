@@ -9,7 +9,7 @@ namespace ABCo.Multicam.Client
 		readonly Dictionary<Type, Delegate> _transientDict = new();
 		readonly IServiceProvider _provider;
 
-		internal ClientServices(IServiceProvider provider, int connectionId, IThreadDispatcher dispatcher, IServerConnection serverConnection, Dictionary<Type, Delegate> transientDict)
+		internal ClientServices(IServiceProvider provider, int connectionId, IThreadDispatcher dispatcher, IMulticamServer serverConnection, Dictionary<Type, Delegate> transientDict)
 		{
             Dispatcher = dispatcher;
             ConnectionID = connectionId;
@@ -20,7 +20,7 @@ namespace ABCo.Multicam.Client
 
 		public int ConnectionID { get; }
 		public IThreadDispatcher Dispatcher { get; }
-        public IServerConnection ServerConnection { get; }
+        public IMulticamServer ServerConnection { get; }
 
         public void Dispose() => ServerConnection.Disconnect(this);
 		public T Get<T>() where T : class
@@ -90,6 +90,6 @@ namespace ABCo.Multicam.Client
         public void AddTransient<T, T1, T2, T3>(Func<T1, T2, T3, IClientInfo, T> factory) where T : IClientService<T1, T2, T3> =>
             _transientDict.Add(typeof(T), factory);
 
-        public IClientInfo Build(IServiceProvider provider, IThreadDispatcher dispatcher, IServerConnection server, int id) => new ClientServices(provider, id, dispatcher, server, _transientDict);
+        public IClientInfo Build(IServiceProvider provider, IThreadDispatcher dispatcher, IMulticamServer server, int id) => new ClientServices(provider, id, dispatcher, server, _transientDict);
     }
 }

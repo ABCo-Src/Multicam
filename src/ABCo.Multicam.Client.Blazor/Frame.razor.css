@@ -1,0 +1,74 @@
+﻿.frame {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    grid-template-rows: 1fr;
+    grid-template-areas: "menu content";
+}
+
+.menu {
+    grid-area: menu;
+    background-color: var(--col-panelback);
+
+    display: grid;
+    grid-template-rows: 100%;
+    grid-template-columns: 1fr 3px;
+    grid-template-areas: "content rightBorder";
+}
+
+.menu .rightBorder {
+    grid-area: rightBorder;
+    background: var(--gradient-vertical);
+    height: 100%;
+}
+
+.menu .content {
+    grid-area: content;
+
+    display: grid;
+    grid-template-rows: auto auto auto 1fr auto;
+    grid-template-areas:
+        "logo"
+        "support"
+        "features"
+        "_"
+        "management";
+    height: 100%;
+    overflow-y: auto;
+}
+
+.menu hr {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.itemsSupport { grid-area: support; }
+.itemsFeatures { grid-area: features; }
+.itemsManagement { grid-area: management; margin-bottom: 10px; }
+
+.selectedPage {
+    grid-area: content;
+}
+
+.logo {
+    display: flex;
+    padding-left: 20px;
+    grid-area: logo;
+}
+
+.abcoLogo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    line-height: 0px;
+    margin: 10px 0 0 0;
+}
+
+.abcoLogo img {
+    height: 20px;
+}
+
+.abcoLogo .abcoMulticamText {
+    margin-left: 2px;
+    font-size: 27px;
+    margin-top: -5px;
+}

@@ -30,6 +30,7 @@ namespace ABCo.Multicam.Client
 			// Register presenters
 			container.AddScoped<IMainUIPresenter, MainUIPresenter>();
 
+			container.AddTransient<IFrameUIPresenter>(s => new FrameUIPresenter(s));
 			container.AddTransient<IHostingPresenter, Dispatched<IHostingManager>>((p1, s) => new HostingPresenter(p1, s));
 			container.AddTransient<IMainFeatureCollectionPresenter, Dispatched<IMainFeatureCollection>>((p1, s) => new MainFeatureCollectionPresenter(p1, s));
             container.AddTransient<IFeaturePresenter, Dispatched<IFeature>>((p1, s) => new FeaturePresenter(p1, s));
@@ -41,7 +42,6 @@ namespace ABCo.Multicam.Client
 			container.AddTransient<ISwitcherATEMConfigPresenter, Dispatched<ISwitcherFeature>>((p1, s) => new SwitcherATEMConfigPresenter(p1, s));
 
 			// Register view-models
-            container.AddTransient<IMainUIVM, IMainUIPresenter, IProjectFeaturesVM, IServerHostingVM>((p1, p2, p3, s) => new MainUIVM(p1, p2, p3));
             container.AddTransient<IServerHostingVM, IHostingPresenter, IHostnameConfigVM, IHostingExecutionVM>((p1, p2, p3, s) => new ServerHostingVM(p1, p2, p3));
             container.AddTransient<IHostnameConfigVM, IHostingPresenter>((p1, s) => new HostnameConfigVM(p1));
             container.AddTransient<IHostingExecutionVM, IHostingPresenter>((p1, s) => new HostingExecutionVM(p1));

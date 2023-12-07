@@ -16,14 +16,14 @@ namespace ABCo.Multicam.Server.Features
         void Delete(IFeature feature);
     }
 
-    public partial class MainFeatureCollection : BindableServerComponent<IMainFeatureCollection>, IMainFeatureCollection
+    public partial class ServerFeatures : BindableServerComponent<IMainFeatureCollection>, IMainFeatureCollection
     {
 		[ObservableProperty] IReadOnlyList<IFeature> _features = Array.Empty<IFeature>();
 
         List<IFeature> _workingList;
 		readonly IServerInfo _info;
 
-		public MainFeatureCollection(IServerInfo info) : base(info)
+		public ServerFeatures(IServerInfo info) : base(info)
         {
             _info = info;
 			_workingList = new List<IFeature>();

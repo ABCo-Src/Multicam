@@ -32,11 +32,12 @@ namespace ABCo.Multicam.Client.Presenters
 		public MainUIPresenter(IClientInfo info) => _info = info;
 
 		public void Init()
-		{			
+		{
 			var featuresVM = _info.ServerConnection.GetFeatures().ClientNotifier.GetOrAddClientEndpoint<IMainFeatureCollectionPresenter>(_info).VM;
 			var hostingVM = _info.ServerConnection.GetHostingManager().ClientNotifier.GetOrAddClientEndpoint<IHostingPresenter>(_info).VM;
-			VM = _info.Get<IMainUIVM, IMainUIPresenter, IProjectFeaturesVM, IServerHostingVM>(this, featuresVM, hostingVM);
-        }
+			var frameVM = _info.Get<IFrameUIPresenter>().VM;
+			VM = new MainUIVM(this, featuresVM, frameVM, hostingVM);
+		}
 
 		public void OpenMenu(ISideMenuEmbeddableVM vm, string title, Action onClose)
 		{

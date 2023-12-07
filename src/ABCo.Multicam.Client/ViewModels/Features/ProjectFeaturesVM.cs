@@ -3,10 +3,11 @@ using ABCo.Multicam.Client.Presenters.Features;
 using ABCo.Multicam.Client.Structures;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.ComponentModel;
+using ABCo.Multicam.Client.ViewModels.Frames;
 
 namespace ABCo.Multicam.Client.ViewModels.Features
 {
-	public interface IProjectFeaturesVM : IClientService<IMainFeatureCollectionPresenter>, IAnimationHandlingVM
+	public interface IProjectFeaturesVM : IClientService<IMainFeatureCollectionPresenter>, IAnimationHandlingVM, IPageVM
     {
 		IProjectFeaturesListItemVM? MobileView { get; set; }
         IProjectFeaturesListItemVM[] Items { get; set; }
@@ -23,6 +24,8 @@ namespace ABCo.Multicam.Client.ViewModels.Features
             get => _mobileView;
 			set => UpdateMobileView(value);
 		}
+
+		public AppPages Page => AppPages.Switchers;
 
 		public async void UpdateMobileView(IProjectFeaturesListItemVM? newVal)
 		{

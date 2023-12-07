@@ -20,6 +20,7 @@ h1:focus, p:focus {
     --col-btn-appbackdefault: #333;
     --col-foreground-darker: #bbb;
     --col-disabledtextbox: #444;
+    --col-focused-button: #555;
     --col-disabledbutton: #333;
     color: white;
 }
@@ -46,6 +47,7 @@ h1:focus, p:focus {
     --col-gradient3: #777;
     --col-gradient4: #888;
     --gradient-3431: linear-gradient(90deg, var(--col-gradient3) 0%, var(--col-gradient4) 50%, var(--col-gradient3) 90%, var(--col-gradient1) 100%);
+    --gradient-vertical: linear-gradient(0deg, var(--col-gradient1) 0%, var(--col-gradient2) 50%, var(--col-gradient1) 100%);
 }
 
 p, a {
@@ -138,6 +140,13 @@ body {
 
 .btnIcon:hover {
     cursor: pointer;
+}
+
+/* Outlines */
+.outlineHorizontalSeparator {
+    border: none;
+    height: 3px;
+    background: var(--gradient-3431);
 }
 
 /* Text/Combo Boxes */

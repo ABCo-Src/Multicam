@@ -10,7 +10,7 @@ namespace ABCo.Multicam.Server
 	public interface IClientInfo : IDisposable
 	{
 		int ConnectionID { get; }
-		IServerConnection ServerConnection { get; }
+		IMulticamServer ServerConnection { get; }
 		IThreadDispatcher Dispatcher { get; }
 
 		T Get<T>() where T : class;
@@ -27,7 +27,7 @@ namespace ABCo.Multicam.Server
 	{
 		IThreadDispatcher Dispatcher { get; }
 		IConnectedClientsManager ClientsManager { get; }
-		IServerConnection GetLocalClientConnection();
+		IMulticamServer GetLocalClientConnection();
 
 		T Get<T>() where T : class;
         T Get<T, T1>(T1 param1) where T : class, IServerService<T1>;
@@ -37,13 +37,13 @@ namespace ABCo.Multicam.Server
 
 	public class ServerInfo : IServerInfo
 	{
-		readonly IServerConnection _localClientConnection;
+		readonly IMulticamServer _localClientConnection;
 
 		public IThreadDispatcher Dispatcher { get; }
 		public IConnectedClientsManager ClientsManager => Get<IConnectedClientsManager>();
-		public IServerConnection GetLocalClientConnection() => _localClientConnection;
+		public IMulticamServer GetLocalClientConnection() => _localClientConnection;
 
-		public ServerInfo(IThreadDispatcher dispatcher, IServerConnection connection)
+		public ServerInfo(IThreadDispatcher dispatcher, IMulticamServer connection)
 		{
 			Dispatcher = dispatcher;
 			_localClientConnection = connection;

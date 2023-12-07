@@ -67,6 +67,6 @@
 
 .sidePanel .rightBorder {
     grid-area: rightBorder;
-    background: linear-gradient(0deg, var(--col-gradient1) 0%, var(--col-gradient2) 50%, var(--col-gradient1) 100%);
+    background: var(--gradient-vertical);
     height: 100%;
 }

@@ -12,7 +12,7 @@ using ABCo.Multicam.Server.Features.Switchers.Core.ATEM.Native;
 
 namespace ABCo.Multicam.Server
 {
-	public interface IServerConnection
+	public interface IMulticamServer
 	{
 		IPlatformInfo GetPlatformInfo();
 		IMainFeatureCollection GetFeatures();
@@ -20,7 +20,7 @@ namespace ABCo.Multicam.Server
 		void Disconnect(IClientInfo info);
 	}
 
-	public class LocalMulticamServer : IServerConnection
+	public class LocalMulticamServer : IMulticamServer
     {
 		public IServerInfo ServerInfo { get; }
 
@@ -42,7 +42,7 @@ namespace ABCo.Multicam.Server
 			Server.ServerInfo.AddSingleton<IHostingManager>(s => new HostingManager(s));
 
 			// Features
-			Server.ServerInfo.AddSingleton<IMainFeatureCollection>(s => new MainFeatureCollection(s));
+			Server.ServerInfo.AddSingleton<IMainFeatureCollection>(s => new ServerFeatures(s));
 			Server.ServerInfo.AddSingleton<IFeatureContentFactory>(s => new FeatureContentFactory(s));
 			Server.ServerInfo.AddTransient<IUnsupportedLiveFeature>((s) => new UnsupportedLiveFeature(s));
 			Server.ServerInfo.AddTransient<ISwitcherFeature>((s) => new SwitcherFeature(s));

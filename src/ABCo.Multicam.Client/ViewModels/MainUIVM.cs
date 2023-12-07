@@ -4,14 +4,16 @@ using ABCo.Multicam.Client.ViewModels.Features;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.ComponentModel;
 using ABCo.Multicam.Client.ViewModels.Hosting;
+using ABCo.Multicam.Client.ViewModels.Frames;
 
 namespace ABCo.Multicam.Client.ViewModels
 {
-	public interface IMainUIVM : IClientService<IMainUIPresenter, IProjectFeaturesVM, IServerHostingVM>, INotifyPropertyChanged, IAnimationHandlingVM
+	public interface IMainUIVM : INotifyPropertyChanged, IAnimationHandlingVM
 	{
 		ISideMenuEmbeddableVM? MenuVM { get; set; }
 		IProjectFeaturesVM FeaturesVM { get; }
 		IServerHostingVM HostingVM { get; }
+		IFrameVM Frame { get; }
         string MenuTitle { get; set; }
 
 		void CloseMenuButton();
@@ -28,7 +30,8 @@ namespace ABCo.Multicam.Client.ViewModels
 			set => UpdateMenuVM(value);
 		}
 
-        public IProjectFeaturesVM FeaturesVM { get; }
+		public IFrameVM Frame { get; }
+		public IProjectFeaturesVM FeaturesVM { get; }
 		public IServerHostingVM HostingVM { get; }
 
 		public async void UpdateMenuVM(ISideMenuEmbeddableVM? newVal)
@@ -40,10 +43,11 @@ namespace ABCo.Multicam.Client.ViewModels
 
 		[ObservableProperty] string _menuTitle = "";
 
-		public MainUIVM(IMainUIPresenter presenter, IProjectFeaturesVM featuresVM, IServerHostingVM hostingVM)
+		public MainUIVM(IMainUIPresenter presenter, IProjectFeaturesVM featuresVM, IFrameVM frame, IServerHostingVM hostingVM)
 		{
 			_presenter = presenter;
 			FeaturesVM = featuresVM;
+			Frame = frame;
 			HostingVM = hostingVM;
 		}
 

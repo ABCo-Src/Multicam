@@ -8,7 +8,8 @@
 
 <div class="mainView">
 
-	<!-- Side Menu -->
+	<Frame VM="VM.Frame" />
+
 	@if (VM.MenuVM != null)
 	{
 		<div class="sidePanel @SidePanelClasses">
@@ -17,9 +18,9 @@
 	}
 
 	<!-- Main Content -->
-	<div class="content">
+	<!--<div class="content">
 		<FeatureView VM="VM.FeaturesVM" HostingVM="VM.HostingVM" />
-	</div>
+	</div>-->
 </div>
 
 @code {

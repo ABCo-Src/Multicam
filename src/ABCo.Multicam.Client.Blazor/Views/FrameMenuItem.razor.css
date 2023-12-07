@@ -1,0 +1,29 @@
+﻿li {
+    cursor: pointer;
+    padding: 10px 0 10px 20px;
+    
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas: "content rightArrow";
+}
+
+li p { grid-area: content; }
+
+li.selected {
+    background-color: var(--col-disabledtextbox);
+}
+
+li .rightArrow {
+    visibility: none;
+    grid-area: rightArrow;
+    line-height: 0px;
+    padding-right: 10px;
+}
+
+li .rightArrow img {
+    width: 20px;
+}
+
+li:hover .rightArrow, li.selected .rightArrow {
+    visibility: visible;
+}
