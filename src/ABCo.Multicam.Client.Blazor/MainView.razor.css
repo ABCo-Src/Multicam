@@ -26,36 +26,9 @@
     box-sizing: border-box;
 }
 
-.mainView .content {
-    grid-area: content;
-    box-sizing: border-box;
-    height: 100%;
-}
-
-.sidePanel {
-    grid-area: panel;
-    animation: editPanelSlideIn 0.2s ease-out;
-    z-index: 10;
-
-    /* Mobile specific */
-    width: 100%;
-    position: absolute;
-}
-
-@media (min-width: 800px) {
-    .mainView {
-        display: grid;
-        grid-template-rows: 100%;
-        grid-template-columns: auto 1fr;
-        grid-template-areas: "panel content";
-    }
-
-    .sidePanel {
-        width: 400px;
-        position: unset;
-    }
-}
-
-.slideOut {
-    animation: editPanelSlideOut 0.2s ease-out forwards;
-}
+/*.mainView {
+    display: grid;
+    grid-template-rows: 100%;
+    grid-template-columns: auto 1fr;
+    grid-template-areas: "panel content";
+}*/

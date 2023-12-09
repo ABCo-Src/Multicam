@@ -1,42 +1,30 @@
 ﻿using ABCo.Multicam.Server;
-using ABCo.Multicam.Client.Presenters.Features;
 using ABCo.Multicam.Client.Structures;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.ComponentModel;
 using ABCo.Multicam.Client.ViewModels.Frames;
+using ABCo.Multicam.Client.Presenters.Features.Switchers;
 
 namespace ABCo.Multicam.Client.ViewModels.Features
 {
-	public interface IProjectFeaturesVM : IClientService<IMainFeatureCollectionPresenter>, IAnimationHandlingVM, IPageVM
+    public interface ISwitcherListVM : IClientService<ISwitcherCollectionPresenter>, IPageVM, INotifyPropertyChanged
     {
-		IProjectFeaturesListItemVM? MobileView { get; set; }
-        IProjectFeaturesListItemVM[] Items { get; set; }
+		ISwitcherListItemVM? MobileView { get; set; }
+        ISwitcherListItemVM[] Items { get; set; }
 		void CreateFeature(CursorPosition pos);
     }
 
-    public partial class ProjectFeaturesVM : ViewModelBase, IProjectFeaturesVM
+    public partial class SwitcherListVM : ViewModelBase, ISwitcherListVM
     {
-		readonly IMainFeatureCollectionPresenter _presenter;
+		readonly ISwitcherCollectionPresenter _presenter;
 
-		IProjectFeaturesListItemVM? _mobileView;
-        public IProjectFeaturesListItemVM? MobileView
-        {
-            get => _mobileView;
-			set => UpdateMobileView(value);
-		}
+        public ISwitcherListItemVM? MobileView { get; set; }
 
 		public AppPages Page => AppPages.Switchers;
 
-		public async void UpdateMobileView(IProjectFeaturesListItemVM? newVal)
-		{
-			await WaitForAnimationHandler(nameof(MobileView));
-			_mobileView = newVal;
-			OnPropertyChanged(new PropertyChangedEventArgs(nameof(MobileView)));
-		}
+		[ObservableProperty] ISwitcherListItemVM[] _items = Array.Empty<ISwitcherListItemVM>();
 
-		[ObservableProperty] IProjectFeaturesListItemVM[] _items = Array.Empty<IProjectFeaturesListItemVM>();
-
-		public ProjectFeaturesVM(IMainFeatureCollectionPresenter presenter) => _presenter = presenter;
+		public SwitcherListVM(ISwitcherCollectionPresenter presenter) => _presenter = presenter;
         public void CreateFeature(CursorPosition pos) => _presenter.CreateFeature(pos);
     }
 }

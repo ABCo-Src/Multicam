@@ -1,13 +1,13 @@
 ﻿using ABCo.Multicam.Server;
-using ABCo.Multicam.Client.Presenters.Features.Switcher;
 using ABCo.Multicam.Client.ViewModels.Features;
 using ABCo.Multicam.Server.Hosting.Clients;
 using ABCo.Multicam.Server.Features;
+using ABCo.Multicam.Client.Presenters.Features.Switchers;
 
 namespace ABCo.Multicam.Client.Presenters.Features
 {
 
-	public interface IFeaturePresenter : IClientDataNotificationTarget<IFeature>
+    public interface IFeaturePresenter : IClientDataNotificationTarget<IFeature>
 	{
 		IFeatureVM VM { get; }
 		void OnTitleChange();

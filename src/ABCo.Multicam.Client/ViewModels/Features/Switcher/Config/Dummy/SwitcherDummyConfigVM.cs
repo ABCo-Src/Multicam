@@ -1,11 +1,11 @@
 ﻿using ABCo.Multicam.Server;
-using ABCo.Multicam.Client.Presenters.Features.Switcher.Config;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.ComponentModel;
+using ABCo.Multicam.Client.Presenters.Features.Switchers.Config;
 
 namespace ABCo.Multicam.Client.ViewModels.Features.Switcher.Types
 {
-	public interface ISwitcherDummyConfigVM : ISwitcherSpecificConfigVM, IClientService<ISwitcherDummyConfigPresenter>, INotifyPropertyChanged
+    public interface ISwitcherDummyConfigVM : ISwitcherSpecificConfigVM, IClientService<ISwitcherDummyConfigPresenter>, INotifyPropertyChanged
     {
         string SelectedMixBlockCount { get; set; }
 		int[] MixBlockCountOptions { get; }

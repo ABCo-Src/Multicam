@@ -6,18 +6,18 @@
 @using ABCo.Multicam.Client.ViewModels.Hosting;
 @inherits VMBoundComponent<IMainUIVM>
 
-<div class="sidePanel">
+<!--<div class="sidePanel">
 	<div class="rightBorder"></div>
 	<div class="content">
 		<div class="appWideTitlebar titlebar">
 			<p class="title">@VM.MenuTitle</p>
-			<a class="close btn btnIcon" @onclick=VM.CloseMenuButton><img src="_content/ABCo.Multicam.Client.Blazor/img/icons/smallCloseButton.svg" /></a>
+			<a class="close btn btnIcon" @onclick=VM.><img src="_content/ABCo.Multicam.Client.Blazor/img/icons/smallCloseButton.svg" /></a>
 		</div>
 
 		<hr class="appWideTitlebarSeparator titlebarSeparator" />
 
 		<div class="scrollArea">
-			@if (VM.MenuVM is ProjectFeaturesListItemVM listViewItem)
+			@if (VM.MenuVM is SwitcherListItemVM listViewItem)
 			{
 				<FeatureEditPanel VM="listViewItem" />
 			}
@@ -27,4 +27,4 @@
 			}
 		</div>
 	</div>
-</div>
+</div>-->

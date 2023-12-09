@@ -1,4 +1,5 @@
 ﻿using ABCo.Multicam.Client.ViewModels.Features;
+using ABCo.Multicam.Server.Features.Switchers;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace ABCo.Multicam.Server.Features
@@ -10,7 +11,7 @@ namespace ABCo.Multicam.Server.Features
     {
 		IReadOnlyList<IFeature> Features { get; }
 
-		void CreateFeature(FeatureTypes type);
+		void CreateSwitcher();
         void MoveUp(IFeature feature);
         void MoveDown(IFeature feature);
         void Delete(IFeature feature);
@@ -30,9 +31,9 @@ namespace ABCo.Multicam.Server.Features
 			RefreshFeaturesList();
 		}
 
-        public void CreateFeature(FeatureTypes type)
+        public void CreateSwitcher()
         {
-			_workingList.Add(_info.Get<IFeatureContentFactory>().GetLiveFeature(type));
+			_workingList.Add(_info.Get<ISwitcherFeature>());
 			RefreshFeaturesList();
 		}
 

@@ -1,4 +1,5 @@
-﻿using ABCo.Multicam.Server;
+﻿using ABCo.Multicam.Client.Presenters;
+using ABCo.Multicam.Server;
 using ABCo.Multicam.Server.General;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,11 +15,13 @@ namespace ABCo.Multicam.Client
             Dispatcher = dispatcher;
             ConnectionID = connectionId;
             ServerConnection = serverConnection;
+            Shared = new SharedVMs(this);
 			_provider = provider;
 			_transientDict = transientDict;
 		}
 
 		public int ConnectionID { get; }
+        public object Shared { get; }
 		public IThreadDispatcher Dispatcher { get; }
         public IMulticamServer ServerConnection { get; }
 

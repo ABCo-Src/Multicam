@@ -6,7 +6,7 @@ using System.ComponentModel;
 
 namespace ABCo.Multicam.Client.ViewModels.Hosting
 {
-	public interface IServerHostingVM : INotifyPropertyChanged, IClientService<IHostingPresenter, IHostnameConfigVM, IHostingExecutionVM>, ISideMenuEmbeddableVM
+	public interface IServerHostingVM : INotifyPropertyChanged, IClientService<IHostingPresenter, IHostnameConfigVM, IHostingExecutionVM>
 	{
 		IHostnameConfigVM HostnameVM { get; }
 		IHostingExecutionVM ExecutionVM { get; }

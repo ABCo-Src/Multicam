@@ -17,7 +17,7 @@ namespace ABCo.Multicam.Client.Presenters.Hosting
 	public class HostingPresenter : IHostingPresenter
 	{
 		bool _menuOpen = false;
-		readonly IMainUIPresenter _mainUI;
+		readonly IMainUIVM _mainUI;
 		readonly Dispatched<IHostingManager> _manager;
 
 		public IServerHostingVM VM { get; }
@@ -25,7 +25,7 @@ namespace ABCo.Multicam.Client.Presenters.Hosting
 		public HostingPresenter(Dispatched<IHostingManager> manager, IClientInfo info)
 		{
 			_manager = manager;
-			_mainUI = info.Get<IMainUIPresenter>();
+			_mainUI = info.Get<IMainUIVM>();
 
 			var hostnameConfigVM = info.Get<IHostnameConfigVM, IHostingPresenter>(this);
 			var hostingExecutionVM = info.Get<IHostingExecutionVM, IHostingPresenter>(this);
@@ -41,13 +41,13 @@ namespace ABCo.Multicam.Client.Presenters.Hosting
 
 		public void OnHostingMenuToggle()
 		{
-			if (_menuOpen)
-				_mainUI.CloseMenu();
-			else
-			{
-				_mainUI.OpenMenu(VM, "Hosting Options", () => _menuOpen = false);
-				_menuOpen = true;
-			}
+			//if (_menuOpen)
+			//	_mainUI.CloseMenu();
+			//else
+			//{
+			//	_mainUI.OpenMenu(VM, "Hosting Options", () => _menuOpen = false);
+			//	_menuOpen = true;
+			//}
 		}
 
 		public void OnHostingModeChange() => _manager.CallDispatched(m => m.SetMode(VM.HostnameVM.SelectedMode == "Automatic"));

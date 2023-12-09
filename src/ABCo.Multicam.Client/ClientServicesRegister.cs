@@ -1,7 +1,7 @@
 ﻿using ABCo.Multicam.Client.Presenters;
 using ABCo.Multicam.Client.Presenters.Features;
-using ABCo.Multicam.Client.Presenters.Features.Switcher;
-using ABCo.Multicam.Client.Presenters.Features.Switcher.Config;
+using ABCo.Multicam.Client.Presenters.Features.Switchers;
+using ABCo.Multicam.Client.Presenters.Features.Switchers.Config;
 using ABCo.Multicam.Client.Presenters.Hosting;
 using ABCo.Multicam.Client.ViewModels;
 using ABCo.Multicam.Client.ViewModels.Features;
@@ -16,7 +16,7 @@ using ABCo.Multicam.Server.Hosting.Management;
 
 namespace ABCo.Multicam.Client
 {
-	public static class ClientServicesRegister
+    public static class ClientServicesRegister
     {
         //public static string Log { get; set; }
 
@@ -28,11 +28,10 @@ namespace ABCo.Multicam.Client
 			//);
 
 			// Register presenters
-			container.AddScoped<IMainUIPresenter, MainUIPresenter>();
+			container.AddScoped<IMainUIVM, MainUIVM>();
 
-			container.AddTransient<IFrameUIPresenter>(s => new FrameUIPresenter(s));
 			container.AddTransient<IHostingPresenter, Dispatched<IHostingManager>>((p1, s) => new HostingPresenter(p1, s));
-			container.AddTransient<IMainFeatureCollectionPresenter, Dispatched<IMainFeatureCollection>>((p1, s) => new MainFeatureCollectionPresenter(p1, s));
+			container.AddTransient<ISwitcherCollectionPresenter, Dispatched<IMainFeatureCollection>>((p1, s) => new SwitcherCollectionPresenter(p1, s));
             container.AddTransient<IFeaturePresenter, Dispatched<IFeature>>((p1, s) => new FeaturePresenter(p1, s));
 			container.AddTransient<ISwitcherFeaturePresenter, Dispatched<IFeature>>((p1, s) => new SwitcherFeaturePresenter(p1, s));
 			container.AddTransient<ISwitcherMixBlocksPresenter, ISwitcherFeatureVM, Dispatched<ISwitcherFeature>>((p1, p2, s) => new SwitcherMixBlocksPresenter(p1, p2, s));
@@ -45,8 +44,8 @@ namespace ABCo.Multicam.Client
             container.AddTransient<IServerHostingVM, IHostingPresenter, IHostnameConfigVM, IHostingExecutionVM>((p1, p2, p3, s) => new ServerHostingVM(p1, p2, p3));
             container.AddTransient<IHostnameConfigVM, IHostingPresenter>((p1, s) => new HostnameConfigVM(p1));
             container.AddTransient<IHostingExecutionVM, IHostingPresenter>((p1, s) => new HostingExecutionVM(p1));
-            container.AddTransient<IProjectFeaturesVM, IMainFeatureCollectionPresenter>((p1, s) => new ProjectFeaturesVM(p1));
-            container.AddTransient<IProjectFeaturesListItemVM, IMainFeatureCollectionPresenter, IFeature, IFeatureVM>((p1, p2, p3, s) => new ProjectFeaturesListItemVM(p1, p2, p3));
+            container.AddTransient<ISwitcherListVM, ISwitcherCollectionPresenter>((p1, s) => new SwitcherListVM(p1));
+            container.AddTransient<ISwitcherListItemVM, ISwitcherCollectionPresenter, IFeature, IFeatureVM>((p1, p2, p3, s) => new SwitcherListItemVM(p1, p2, p3));
             container.AddTransient<IFeatureVM, IFeaturePresenter>((p1, s) => new FeatureVM(p1));
 			container.AddTransient<ISwitcherFeatureVM>(s => new SwitcherFeatureVM());
             container.AddTransient<ISwitcherMixBlockVM>(s => new SwitcherMixBlockVM());

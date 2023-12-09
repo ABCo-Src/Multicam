@@ -1,9 +1,9 @@
 ﻿using ABCo.Multicam.Server;
-using ABCo.Multicam.Client.Presenters.Features.Switcher;
+using ABCo.Multicam.Client.Presenters.Features.Switchers;
 
 namespace ABCo.Multicam.Client.ViewModels.Features.Switcher
 {
-	public interface ISwitcherActButtonVM : ISwitcherButtonVM, IClientService<ISwitcherMixBlocksPresenter, int> { }
+    public interface ISwitcherActButtonVM : ISwitcherButtonVM, IClientService<ISwitcherMixBlocksPresenter, int> { }
 
 	public abstract class SwitcherActButtonVM : SwitcherButtonVM
 	{

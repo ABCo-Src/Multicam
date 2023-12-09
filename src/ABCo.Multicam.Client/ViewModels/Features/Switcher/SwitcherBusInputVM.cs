@@ -1,9 +1,9 @@
 ﻿using ABCo.Multicam.Server;
-using ABCo.Multicam.Client.Presenters.Features.Switcher;
+using ABCo.Multicam.Client.Presenters.Features.Switchers;
 
 namespace ABCo.Multicam.Client.ViewModels.Features.Switcher
 {
-	public interface ISwitcherBusInputVM : IClientService<ISwitcherMixBlocksPresenter, int, int>, ISwitcherButtonVM
+    public interface ISwitcherBusInputVM : IClientService<ISwitcherMixBlocksPresenter, int, int>, ISwitcherButtonVM
     {
 		int BusId { get; }
 	}

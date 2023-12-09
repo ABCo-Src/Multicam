@@ -1,10 +1,10 @@
 ﻿using ABCo.Multicam.Server;
-using ABCo.Multicam.Client.Presenters.Features.Switcher;
 using CommunityToolkit.Mvvm.ComponentModel;
+using ABCo.Multicam.Client.Presenters.Features.Switchers;
 
 namespace ABCo.Multicam.Client.ViewModels.Features.Switcher
 {
-	public interface ISwitcherConnectionVM : IClientService<SwitcherConnectionPresenter>
+    public interface ISwitcherConnectionVM : IClientService<SwitcherConnectionPresenter>
 	{
 		string StatusText { get; set; }
 		string StatusButtonText { get; set; }

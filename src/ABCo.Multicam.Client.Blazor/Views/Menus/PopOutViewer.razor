@@ -1,0 +1,36 @@
+﻿@using ABCo.Multicam.Client.Presenters;
+@using ABCo.Multicam.Server;
+@using ABCo.Multicam.Client.Services;
+@inherits VMBoundComponent<IPopOutVM>
+
+@if (VM.ShowMenu)
+{
+	<div class="menuContainer">
+		<div class="blackCurtain" @onclick=VM.Close></div>
+
+		@if (VM.ContextMenu != null)
+		{
+			<div class="menu contextMenu" style="left: @(VM.ContextMenu.Value.Pos.X)px; top: @(VM.ContextMenu.Value.Pos.Y)px;">
+				<p class="title">@VM.ContextMenu.Value.Title</p>
+
+				<ul>
+					@foreach (var item in VM.ContextMenu.Value.Items)
+					{
+						<li class="btn btnBorderless" @onclick="() => VM.ContextChooseItem(item)"><p>@item</p></li>
+					}
+				</ul>
+			</div>
+		}
+		
+		@if (VM.CustomContent != null)
+		{
+			<div class="menu customMenu">
+				<p class="title">@VM.CustomContent.Title</p>
+
+				<div class="content">
+
+				</div>
+			</div>
+		}
+	</div>
+}

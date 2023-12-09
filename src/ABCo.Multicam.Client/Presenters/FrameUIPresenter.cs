@@ -1,64 +1,71 @@
-﻿using ABCo.Multicam.Client.Presenters.Features;
+﻿using ABCo.Multicam.Client.Presenters.Features.Switchers;
 using ABCo.Multicam.Client.ViewModels.Frames;
 using ABCo.Multicam.Server;
+using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Client.Presenters
 {
-	public interface IFrameUIPresenter
+	public interface IFrameVM : INotifyPropertyChanged
 	{
+		IPageVM? SelectedPage { get; }
+		IFrameMenuTabVM[] TopTabs { get; }
+		IFrameMenuTabVM[] MiddleTabs { get; }
+		IFrameMenuTabVM[] BottomTabs { get; }
 		void Select(IFrameMenuTabVM vm);
-		IFrameVM VM { get; }
 	}
 
-	public class FrameUIPresenter : IFrameUIPresenter
+	public partial class FrameVM : ViewModelBase, IFrameVM
 	{
-		public IFrameVM VM { get; }
+		[ObservableProperty] IPageVM? _selectedPage;
+		[ObservableProperty] IFrameMenuTabVM[] _topTabs = Array.Empty<IFrameMenuTabVM>();
+		[ObservableProperty] IFrameMenuTabVM[] _middleTabs = Array.Empty<IFrameMenuTabVM>();
+		[ObservableProperty] IFrameMenuTabVM[] _bottomTabs = Array.Empty<IFrameMenuTabVM>();
 
-		public FrameUIPresenter(IClientInfo info)
+		public FrameVM(IClientInfo info)
 		{
-			var switcherPage = info.ServerConnection.GetFeatures().ClientNotifier.GetOrAddClientEndpoint<IMainFeatureCollectionPresenter>(info).VM;
+			var switcherPage = info.ServerConnection.GetFeatures().ClientNotifier.GetOrAddClientEndpoint<ISwitcherCollectionPresenter>(info).VM;
 
-			var vm = new FrameVM(null, 
-				new IFrameMenuTabVM[]
-				{
-					new FrameMenuTabVM("Welcome", this, null)
-				},
-				new IFrameMenuTabVM[]
-				{
-					new FrameMenuTabVM("Switchers / Video Devices", this, switcherPage),
-					new FrameMenuTabVM("Digital Tally", this, null),
-					new FrameMenuTabVM("Cut Recording", this, null)
-				},
-				new IFrameMenuTabVM[]
-				{
-					new FrameMenuTabVM("Automation", this, null),
-					new FrameMenuTabVM("Sync Devices", this, null)
-				});
+			_topTabs = new IFrameMenuTabVM[]
+			{
+				new FrameMenuTabVM("Welcome", this, null)
+			};
 
-			VM = vm;
+			_middleTabs = new IFrameMenuTabVM[]
+			{
+				new FrameMenuTabVM("Switchers / Video Devices", this, switcherPage),
+				new FrameMenuTabVM("Digital Tally", this, null),
+				new FrameMenuTabVM("Cut Recording", this, null)
+			};
+
+			_bottomTabs = new IFrameMenuTabVM[]
+			{
+				new FrameMenuTabVM("Automation", this, null),
+				new FrameMenuTabVM("Sync Devices", this, null)
+			};
 
 			// Start with the very first thing selected.
-			Select(VM.TopTabs[0]);
+			Select(TopTabs[0]);
 		}
 
 		public void Select(IFrameMenuTabVM vm)
 		{
 			// Deselect everything else
-			foreach (IFrameMenuTabVM a in VM.TopTabs)
+			foreach (IFrameMenuTabVM a in TopTabs)
 				a.IsSelected = false;
-			foreach (IFrameMenuTabVM b in VM.MiddleTabs)
+			foreach (IFrameMenuTabVM b in MiddleTabs)
 				b.IsSelected = false;
-			foreach (IFrameMenuTabVM c in VM.BottomTabs)
+			foreach (IFrameMenuTabVM c in BottomTabs)
 				c.IsSelected = false;
 
 			// Select this
 			vm.IsSelected = true;
-			VM.SelectedPage = vm.AssociatedPage;
+			SelectedPage = vm.AssociatedPage;
 		}
 	}
 }

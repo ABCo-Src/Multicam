@@ -9,17 +9,10 @@
 @{
 	((BlazorMainThreadDispatcher)clientInfo.Dispatcher).Associate(InvokeAsync);
 
-	var presenter = clientInfo.Get<IMainUIPresenter>();
-	presenter.Init();
+	var presenter = clientInfo.Get<IMainUIVM>();
 }
 
 <!-- Content -->
 <main>
-	@if (presenter.VM != null)
-	{
-		<MainView VM="presenter.VM" />
-	}
+	<MainView VM="presenter" />
 </main>
-
-<!-- Menu -->
-<MenuHandler />

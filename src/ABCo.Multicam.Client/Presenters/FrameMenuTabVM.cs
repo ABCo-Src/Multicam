@@ -24,15 +24,15 @@ namespace ABCo.Multicam.Client.ViewModels.Frames
         [ObservableProperty] string _name;
         [ObservableProperty] bool _isSelected;
 
-        readonly IFrameUIPresenter _presenter;
+        readonly IFrameVM _frame;
 
-		public FrameMenuTabVM(string name, IFrameUIPresenter presenter, IPageVM? associatedPage)
+		public FrameMenuTabVM(string name, IFrameVM frame, IPageVM? associatedPage)
 		{
 			Name = name;
             AssociatedPage = associatedPage;
-            _presenter = presenter;
+            _frame = frame;
 		}
 
-        public void Select() => _presenter.Select(this);
+        public void Select() => _frame.Select(this);
     }
 }

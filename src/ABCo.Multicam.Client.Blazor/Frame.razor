@@ -1,5 +1,6 @@
 ﻿@using ABCo.Multicam.Client.Blazor.Views
 @using ABCo.Multicam.Client.Blazor.Views.Features
+@using ABCo.Multicam.Client.Presenters;
 @using ABCo.Multicam.Client.ViewModels;
 @using ABCo.Multicam.Client.ViewModels.Features;
 @using ABCo.Multicam.Client.ViewModels.Frames;
@@ -62,13 +63,9 @@
 
 	<!-- Page Content -->
 	<div class="selectedPage">
-		@if (VM.SelectedPage is IProjectFeaturesVM vm)
+		@if (VM.SelectedPage is ISwitcherListVM vm)
 		{
-			<FeatureView VM="vm" />
+			<SwitcherView VM="vm" />
 		}
 	</div>
 </div>
-
-@code {
-
-}

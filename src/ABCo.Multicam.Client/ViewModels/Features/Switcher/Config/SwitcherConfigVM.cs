@@ -1,11 +1,11 @@
 ﻿using ABCo.Multicam.Server;
-using ABCo.Multicam.Client.Presenters.Features.Switcher;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.ComponentModel;
+using ABCo.Multicam.Client.Presenters.Features.Switchers;
 
 namespace ABCo.Multicam.Client.ViewModels.Features.Switcher
 {
-	public interface ISwitcherConfigVM : IClientService<ISwitcherConfigPresenter>, INotifyPropertyChanged
+    public interface ISwitcherConfigVM : IClientService<ISwitcherConfigPresenter>, INotifyPropertyChanged
     {
 		string[] Items { get; }
         string SelectedItem { get; set; }

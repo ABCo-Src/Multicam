@@ -1,45 +1,17 @@
-﻿@using ABCo.Multicam.Server.Features;
+﻿@using ABCo.Multicam.Client.Presenters;
+@using ABCo.Multicam.Server.Features;
 @using ABCo.Multicam.Client.Presenters.Features;
 @using ABCo.Multicam.Client.ViewModels;
 @using ABCo.Multicam.Client.Blazor.Views.Features;
 @using ABCo.Multicam.Client.Blazor.Views.Menus;
 @using ABCo.Multicam.Client.ViewModels.Features;
-@inherits AnimBasedVMBoundComponent<IMainUIVM>
+@inherits VMBoundComponent<IMainUIVM>
 
 <div class="mainView">
 
 	<Frame VM="VM.Frame" />
 
-	@if (VM.MenuVM != null)
-	{
-		<div class="sidePanel @SidePanelClasses">
-			<SidePanel VM="VM" />
-		</div>
-	}
-
-	<!-- Main Content -->
-	<!--<div class="content">
-		<FeatureView VM="VM.FeaturesVM" HostingVM="VM.HostingVM" />
-	</div>-->
 </div>
 
-@code {
-	// Animation code for side panel
-	string SidePanelClasses = "";
-
-	public override async Task PerformAnimationAndDelay(string propertyName)
-	{
-		if (VM.MenuVM != null)
-		{
-			if (propertyName is nameof(IMainUIVM.MenuVM) or nameof(IMainUIVM.MenuTitle))
-			{
-				SidePanelClasses = "noInteraction slideOut";
-				StateHasChanged();
-				await Task.Delay(200);
-			}
-		}
-		else SidePanelClasses = "";
-
-		await Task.CompletedTask;
-	}
-}
+<!-- Menu -->
+<PopOutViewer VM="VM.PopOut" />

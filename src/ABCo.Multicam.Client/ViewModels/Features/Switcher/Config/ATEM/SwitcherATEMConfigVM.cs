@@ -1,12 +1,12 @@
 ﻿using ABCo.Multicam.Server;
-using ABCo.Multicam.Client.Presenters.Features.Switcher.Config;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.ComponentModel;
 using ABCo.Multicam.Server.Features.Switchers;
+using ABCo.Multicam.Client.Presenters.Features.Switchers.Config;
 
 namespace ABCo.Multicam.Client.ViewModels.Features.Switcher.Config.ATEM
 {
-	public interface ISwitcherATEMConfigVM : IClientService<ISwitcherATEMConfigPresenter>, ISwitcherSpecificConfigVM, INotifyPropertyChanged 
+    public interface ISwitcherATEMConfigVM : IClientService<ISwitcherATEMConfigPresenter>, ISwitcherSpecificConfigVM, INotifyPropertyChanged 
 	{
 		string[] ConnectionTypes { get; }
 		bool IsIPAddressEditable { get; }

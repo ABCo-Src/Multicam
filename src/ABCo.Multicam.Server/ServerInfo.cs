@@ -11,6 +11,7 @@ namespace ABCo.Multicam.Server
 	{
 		int ConnectionID { get; }
 		IMulticamServer ServerConnection { get; }
+		object Shared { get; }
 		IThreadDispatcher Dispatcher { get; }
 
 		T Get<T>() where T : class;

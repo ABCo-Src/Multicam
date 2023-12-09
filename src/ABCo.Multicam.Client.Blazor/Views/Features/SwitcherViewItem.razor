@@ -1,0 +1,26 @@
+﻿@using ABCo.Multicam.Client.Blazor.Views.Features.Switchers
+@using ABCo.Multicam.Client.ViewModels.Features;
+@using ABCo.Multicam.Client.ViewModels.Features.Switcher;
+@inherits VMBoundComponent<ISwitcherListItemVM>
+
+<!-- Desktop appearance -->
+<div class="item">
+	<div class="titlebar">
+		<div class="title">
+			<SwitcherTitle VM="VM.Feature" />
+		</div>
+		<a class="hyperlink editBtn">@VM.EditBtnText</a>
+	</div>
+	<div class="bordered">
+		<div class="content">
+			@if (VM.Feature.Content is SwitcherFeatureVM switcherVM)
+			{
+				<SwitcherFeature VM="switcherVM" />
+			}
+			else
+			{
+				<p>Unsupported feature!</p>
+			}
+		</div>
+	</div>
+</div>
