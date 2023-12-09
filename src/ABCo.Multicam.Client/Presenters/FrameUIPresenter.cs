@@ -29,7 +29,7 @@ namespace ABCo.Multicam.Client.Presenters
 
 		public FrameVM(IClientInfo info)
 		{
-			var switcherPage = info.ServerConnection.GetFeatures().ClientNotifier.GetOrAddClientEndpoint<ISwitcherCollectionPresenter>(info).VM;
+			var switcherPage = info.ServerConnection.GetFeatures().ClientNotifier.GetOrAddClientEndpoint<ISwitcherListVM>(info);
 
 			_topTabs = new IFrameMenuTabVM[]
 			{

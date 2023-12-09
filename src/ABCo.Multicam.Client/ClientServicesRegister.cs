@@ -31,7 +31,7 @@ namespace ABCo.Multicam.Client
 			container.AddScoped<IMainUIVM, MainUIVM>();
 
 			container.AddTransient<IHostingPresenter, Dispatched<IHostingManager>>((p1, s) => new HostingPresenter(p1, s));
-			container.AddTransient<ISwitcherCollectionPresenter, Dispatched<IMainFeatureCollection>>((p1, s) => new SwitcherCollectionPresenter(p1, s));
+			container.AddTransient<ISwitcherListVM, Dispatched<IMainFeatureCollection>>((p1, s) => new SwitcherListVM(p1, s));
             container.AddTransient<IFeaturePresenter, Dispatched<IFeature>>((p1, s) => new FeaturePresenter(p1, s));
 			container.AddTransient<ISwitcherFeaturePresenter, Dispatched<IFeature>>((p1, s) => new SwitcherFeaturePresenter(p1, s));
 			container.AddTransient<ISwitcherMixBlocksPresenter, ISwitcherFeatureVM, Dispatched<ISwitcherFeature>>((p1, p2, s) => new SwitcherMixBlocksPresenter(p1, p2, s));
@@ -44,8 +44,7 @@ namespace ABCo.Multicam.Client
             container.AddTransient<IServerHostingVM, IHostingPresenter, IHostnameConfigVM, IHostingExecutionVM>((p1, p2, p3, s) => new ServerHostingVM(p1, p2, p3));
             container.AddTransient<IHostnameConfigVM, IHostingPresenter>((p1, s) => new HostnameConfigVM(p1));
             container.AddTransient<IHostingExecutionVM, IHostingPresenter>((p1, s) => new HostingExecutionVM(p1));
-            container.AddTransient<ISwitcherListVM, ISwitcherCollectionPresenter>((p1, s) => new SwitcherListVM(p1));
-            container.AddTransient<ISwitcherListItemVM, ISwitcherCollectionPresenter, IFeature, IFeatureVM>((p1, p2, p3, s) => new SwitcherListItemVM(p1, p2, p3));
+            container.AddTransient<ISwitcherListItemVM, ISwitcherListVM, IFeature, IFeatureVM>((p1, p2, p3, s) => new SwitcherListItemVM(p1, p2, p3));
             container.AddTransient<IFeatureVM, IFeaturePresenter>((p1, s) => new FeatureVM(p1));
 			container.AddTransient<ISwitcherFeatureVM>(s => new SwitcherFeatureVM());
             container.AddTransient<ISwitcherMixBlockVM>(s => new SwitcherMixBlockVM());

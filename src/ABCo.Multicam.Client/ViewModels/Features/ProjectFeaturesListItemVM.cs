@@ -7,7 +7,7 @@ using ABCo.Multicam.Client.Presenters.Features.Switchers;
 
 namespace ABCo.Multicam.Client.ViewModels.Features
 {
-    public interface ISwitcherListItemVM : IClientService<ISwitcherCollectionPresenter, IFeature, IFeatureVM>, INotifyPropertyChanged
+    public interface ISwitcherListItemVM : IClientService<ISwitcherListVM, IFeature, IFeatureVM>, INotifyPropertyChanged
 	{
 		IFeature NativeItem { get; }
 		IFeatureVM Feature { get; }
@@ -21,11 +21,11 @@ namespace ABCo.Multicam.Client.ViewModels.Features
 	{
 		public IFeature NativeItem { get; }
 
-		readonly ISwitcherCollectionPresenter _presenter;
+		readonly ISwitcherListVM _presenter;
 		[ObservableProperty] IFeatureVM _feature;
 		[ObservableProperty] string _editBtnText = "";
 
-		public SwitcherListItemVM(ISwitcherCollectionPresenter presenter, IFeature nativeItem, IFeatureVM innerVM)
+		public SwitcherListItemVM(ISwitcherListVM presenter, IFeature nativeItem, IFeatureVM innerVM)
 		{
 			NativeItem = nativeItem;
 			_presenter = presenter;
