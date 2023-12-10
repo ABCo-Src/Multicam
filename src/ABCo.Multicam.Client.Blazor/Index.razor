@@ -8,11 +8,10 @@
 
 @{
 	((BlazorMainThreadDispatcher)clientInfo.Dispatcher).Associate(InvokeAsync);
-
-	var presenter = clientInfo.Get<IMainUIVM>();
+	var mainVM = new MainUIVM(clientInfo);
 }
 
 <!-- Content -->
 <main>
-	<MainView VM="presenter" />
+	<MainView VM="mainVM" />
 </main>

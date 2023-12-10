@@ -1,0 +1,19 @@
+﻿@using ABCo.Multicam.Client.Presenters.Features.Switchers;
+@inherits VMBoundComponent<ISwitcherMixBlocksVM>
+
+@if (VM.MixBlocks.Length == 0)
+{
+	<p>Connect to the device to load buses.</p>
+}
+else
+{
+	<ul class="mixBlocks">
+
+		@foreach (var mixBlock in VM.MixBlocks)
+		{
+			<li>
+				<SwitcherMixBlock VM="mixBlock" />
+			</li>
+		}
+	</ul>
+}

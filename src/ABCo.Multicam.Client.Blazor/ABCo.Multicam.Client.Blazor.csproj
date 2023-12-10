@@ -20,8 +20,4 @@
     <ProjectReference Include="..\ABCo.Multicam.Client\ABCo.Multicam.Client.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Views\Pages\" />
-  </ItemGroup>
-
 </Project>

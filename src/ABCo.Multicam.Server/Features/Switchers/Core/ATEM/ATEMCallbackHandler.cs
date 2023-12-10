@@ -49,10 +49,10 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.ATEM
 
         class MixEffectBlockHandler : INativeATEMBlockCallbackHandler
         {
-            readonly ISwitcher _switcher;
+            readonly IRawSwitcher _switcher;
             readonly int _index;
 
-            public MixEffectBlockHandler(ISwitcher handler, int index) => (_switcher, _index) = (handler, index);
+            public MixEffectBlockHandler(IRawSwitcher handler, int index) => (_switcher, _index) = (handler, index);
 
             public void Notify(_BMDSwitcherMixEffectBlockEventType eventType)
             {

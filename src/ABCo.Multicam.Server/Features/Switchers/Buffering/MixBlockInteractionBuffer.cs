@@ -26,7 +26,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Buffering
     {
         readonly SwitcherMixBlock _mixBlock;
         readonly int _mixBlockIdx;
-        readonly ISwitcher _switcher;
+        readonly IRawSwitcher _switcher;
         readonly IMixBlockInteractionEmulator _fallbackEmulator;
         ISwitcherEventHandler? _eventHandler;
 
@@ -34,7 +34,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Buffering
         public int Preview { get; private set; }
         public CutBusMode CutBusMode { get; private set; }
 
-        public MixBlockInteractionBuffer(SwitcherMixBlock block, int mixBlockIdx, ISwitcher switcher, ISwitcherInteractionBufferFactory factory)
+        public MixBlockInteractionBuffer(SwitcherMixBlock block, int mixBlockIdx, IRawSwitcher switcher, ISwitcherInteractionBufferFactory factory)
         {
             _mixBlock = block;
             _mixBlockIdx = mixBlockIdx;

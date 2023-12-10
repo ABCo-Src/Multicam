@@ -2,8 +2,6 @@
 using ABCo.Multicam.Server.Features.Switchers;
 using ABCo.Multicam.Server.Features.Switchers.Data.Config;
 using ABCo.Multicam.Server.General;
-using ABCo.Multicam.Client.ViewModels.Features;
-using ABCo.Multicam.Server.Hosting.Clients;
 using ABCo.Multicam.Server.Hosting.Management;
 using ABCo.Multicam.Server.Features.Switchers.Buffering;
 using ABCo.Multicam.Server.Features.Switchers.Core;
@@ -14,19 +12,21 @@ namespace ABCo.Multicam.Server
 {
 	public interface IMulticamServer
 	{
+		public IThreadDispatcher Dispatcher { get; }
 		IPlatformInfo GetPlatformInfo();
-		IMainFeatureCollection GetFeatures();
+		ISwitcherList GetFeatures();
 		IHostingManager GetHostingManager();
-		void Disconnect(IClientInfo info);
 	}
 
 	public class LocalMulticamServer : IMulticamServer
     {
+		public IThreadDispatcher Dispatcher { get; }
 		public IServerInfo ServerInfo { get; }
 
 		public LocalMulticamServer(Func<IServerInfo, IPlatformInfo> getPlatformInfo, Func<NativeServerHostConfig, IServerInfo, INativeServerHost> getServerHost, Func<Action, IServerInfo, ILocalIPCollection> getAvaIP, IThreadDispatcher dispatcher)
 		{
 			// Initialize our services
+			Dispatcher = dispatcher;
 			ServerInfo = InitializeServices(getPlatformInfo, getServerHost, getAvaIP, dispatcher);
 		}
 
@@ -38,20 +38,17 @@ namespace ABCo.Multicam.Server
 			Server.ServerInfo.AddSingleton(getPlatformInfo);
 			Server.ServerInfo.AddTransient(getServerHost);
 			Server.ServerInfo.AddTransient(getAvaIP);
-			Server.ServerInfo.AddSingleton<IConnectedClientsManager>(s => new ConnectedClientsManager(s));
 			Server.ServerInfo.AddSingleton<IHostingManager>(s => new HostingManager(s));
 
 			// Features
-			Server.ServerInfo.AddSingleton<IMainFeatureCollection>(s => new ServerFeatures(s));
-			Server.ServerInfo.AddSingleton<IFeatureContentFactory>(s => new FeatureContentFactory(s));
-			Server.ServerInfo.AddTransient<IUnsupportedLiveFeature>((s) => new UnsupportedLiveFeature(s));
-			Server.ServerInfo.AddTransient<ISwitcherFeature>((s) => new SwitcherFeature(s));
+			Server.ServerInfo.AddSingleton<ISwitcherList>(s => new SwitcherList(s));
+			Server.ServerInfo.AddTransient<ISwitcher>((s) => new Switcher(s));
 
 			// Switcher
 			Server.ServerInfo.AddTransient<ISwitcherFactory>(s => new SwitcherFactory(s));
 			Server.ServerInfo.AddTransient<IHotSwappableSwitcherInteractionBuffer, SwitcherConfig>((p, s) => new HotSwappableSwitcherInteractionBuffer(p, s));
 			Server.ServerInfo.AddTransient<IPerSwitcherInteractionBuffer, SwitcherConfig>((p, s) => new PerSwitcherInteractionBuffer(p, s));
-			Server.ServerInfo.AddTransient<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, ISwitcher>((p1, p2, s) => new PerSpecSwitcherInteractionBuffer(p1, p2, s));
+			Server.ServerInfo.AddTransient<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, IRawSwitcher>((p1, p2, s) => new PerSpecSwitcherInteractionBuffer(p1, p2, s));
 			Server.ServerInfo.AddSingleton<ISwitcherInteractionBufferFactory>(s => new SwitcherInteractionBufferFactory());
 
 			Server.ServerInfo.AddTransient<IDummySwitcher, DummySwitcherConfig>((p1, s) => new DummySwitcher(p1));
@@ -67,9 +64,8 @@ namespace ABCo.Multicam.Server
 			return container;
 		}
 
-		public IMainFeatureCollection GetFeatures() => ServerInfo.Get<IMainFeatureCollection>();
+		public ISwitcherList GetFeatures() => ServerInfo.Get<ISwitcherList>();
 		public IHostingManager GetHostingManager() => ServerInfo.Get<IHostingManager>();
 		public IPlatformInfo GetPlatformInfo() => ServerInfo.Get<IPlatformInfo>();
-		public void Disconnect(IClientInfo info) => ServerInfo.Get<IConnectedClientsManager>().OnClientDisconnected(info);
 	}
 }

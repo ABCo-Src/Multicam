@@ -3,6 +3,7 @@ using ABCo.Multicam.Server.Features.Switchers.Core;
 using ABCo.Multicam.Server.Features.Switchers.Data;
 using ABCo.Multicam.Server.Features.Switchers.Data.Config;
 using CommunityToolkit.Mvvm.ComponentModel;
+using System.ComponentModel;
 
 namespace ABCo.Multicam.Server.Features.Switchers
 {
@@ -32,14 +33,20 @@ namespace ABCo.Multicam.Server.Features.Switchers
         void OnFailure(SwitcherError error);
     }
 
-    public interface ISwitcherFeature : IFeature 
+    public interface ISwitcher : INotifyPropertyChanged, IDisposable
 	{
+		// General
+		string Name { get; }
+		void Rename(string name);
+
+		// Data
 		SwitcherPlatformCompatibilityValue PlatformCompatibility { get; }
 		SwitcherConnectionStatus ConnectionStatus { get; }
 		string? ErrorMessage { get; }
 		SpecsSpecificInfo SpecsInfo { get; }
 		SwitcherConfig Config { get; }
 
+		// Actions
 		void ChangeConfig(SwitcherConfig newConfig);
 		void SetProgram(int mb, int val);
 		void SetPreview(int mb, int val);
@@ -49,7 +56,7 @@ namespace ABCo.Multicam.Server.Features.Switchers
 		void AcknowledgeError();
 	}
 
-	public partial class SwitcherFeature : BindableServerComponent<IFeature>, ISwitcherFeature, ISwitcherEventHandler
+	public partial class Switcher : BindableServerComponent<ISwitcher>, ISwitcher, ISwitcherEventHandler
     {
 		// The buffer that sits between the switcher and adds preview emulation, caching and more to all the switcher interactions.
 		readonly IHotSwappableSwitcherInteractionBuffer _buffer;
@@ -61,9 +68,7 @@ namespace ABCo.Multicam.Server.Features.Switchers
 		[ObservableProperty] SpecsSpecificInfo _specsInfo = new(new SwitcherSpecs(), Array.Empty<MixBlockState>());
 		[ObservableProperty] SwitcherConfig _config = new DummySwitcherConfig(4);
 
-		public FeatureTypes Type => FeatureTypes.Switcher;
-
-		public SwitcherFeature(IServerInfo info) : base(info)
+		public Switcher(IServerInfo info)
         {
             _buffer = info.Get<IHotSwappableSwitcherInteractionBuffer, SwitcherConfig>(Config);
 			_buffer.SetEventHandler(this);
@@ -117,6 +122,6 @@ namespace ABCo.Multicam.Server.Features.Switchers
 		}
 
 		// Dispose:
-		public override void DisposeComponent() => _buffer.Dispose();
+		public void Dispose() => _buffer.Dispose();
 	}
 }

@@ -2,7 +2,7 @@
 
 namespace ABCo.Multicam.Server.Features.Switchers.Buffering
 {
-	public interface IPerSpecSwitcherInteractionBuffer : IServerService<SwitcherSpecs, ISwitcher>
+	public interface IPerSpecSwitcherInteractionBuffer : IServerService<SwitcherSpecs, IRawSwitcher>
     {
         SwitcherSpecs Specs { get; }
         void SetEventHandler(ISwitcherEventHandler? eventHandler);
@@ -20,12 +20,12 @@ namespace ABCo.Multicam.Server.Features.Switchers.Buffering
     {
         readonly ISwitcherInteractionBufferFactory _factory;
 
-        readonly ISwitcher _rawSwitcher;
+        readonly IRawSwitcher _rawSwitcher;
         readonly IMixBlockInteractionBuffer[] _mixBlockBuffers;
 
         public SwitcherSpecs Specs { get; private set; }
 
-        public PerSpecSwitcherInteractionBuffer(SwitcherSpecs specs, ISwitcher switcher, IServerInfo servSource)
+        public PerSpecSwitcherInteractionBuffer(SwitcherSpecs specs, IRawSwitcher switcher, IServerInfo servSource)
         {
             _factory = servSource.Get<ISwitcherInteractionBufferFactory>();
 
@@ -62,8 +62,8 @@ namespace ABCo.Multicam.Server.Features.Switchers.Buffering
 
     public interface ISwitcherInteractionBufferFactory
     {
-        IMixBlockInteractionBuffer CreateMixBlock(SwitcherMixBlock mixBlock, int mixBlockIdx, ISwitcher switcher);
-        IMixBlockInteractionEmulator CreateMixBlockEmulator(SwitcherMixBlock mixBlock, int mixBlockIdx, ISwitcher switcher, IMixBlockInteractionBuffer parentBuffer);
+        IMixBlockInteractionBuffer CreateMixBlock(SwitcherMixBlock mixBlock, int mixBlockIdx, IRawSwitcher switcher);
+        IMixBlockInteractionEmulator CreateMixBlockEmulator(SwitcherMixBlock mixBlock, int mixBlockIdx, IRawSwitcher switcher, IMixBlockInteractionBuffer parentBuffer);
     }
 
     public class SwitcherInteractionBufferFactory : ISwitcherInteractionBufferFactory
@@ -71,10 +71,10 @@ namespace ABCo.Multicam.Server.Features.Switchers.Buffering
         //public ISwitcherInteractionBuffer CreateSync(ISwitcher switcher) => new SwitcherInteractionBuffer(switcher, this);
         //public async Task<ISwitcherInteractionBuffer> CreateAsync(ISwitcher switcher) => await Task.Run(() => CreateSync(switcher));
 
-        public IMixBlockInteractionBuffer CreateMixBlock(SwitcherMixBlock mixBlock, int mixBlockIdx, ISwitcher switcher) =>
+        public IMixBlockInteractionBuffer CreateMixBlock(SwitcherMixBlock mixBlock, int mixBlockIdx, IRawSwitcher switcher) =>
             new MixBlockInteractionBuffer(mixBlock, mixBlockIdx, switcher, this);
 
-        public IMixBlockInteractionEmulator CreateMixBlockEmulator(SwitcherMixBlock mixBlock, int mixBlockIdx, ISwitcher switcher, IMixBlockInteractionBuffer parentBuffer) =>
+        public IMixBlockInteractionEmulator CreateMixBlockEmulator(SwitcherMixBlock mixBlock, int mixBlockIdx, IRawSwitcher switcher, IMixBlockInteractionBuffer parentBuffer) =>
             new MixBlockInteractionEmulator(mixBlock, mixBlockIdx, switcher, parentBuffer);
     }
 }

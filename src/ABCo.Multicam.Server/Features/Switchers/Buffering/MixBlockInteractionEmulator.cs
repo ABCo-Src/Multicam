@@ -16,10 +16,10 @@ namespace ABCo.Multicam.Server.Features.Switchers.Buffering
     {
         readonly SwitcherMixBlock _mixBlock;
         readonly int _mixBlockIdx;
-        readonly ISwitcher _switcher;
+        readonly IRawSwitcher _switcher;
         readonly IMixBlockInteractionBuffer _parent;
 
-        public MixBlockInteractionEmulator(SwitcherMixBlock mixBlock, int mixBlockIdx, ISwitcher switcher, IMixBlockInteractionBuffer parent)
+        public MixBlockInteractionEmulator(SwitcherMixBlock mixBlock, int mixBlockIdx, IRawSwitcher switcher, IMixBlockInteractionBuffer parent)
         {
             _mixBlock = mixBlock;
             _mixBlockIdx = mixBlockIdx;

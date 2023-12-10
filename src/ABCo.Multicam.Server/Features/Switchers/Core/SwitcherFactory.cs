@@ -6,7 +6,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core
 	// Creates a switcher from a given config
 	public interface ISwitcherFactory
     {
-        ISwitcher GetSwitcher(SwitcherConfig config);
+        IRawSwitcher GetSwitcher(SwitcherConfig config);
     }
 
     public class SwitcherFactory : ISwitcherFactory
@@ -14,7 +14,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core
         readonly IServerInfo _servSource;
         public SwitcherFactory(IServerInfo servSource) => _servSource = servSource;
 
-        public ISwitcher GetSwitcher(SwitcherConfig config)
+        public IRawSwitcher GetSwitcher(SwitcherConfig config)
         {
             return config switch
             {

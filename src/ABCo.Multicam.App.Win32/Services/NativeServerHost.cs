@@ -17,12 +17,9 @@ namespace ABCo.Multicam.App.Win32.Services
 			});
 
 			// Setup services
-			var builder = new ClientServicesBuilder(webApp.Services);
 			webApp.Services.AddRazorPages();
 			webApp.Services.AddServerSideBlazor();
-			webApp.Services.AddScoped(p => builder.Build(p, new BlazorMainThreadDispatcher(), info.GetLocalClientConnection(), info.ClientsManager.NewConnectionId()));
-			ClientServicesRegister.AddServices(builder);
-			BlazorClientServicesRegister.AddServices(builder);
+			webApp.Services.AddScoped<IClientInfo>(p => new ClientInfo(new BlazorMainThreadDispatcher(), info.GetLocalClientConnection()));
 
 			// Build the app
 			_webApp = webApp.Build();

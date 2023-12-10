@@ -22,12 +22,9 @@ namespace ABCo.Multicam.App.Win32
 
 			// Setup our desktop client services
 			var desktopServiceCollection = new ServiceCollection();
-			var clientServiceBuilder = new ClientServicesBuilder(desktopServiceCollection, true);
 			desktopServiceCollection.AddWindowsFormsBlazorWebView();
 			desktopServiceCollection.AddBlazorWebViewDeveloperTools();
-			desktopServiceCollection.AddSingleton(p => clientServiceBuilder.Build(p, blazorDispatcher, server, server.ServerInfo.ClientsManager.NewConnectionId()));
-			ClientServicesRegister.AddServices(clientServiceBuilder);
-			BlazorClientServicesRegister.AddServices(clientServiceBuilder);
+			desktopServiceCollection.AddSingleton<IClientInfo>(p => new ClientInfo(blazorDispatcher, server));
 
 			// And build the app from this
 			var builtProvider = desktopServiceCollection.BuildServiceProvider();

@@ -24,7 +24,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Buffering
         // TODO: Handle interactions when disconnected
         readonly IServerInfo _servSource;
         readonly ISwitcherFactory _factory;
-        readonly ISwitcher _switcher;
+        readonly IRawSwitcher _switcher;
         IPerSpecSwitcherInteractionBuffer _currentBuffer;
         ISwitcherEventHandler? _eventHandler;
 
@@ -41,7 +41,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Buffering
             _switcher.SetEventHandler(this);
 
             // Request a connection status update, and use an empty buffer in the meantime
-            _currentBuffer = _servSource.Get<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, ISwitcher>(new(true), _switcher);
+            _currentBuffer = _servSource.Get<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, IRawSwitcher>(new(true), _switcher);
             _switcher.RefreshConnectionStatus();
         }
 
@@ -55,7 +55,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Buffering
 
         public void OnSpecsChange(SwitcherSpecs newSpecs)
         {
-            _currentBuffer = _servSource.Get<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, ISwitcher>(newSpecs, _switcher);
+            _currentBuffer = _servSource.Get<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, IRawSwitcher>(newSpecs, _switcher);
             _currentBuffer.SetEventHandler(_eventHandler);
 
             // If we're connected, update the values too

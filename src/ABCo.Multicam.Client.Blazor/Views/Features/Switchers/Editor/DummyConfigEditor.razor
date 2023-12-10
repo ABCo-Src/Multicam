@@ -1,9 +1,9 @@
-﻿@using ABCo.Multicam.Client.ViewModels.Features.Switcher.Types;
-@inherits VMBoundComponent<SwitcherDummyConfigVM>
+﻿@using ABCo.Multicam.Client.Presenters.Features.Switchers.Config.Dummy;
+@inherits VMBoundComponent<ISwitcherDummyConfigVM>
 
 <div class="grid">
 	<p class="gridTitle">Mix Block Count:</p>
-	<select class="combo mixBlockCount" value="@VM.SelectedMixBlockCount" @onchange="e => { VM.SelectedMixBlockCount = (string)e.Value!; VM.MixBlockCountChange(); }">
+	<select class="combo mixBlockCount" value="@VM.SelectedMixBlockCount" @onchange="e => { VM.SelectedMixBlockCount = (string)e.Value!; VM.OnUIChange(); }">
 		@foreach (var item in VM.MixBlockCountOptions)
 		{
 			<option>@item</option>
@@ -15,7 +15,7 @@
 	@foreach (var item in VM.MixBlockVMs)
 	{
 		<li class="indexedListItem">
-			<DummyMBConfigEditor VM="(DummySwitcherConfigMixBlockVM)item" />
+			<DummyMBConfigEditor VM="item" />
 		</li>
 	}
 </ul>

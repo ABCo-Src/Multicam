@@ -1,16 +1,10 @@
-﻿@using ABCo.Multicam.Server.Features.Switchers.Core.ATEM;
+﻿@using ABCo.Multicam.Client.Presenters.Features.Switchers.Config.ATEM;
+@using ABCo.Multicam.Server.Features.Switchers.Core.ATEM;
 @using ABCo.Multicam.Server.Features.Switchers;
 @using ABCo.Multicam.Server.General;
 @using ABCo.Multicam.Server;
 @using ABCo.Multicam.Server.Features.Switchers.Data;
-@using ABCo.Multicam.Client.ViewModels.Features.Switcher.Config.ATEM;
 @inherits VMBoundComponent<ISwitcherATEMConfigVM>
-@inject IClientInfo servSource
-
-@{
-	IPlatformInfo platformInfo = servSource.ServerConnection.GetPlatformInfo();
-}
-
 
 <div class="grid">
 	<p class="gridTitle connectionTag">Connection:</p>
@@ -39,14 +33,7 @@
 
 		@if (VM.CompatibilityMessage == SwitcherPlatformCompatibilityValue.UnsupportedPlatform)
 		{
-			@if (platformInfo.GetPlatformType() == PlatformType.Web)
-			{
-				<p class="message">ATEM Switchers can't be connected to from the web. Install the program on this device to do this, or install on another device and sync up with it.</p>
-			}
-			else
-			{
-				<p class="message">ATEM Switchers can't be connected to from this platform. Install the program on a device of a different platform, and sync up to that.</p>
-			}
+			<p class="message">ATEM Switchers can't be connected to from this platform. Install the program on a device of a different platform, and sync up to that.</p>
 		}
 		else
 		{

@@ -1,5 +1,4 @@
-﻿using ABCo.Multicam.Server.Hosting.Clients;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System.Net;
 using System.Net.Sockets;
 
@@ -12,7 +11,6 @@ namespace ABCo.Multicam.Server.Hosting.Management
 		string? ActiveHostName { get; }
 		bool IsConnected { get; }
 
-		IClientNotifier<IHostingManager> ClientNotifier { get; }
 		void ToggleOnOff();
         void SetMode(bool isAutomatic);
         void SetCustomModeConfig(string[] customModeConfig);
@@ -29,7 +27,7 @@ namespace ABCo.Multicam.Server.Hosting.Management
         readonly ILocalIPCollection _localIPAddresses;
 		INativeServerHost? _localNetworkHost;
 
-		public HostingManager(IServerInfo info) : base(info)
+		public HostingManager(IServerInfo info)
         {
             _info = info;
             _localIPAddresses = info.Get<ILocalIPCollection, Action>(HandleIPCollectionChange);
@@ -142,6 +140,6 @@ namespace ABCo.Multicam.Server.Hosting.Management
 			UpdateCurrentlyActiveConfig();
 		}
 
-		public override void DisposeComponent() => _localIPAddresses.Dispose();
+		public void Dispose() => _localIPAddresses.Dispose();
 	}
 }

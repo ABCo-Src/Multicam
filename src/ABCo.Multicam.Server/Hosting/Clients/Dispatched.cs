@@ -13,7 +13,7 @@ namespace ABCo.Multicam.Server.Hosting.Clients
 		readonly T _native;
 		readonly IThreadDispatcher _dispatcher;
 
-        public Dispatched(T native, IServerInfo info) : this(native, info.Dispatcher) { }
+        public Dispatched(T native, IMulticamServer info) : this(native, info.Dispatcher) { }
         private Dispatched(T native, IThreadDispatcher dispatcher)
         {
 			_native = native;
@@ -21,7 +21,8 @@ namespace ABCo.Multicam.Server.Hosting.Clients
 		}
 
 		public void CallDispatched(Action<T> act) => _dispatcher.Queue(() => act(_native));
-		public TVal Get<TVal>(Func<T, TVal> get) => get(_native); // IMPORTANT NOTE: We trust property getters to be safe for perf... They better be!
+		public void CallDispatchedAndUnpack<T2>(Dispatched<T2> toUnpack, Action<T, T2> act) => _dispatcher.Queue(() => act(_native, toUnpack._native));
+		public TVal Get<TVal>(Func<T, TVal> get) => get(_native); // IMPORTANT NOTE: We trust property getters to be dispatcher-safe for perf... They better be!
 		public Dispatched<TNew> CastTo<TNew>() where TNew : T => new Dispatched<TNew>((TNew)_native!, _dispatcher);
 	}
 }

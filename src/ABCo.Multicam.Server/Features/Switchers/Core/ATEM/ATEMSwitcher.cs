@@ -4,11 +4,11 @@ using ABCo.Multicam.Server.General;
 
 namespace ABCo.Multicam.Server.Features.Switchers.Core.ATEM
 {
-	public interface IATEMSwitcher : ISwitcher, IErrorHandlingTarget, IServerService<ATEMSwitcherConfig>
+	public interface IATEMSwitcher : IRawSwitcher, IErrorHandlingTarget, IServerService<ATEMSwitcherConfig>
     {
     }
 
-    public class ATEMSwitcher : Switcher, IATEMSwitcher
+    public class ATEMSwitcher : RawSwitcher, IATEMSwitcher
     {
         readonly ATEMSwitcherConfig _config;
         readonly IThreadDispatcher _mainThreadDispatcher;
@@ -24,7 +24,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.ATEM
             _servSource = servSource;
             _interactionThread = new(servSource);
             _compatibility = servSource.Get<IATEMPlatformCompatibility>();
-            _mainThreadDispatcher = servSource.Dispatcher;
+            _mainThreadDispatcher = servSource.GetLocalClientConnection().Dispatcher;
         }
 
         public override SwitcherPlatformCompatibilityValue GetPlatformCompatibility() => _compatibility.GetCompatibility();
