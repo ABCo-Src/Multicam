@@ -21,12 +21,13 @@
     padding: 10px;
     border: solid 1px white;
     background-color: black;
-    margin-right: 10px;
+    margin: 10px;
 }
 
 .menuContainerPushDown {
     display: flex;
     flex-direction: column;
+    height: 100%;
 }
 
 .menuContainerPushRight {
