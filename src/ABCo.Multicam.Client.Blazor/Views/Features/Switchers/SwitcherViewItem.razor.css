@@ -17,10 +17,13 @@
     display: grid;
     grid-template-columns: 1fr auto;
     grid-template-areas: "title editBtn";
+    align-content: center;
 }
 
 .titlebar .title {
     grid-area: title;
+    display: flex;
+    align-items: center;
 }
 
 .titlebar .title p {

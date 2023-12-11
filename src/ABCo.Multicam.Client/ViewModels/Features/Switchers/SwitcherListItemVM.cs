@@ -1,4 +1,6 @@
-﻿using ABCo.Multicam.Client.Presenters.Features.Switchers;
+﻿using ABCo.Multicam.Client.Presenters;
+using ABCo.Multicam.Client.Presenters.Features.Switchers;
+using ABCo.Multicam.Client.Structures;
 using ABCo.Multicam.Server.Features;
 using ABCo.Multicam.Server.Features.Switchers;
 using ABCo.Multicam.Server.Hosting.Clients;
@@ -11,6 +13,7 @@ namespace ABCo.Multicam.Client.ViewModels.Features.Switchers
 	{
 		ISwitcherVM Switcher { get; }
 		string Name { get; set; }
+		void OpenGeneralEditMenu(CursorPosition pos);
 		void Rename();
 		void MoveUp();
 		void MoveDown();
@@ -20,6 +23,7 @@ namespace ABCo.Multicam.Client.ViewModels.Features.Switchers
 	public partial class SwitcherListItemVM : BoundViewModelBase<ISwitcher>, ISwitcherListItemVM
 	{
 		readonly Dispatched<ISwitcherList> _list;
+
 		[ObservableProperty] ISwitcherVM _switcher;
 		[ObservableProperty] string _name = "";
 
@@ -28,6 +32,33 @@ namespace ABCo.Multicam.Client.ViewModels.Features.Switchers
 			_list = list;
 			_switcher = new SwitcherVM(feature, info);
 			OnServerStateChange(null);
+		}
+
+		public void OpenGeneralEditMenu(CursorPosition pos) => _info.Shared.PopOut.OpenContext(new ContextMenuDetails("", OnMenuOptionChoose, null, pos, new string[]
+		{
+			"Rename",
+			"Move Up",
+			"Move Down",
+			"Delete"
+		}));
+
+		void OnMenuOptionChoose(string s)
+		{
+			switch (s)
+			{
+				case "Rename":
+					Rename();
+					break;
+				case "Move Up":
+					MoveUp();
+					break;
+				case "Move Down":
+					MoveDown();
+					break;
+				case "Delete":
+					Delete();
+					break;
+			}
 		}
 
 		public void Rename() => _serverComponent.CallDispatched(l => l.Rename(Name));

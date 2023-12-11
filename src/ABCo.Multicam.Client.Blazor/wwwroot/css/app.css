@@ -98,6 +98,10 @@ body {
     padding: 15px;
 }
 
+.btnDropDown {
+    padding: 5px;
+}
+
 .btnDisabled {
     background-color: darkgray;
 }
@@ -108,6 +112,10 @@ body {
 
 .btnRedHint {
     color: red;
+}
+
+.btnUnderline {
+    text-decoration: underline;
 }
 
 .hyperlink {

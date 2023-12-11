@@ -52,6 +52,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers
 				};
 
 				// Update the inner VM
+				CurrentConfig?.Dispose();
 				CurrentConfig = config.Type switch
 				{
 					SwitcherType.Dummy => new SwitcherDummyConfigVM(_serverComponent, _info),
@@ -73,7 +74,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers
 
 		public override void Dispose()
 		{
-			
+			CurrentConfig?.Dispose();
 			base.Dispose();
 		}
 	}

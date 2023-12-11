@@ -9,7 +9,7 @@ namespace ABCo.Multicam.Client.Presenters
 		string Title { get; }
 	}
 
-	public record struct ContextMenuDetails(string Title, Action<string> OnSelect, Action? OnCancel, CursorPosition Pos, string[] Items);
+	public record class ContextMenuDetails(string Title, Action<string> OnSelect, Action? OnCancel, CursorPosition Pos, string[] Items);
 
 	public interface IPopOutVM : INotifyPropertyChanged
 	{
@@ -49,7 +49,7 @@ namespace ABCo.Multicam.Client.Presenters
 
 		public void ContextChooseItem(string item)
 		{
-			ContextMenu!.Value.OnSelect(item);
+			ContextMenu!.OnSelect(item);
 			Close();
 		}
 

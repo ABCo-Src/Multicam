@@ -9,7 +9,10 @@
 		<div class="title">
 			<p class="rawFeatureTitle">@VM.Name</p>
 		</div>
-		<a class="hyperlink editBtn">Edit</a>
+		<a class="btnDropDown btnLikeHighlight" @onclick="e=>VM.OpenGeneralEditMenu(new(e.ClientX, e.ClientY + (40 - e.OffsetY)))">
+			Edit
+			<img src="_content/ABCo.Multicam.Client.Blazor/img/icons/smallDownArrow.svg" />
+		</a>
 	</div>
 	<div class="bordered">
 		<div class="content">

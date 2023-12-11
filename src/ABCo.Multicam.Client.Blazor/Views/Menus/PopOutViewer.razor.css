@@ -21,6 +21,18 @@
     padding: 10px;
     border: solid 1px white;
     background-color: black;
+    margin-right: 10px;
+}
+
+.menuContainerPushDown {
+    display: flex;
+    flex-direction: column;
+}
+
+.menuContainerPushRight {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
 }
 
 .menu .title {
