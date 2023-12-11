@@ -2,9 +2,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.ComponentModel;
 
-namespace ABCo.Multicam.Client.Presenters.Features.Switchers.Config.Dummy
+namespace ABCo.Multicam.Client.Presenters.Features.Switchers.Config.Virtual
 {
-	public interface ISwitcherDummyConfigMixBlockVM : INotifyPropertyChanged
+	public interface ISwitcherVirtualConfigMixBlockVM : INotifyPropertyChanged
 	{
 		int[] InputCountItems { get; }
 		string InputCount { get; set; }
@@ -12,15 +12,15 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers.Config.Dummy
 		void InputCountChange();
 	}
 
-	public partial class SwitcherDummyConfigMixBlockVM : ViewModelBase, ISwitcherDummyConfigMixBlockVM
+	public partial class SwitcherVirtualConfigMixBlockVM : ViewModelBase, ISwitcherVirtualConfigMixBlockVM
 	{
-		readonly ISwitcherDummyConfigVM _parent;
+		readonly ISwitcherVirtualConfigVM _parent;
 
 		[ObservableProperty] int[] _inputCountItems = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 		[ObservableProperty] int _inputIndex;
 		[ObservableProperty] string _inputCount;
 
-		public SwitcherDummyConfigMixBlockVM(ISwitcherDummyConfigVM parent, int count, int index)
+		public SwitcherVirtualConfigMixBlockVM(ISwitcherVirtualConfigVM parent, int count, int index)
 		{
 			_parent = parent;
 			_inputCount = count.ToString();

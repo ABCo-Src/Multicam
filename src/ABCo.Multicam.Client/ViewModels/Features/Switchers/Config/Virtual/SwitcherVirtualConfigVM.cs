@@ -4,24 +4,24 @@ using ABCo.Multicam.Server.Features.Switchers.Data.Config;
 using ABCo.Multicam.Server.Hosting.Clients;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace ABCo.Multicam.Client.Presenters.Features.Switchers.Config.Dummy
+namespace ABCo.Multicam.Client.Presenters.Features.Switchers.Config.Virtual
 {
-	public interface ISwitcherDummyConfigVM : ISwitcherSpecificConfigVM
+	public interface ISwitcherVirtualConfigVM : ISwitcherSpecificConfigVM
     {
 		string SelectedMixBlockCount { get; set; }
 		int[] MixBlockCountOptions { get; }
-		ISwitcherDummyConfigMixBlockVM[] MixBlockVMs { get; set; }
+		ISwitcherVirtualConfigMixBlockVM[] MixBlockVMs { get; set; }
 		void OnUIChange();
     }
 
-	public partial class SwitcherDummyConfigVM : BoundViewModelBase<ISwitcher>, ISwitcherDummyConfigVM
+	public partial class SwitcherVirtualConfigVM : BoundViewModelBase<ISwitcher>, ISwitcherVirtualConfigVM
     {
 		public int[] MixBlockCountOptions => new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
 		[ObservableProperty] string _selectedMixBlockCount = "1";
-		[ObservableProperty] ISwitcherDummyConfigMixBlockVM[] _mixBlockVMs = Array.Empty<ISwitcherDummyConfigMixBlockVM>();
+		[ObservableProperty] ISwitcherVirtualConfigMixBlockVM[] _mixBlockVMs = Array.Empty<ISwitcherVirtualConfigMixBlockVM>();
 
-		public SwitcherDummyConfigVM(Dispatched<ISwitcher> feature, IClientInfo info) : base(feature, info) => OnServerStateChange(null);
+		public SwitcherVirtualConfigVM(Dispatched<ISwitcher> feature, IClientInfo info) : base(feature, info) => OnServerStateChange(null);
 
         public void OnUIChange()
         {
@@ -36,21 +36,21 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers.Config.Dummy
             for (int i = 0; i < end; i++)
                 newConfigMBs[i] = int.Parse(MixBlockVMs[i].InputCount);
 
-            _serverComponent.CallDispatched(f => f.ChangeConfig(new DummySwitcherConfig(newConfigMBs)));
+            _serverComponent.CallDispatched(f => f.ChangeConfig(new VirtualSwitcherConfig(newConfigMBs)));
         }
 
 		protected override void OnServerStateChange(string? changedProp)
 		{
 			var config = _serverComponent.Get(s => s.Config);
-			if (config is DummySwitcherConfig dummyConfig)
+			if (config is VirtualSwitcherConfig dummyConfig)
 			{
                 // Set the selected count
                 SelectedMixBlockCount = dummyConfig.MixBlocks.Length.ToString();
 
                 // Add the mix-blocks
-                var newMixBlocks = new ISwitcherDummyConfigMixBlockVM[dummyConfig.MixBlocks.Length];
+                var newMixBlocks = new ISwitcherVirtualConfigMixBlockVM[dummyConfig.MixBlocks.Length];
                 for (int i = 0; i < dummyConfig.MixBlocks.Length; i++)
-                    newMixBlocks[i] = new SwitcherDummyConfigMixBlockVM(this, dummyConfig.MixBlocks[i], i);
+                    newMixBlocks[i] = new SwitcherVirtualConfigMixBlockVM(this, dummyConfig.MixBlocks[i], i);
 
                 MixBlockVMs = newMixBlocks;
             }

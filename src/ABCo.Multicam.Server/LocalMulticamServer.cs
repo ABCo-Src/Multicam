@@ -51,7 +51,7 @@ namespace ABCo.Multicam.Server
 			Server.ServerInfo.AddTransient<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, IRawSwitcher>((p1, p2, s) => new PerSpecSwitcherInteractionBuffer(p1, p2, s));
 			Server.ServerInfo.AddSingleton<ISwitcherInteractionBufferFactory>(s => new SwitcherInteractionBufferFactory());
 
-			Server.ServerInfo.AddTransient<IDummySwitcher, DummySwitcherConfig>((p1, s) => new DummySwitcher(p1));
+			Server.ServerInfo.AddTransient<IVirtualSwitcher, VirtualSwitcherConfig>((p1, s) => new VirtualSwitcher(p1));
 			Server.ServerInfo.AddSingleton<IATEMPlatformCompatibility>(s => new ATEMPlatformCompatibility(s));
 			Server.ServerInfo.AddTransient<IATEMSwitcher, ATEMSwitcherConfig>((p1, s) => new ATEMSwitcher(p1, s));
 			Server.ServerInfo.AddTransient<IATEMConnection, ATEMSwitcherConfig, IATEMSwitcher>((p1, p2, s) => new ATEMConnection(p1, p2, s));

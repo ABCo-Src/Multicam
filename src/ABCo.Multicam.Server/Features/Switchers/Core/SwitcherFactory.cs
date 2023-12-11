@@ -18,7 +18,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core
         {
             return config switch
             {
-                DummySwitcherConfig d => _servSource.Get<IDummySwitcher, DummySwitcherConfig>(d),
+                VirtualSwitcherConfig d => _servSource.Get<IVirtualSwitcher, VirtualSwitcherConfig>(d),
                 ATEMSwitcherConfig a => _servSource.Get<IATEMSwitcher, ATEMSwitcherConfig>(a),
                 _ => throw new Exception("Unsupported switcher type!")
             };

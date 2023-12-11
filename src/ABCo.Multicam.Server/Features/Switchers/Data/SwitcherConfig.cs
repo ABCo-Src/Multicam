@@ -7,7 +7,7 @@
 
     public enum SwitcherType
     {
-        Dummy,
+        Virtual,
         ATEM
     }
 }

@@ -10,7 +10,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers
     {
         public record struct Mocks(
             Mock<IServerInfo> ServSource,
-            Mock<IDummySwitcher> DummySwitcher
+            Mock<IVirtualSwitcher> DummySwitcher
         );
 
         Mocks _mocks;
@@ -20,7 +20,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         {
             _mocks.DummySwitcher = new();
             _mocks.ServSource = new();
-            _mocks.ServSource.Setup(m => m.Get<IDummySwitcher, DummySwitcherConfig>(It.IsAny<DummySwitcherConfig>()))
+            _mocks.ServSource.Setup(m => m.Get<IVirtualSwitcher, VirtualSwitcherConfig>(It.IsAny<VirtualSwitcherConfig>()))
                 .Returns(_mocks.DummySwitcher.Object);
         }
 
@@ -29,9 +29,9 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         [TestMethod]
         public void GetSwitcher_Dummy()
         {
-            var config = new DummySwitcherConfig();
+            var config = new VirtualSwitcherConfig();
             Assert.AreEqual(_mocks.DummySwitcher.Object, Create().GetSwitcher(config));
-            _mocks.ServSource.Verify(m => m.Get<IDummySwitcher, DummySwitcherConfig>(config));
+            _mocks.ServSource.Verify(m => m.Get<IVirtualSwitcher, VirtualSwitcherConfig>(config));
         }
     }
 }

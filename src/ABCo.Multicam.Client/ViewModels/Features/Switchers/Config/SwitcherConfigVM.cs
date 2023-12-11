@@ -4,9 +4,9 @@ using ABCo.Multicam.Server.Features.Switchers.Data.Config;
 using ABCo.Multicam.Server.Hosting.Clients;
 using CommunityToolkit.Mvvm.ComponentModel;
 using ABCo.Multicam.Client.Presenters.Features.Switchers.Config.ATEM;
-using ABCo.Multicam.Client.Presenters.Features.Switchers.Config.Dummy;
 using System.ComponentModel;
 using ABCo.Multicam.Client.Structures;
+using ABCo.Multicam.Client.Presenters.Features.Switchers.Config.Virtual;
 
 namespace ABCo.Multicam.Client.Presenters.Features.Switchers
 {
@@ -59,7 +59,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers
 				CurrentConfig?.Dispose();
 				CurrentConfig = config.Type switch
 				{
-					SwitcherType.Dummy => new SwitcherDummyConfigVM(_serverComponent, _info),
+					SwitcherType.Virtual => new SwitcherVirtualConfigVM(_serverComponent, _info),
 					SwitcherType.ATEM => new SwitcherATEMConfigVM(_serverComponent, _info),
 					_ => throw new Exception("Unsupported switcher type!")
 				};
@@ -70,7 +70,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers
         {
             _serverComponent.CallDispatched(f => f.ChangeConfig(SelectedItem switch
             {
-                "Virtual" => new DummySwitcherConfig(4),
+                "Virtual" => new VirtualSwitcherConfig(4),
                 "ATEM" => new ATEMSwitcherConfig(null),
                 _ => throw new Exception("Unsupported selected mode given")
             }));

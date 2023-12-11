@@ -2,14 +2,14 @@
 
 namespace ABCo.Multicam.Server.Features.Switchers.Core
 {
-	public interface IDummySwitcher : IRawSwitcher, IServerService<DummySwitcherConfig> { }
+	public interface IVirtualSwitcher : IRawSwitcher, IServerService<VirtualSwitcherConfig> { }
 
-    public class DummySwitcher : RawSwitcher, IDummySwitcher
+    public class VirtualSwitcher : RawSwitcher, IVirtualSwitcher
     {
         readonly SwitcherSpecs _specs;
         readonly MixBlockState[] _states;
 
-        public DummySwitcher(DummySwitcherConfig config)
+        public VirtualSwitcher(VirtualSwitcherConfig config)
         {
             _specs = CreateSpecsFrom(config.MixBlocks);
 

@@ -1,6 +1,6 @@
 ﻿@using ABCo.Multicam.Client.Presenters.Features.Switchers;
 @using ABCo.Multicam.Client.Presenters.Features.Switchers.Config.ATEM;
-@using ABCo.Multicam.Client.Presenters.Features.Switchers.Config.Dummy;
+@using ABCo.Multicam.Client.Presenters.Features.Switchers.Config.Virtual;
 @using ABCo.Multicam.Server.Features.Switchers;
 @using ABCo.Multicam.Server.Features.Switchers.Data.Config;
 @using ABCo.Multicam.Client.ViewModels.Features.Switcher;
@@ -17,9 +17,9 @@
 </div>
 
 <div class="inner">
-	@if (VM.CurrentConfig is SwitcherDummyConfigVM dummyConfig)
+	@if (VM.CurrentConfig is SwitcherVirtualConfigVM dummyConfig)
 	{
-        <DummyConfigEditor VM="dummyConfig" />
+        <VirtualConfigEditor VM="dummyConfig" />
     }
     else if (VM.CurrentConfig is SwitcherATEMConfigVM atemConfig)
     {

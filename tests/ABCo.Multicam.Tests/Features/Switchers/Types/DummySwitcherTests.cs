@@ -13,7 +13,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
         SwitcherPreviewChangeInfo? _changedPreviewValue;
 
         Mock<ISwitcherEventHandler> _eventHandler = null!;
-        DummySwitcherConfig _config = null!;
+        VirtualSwitcherConfig _config = null!;
 
         [TestInitialize]
         public void SetupMocks()
@@ -25,17 +25,17 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
             _eventHandler.Setup(m => m.OnSpecsChange(It.IsAny<SwitcherSpecs>())).Callback<SwitcherSpecs>(s => _sentSpecs = s);
             _eventHandler.Setup(m => m.OnProgramValueChange(It.IsAny<SwitcherProgramChangeInfo>())).Callback<SwitcherProgramChangeInfo>(s => _changedProgramValue = s);
             _eventHandler.Setup(m => m.OnPreviewValueChange(It.IsAny<SwitcherPreviewChangeInfo>())).Callback<SwitcherPreviewChangeInfo>(s => _changedPreviewValue = s);
-            _config = new DummySwitcherConfig(4);
+            _config = new VirtualSwitcherConfig(4);
         }
 
-        public DummySwitcher Create(ISwitcherEventHandler? eventHandler)
+        public VirtualSwitcher Create(ISwitcherEventHandler? eventHandler)
         {
-            var obj = new DummySwitcher(_config);
+            var obj = new VirtualSwitcher(_config);
             obj.SetEventHandler(eventHandler);
             return obj;
         }
 
-        public DummySwitcher Create() => Create(_eventHandler.Object);
+        public VirtualSwitcher Create() => Create(_eventHandler.Object);
 
         [TestMethod]
         public void RefreshConnectionState()
@@ -50,7 +50,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
         [TestMethod]
         public void RefreshSpecs_ZeroMixBlocks()
         {
-            _config = new DummySwitcherConfig();
+            _config = new VirtualSwitcherConfig();
             Create().RefreshSpecs();
 
 			AssertGeneralSpecsInfo();
@@ -60,7 +60,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Types
         [TestMethod]
         public void RefreshSpecs_ZeroInputMixBlock()
 		{
-			_config = new DummySwitcherConfig(0);
+			_config = new VirtualSwitcherConfig(0);
 			Create().RefreshSpecs();
 
 			AssertGeneralSpecsInfo();
