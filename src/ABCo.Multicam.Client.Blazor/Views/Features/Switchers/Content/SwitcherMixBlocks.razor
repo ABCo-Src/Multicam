@@ -7,11 +7,11 @@
 }
 else
 {
-	<ul class="mixBlocks">
+	<ul class="mixBlocks switcherContentStrip">
 
 		@foreach (var mixBlock in VM.MixBlocks)
 		{
-			<li>
+			<li class="switcherContentStripWidth">
 				<SwitcherMixBlock VM="mixBlock" />
 			</li>
 		}

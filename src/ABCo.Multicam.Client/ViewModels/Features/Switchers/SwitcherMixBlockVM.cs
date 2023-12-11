@@ -12,7 +12,7 @@ namespace ABCo.Multicam.Client.ViewModels.Features.Switcher
         ISwitcherCutButtonVM CutButton { get; set; }
 		//ISwitcherCutButtonVM AutoButton { get; set; }
         bool ShowPreview { get; set; }
-        string MainLabel { get; set; }
+        string MixBlockTitle { get; set; }
 		void UpdateState(MixBlockState state);
 	}
 
@@ -21,7 +21,7 @@ namespace ABCo.Multicam.Client.ViewModels.Features.Switcher
 		readonly Dispatched<ISwitcher> _switcher;
 
         [ObservableProperty] bool _showPreview;
-        [ObservableProperty] string _mainLabel;
+        [ObservableProperty] string _mixBlockTitle;
         [ObservableProperty] ISwitcherProgramInputVM[] _programBus = Array.Empty<ISwitcherProgramInputVM>();
         [ObservableProperty] ISwitcherPreviewInputVM[] _previewBus = Array.Empty<ISwitcherPreviewInputVM>();
         [ObservableProperty] ISwitcherCutButtonVM _cutButton;
@@ -42,7 +42,7 @@ namespace ABCo.Multicam.Client.ViewModels.Features.Switcher
 			CutButton = new SwitcherCutButtonVM(switcher, mixBlockIndex);
 
 			// Setup additional info
-			MainLabel = mb.NativeType == SwitcherMixBlockType.CutBus ? "Cut Bus" : "Program";
+			MixBlockTitle = "Bus #" + (mixBlockIndex + 1);
 			ShowPreview = mb.NativeType == SwitcherMixBlockType.ProgramPreview;
 		}
 

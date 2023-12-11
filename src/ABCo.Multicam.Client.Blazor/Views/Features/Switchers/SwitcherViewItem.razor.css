@@ -34,19 +34,10 @@
     grid-area: editBtn;
 }
 
-.content {
-    margin-left: 10px;
-    max-width: max-content;
-    overflow-x: auto;
-    padding-bottom: 10px;
-}
-
 .bordered {
     border-left: 5px solid var(--col-dark-accent);
     border-right: 5px solid var(--col-dark-accent);
     border-bottom: 5px solid var(--col-dark-accent);
-    padding: 10px;
-    max-width: 100%;
 }
 
 .edit {

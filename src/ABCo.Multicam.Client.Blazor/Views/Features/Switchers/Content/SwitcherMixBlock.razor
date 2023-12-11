@@ -1,10 +1,9 @@
 ﻿@using ABCo.Multicam.Client.ViewModels.Features.Switcher;
 @inherits VMBoundComponent<ISwitcherMixBlockVM>
 
-<div class="grid">
+<div class="grid switcherContentStripWidth">
+	<p class="mixBlockTitle">@VM.MixBlockTitle</p>
 	<p class="programTag">Program</p>
-	<p class="previewTag">Preview</p>
-
 	<ul class="inputs buttonRow programInputs">
 		@foreach (var input in VM.ProgramBus)
 		{
@@ -14,6 +13,7 @@
 		}
 	</ul>
 
+	<p class="previewTag">Preview</p>
 	<ul class="inputs buttonRow previewInputs">
 		@foreach (var input in VM.PreviewBus)
 		{
