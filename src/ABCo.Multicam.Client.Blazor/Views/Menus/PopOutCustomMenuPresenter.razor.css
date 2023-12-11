@@ -1,0 +1,48 @@
+﻿::deep .section {
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+::deep .sectionTitle {
+    text-decoration: underline;
+    text-align: center;
+    margin: 5px 0 20px 0;
+}
+
+::deep .sectionSeparator {
+    border: none;
+    height: 3px;
+    background: var(--gradient-3431);
+}
+
+::deep .gridTitle {
+    font-weight: bold;
+}
+
+::deep .grid {
+    gap: 10px;
+    padding: 0 10px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+::deep .boxedPortion {
+    margin: 10px 10px 0 10px;
+    padding: 10px;
+}
+
+::deep .indexedListItem {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: var(--col-alwaysinner);
+}
+
+::deep .indexedListItem .index {
+    padding: 10px;
+    font-weight: bold;
+}
+
+.content {
+    margin-top: 10px;
+}

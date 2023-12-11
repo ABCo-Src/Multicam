@@ -17,11 +17,18 @@
 .menu {
     z-index: 1;
     position: relative;
-    width: 200px;
     padding: 10px;
     border: solid 1px white;
     background-color: black;
     margin: 10px;
+}
+
+.contextMenu {
+    width: 200px;
+}
+
+.customMenu {
+    width: 300px;
 }
 
 .menuContainerPushDown {
@@ -36,7 +43,7 @@
     width: 100%;
 }
 
-.menu .title {
+::deep .popOutMenuTitle {
     text-align: center;
     font-weight: bold;
 }

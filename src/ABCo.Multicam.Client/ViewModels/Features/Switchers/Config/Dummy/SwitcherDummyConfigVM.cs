@@ -21,7 +21,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers.Config.Dummy
 		[ObservableProperty] string _selectedMixBlockCount = "1";
 		[ObservableProperty] ISwitcherDummyConfigMixBlockVM[] _mixBlockVMs = Array.Empty<ISwitcherDummyConfigMixBlockVM>();
 
-		public SwitcherDummyConfigVM(Dispatched<ISwitcher> feature, IClientInfo info) : base(feature, info) { }
+		public SwitcherDummyConfigVM(Dispatched<ISwitcher> feature, IClientInfo info) : base(feature, info) => OnServerStateChange(null);
 
         public void OnUIChange()
         {
@@ -42,17 +42,18 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers.Config.Dummy
 		protected override void OnServerStateChange(string? changedProp)
 		{
 			var config = _serverComponent.Get(s => s.Config);
-			var dummyConfig = (DummySwitcherConfig)config;
+			if (config is DummySwitcherConfig dummyConfig)
+			{
+                // Set the selected count
+                SelectedMixBlockCount = dummyConfig.MixBlocks.Length.ToString();
 
-			// Set the selected count
-			SelectedMixBlockCount = dummyConfig.MixBlocks.Length.ToString();
+                // Add the mix-blocks
+                var newMixBlocks = new ISwitcherDummyConfigMixBlockVM[dummyConfig.MixBlocks.Length];
+                for (int i = 0; i < dummyConfig.MixBlocks.Length; i++)
+                    newMixBlocks[i] = new SwitcherDummyConfigMixBlockVM(this, dummyConfig.MixBlocks[i], i);
 
-			// Add the mix-blocks
-			var newMixBlocks = new ISwitcherDummyConfigMixBlockVM[dummyConfig.MixBlocks.Length];
-			for (int i = 0; i < dummyConfig.MixBlocks.Length; i++)
-				newMixBlocks[i] = new SwitcherDummyConfigMixBlockVM(this, dummyConfig.MixBlocks[i], i);
-
-			MixBlockVMs = newMixBlocks;
+                MixBlockVMs = newMixBlocks;
+            }
 		}
 	}
 }

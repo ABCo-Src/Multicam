@@ -1,0 +1,13 @@
+﻿@using ABCo.Multicam.Client.Blazor;
+@using ABCo.Multicam.Client.Presenters.Features.Switchers;
+@using ABCo.Multicam.Client.ViewModels.Features.Switcher;
+@using ABCo.Multicam.Client.ViewModels.Features;
+@inherits VMBoundComponent<ISwitcherConfigVM>
+
+<div class="switcherContentStrip">
+	<p class="switcherType">Virtual Switcher</p>
+	<a class="btnDropDown btnLikeHighlight" @onclick="e=>VM.OpenEditMenu(new(e.ClientX, e.ClientY + (40 - e.OffsetY)))">
+		Edit
+		<img src="_content/ABCo.Multicam.Client.Blazor/img/icons/smallDownArrow.svg" />
+	</a>
+</div>

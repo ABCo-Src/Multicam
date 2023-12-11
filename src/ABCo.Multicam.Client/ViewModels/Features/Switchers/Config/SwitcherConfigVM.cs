@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using ABCo.Multicam.Client.Presenters.Features.Switchers.Config.ATEM;
 using ABCo.Multicam.Client.Presenters.Features.Switchers.Config.Dummy;
 using System.ComponentModel;
+using ABCo.Multicam.Client.Structures;
 
 namespace ABCo.Multicam.Client.Presenters.Features.Switchers
 {
@@ -15,23 +16,26 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers
 		string SelectedItem { get; set; }
 		ISwitcherSpecificConfigVM? CurrentConfig { get; set; }
 		void UpdateSelectedItem();
+		void OpenEditMenu(CursorPosition pos);
     }
 
     public interface ISwitcherSpecificConfigVM : INotifyPropertyChanged, IDisposable
     {
     }
 
-    public partial class SwitcherConfigVM : BoundViewModelBase<ISwitcher>, ISwitcherConfigVM
+    public partial class SwitcherConfigVM : BoundViewModelBase<ISwitcher>, ISwitcherConfigVM, IPopOutContentVM
 	{
         SwitcherType? _oldType;
 
 		public string[] Items => new string[]
         {
-			"Dummy",
+			"Virtual",
 			"ATEM"
         };
 
-		[ObservableProperty] string _selectedItem = "Dummy";
+		public string Title => "Connection Settings";
+
+		[ObservableProperty] string _selectedItem = "Virtual";
 		[ObservableProperty] ISwitcherSpecificConfigVM? _currentConfig;
 
 		public SwitcherConfigVM(Dispatched<ISwitcher> feature, IClientInfo info) : base(feature, info) => OnServerStateChange(null);
@@ -48,7 +52,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers
 				SelectedItem = config.Type switch
 				{
 					SwitcherType.ATEM => "ATEM",
-					_ => "Dummy"
+					_ => "Virtual"
 				};
 
 				// Update the inner VM
@@ -66,7 +70,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers
         {
             _serverComponent.CallDispatched(f => f.ChangeConfig(SelectedItem switch
             {
-                "Dummy" => new DummySwitcherConfig(4),
+                "Virtual" => new DummySwitcherConfig(4),
                 "ATEM" => new ATEMSwitcherConfig(null),
                 _ => throw new Exception("Unsupported selected mode given")
             }));
@@ -77,5 +81,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers
 			CurrentConfig?.Dispose();
 			base.Dispose();
 		}
+
+		public void OpenEditMenu(CursorPosition pos) => _info.Shared.PopOut.Open(this, pos);
 	}
 }

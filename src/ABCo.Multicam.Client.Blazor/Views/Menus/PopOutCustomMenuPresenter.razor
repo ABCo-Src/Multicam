@@ -1,0 +1,15 @@
+﻿@using ABCo.Multicam.Client.Blazor.Views.Features.Switchers.Editor
+@using ABCo.Multicam.Client.Presenters;
+@using ABCo.Multicam.Client.Presenters.Features.Switchers;
+@inherits VMBoundComponent<IPopOutContentVM>
+
+<div>
+	<p class="popOutMenuTitle">@VM.Title</p>
+
+	<div class="content">
+		@if (VM is ISwitcherConfigVM vm)
+		{
+			<SwitcherConfigEditor VM="vm" />
+		}
+	</div>
+</div>

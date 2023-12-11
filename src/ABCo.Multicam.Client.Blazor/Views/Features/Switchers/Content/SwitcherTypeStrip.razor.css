@@ -1,0 +1,14 @@
+﻿.switcherContentStrip {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: "switcherType _ editDropDown";
+    align-items: center;
+}
+
+.switcherType {
+    grid-area: switcherType;
+}
+
+.btnDropDown {
+    grid-area: editDropDown;
+}

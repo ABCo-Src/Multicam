@@ -1,4 +1,6 @@
-﻿@using ABCo.Multicam.Client.Presenters;
+﻿@using ABCo.Multicam.Client.Blazor.Views.Features.Switchers.Editor
+@using ABCo.Multicam.Client.Presenters;
+@using ABCo.Multicam.Client.Presenters.Features.Switchers;
 @using ABCo.Multicam.Server;
 @using ABCo.Multicam.Client.Services;
 @inherits VMBoundComponent<IPopOutVM>
@@ -8,15 +10,15 @@
 	<div class="menuContainer">
 		<div class="blackCurtain" @onclick=VM.Close></div>
 
-		@if (VM.ContextMenu != null)
-		{
-			<div class="menuContainerPushDown">
-				<span class="menuContainerPushDownSpan" style="height: @(VM.ContextMenu.Pos.Y)px;"></span>
-				<div class="menuContainerPushRight">
-					<span class="menuContainerPushRightSpan" style="width: @(VM.ContextMenu.Pos.X)px; "></span>
-					<div class="menus">
+		<div class="menuContainerPushDown">
+			<span class="menuContainerPushDownSpan" style="height: @(VM.RequestedMenuY)px;"></span>
+			<div class="menuContainerPushRight">
+				<span class="menuContainerPushRightSpan" style="width: @(VM.RequestedMenuX)px; "></span>
+				<div class="menus">
+					@if (VM.ContextMenu != null)
+					{
 						<div class="menu contextMenu">
-							<p class="title">@VM.ContextMenu.Title</p>
+							<p class="popOutMenuTitle">@VM.ContextMenu.Title</p>
 
 							<ul>
 								@foreach (var item in VM.ContextMenu.Items)
@@ -25,20 +27,19 @@
 								}
 							</ul>
 						</div>
-					</div>
+					}
+
+					@if (VM.CustomContent != null)
+					{
+						<div class="menu customMenu">
+
+							<div class="content">
+								<PopOutCustomMenuPresenter VM="VM.CustomContent" />
+							</div>
+						</div>
+					}
 				</div>
 			</div>
-		}
-		
-		@if (VM.CustomContent != null)
-		{
-			<div class="menu customMenu">
-				<p class="title">@VM.CustomContent.Title</p>
-
-				<div class="content">
-
-				</div>
-			</div>
-		}
+		</div>
 	</div>
 }

@@ -1,8 +1,0 @@
-﻿.top {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-}
-
-.connectBtn {
-    margin-left: 15px;
-}

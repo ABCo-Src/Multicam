@@ -45,14 +45,15 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers.Config.ATEM
 		protected override void OnServerStateChange(string? changedProp)
 		{
 			var config = _serverComponent.Get(m => m.Config);
-			var atemConfig = (ATEMSwitcherConfig)config;
+			if (config is ATEMSwitcherConfig atemConfig)
+			{
+                // Update IP address info
+                SelectedConnectionType = atemConfig.IP == null ? "USB" : "IP";
+                if (atemConfig.IP != null)
+                    IpAddress = atemConfig.IP;
 
-			// Update IP address info
-			SelectedConnectionType = atemConfig.IP == null ? "USB" : "IP";
-			if (atemConfig.IP != null)
-				IpAddress = atemConfig.IP;
-
-			CompatibilityMessage = _serverComponent.Get(m => m.PlatformCompatibility);
+                CompatibilityMessage = _serverComponent.Get(m => m.PlatformCompatibility);
+            }
 		}
 
 		public void OnIPChange() => OnUIChange();

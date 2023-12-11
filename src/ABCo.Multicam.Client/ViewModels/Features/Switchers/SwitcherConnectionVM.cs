@@ -1,4 +1,5 @@
-﻿using ABCo.Multicam.Server.Features.Switchers;
+﻿using ABCo.Multicam.Client.Structures;
+using ABCo.Multicam.Server.Features.Switchers;
 using ABCo.Multicam.Server.Hosting.Clients;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.ComponentModel;
