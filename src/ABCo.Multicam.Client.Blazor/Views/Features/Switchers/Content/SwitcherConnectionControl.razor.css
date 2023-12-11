@@ -1,0 +1,9 @@
+﻿.statusText { grid-area: statusText; }
+.connectBtn { grid-area: connect; margin-left: 10px; }
+
+.connectionControl {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas: "statusText connect";
+    margin-top: 10px;
+}

@@ -1,6 +1,5 @@
 ﻿::deep .switcherContentStrip {
     background-color: rgba(60, 60, 60, 0.2);
-    margin: 10px 0;
     padding: 10px;
     max-width: 100%;
     overflow-x: auto;

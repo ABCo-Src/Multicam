@@ -1,16 +1,14 @@
 ﻿@using ABCo.Multicam.Client.Presenters.Features.Switchers;
 @inherits VMBoundComponent<ISwitcherConnectionVM>
 
-<h3>SwitcherConnectionControl</h3>
-
-@code {
-
-}
-<div class="switcherContentStrip">
-	<p class="linkText">@VM.StatusText</p>
+@if (VM.ShowConnectionInfo)
+{
+<div class="connectionControl switcherContentStrip">
+	<p class="statusText">@VM.StatusText</p>
 
 	@if (VM.ShowConnectionButton)
 	{
 		<a class="connectBtn hyperlink" @onclick=VM.ToggleConnection>@VM.StatusButtonText</a>
 	}
 </div>
+}

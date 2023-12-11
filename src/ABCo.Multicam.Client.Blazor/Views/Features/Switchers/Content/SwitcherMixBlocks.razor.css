@@ -1,6 +1,9 @@
-﻿.mixBlocks {
+﻿.noMixBlocks {
+    display: flex;
+    justify-content: center;
     margin-top: 10px;
 }
 
 .mixBlocks li {
+    margin-top: 10px;
 }

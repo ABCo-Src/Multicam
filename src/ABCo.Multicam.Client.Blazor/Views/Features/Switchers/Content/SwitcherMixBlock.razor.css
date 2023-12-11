@@ -3,7 +3,7 @@
     gap: 10px;
 
     grid-template-rows: auto auto auto auto auto;
-    grid-template-columns: auto auto;
+    grid-template-columns: max-content auto;
     grid-template-areas:
         "mixBlockTitle _"
         "programTag _"

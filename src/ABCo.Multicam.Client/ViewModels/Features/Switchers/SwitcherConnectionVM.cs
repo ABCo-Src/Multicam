@@ -11,6 +11,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers
 		string StatusText { get; set; }
 		string StatusButtonText { get; set; }
 		bool ShowConnectionButton { get; set; }
+		bool ShowConnectionInfo { get; set; }
 		void ToggleConnection();
 	}
 
@@ -20,17 +21,17 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers
 
 		[ObservableProperty] string _statusText = "";
 		[ObservableProperty] string _statusButtonText = "";
+		[ObservableProperty] bool _showConnectionInfo;
 		[ObservableProperty] bool _showConnectionButton;
 
 		public SwitcherConnectionVM(Dispatched<ISwitcher> feature, IClientInfo clientInfo) : base(feature, clientInfo) => OnServerStateChange(null);
-		protected override void OnServerStateChange(string? changedProp)
+		protected override async void OnServerStateChange(string? changedProp)
 		{
 			// With error
 			var error = _serverComponent.Get(f => f.ErrorMessage);
 			if (error != null)
 			{
 				StatusButtonText = "OK";
-				ShowConnectionButton = true;
 				StatusText = $"Communication Error: {error}";
 			}
 
@@ -42,16 +43,26 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers
 					case SwitcherConnectionStatus.NotConnected:
 						StatusButtonText = "Connect";
 						ShowConnectionButton = true;
+						ShowConnectionInfo = true;
 						StatusText = "Disconnected.";
 						break;
 					case SwitcherConnectionStatus.Connecting:
-						MoveDotsAndRefreshAfterInterval();
-						StatusText = GetConnectingText();
 						ShowConnectionButton = false;
+						ShowConnectionInfo = true;
+
+						// Repeatedly update the text until we've stopped connecting
+						while (_serverComponent.Get(f => f.ConnectionStatus) == SwitcherConnectionStatus.Connecting)
+						{
+							MoveDotsForwardOne();
+							StatusText = GetConnectingText();
+							await Task.Delay(300);
+						}
+
 						break;
 					case SwitcherConnectionStatus.Connected:
 						StatusButtonText = "Disconnect";
-						ShowConnectionButton = _serverComponent.Get(f => f.SpecsInfo).Specs.CanChangeConnection;
+						ShowConnectionButton = true;
+						ShowConnectionInfo = true; //_serverComponent.Get(f => f.SpecsInfo).Specs.CanChangeConnection;
 						StatusText = "Connected.";
 						break;
 				}
@@ -79,20 +90,13 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers
             if (_serverComponent.Get(f => f.ConnectionStatus) == SwitcherConnectionStatus.Connected)
 				_serverComponent.CallDispatched(f => f.Disconnect());
             else
-            {
-                ShowConnectionButton = false;
 				_serverComponent.CallDispatched(f => f.Connect());
-            }
         }
 
-        async void MoveDotsAndRefreshAfterInterval()
+        void MoveDotsForwardOne()
         {
-            await Task.Delay(300);
-
             _transitionState++;
             if (_transitionState == 3) _transitionState = 0;
-
-			OnServerStateChange(null);
         }
 	}
 }

@@ -3,15 +3,17 @@
 
 @if (VM.MixBlocks.Length == 0)
 {
-	<p>Connect to the device to load buses.</p>
+	<div class="noMixBlocks switcherContentStrip">
+		<p>Connect to the device to load buses.</p>
+	</div>
 }
 else
 {
-	<ul class="mixBlocks switcherContentStrip">
+	<ul class="mixBlocks">
 
 		@foreach (var mixBlock in VM.MixBlocks)
 		{
-			<li class="switcherContentStripWidth">
+			<li class="switcherContentStrip">
 				<SwitcherMixBlock VM="mixBlock" />
 			</li>
 		}
