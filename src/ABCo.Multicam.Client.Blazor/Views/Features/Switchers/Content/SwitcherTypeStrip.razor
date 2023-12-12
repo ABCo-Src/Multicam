@@ -5,7 +5,7 @@
 @inherits VMBoundComponent<ISwitcherConfigVM>
 
 <div class="switcherContentStrip">
-	<p class="switcherType">Virtual Switcher</p>
+	<p class="switcherType">@VM.SwitcherTypeTitle</p>
 	<a class="btnDropDown btnLikeHighlight" @onclick="e=>VM.OpenEditMenu(new(e.ClientX, e.ClientY + (40 - e.OffsetY)))">
 		Edit
 		<img src="_content/ABCo.Multicam.Client.Blazor/img/icons/smallDownArrow.svg" />

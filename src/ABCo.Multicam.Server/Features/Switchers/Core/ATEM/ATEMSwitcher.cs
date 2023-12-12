@@ -123,10 +123,6 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.ATEM
             }, this);
         }
 
-        public void OnATEMDisconnect() => _mainThreadDispatcher.Queue(() => _eventHandler?.OnConnectionStateChange(false));
-        public void OnATEMProgramChange(int mixBlock) => RefreshProgram(mixBlock);
-        public void OnATEMPreviewChange(int mixBlock) => RefreshPreview(mixBlock);
-
         public void ProcessError(Exception ex) => _mainThreadDispatcher.Queue(() => _eventHandler?.OnFailure(new(ex.Message)));
 
         public override void Dispose()

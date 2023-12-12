@@ -62,7 +62,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers
 					case SwitcherConnectionStatus.Connected:
 						StatusButtonText = "Disconnect";
 						ShowConnectionButton = true;
-						ShowConnectionInfo = true; //_serverComponent.Get(f => f.SpecsInfo).Specs.CanChangeConnection;
+						ShowConnectionInfo = _serverComponent.Get(f => f.SpecsInfo).Specs.CanChangeConnection;
 						StatusText = "Connected.";
 						break;
 				}

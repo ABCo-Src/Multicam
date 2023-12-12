@@ -66,7 +66,7 @@ namespace ABCo.Multicam.Server.Features.Switchers
 		[ObservableProperty] SwitcherConnectionStatus _connectionStatus = SwitcherConnectionStatus.NotConnected;
 		[ObservableProperty] string? _errorMessage = null;
 		[ObservableProperty] SpecsSpecificInfo _specsInfo = new(new SwitcherSpecs(), Array.Empty<MixBlockState>());
-		[ObservableProperty] SwitcherConfig _config = new VirtualSwitcherConfig(4);
+		[ObservableProperty] SwitcherConfig _config = new OBSSwitcherConfig("10.149.237.129", 4455, "eET4kePMhdX8D84D");
 
 		public Switcher(IServerInfo info)
         {

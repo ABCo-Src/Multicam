@@ -8,6 +8,7 @@
     public enum SwitcherType
     {
         Virtual,
-        ATEM
+        ATEM,
+        OBS
     }
 }

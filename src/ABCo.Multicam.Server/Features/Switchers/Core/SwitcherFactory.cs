@@ -1,4 +1,5 @@
 ﻿using ABCo.Multicam.Server.Features.Switchers.Core.ATEM;
+using ABCo.Multicam.Server.Features.Switchers.Core.OBS;
 using ABCo.Multicam.Server.Features.Switchers.Data.Config;
 
 namespace ABCo.Multicam.Server.Features.Switchers.Core
@@ -20,7 +21,8 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core
             {
                 VirtualSwitcherConfig d => _servSource.Get<IVirtualSwitcher, VirtualSwitcherConfig>(d),
                 ATEMSwitcherConfig a => _servSource.Get<IATEMSwitcher, ATEMSwitcherConfig>(a),
-                _ => throw new Exception("Unsupported switcher type!")
+                OBSSwitcherConfig o => new OBSSwitcher(o),
+				_ => throw new Exception("Unsupported switcher type!")
             };
         }
     }

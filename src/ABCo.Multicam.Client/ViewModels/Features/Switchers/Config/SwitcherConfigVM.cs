@@ -13,6 +13,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers
 	public interface ISwitcherConfigVM : INotifyPropertyChanged, IDisposable
 	{
 		string[] Items { get; }
+		string SwitcherTypeTitle { get; }
 		string SelectedItem { get; set; }
 		ISwitcherSpecificConfigVM? CurrentConfig { get; set; }
 		void UpdateSelectedItem();
@@ -32,6 +33,8 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers
 			"Virtual",
 			"ATEM"
         };
+
+		public string SwitcherTypeTitle => SelectedItem + " Switcher";
 
 		public string Title => "Connection Settings";
 
@@ -61,6 +64,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers
 				{
 					SwitcherType.Virtual => new SwitcherVirtualConfigVM(_serverComponent, _info),
 					SwitcherType.ATEM => new SwitcherATEMConfigVM(_serverComponent, _info),
+					SwitcherType.OBS => null!,
 					_ => throw new Exception("Unsupported switcher type!")
 				};
 			}

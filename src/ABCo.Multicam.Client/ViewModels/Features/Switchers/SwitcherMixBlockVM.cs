@@ -18,8 +18,6 @@ namespace ABCo.Multicam.Client.ViewModels.Features.Switcher
 
     public partial class SwitcherMixBlockVM : ViewModelBase, ISwitcherMixBlockVM
     {
-		readonly Dispatched<ISwitcher> _switcher;
-
         [ObservableProperty] bool _showPreview;
         [ObservableProperty] string _mixBlockTitle;
         [ObservableProperty] ISwitcherProgramInputVM[] _programBus = Array.Empty<ISwitcherProgramInputVM>();
@@ -42,7 +40,7 @@ namespace ABCo.Multicam.Client.ViewModels.Features.Switcher
 			CutButton = new SwitcherCutButtonVM(switcher, mixBlockIndex);
 
 			// Setup additional info
-			MixBlockTitle = "Bus #" + (mixBlockIndex + 1);
+			MixBlockTitle = "Mix Block #" + (mixBlockIndex + 1);
 			ShowPreview = mb.NativeType == SwitcherMixBlockType.ProgramPreview;
 		}
 
