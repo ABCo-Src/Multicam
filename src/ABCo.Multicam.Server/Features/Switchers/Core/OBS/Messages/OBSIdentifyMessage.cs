@@ -9,16 +9,16 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Messages
 {
 	public class OBSIdentifyMessageWithAuth : OBSIdentifyMessage
 	{
-		[JsonPropertyName("authentication")]
-		public string? Authentication { get; set; }
+		[JsonPropertyName("authentication"), JsonRequired]
+		public string Authentication { get; set; } = null!;
 	}
 
 	public class OBSIdentifyMessage
 	{
-		[JsonPropertyName("rpcVersion")]
+		[JsonPropertyName("rpcVersion"), JsonRequired]
 		public int RPCVersion { get; set; }
 
-		[JsonPropertyName("eventSubscriptions")]
+		[JsonPropertyName("eventSubscriptions"), JsonRequired]
 		public int EventSubscriptions { get; set; }
 	}
 }

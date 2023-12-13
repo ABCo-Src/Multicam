@@ -6,13 +6,14 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Threading.Tasks;
-using ABCo.Multicam.Server.Features.Switchers.Core.OBS.Messages.Requests;
+using ABCo.Multicam.Server.Features.Switchers.Core.OBS.Messages.NewData;
+using System.Data;
 
 namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Communication
 {
-	public class OBSResponseJSONConverter : JsonConverter<OBSResponse>
+    public class OBSResponseJSONConverter : JsonConverter<OBSResponseMessage>
 	{
-		public override OBSResponse? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+		public override OBSResponseMessage? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 		{
 			if (reader.TokenType != JsonTokenType.StartObject) throw new JsonException();
 
@@ -35,29 +36,36 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Communication
 						requestType = ReadString(ref reader);
 						break;
 					case "requestStatus":
+
 						reader.Skip();
 						requestStatusPos = reader.ValueSpan;
+						//OBSJSONConverterHelpers.ReadAndGetSpanOfStartAndEnd(ref reader, ref requestStatusPos);
 						break;
 					case "responseData":
-						reader.Skip();
-						responseDataPos = reader.ValueSpan;
+						OBSJSONConverterHelpers.ReadAndGetSpanOfStartAndEnd(ref reader, ref responseDataPos);
 						break;
-						//default:
-						//	throw new Exception("Unexpected JSON property in OBS data");
 				}
 			}
 
 			// If anything was missing, stop.
-			if (requestType == null || requestStatusPos.Length == 0 || responseDataPos.Length == 0) throw new OBSCommunicationException("Missing JSON property in OBS data response.");
+			if (requestType == null || requestStatusPos.Length == 0 || responseDataPos.Length == 0) goto MissingJSONData;
 
-			// Deserialize the data with the appropriate type
-			return requestType switch
+			// Deserialize the specific data.
+			OBSResponseMessage? specificResponse = requestType switch
 			{
-				0 => JsonSerializer.Deserialize<OBSHelloMessage>(dataSpan),
-				2 => JsonSerializer.Deserialize<OBSIdentifiedMessage>(dataSpan),
-				7 => JsonSerializer.Deserialize<OBSResponseMessage>(dataSpan),
-				_ => throw new Exception("Unsupported OBS message opcode"),
+				"GetSceneList" => JsonSerializer.Deserialize<OBSGetSceneListResponse>(responseDataPos, options),
+				"GetStudioModeEnabled" => JsonSerializer.Deserialize<OBSGetStudioModeEnabledResponse>(responseDataPos, options),
+				_ => null,
 			};
+			if (specificResponse == null) return null;
+
+			// Deserialize status
+			var status = JsonSerializer.Deserialize<OBSResponseStatus>(requestStatusPos);
+			if (status == null) goto MissingJSONData;
+			specificResponse.Status = status;
+
+			// Return this
+			return specificResponse;
 
 			string? ReadString(ref Utf8JsonReader reader)
 			{
@@ -65,20 +73,12 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Communication
 				reader.Read();
 				return str;
 			}
+
+		MissingJSONData:
+			throw new OBSCommunicationException("Missing JSON property in OBS data response.");
 		}
 
-		Range GetRangeOfToken(ref Utf8JsonReader reader)
-		{
-			reader.Read();
-			int dataStart = checked((int)reader.TokenStartIndex);
-			reader.Skip();
-			int dataEnd = reader.TokenStartIndex;
-			reader.Read();
-
-			return new Range(new Index(dataStart), new Index(dataEnd));
-		}
-
-		public override void Write(Utf8JsonWriter writer, OBSResponse value, JsonSerializerOptions options)
+		public override void Write(Utf8JsonWriter writer, OBSResponseMessage value, JsonSerializerOptions options)
 		{
 			throw new NotImplementedException();
 		}

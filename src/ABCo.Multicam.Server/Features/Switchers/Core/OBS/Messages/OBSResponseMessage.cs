@@ -1,5 +1,4 @@
-﻿using ABCo.Multicam.Server.Features.Switchers.Core.OBS.Messages.Requests;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,27 +7,17 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Messages
 {
-	[JsonPolymorphic(TypeDiscriminatorPropertyName = "requestType")]
-	[JsonDerivedType(typeof(OBSGetSceneListResponse), "GetSceneList")]
-	[JsonDerivedType(typeof(OBSGetStudioModeEnabledResponse), "GetStudioModeEnabled")]
 	public class OBSResponseMessage : OBSDeserializedMessage
 	{
-		[JsonPropertyName("requestStatus")]
-		public StatusInfo? Status { get; set; }
+		public OBSResponseStatus Status { get; set; } = null!;
+	}
 
-		[JsonPropertyName("requestId")]
-		public string? RequestID { get; set; }
+	public class OBSResponseStatus
+	{
+		[JsonPropertyName("code"), JsonRequired]
+		public int Code { get; set; }
 
-		[JsonPropertyName("requested")]
-		public string? RequestID { get; set; }
-
-		public class StatusInfo
-		{
-			[JsonPropertyName("code")]
-			public int? Code { get; set; }
-
-			[JsonPropertyName("result")]
-			public bool? Result { get; set; }
-		}
+		[JsonPropertyName("result"), JsonRequired]
+		public bool Result { get; set; }
 	}
 }

@@ -6,14 +6,13 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 
 namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Communication
 {
 	public class OBSMessageJSONConverter : JsonConverter<OBSDeserializedMessage>
 	{
-		readonly OBSReceiveBuffer _currentlyDeserializing;
-
-		public OBSMessageJSONConverter(OBSReceiveBuffer currentlyDeserializing) => _currentlyDeserializing = currentlyDeserializing;
+		public OBSMessageJSONConverter() { }
 
 		public override OBSDeserializedMessage? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 		{
@@ -31,44 +30,29 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Communication
 					continue;
 				}
 
-				switch (reader.GetString())
+				switch (ReadString(ref reader))
 				{
 					case "op":
-						// Read property name, get value, read value
-						reader.Read();
 						opCode = reader.GetInt32();
 						reader.Read();
 						break;
-
 					case "d":
-						// Read property name, save start of data, skip data, save end of data, read EndObject
-						reader.Read();
-						dataStart = reader.TokenStartIndex;
-						reader.Skip();
-						dataEnd = reader.TokenStartIndex;
-						reader.Read();
+						OBSJSONConverterHelpers.ReadAndGetSpanOfStartAndEnd(ref reader, ref dataPos);
 						break;
-					default:
-						throw new Exception("Unexpected JSON property in OBS data");
 				}
 			}
 
-			checked
-			{
-				// If anything was missing, stop.
-				if (opCode == null || dataStart == null) throw new Exception("Missing JSON property in OBS message");
-				if (dataStart > int.MaxValue || dataEnd > int.MaxValue) throw new Exception("Infinite data received from OBS");
+			// If anything was missing, stop.
+			if (opCode == null || dataPos.Length == 0) throw new OBSCommunicationException("Missing JSON property in OBS message.");
 
-				// Deserialize the data with the appropriate type
-				var dataSpan = _currentlyDeserializing.Buffer.AsSpan()[(int)dataStart.Value..(int)(dataEnd + 1)];
-				return opCode switch
-				{
-					0 => JsonSerializer.Deserialize<OBSHelloMessage>(dataSpan),
-					2 => JsonSerializer.Deserialize<OBSIdentifiedMessage>(dataSpan),
-					7 => JsonSerializer.Deserialize<OBSResponseMessage>(dataSpan),
-					_ => throw new Exception("Unsupported OBS message opcode"),
-				};
-			}
+			// Deserialize the data with the appropriate type
+			return opCode switch
+			{
+				0 => JsonSerializer.Deserialize<OBSHelloMessage>(dataPos, options),
+				2 => JsonSerializer.Deserialize<OBSIdentifiedMessage>(dataPos, options),
+				7 => JsonSerializer.Deserialize<OBSResponseMessage>(dataPos, options),
+				_ => throw new OBSCommunicationException("Unsupported OBS message opcode."),
+			};
 
 			string? ReadString(ref Utf8JsonReader reader)
 			{

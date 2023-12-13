@@ -1,6 +1,6 @@
 ﻿using ABCo.Multicam.Server.Features.Switchers.Core.OBS.Communication;
 using ABCo.Multicam.Server.Features.Switchers.Core.OBS.Messages;
-using ABCo.Multicam.Server.Features.Switchers.Core.OBS.Messages.Requests;
+using ABCo.Multicam.Server.Features.Switchers.Core.OBS.Messages.NewData;
 using ABCo.Multicam.Server.Features.Switchers.Data;
 using ABCo.Multicam.Server.Features.Switchers.Data.Config;
 using ABCo.Multicam.Server.General;
@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 {
-	public partial class OBSSwitcher : RawSwitcher
+    public partial class OBSSwitcher : RawSwitcher
 	{
 		// Implementation of: https://github.com/obsproject/obs-websocket/blob/master/docs/generated/protocol.md
 		readonly OBSSwitcherConfig _config;
@@ -54,26 +54,36 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 
 		async void OBSEventLoop()
 		{
-			try
+			while (true)
 			{
-				// Get data, and stop if disconnected.
-				var data = await _client.ReceiveData();
-				if (data == null)
+				try
 				{
-					_isConnected = false;
-					return;
-				}
+					// Get data, and stop if disconnected.
+					var data = await _client.ReceiveData();
+					if (data == null)
+					{
+						// Skip if it was just an unrecognised message
+						if (_client.IsConnected)
+							continue;
 
-				if (data is OBSResponseMessage msg)
-				{
-					ThrowMissingDataIf(msg.Status == null || msg.Status.Code == null || msg.Status.Result == null);
-					if (msg.Status!.Code != 100) throw new OBSCommunicationException("OBS failed to fulfill data request.");
-					ProcessResponse(msg);
+						// Stop if we've disconnected
+						else
+						{
+							RefreshConnectionStatus();
+							break;
+						}
+					}
+
+					if (data is OBSResponseMessage msg)
+					{
+						ValidateStatus(msg.Status);
+						ProcessResponse(msg);
+					}
+					else throw new OBSCommunicationException("Unexpected data received from OBS");
+
 				}
-				else throw new OBSCommunicationException("Unexpected data received from OBS");
-				
+				catch (Exception ex) { HandleFail(ex); }
 			}
-			catch (Exception ex) { HandleFail(ex); }
 		}
 
 		public override async void RefreshSpecs()
@@ -93,22 +103,36 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 			_eventHandler?.OnConnectionStateChange(_isConnected);
 		}
 
+		public override void RefreshPreview(int mixBlock)
+		{
+			
+		}
+
+		public override void RefreshProgram(int mixBlock)
+		{
+			
+		}
+
+		public override CutBusMode GetCutBusMode(int mixBlock) => CutBusMode.Cut;
+
+		void ValidateStatus(OBSResponseStatus status)
+		{
+			if (status.Code != 100 || !status.Result) throw new OBSCommunicationException("OBS failed to retrieve requested data.");
+		}
+
 		void ProcessResponse(OBSResponseMessage response)
 		{
 			// GetSceneList
 			switch (response)
 			{
-				case OBSGetSceneListResponse getSceneListRaw:
-					var data = getSceneListRaw.Data;
-					ThrowMissingDataIf(getSceneListRaw.Data == null || getSceneListRaw.Data.Scenes == null);
+				case OBSGetSceneListResponse getSceneList:
 
 					// Create a list of inputs based on the scenes
-					var inputs = new SwitcherBusInput[data!.Scenes!.Length];
+					var inputs = new SwitcherBusInput[getSceneList.Scenes.Length];
 					for (int i = 0; i < inputs.Length; i++)
 					{
-						var scene = data.Scenes[i];
-						ThrowMissingDataIf(scene.SceneIndex == null || scene.SceneName == "");
-						inputs[i] = new SwitcherBusInput(data.Scenes[i].SceneIndex!.Value, data.Scenes[i].SceneName!);
+						var scene = getSceneList.Scenes[i];
+						inputs[i] = new SwitcherBusInput(getSceneList.Scenes[i].SceneIndex, getSceneList.Scenes[i].SceneName);
 					}
 
 					// Create new specs from this and report it
@@ -116,8 +140,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 					UpdateSpecsIfAllDataCollected();
 					break;
 				case OBSGetStudioModeEnabledResponse getStudioModeRaw:
-					ThrowMissingDataIf(getStudioModeRaw.Data == null || getStudioModeRaw.Data.IsEnabled == null);
-					_lastReceivedIsStudioMode = getStudioModeRaw.Data!.IsEnabled;
+					_lastReceivedIsStudioMode = getStudioModeRaw.IsEnabled;
 					UpdateSpecsIfAllDataCollected();
 					break;
 			}
@@ -153,10 +176,5 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 		void HandleFail(Exception ex) => _eventHandler?.OnFailure(new SwitcherError(ex.Message));
 
 		void ThrowDisconnected() => throw new OBSCommunicationException("Unexpected disconnection from OBS.");
-		void ThrowMissingDataIf(bool condition)
-		{
-			if (condition)
-				throw new OBSCommunicationException("Missing JSON properties in data from OBS.");
-		}
 	}
 }

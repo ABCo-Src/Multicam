@@ -20,19 +20,8 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 		async Task<OBSHelloMessage> GetAndValidateHelloMessage()
 		{
 			var rawMsg = await _client.ReceiveData();
-
-			// Verify type is correct
-			if ((int?)rawMsg["op"] != 0) throw new OBSCommunicationException("Unexpected message from OBS when performing handshake.");
-
-			// Verify all data is present
-			ThrowMissingDataIf(rawMsg["op"] == null || rawMsg["obsWebSocketVersion"] == null || rawMsg["rpcVersion"] == null);
-			if (rawMsg["Auth"] != null)
-			{
-				var auth = rawMsg["Auth"]!;
-				ThrowMissingDataIf(auth["Challenge"] == null || auth["Salt"] == null));
-			}
-
-			return msg;
+			if (rawMsg is not OBSHelloMessage helloMsg) throw new OBSCommunicationException("Unexpected message from OBS when performing handshake.");
+			return helloMsg;
 		}
 
 		async Task SendIdentifyMessage(OBSHelloMessage helloMsg)
@@ -61,7 +50,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 		{
 			var rawMsg = await _client.ReceiveData();
 			if (rawMsg is not OBSIdentifiedMessage msg) throw new OBSCommunicationException("Failed to finish OBS handshake, verify the Server Password given is correct.");
-
+			if (msg.NegotiatedRPCVersion != 1) throw new OBSCommunicationException("OBS not allowing the required RPC version, v1, to be used for communication.");
 		}
 
 		static string GenerateAuthenticationCode(string password, string challenge, string salt)

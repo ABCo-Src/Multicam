@@ -17,19 +17,23 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Communication
     {
         readonly Uri _hostname;
 		readonly ClientWebSocket _client = new();
+		readonly JsonSerializerOptions _deserializeOptions;
 
 		byte[] _dataBuffer = new byte[128];
 
 		public OBSWebsocketClient(string hostname)
 		{
 			_hostname = new Uri(hostname);
+			_deserializeOptions = new JsonSerializerOptions();
+			_deserializeOptions.Converters.Add(new OBSMessageJSONConverter());
+			_deserializeOptions.Converters.Add(new OBSResponseJSONConverter());
 		}
 
 		public async Task Connect() => await _client.ConnectAsync(_hostname, CancellationToken.None);
 
 		public bool IsConnected => _client.State == WebSocketState.Open;
 
-        public async Task<JsonNode> ReceiveData()
+        public async Task<OBSDeserializedMessage?> ReceiveData()
 		{
 			int length = await ReadIntoBuffer();
 
@@ -37,21 +41,23 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Communication
 			if (length == 0 || _client.State == WebSocketState.Closed) return null;
 
 			// Deserialize JSON payload
-			_dataBuffer = new byte[] { 5, 9 };
-			var jsonData = JsonNode.Parse(_dataBuffer.AsSpan()[0..length]);
+			return JsonSerializer.Deserialize<OBSDeserializedMessage>(_dataBuffer.AsSpan()[0..length], _deserializeOptions);
 		}
 
 		private async Task<int> ReadIntoBuffer()
 		{
+			// Don't do anything if we've lost connection
+			if (!IsConnected) return 0;
+
 			int length = 0;
 			while (true)
 			{
-				var res = await _client.ReceiveAsync(_dataBuffer.Buffer.AsMemory()[length..], CancellationToken.None);
+				var res = await _client.ReceiveAsync(_dataBuffer.AsMemory()[length..], CancellationToken.None);
 				length += res.Count;
 
 				// If that's all the data, stop here. Otherwise, grow the buffer...
 				if (res.EndOfMessage) break;
-				Array.Resize(ref _dataBuffer.Buffer, _dataBuffer.Buffer.Length * 2);
+				Array.Resize(ref _dataBuffer, _dataBuffer.Length * 2);
 			}
 			return length;
 		}
