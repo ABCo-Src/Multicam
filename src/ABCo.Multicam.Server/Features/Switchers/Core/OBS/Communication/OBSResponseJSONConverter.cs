@@ -36,10 +36,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Communication
 						requestType = ReadString(ref reader);
 						break;
 					case "requestStatus":
-
-						reader.Skip();
-						requestStatusPos = reader.ValueSpan;
-						//OBSJSONConverterHelpers.ReadAndGetSpanOfStartAndEnd(ref reader, ref requestStatusPos);
+						OBSJSONConverterHelpers.ReadAndGetSpanOfStartAndEnd(ref reader, ref requestStatusPos);
 						break;
 					case "responseData":
 						OBSJSONConverterHelpers.ReadAndGetSpanOfStartAndEnd(ref reader, ref responseDataPos);

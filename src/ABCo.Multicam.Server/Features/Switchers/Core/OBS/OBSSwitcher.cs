@@ -105,7 +105,6 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 
 		public override void RefreshPreview(int mixBlock)
 		{
-			
 		}
 
 		public override void RefreshProgram(int mixBlock)
@@ -165,7 +164,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 				SupportsDirectProgramModification = true
 			};
 
-			_eventHandler?.OnSpecsChange(new SwitcherSpecs(new SwitcherMixBlock[]
+			_eventHandler?.OnSpecsChange(new SwitcherSpecs(true, new SwitcherMixBlock[]
 			{
 				isStudioMode ? SwitcherMixBlock.NewProgPrevSameInputs(features, busInputs) : SwitcherMixBlock.NewCutBus(features, busInputs)
 			}));
