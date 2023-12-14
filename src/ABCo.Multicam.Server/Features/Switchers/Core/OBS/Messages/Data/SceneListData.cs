@@ -5,15 +5,15 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Messages.NewData
+namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Messages.Data
 {
-    public class OBSGetSceneListResponse : OBSResponseMessage
+    public class SceneListData : OBSData
     {
         [JsonPropertyName("scenes"), JsonRequired]
-        public OBSSceneData[] Scenes { get; set; } = null!;
+        public SceneData[] Scenes { get; set; } = null!;
     }
 
-    public class OBSSceneData
+    public class SceneData
     {
         [JsonPropertyName("sceneIndex"), JsonRequired]
         public int SceneIndex { get; set; }

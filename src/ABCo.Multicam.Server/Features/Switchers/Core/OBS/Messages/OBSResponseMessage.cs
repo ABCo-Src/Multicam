@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ABCo.Multicam.Server.Features.Switchers.Core.OBS.Messages.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,13 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Messages
 	public class OBSResponseMessage : OBSDeserializedMessage
 	{
 		public OBSResponseStatus Status { get; set; } = null!;
+		public OBSData Data { get; set; } = null!;
+
+		public OBSResponseMessage(OBSResponseStatus status, OBSData data)
+		{
+			Status = status;
+			Data = data;
+		}
 	}
 
 	public class OBSResponseStatus

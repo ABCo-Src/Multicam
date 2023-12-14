@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ABCo.Multicam.Server.Features.Switchers.Core.OBS.Messages.Data;
+using ABCo.Multicam.Server.Features.Switchers.Core.OBS.Messages;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -26,6 +28,13 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Communication
 
 			// Read past the end
 			reader.Read();
+		}
+
+		public static string? ReadString(ref Utf8JsonReader reader)
+		{
+			string? str = reader.GetString();
+			reader.Read();
+			return str;
 		}
 	}
 }

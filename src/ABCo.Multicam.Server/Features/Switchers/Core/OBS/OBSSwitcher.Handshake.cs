@@ -41,7 +41,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 
 			static void Populate(OBSIdentifyMessage msg)
 			{
-				msg.EventSubscriptions = 33; // EventSubscription::All (for now)
+				msg.EventSubscriptions = 4 | 1024; // EventSubscription::Scenes and EventSubscription::Ui
 				msg.RPCVersion = 1;
 			}
 		}

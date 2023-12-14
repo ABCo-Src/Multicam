@@ -1,6 +1,6 @@
 ﻿using ABCo.Multicam.Server.Features.Switchers.Core.OBS.Communication;
 using ABCo.Multicam.Server.Features.Switchers.Core.OBS.Messages;
-using ABCo.Multicam.Server.Features.Switchers.Core.OBS.Messages.NewData;
+using ABCo.Multicam.Server.Features.Switchers.Core.OBS.Messages.Data;
 using ABCo.Multicam.Server.Features.Switchers.Data;
 using ABCo.Multicam.Server.Features.Switchers.Data.Config;
 using ABCo.Multicam.Server.General;
@@ -52,6 +52,17 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 			catch (Exception ex) { HandleFail(ex); }
 		}
 
+		public override async void Disconnect()
+		{
+			try
+			{
+				await _client.Disconnect();
+				_isConnected = false;
+				_eventHandler?.OnConnectionStateChange(false);
+			}
+			catch (Exception ex) { HandleFail(ex); }
+		}
+
 		async void OBSEventLoop()
 		{
 			while (true)
@@ -77,8 +88,9 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 					if (data is OBSResponseMessage msg)
 					{
 						ValidateStatus(msg.Status);
-						ProcessResponse(msg);
+						ProcessResponse(msg.Data);
 					}
+					else if (data is OBSEventMessage msgEvent) ProcessResponse(msgEvent.Data);
 					else throw new OBSCommunicationException("Unexpected data received from OBS");
 
 				}
@@ -119,26 +131,26 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 			if (status.Code != 100 || !status.Result) throw new OBSCommunicationException("OBS failed to retrieve requested data.");
 		}
 
-		void ProcessResponse(OBSResponseMessage response)
+		void ProcessResponse(OBSData response)
 		{
 			// GetSceneList
 			switch (response)
 			{
-				case OBSGetSceneListResponse getSceneList:
+				case SceneListData getSceneList:
 
 					// Create a list of inputs based on the scenes
 					var inputs = new SwitcherBusInput[getSceneList.Scenes.Length];
 					for (int i = 0; i < inputs.Length; i++)
 					{
 						var scene = getSceneList.Scenes[i];
-						inputs[i] = new SwitcherBusInput(getSceneList.Scenes[i].SceneIndex, getSceneList.Scenes[i].SceneName);
+						inputs[i] = new SwitcherBusInput(scene.SceneIndex, scene.SceneName);
 					}
 
 					// Create new specs from this and report it
 					_lastReceivedBusInputs = inputs;
 					UpdateSpecsIfAllDataCollected();
 					break;
-				case OBSGetStudioModeEnabledResponse getStudioModeRaw:
+				case StudioModeEnabledData getStudioModeRaw:
 					_lastReceivedIsStudioMode = getStudioModeRaw.IsEnabled;
 					UpdateSpecsIfAllDataCollected();
 					break;

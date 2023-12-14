@@ -6,8 +6,8 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Threading.Tasks;
-using ABCo.Multicam.Server.Features.Switchers.Core.OBS.Messages.NewData;
 using System.Data;
+using ABCo.Multicam.Server.Features.Switchers.Core.OBS.Messages.Data;
 
 namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Communication
 {
@@ -29,11 +29,11 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Communication
 					reader.Read();
 					continue;
 				}
-
-				switch (ReadString(ref reader))
+				
+				switch (OBSJSONConverterHelpers.ReadString(ref reader))
 				{
 					case "requestType":
-						requestType = ReadString(ref reader);
+						requestType = OBSJSONConverterHelpers.ReadString(ref reader);
 						break;
 					case "requestStatus":
 						OBSJSONConverterHelpers.ReadAndGetSpanOfStartAndEnd(ref reader, ref requestStatusPos);
@@ -48,28 +48,20 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Communication
 			if (requestType == null || requestStatusPos.Length == 0 || responseDataPos.Length == 0) goto MissingJSONData;
 
 			// Deserialize the specific data.
-			OBSResponseMessage? specificResponse = requestType switch
+			OBSData? responseData = requestType switch
 			{
-				"GetSceneList" => JsonSerializer.Deserialize<OBSGetSceneListResponse>(responseDataPos, options),
-				"GetStudioModeEnabled" => JsonSerializer.Deserialize<OBSGetStudioModeEnabledResponse>(responseDataPos, options),
+				"GetSceneList" => JsonSerializer.Deserialize<SceneListData>(responseDataPos, options),
+				"GetStudioModeEnabled" => JsonSerializer.Deserialize<StudioModeEnabledData>(responseDataPos, options),
 				_ => null,
 			};
-			if (specificResponse == null) return null;
+			if (responseData == null) return null;
 
 			// Deserialize status
 			var status = JsonSerializer.Deserialize<OBSResponseStatus>(requestStatusPos);
 			if (status == null) goto MissingJSONData;
-			specificResponse.Status = status;
 
 			// Return this
-			return specificResponse;
-
-			string? ReadString(ref Utf8JsonReader reader)
-			{
-				string? str = reader.GetString();
-				reader.Read();
-				return str;
-			}
+			return new OBSResponseMessage(status, responseData);
 
 		MissingJSONData:
 			throw new OBSCommunicationException("Missing JSON property in OBS data response.");

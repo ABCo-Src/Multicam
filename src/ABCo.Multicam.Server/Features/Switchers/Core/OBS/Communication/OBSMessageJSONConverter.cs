@@ -30,7 +30,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Communication
 					continue;
 				}
 
-				switch (ReadString(ref reader))
+				switch (OBSJSONConverterHelpers.ReadString(ref reader))
 				{
 					case "op":
 						opCode = reader.GetInt32();
@@ -50,16 +50,10 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Communication
 			{
 				0 => JsonSerializer.Deserialize<OBSHelloMessage>(dataPos, options),
 				2 => JsonSerializer.Deserialize<OBSIdentifiedMessage>(dataPos, options),
+				5 => JsonSerializer.Deserialize<OBSEventMessage>(dataPos, options),
 				7 => JsonSerializer.Deserialize<OBSResponseMessage>(dataPos, options),
 				_ => throw new OBSCommunicationException("Unsupported OBS message opcode."),
 			};
-
-			string? ReadString(ref Utf8JsonReader reader)
-			{
-				string? str = reader.GetString();
-				reader.Read();
-				return str;
-			}
 		}
 
 		public override void Write(Utf8JsonWriter writer, OBSDeserializedMessage value, JsonSerializerOptions options)
