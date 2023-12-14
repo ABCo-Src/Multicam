@@ -20,6 +20,8 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 		// Implementation of: https://github.com/obsproject/obs-websocket/blob/master/docs/generated/protocol.md
 		readonly OBSSwitcherConfig _config;
 		readonly OBSWebsocketClient _client;
+		readonly Dictionary<string, int> _sceneNameTable = new();
+
 		SwitcherBusInput[]? _lastReceivedBusInputs = null;
 		bool? _lastReceivedIsStudioMode = null;
 
@@ -115,18 +117,29 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 			_eventHandler?.OnConnectionStateChange(_isConnected);
 		}
 
-		public override void RefreshPreview(int mixBlock)
+		public override async void RefreshPreview(int mixBlock)
 		{
+			try
+			{
+				if (!_isConnected) ThrowDisconnected();
+				await _client.SendDatalessRequest(new OBSRequestMessage("GetCurrentProgramScene", ""));
+			}
+			catch (Exception ex) { HandleFail(ex); }
 		}
 
-		public override void RefreshProgram(int mixBlock)
+		public override async void RefreshProgram(int mixBlock)
 		{
-			
+			try
+			{
+				if (!_isConnected) ThrowDisconnected();
+				await _client.SendDatalessRequest(new OBSRequestMessage("GetCurrentPreviewScene", ""));
+			}
+			catch (Exception ex) { HandleFail(ex); }
 		}
 
 		public override CutBusMode GetCutBusMode(int mixBlock) => CutBusMode.Cut;
 
-		void ValidateStatus(OBSResponseStatus status)
+		static void ValidateStatus(OBSResponseStatus status)
 		{
 			if (status.Code != 100 || !status.Result) throw new OBSCommunicationException("OBS failed to retrieve requested data.");
 		}
@@ -138,13 +151,21 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 			{
 				case SceneListData getSceneList:
 
+					// Sort by index
+					var sortedSceneList = getSceneList.Scenes.OrderBy(s => s.SceneIndex).ToArray();
+
 					// Create a list of inputs based on the scenes
 					var inputs = new SwitcherBusInput[getSceneList.Scenes.Length];
 					for (int i = 0; i < inputs.Length; i++)
 					{
-						var scene = getSceneList.Scenes[i];
+						var scene = sortedSceneList[i];
 						inputs[i] = new SwitcherBusInput(scene.SceneIndex, scene.SceneName);
 					}
+
+					// Update the name-id translation table for this.
+					_sceneNameTable.Clear();
+					for (int i = 0; i < sortedSceneList.Length; i++)
+						_sceneNameTable.Add(sortedSceneList[i].SceneName, sortedSceneList[i].SceneIndex);
 
 					// Create new specs from this and report it
 					_lastReceivedBusInputs = inputs;
@@ -153,6 +174,16 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 				case StudioModeEnabledData getStudioModeRaw:
 					_lastReceivedIsStudioMode = getStudioModeRaw.IsEnabled;
 					UpdateSpecsIfAllDataCollected();
+					break;
+				case CurrentPreviewSceneData previewRaw:
+					if (_sceneNameTable.TryGetValue(previewRaw.SceneName, out int prevVal))
+						_eventHandler?.OnPreviewValueChange(new(0, prevVal, null));
+
+					break;
+				case CurrentProgramSceneData previewRaw:
+					if (_sceneNameTable.TryGetValue(previewRaw.SceneName, out int progVal))
+						_eventHandler?.OnProgramValueChange(new(0, progVal, null));
+
 					break;
 			}
 		}

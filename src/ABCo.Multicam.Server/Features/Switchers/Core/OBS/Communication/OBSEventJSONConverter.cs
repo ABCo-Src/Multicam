@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Text.Json.Nodes;
 
 namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Communication
 {
@@ -47,6 +48,8 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Communication
 			{
 				"SceneListChanged" => JsonSerializer.Deserialize<SceneListData>(eventDataPos, options),
 				"StudioModeStateChanged" => JsonSerializer.Deserialize<StudioModeEnabledData>(eventDataPos, options),
+				"CurrentPreviewSceneChanged" => new CurrentPreviewSceneData((string)JsonNode.Parse(eventDataPos)!["sceneName"]!),
+				"CurrentProgramSceneChanged" => new CurrentProgramSceneData((string)JsonNode.Parse(eventDataPos)!["sceneName"]!),
 				_ => null,
 			};
 

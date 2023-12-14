@@ -8,6 +8,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Data;
 using ABCo.Multicam.Server.Features.Switchers.Core.OBS.Messages.Data;
+using System.Text.Json.Nodes;
 
 namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Communication
 {
@@ -52,6 +53,8 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Communication
 			{
 				"GetSceneList" => JsonSerializer.Deserialize<SceneListData>(responseDataPos, options),
 				"GetStudioModeEnabled" => JsonSerializer.Deserialize<StudioModeEnabledData>(responseDataPos, options),
+				"GetCurrentPreviewScene" => new CurrentPreviewSceneData((string)JsonNode.Parse(responseDataPos)!["currentPreviewSceneName"]!),
+				"GetCurrentProgramScene" => new CurrentProgramSceneData((string)JsonNode.Parse(responseDataPos)!["currentProgramSceneName"]!),
 				_ => null,
 			};
 			if (responseData == null) return null;
