@@ -74,7 +74,7 @@ namespace ABCo.Multicam.Server.Features.Switchers
 			_buffer.SetEventHandler(this);
 
 			// Update the specs + connection to match the new ones
-			SpecsInfo = new SpecsSpecificInfo(_buffer.CurrentBuffer.Specs, CreateMixBlockStateVals());
+			SpecsInfo = new SpecsSpecificInfo(_buffer.CurrentBuffer.Specs, CreateMixBlockStateVals(_buffer.CurrentBuffer.Specs));
 			OnConnectionStateChange(_buffer.CurrentBuffer.IsConnected);
 		}
 
@@ -98,10 +98,8 @@ namespace ABCo.Multicam.Server.Features.Switchers
 		}
 
 		// Events:
-		MixBlockState[] CreateMixBlockStateVals()
+		MixBlockState[] CreateMixBlockStateVals(SwitcherSpecs specs)
         {
-            var specs = _buffer.CurrentBuffer.Specs;
-
             var res = new MixBlockState[specs.MixBlocks.Count];
             for (int i = 0; i < specs.MixBlocks.Count; i++)
                 res[i] = new MixBlockState(_buffer.CurrentBuffer.GetProgram(i), _buffer.CurrentBuffer.GetPreview(i));
@@ -109,9 +107,9 @@ namespace ABCo.Multicam.Server.Features.Switchers
 			return res;
         }
 
-        public void OnProgramValueChange(SwitcherProgramChangeInfo info) => SpecsInfo = new SpecsSpecificInfo(SpecsInfo.Specs, CreateMixBlockStateVals());
-		public void OnPreviewValueChange(SwitcherPreviewChangeInfo info) => SpecsInfo = new SpecsSpecificInfo(SpecsInfo.Specs, CreateMixBlockStateVals());
-		public void OnSpecsChange(SwitcherSpecs newSpecs) => SpecsInfo = new SpecsSpecificInfo(newSpecs, CreateMixBlockStateVals());
+        public void OnProgramValueChange(SwitcherProgramChangeInfo info) => SpecsInfo = new SpecsSpecificInfo(SpecsInfo.Specs, CreateMixBlockStateVals(_buffer.CurrentBuffer.Specs));
+		public void OnPreviewValueChange(SwitcherPreviewChangeInfo info) => SpecsInfo = new SpecsSpecificInfo(SpecsInfo.Specs, CreateMixBlockStateVals(_buffer.CurrentBuffer.Specs));
+		public void OnSpecsChange(SwitcherSpecs newSpecs) => SpecsInfo = new SpecsSpecificInfo(newSpecs, CreateMixBlockStateVals(newSpecs));
 		public void OnConnectionStateChange(bool newState) => ConnectionStatus = newState ? SwitcherConnectionStatus.Connected : SwitcherConnectionStatus.NotConnected;
 
 		public void OnFailure(SwitcherError error)

@@ -11,5 +11,8 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Messages.Data
     {
         [JsonPropertyName("studioModeEnabled"), JsonRequired]
         public bool IsEnabled { get; set; }
+
+        public StudioModeEnabledData() { }
+        public StudioModeEnabledData(bool isEnabled) => IsEnabled = isEnabled;
     }
 }

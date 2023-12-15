@@ -10,11 +10,13 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Messages
 {
 	public class OBSResponseMessage : OBSDeserializedMessage
 	{
+		public string ResponseId { get; set; }
 		public OBSResponseStatus Status { get; set; } = null!;
-		public OBSData Data { get; set; } = null!;
+		public OBSData? Data { get; set; } = null!;
 
-		public OBSResponseMessage(OBSResponseStatus status, OBSData data)
+		public OBSResponseMessage(string id, OBSResponseStatus status, OBSData? data)
 		{
+			ResponseId = id;
 			Status = status;
 			Data = data;
 		}

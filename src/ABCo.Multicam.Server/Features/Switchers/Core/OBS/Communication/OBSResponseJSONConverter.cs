@@ -19,6 +19,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Communication
 			if (reader.TokenType != JsonTokenType.StartObject) throw new JsonException();
 
 			string? requestType = null;
+			string? requestId = null;
 			ReadOnlySpan<byte> requestStatusPos = new();
 			ReadOnlySpan<byte> responseDataPos = new();
 
@@ -36,6 +37,9 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Communication
 					case "requestType":
 						requestType = OBSJSONConverterHelpers.ReadString(ref reader);
 						break;
+					case "requestId":
+						requestId = OBSJSONConverterHelpers.ReadString(ref reader);
+						break;
 					case "requestStatus":
 						OBSJSONConverterHelpers.ReadAndGetSpanOfStartAndEnd(ref reader, ref requestStatusPos);
 						break;
@@ -46,25 +50,28 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Communication
 			}
 
 			// If anything was missing, stop.
-			if (requestType == null || requestStatusPos.Length == 0 || responseDataPos.Length == 0) goto MissingJSONData;
-
-			// Deserialize the specific data.
-			OBSData? responseData = requestType switch
-			{
-				"GetSceneList" => JsonSerializer.Deserialize<SceneListData>(responseDataPos, options),
-				"GetStudioModeEnabled" => JsonSerializer.Deserialize<StudioModeEnabledData>(responseDataPos, options),
-				"GetCurrentPreviewScene" => new CurrentPreviewSceneData((string)JsonNode.Parse(responseDataPos)!["currentPreviewSceneName"]!),
-				"GetCurrentProgramScene" => new CurrentProgramSceneData((string)JsonNode.Parse(responseDataPos)!["currentProgramSceneName"]!),
-				_ => null,
-			};
-			if (responseData == null) return null;
+			if (requestType == null || requestId == null || requestStatusPos.Length == 0) goto MissingJSONData;
 
 			// Deserialize status
 			var status = JsonSerializer.Deserialize<OBSResponseStatus>(requestStatusPos);
 			if (status == null) goto MissingJSONData;
 
-			// Return this
-			return new OBSResponseMessage(status, responseData);
+			// If there's a result, deserialize it - leave blank otherwise
+			if (responseDataPos.Length == 0)
+				return new OBSResponseMessage(requestId, status, null);
+			else
+			{
+				OBSData? responseData = requestType switch
+				{
+					"GetSceneList" => JsonSerializer.Deserialize<SceneListData>(responseDataPos, options),
+					"GetStudioModeEnabled" => JsonSerializer.Deserialize<StudioModeEnabledData>(responseDataPos, options),
+					"GetCurrentPreviewScene" => new CurrentPreviewSceneData((string)JsonNode.Parse(responseDataPos)!["currentPreviewSceneName"]!),
+					"GetCurrentProgramScene" => new CurrentProgramSceneData((string)JsonNode.Parse(responseDataPos)!["currentProgramSceneName"]!),
+					_ => null,
+				};
+
+				return responseData == null ? null : new OBSResponseMessage(requestId, status, responseData);
+			}
 
 		MissingJSONData:
 			throw new OBSCommunicationException("Missing JSON property in OBS data response.");

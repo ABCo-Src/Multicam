@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 {
-	public partial class OBSSwitcher
+	public partial class OBSConnection
 	{
 		async Task PerformHandshake()
 		{
@@ -41,7 +41,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 
 			static void Populate(OBSIdentifyMessage msg)
 			{
-				msg.EventSubscriptions = 4 | 1024; // EventSubscription::Scenes and EventSubscription::Ui
+				msg.EventSubscriptions = 4 | 16 | 1024; // EventSubscription::Scenes, EventSubscription::Transitions and EventSubscription::Ui
 				msg.RPCVersion = 1;
 			}
 		}

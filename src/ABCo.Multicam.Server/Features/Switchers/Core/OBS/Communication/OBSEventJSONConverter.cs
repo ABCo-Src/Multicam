@@ -40,11 +40,11 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Communication
 				}
 			}
 
-			// If anything was missing, stop.
-			if (eventType == null || eventDataPos.Length == 0) goto MissingJSONData;
+			// If the type was missing, stop.
+			if (eventType == null) goto MissingJSONData;
 
-			// Deserialize the specific data.
-			OBSData? specificResponse = eventType switch
+			// Deserialize the specific data, if there is any.
+			OBSData? specificResponse = eventDataPos.Length == 0 ? null : eventType switch
 			{
 				"SceneListChanged" => JsonSerializer.Deserialize<SceneListData>(eventDataPos, options),
 				"StudioModeStateChanged" => JsonSerializer.Deserialize<StudioModeEnabledData>(eventDataPos, options),
@@ -53,8 +53,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Communication
 				_ => null,
 			};
 
-			if (specificResponse == null) return null;
-			return new OBSEventMessage(specificResponse);
+			return new OBSEventMessage(eventType, specificResponse);
 
 		MissingJSONData:
 			throw new OBSCommunicationException("Missing JSON property in OBS data response.");
