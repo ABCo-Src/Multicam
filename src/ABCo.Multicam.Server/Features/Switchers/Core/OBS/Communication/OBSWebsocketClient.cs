@@ -35,7 +35,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Communication
 		public async Task Connect() => await _client.ConnectAsync(_hostname, CancellationToken.None);
 		public async Task Disconnect() => await _client.CloseAsync(WebSocketCloseStatus.NormalClosure, null, CancellationToken.None);
 
-		public async Task<OBSDeserializedMessage?> ReceiveData()
+		public async Task<OBSDeserializedMessage?> ReadMessage()
 		{
 			int length = await ReadIntoBuffer();
 

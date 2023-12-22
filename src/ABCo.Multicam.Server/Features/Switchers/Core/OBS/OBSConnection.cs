@@ -23,6 +23,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
         bool? _isStudioMode;
 		string? _currentPreview;
 		string? _currentProgram;
+		string? _currentTransition;
 		OBSProgramEventState _postProgramSetState = OBSProgramEventState.None;
 
         private OBSConnection(OBSSwitcherConfig config, OBSWebsocketClient client)
@@ -35,31 +36,33 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
         {
 			// Request needed info
 			await _client.SendDatalessRequest(new OBSRequestMessage("GetSceneList", ""));
+			await _client.SendDatalessRequest(new OBSRequestMessage("GetCurrentSceneTransition", ""));
 			await _client.SendDatalessRequest(new OBSRequestMessage("GetStudioModeEnabled", ""));
 			await _client.SendDatalessRequest(new OBSRequestMessage("GetCurrentPreviewScene", ""));
 			await _client.SendDatalessRequest(new OBSRequestMessage("GetCurrentProgramScene", ""));
 
 			// Process incoming until we have all of it
-			while (await ReadData() is not OBSSwitcherAction.Disconnected)
+			while (await ReadMessage() is not OBSSwitcherAction.Disconnected)
             {
-				if (_sceneData != null && _isStudioMode != null && _currentPreview != null && _currentProgram != null) return true;
+				if (_sceneData != null && _isStudioMode != null && _currentPreview != null && _currentProgram != null && _currentTransition != null) return true;
             }
 
 			// We got disconnected
 			return false;
         }
 
-        public async Task<OBSSwitcherAction> ReadData()
+		public async Task<OBSDeserializedMessage?> ReadMessage() => await _client.ReadMessage();
+
+		public async Task<OBSSwitcherAction> ProcessMessage(OBSDeserializedMessage? data)
         {
 			// Get data
-			var data = await _client.ReceiveData();
 			if (data == null) return _client.IsConnected ? OBSSwitcherAction.None : OBSSwitcherAction.Disconnected;
 
 			// Perform the appropriate action
 			switch (data)
 			{
 				case OBSResponseMessage dMsg:
-					// ValidateStatusCode(dMsg.Status); // We ignore failures to carry out requests because they're not critical.
+					ValidateStatusCode(dMsg.Status);
 					return dMsg.Data == null ? OBSSwitcherAction.None : ProcessResponseData(dMsg.Data);
 				case OBSEventMessage eMsg:
 
@@ -119,6 +122,10 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 					_currentProgram = programRaw.SceneName;
 					return OBSSwitcherAction.ProgramChanged;
 
+				case CurrentSceneTransition sceneTransition:
+					_currentTransition = sceneTransition.TransitionName;
+					return OBSSwitcherAction.None;
+
 				default:
 					return OBSSwitcherAction.None;
 			}
@@ -159,6 +166,20 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 			await _client.SendRequest(new OBSRequestMessage<CurrentProgramSceneData>("SetCurrentPreviewScene", "s", new(val)));
 		}
 
+		// Only usable in studio mode
+		public async Task Cut(int mixBlock)
+		{
+			if (_currentTransition == null) throw UninitializedException();
+
+			// Change transition to "Cut" (if it's not already)
+			if (_currentTransition != "Cut")
+			{
+				await _client.SendRequest(new OBSRequestMessage<CurrentSceneTransition>("SetCurrentSceneTransition", "", new("Cut")));
+				await _client.SendDatalessRequest(new OBSRequestMessage("TriggerStudioModeTransition", ""));
+				await _client.SendRequest(new OBSRequestMessage<CurrentSceneTransition>("SetCurrentSceneTransition", "", new(_currentTransition)));
+			}
+		}
+
 		static void ValidateStatusCode(OBSResponseStatus status)
 		{
 			// status.Result is just shorthand to tell us whether status.Code is 100 or not (because OBS doesn't know how to design
@@ -170,7 +191,6 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 		{
 			if (_sceneData == null || _isStudioMode == null) throw UninitializedException();
 
-			// Create a list of inputs based on the scenes
 			var features = new SwitcherMixBlockFeatures()
 			{
 				SupportsAutoAction = false,
@@ -183,6 +203,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 				SupportsDirectProgramModification = true
 			};
 
+			// Create a list of inputs based on the scenes
 			var inputs = new SwitcherBusInput[_sceneData.Length];
 			for (int i = 0; i < inputs.Length; i++)
 			{
@@ -225,6 +246,6 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
         Disconnected,
         NotifySpecsChanged,
 		PreviewChanged,
-		ProgramChanged,
+		ProgramChanged
     }
 }

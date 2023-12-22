@@ -1,4 +1,6 @@
-﻿using ABCo.Multicam.Server.General.Queues;
+﻿using ABCo.Multicam.Server.Features.Switchers.Data;
+using ABCo.Multicam.Server.General;
+using ABCo.Multicam.Server.General.Queues;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +14,12 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.Wrappers
     /// </summary>
     public class ExecutionBufferSwitcherWrapper : PassthroughSwitcherBase
 	{
+		readonly IThreadDispatcher _dispatcher;
 		readonly IExecutionBuffer<IRawSwitcher> _interactionThread;
 
-		public ExecutionBufferSwitcherWrapper(IRawSwitcher nextSwitcher, IExecutionBuffer<IRawSwitcher> executionBuffer) : base(nextSwitcher)
+		public ExecutionBufferSwitcherWrapper(IRawSwitcher nextSwitcher, IExecutionBuffer<IRawSwitcher> executionBuffer, IServerInfo info) : base(nextSwitcher)
 		{
+			_dispatcher = info.GetLocalClientConnection().Dispatcher;
 			_interactionThread = executionBuffer;
 		}
 
@@ -38,6 +42,12 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.Wrappers
 		public override void RefreshSpecs() => _interactionThread.QueueTask(s => s.RefreshSpecs());
 		public override void SendPreviewValue(int mixBlock, int id) => _interactionThread.QueueTask(s => s.SendPreviewValue(mixBlock, id));
 		public override void SendProgramValue(int mixBlock, int id) => _interactionThread.QueueTask(s => s.SendProgramValue(mixBlock, id));
+		public override void OnPreviewValueChange(SwitcherPreviewChangeInfo info) => _dispatcher.Queue(() => _parentSwitcher?.OnPreviewValueChange(info));
+		public override void OnProgramValueChange(SwitcherProgramChangeInfo info) => _dispatcher.Queue(() => _parentSwitcher?.OnProgramValueChange(info));
+		public override void OnSpecsChange(SwitcherSpecs newSpecs) => _dispatcher.Queue(() => _parentSwitcher?.OnSpecsChange(newSpecs));
+		public override void OnConnectionStateChange(bool isConnected) => _dispatcher.Queue(() => _parentSwitcher?.OnConnectionStateChange(isConnected));
+		public override void OnFailure(SwitcherError error) => _dispatcher.Queue(() => _parentSwitcher?.OnFailure(error));
+
 		public override void Dispose() => _interactionThread.QueueFinish(s => s.Dispose());
 	}
 }

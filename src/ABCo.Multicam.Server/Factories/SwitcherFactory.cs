@@ -27,12 +27,12 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core
                 case ATEMSwitcherConfig a:
                     var atem = _servSource.Get<IATEMSwitcher, ATEMSwitcherConfig>(a);
                     var caughtATEM = new CatchingSwitcherWrapper(atem);
-					return new ExecutionBufferSwitcherWrapper(caughtATEM, new BackgroundThreadExecutionBuffer<IRawSwitcher>(true, caughtATEM));
+					return new ExecutionBufferSwitcherWrapper(caughtATEM, new BackgroundThreadExecutionBuffer<IRawSwitcher>(true, caughtATEM), _servSource);
 
                 case OBSSwitcherConfig o:
 					var obs = new OBSSwitcher(o);
                     var caughtOBS = new CatchingSwitcherWrapper(obs);
-                    return new ExecutionBufferSwitcherWrapper(caughtOBS, new SameThreadExecutionBuffer<IRawSwitcher>(caughtOBS));
+                    return new ExecutionBufferSwitcherWrapper(caughtOBS, new SameThreadExecutionBuffer<IRawSwitcher>(caughtOBS), _servSource);
 
                 default:
                     throw new Exception("Unsupported switcher type!");

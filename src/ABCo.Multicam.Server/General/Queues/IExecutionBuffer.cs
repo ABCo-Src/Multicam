@@ -14,7 +14,8 @@ namespace ABCo.Multicam.Server.General.Queues
 	{
 		void StartExecution();
 		void QueueFinish();
-		void QueueFinish(Action<T> finishAct);
-		void QueueTask(Action<T> act);
+		void QueueFinish(Action finishAct);
+		void QueueTask(Action act);
+		void QueueTaskAsync(Func<Task> act);
 	}
 }

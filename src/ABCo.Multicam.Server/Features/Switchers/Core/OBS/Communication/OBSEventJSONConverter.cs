@@ -50,6 +50,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Communication
 				"StudioModeStateChanged" => JsonSerializer.Deserialize<StudioModeEnabledData>(eventDataPos, options),
 				"CurrentPreviewSceneChanged" => new CurrentPreviewSceneData((string)JsonNode.Parse(eventDataPos)!["sceneName"]!),
 				"CurrentProgramSceneChanged" => new CurrentProgramSceneData((string)JsonNode.Parse(eventDataPos)!["sceneName"]!),
+				"CurrentSceneTransitionChanged" => new CurrentProgramSceneData((string)JsonNode.Parse(eventDataPos)!["sceneName"]!),
 				_ => null,
 			};
 

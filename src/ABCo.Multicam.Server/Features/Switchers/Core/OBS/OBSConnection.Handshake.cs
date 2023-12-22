@@ -19,7 +19,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 
 		async Task<OBSHelloMessage> GetAndValidateHelloMessage()
 		{
-			var rawMsg = await _client.ReceiveData();
+			var rawMsg = await _client.ReadMessage();
 			if (rawMsg is not OBSHelloMessage helloMsg) throw new OBSCommunicationException("Unexpected message from OBS when performing handshake.");
 			return helloMsg;
 		}
@@ -48,7 +48,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 
 		async Task GetAndValidateIdentifiedMessage()
 		{
-			var rawMsg = await _client.ReceiveData();
+			var rawMsg = await _client.ReadMessage();
 			if (rawMsg is not OBSIdentifiedMessage msg) throw new OBSCommunicationException("Failed to finish OBS handshake, verify the Server Password given is correct.");
 			if (msg.NegotiatedRPCVersion != 1) throw new OBSCommunicationException("OBS not allowing the required RPC version, v1, to be used for communication.");
 		}
