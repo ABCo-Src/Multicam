@@ -53,7 +53,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Buffering
             else
                 Preview = _mixBlock.ProgramInputs.Count == 0 ? 0 : _mixBlock.ProgramInputs[0].Id;
 
-            CutBusMode = _mixBlock.SupportedFeatures.SupportsCutBusModeChanging ? _switcher.GetCutBusMode(_mixBlockIdx) : CutBusMode.Cut;
+            CutBusMode = CutBusMode.Cut;
         }
 
         public void SendProgram(int val)
@@ -67,8 +67,6 @@ namespace ABCo.Multicam.Server.Features.Switchers.Buffering
 
             // Otherwise, try to use a fallback method
             if (_fallbackEmulator.TrySetProgWithPreviewThenCut(val)) return;
-            if (_fallbackEmulator.TrySetProgWithCutBusCut(val)) return;
-            if (_fallbackEmulator.TrySetProgWithCutBusAuto(val)) return;
 
             // If neither works, just update the cache
             Program = val;
@@ -98,22 +96,13 @@ namespace ABCo.Multicam.Server.Features.Switchers.Buffering
 
         public void SetCutBus(int val)
         {
-            if (_mixBlock.SupportedFeatures.SupportsCutBusSwitching)
-            {
-                _switcher.SetCutBus(_mixBlockIdx, val);
-                return;
-            }
-
             if (CutBusMode == CutBusMode.Auto && _fallbackEmulator.TrySetCutBusWithPrevThenAuto(val)) return;
             _fallbackEmulator.SetCutBusWithProgSet(val);
         }
 
         public void SetCutBusMode(CutBusMode val)
         {
-            if (_mixBlock.SupportedFeatures.SupportsCutBusModeChanging)
-                _switcher.SetCutBusMode(_mixBlockIdx, val);
-            else
-                CutBusMode = val;
+            CutBusMode = val;
         }
 
         public void UpdateProg(int knownProg) => Program = knownProg;

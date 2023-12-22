@@ -31,11 +31,6 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core
 		void SendPreviewValue(int mixBlock, int id);
 		void Cut(int mixBlock);
 
-		// Cut Bus:
-		CutBusMode GetCutBusMode(int mixBlock);
-		void SetCutBusMode(int mixBlock, CutBusMode mode);
-		void SetCutBus(int mixBlock, int newVal);
-
 		// Event Handling:
 		void SetEventHandler(ISwitcherEventHandler? eventHandler);
 	}
