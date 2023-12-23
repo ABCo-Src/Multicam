@@ -5,6 +5,7 @@ using ABCo.Multicam.Server.Features.Switchers.Data.Config;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.AccessControl;
 using System.Text;
@@ -24,7 +25,9 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 		string? _currentPreview;
 		string? _currentProgram;
 		string? _currentTransition;
-		OBSProgramEventState _postProgramSetState = OBSProgramEventState.None;
+
+		TaskCompletionSource? _waitForTransitionEnd;
+		TaskCompletionSource? _waitForRequestResponse;
 
         private OBSConnection(OBSSwitcherConfig config, OBSWebsocketClient client)
 		{
@@ -51,35 +54,32 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 			return false;
         }
 
-		public async Task<OBSDeserializedMessage?> ReadMessage() => await _client.ReadMessage();
-
-		public async Task<OBSSwitcherAction> ProcessMessage(OBSDeserializedMessage? data)
+		public async Task<OBSSwitcherAction> ReadMessage()
         {
 			// Get data
+			var data = await _client.ReadMessage();
 			if (data == null) return _client.IsConnected ? OBSSwitcherAction.None : OBSSwitcherAction.Disconnected;
 
 			// Perform the appropriate action
 			switch (data)
 			{
 				case OBSResponseMessage dMsg:
+
+					if (_waitForRequestResponse != null)
+					{
+						_waitForRequestResponse.SetResult();
+						_waitForRequestResponse = null;
+					}
+
 					ValidateStatusCode(dMsg.Status);
 					return dMsg.Data == null ? OBSSwitcherAction.None : ProcessResponseData(dMsg.Data);
 				case OBSEventMessage eMsg:
 
-					// If we recently set the program and we're waiting to change preview back to its old value (see the comment in SetProgram).
-					switch (_postProgramSetState)
+					// If we're waiting for the scene transition to end, report that it has.
+					if (_waitForTransitionEnd != null && eMsg.EventType == "SceneTransitionEnded")
 					{
-						case OBSProgramEventState.WaitingForTransitionEnd:
-							if (eMsg.EventType == "SceneTransitionEnded")
-							{
-								await _client.SendRequest(new OBSRequestMessage<CurrentPreviewSceneData>("SetCurrentPreviewScene", "", new(_currentPreview!)));
-								_postProgramSetState = OBSProgramEventState.WaitingForPreviewCorrectionUpdate;
-							}
-							break;
-						case OBSProgramEventState.WaitingForPreviewCorrectionUpdate:
-							if (eMsg.EventType == "CurrentPreviewSceneChanged")
-								_postProgramSetState = OBSProgramEventState.None;
-							break;
+						_waitForTransitionEnd.SetResult();
+						_waitForTransitionEnd = null;
 					}
 
 					return ProcessResponseData(eMsg.Data);
@@ -114,7 +114,6 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 					return OBSSwitcherAction.NotifySpecsChanged;
 
 				case CurrentPreviewSceneData previewRaw:
-					if (_postProgramSetState != OBSProgramEventState.None) return OBSSwitcherAction.None;
 					_currentPreview = previewRaw.SceneName;
 					return OBSSwitcherAction.PreviewChanged;
 
@@ -150,34 +149,51 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 			if (_currentPreview == null) throw UninitializedException();
 
 			// Annoyingly, when we're in studio mode, setting program can *also* update the preview like a cut operation.
-			// This all depends on whether "Swap Preview/Output" is ticked in OBS, and there's no way to detect if it is.
-			// To resolve this, we send a program signal, wait for a SceneTransitionEnded, *then* send a preview signal to reset
-			// the preview back to its old value. While we wait for that final preview change to apply, we
-			// suppress **any** preview events from being received (just suppress the first one post preview send).
-			// TODO: Only do this stuff if studio mode is enabled? Playing it safe for now
-			_postProgramSetState = OBSProgramEventState.WaitingForTransitionEnd;
+			// So we don't use this function outside of it - instead opting to let the emulator above the switcher set preview and perform "cut".
 			if (!_idToNameLookup.TryGetValue(id, out string? val)) throw new ArgumentException("Invalid ID given for setting program bus.");
-			await _client.SendRequest(new OBSRequestMessage<CurrentProgramSceneData>("SetCurrentProgramScene", "", new(val)));
+			await SendRequestAndWaitForResponse(new OBSRequestMessage<CurrentProgramSceneData>("SetCurrentProgramScene", "", new(val)));
 		}
 
 		public async Task SetPreview(int mixBlock, int id)
 		{
+			Debug.WriteLine("Pre" + _idToNameLookup[id]);
+
 			if (!_idToNameLookup.TryGetValue(id, out string? val)) throw new ArgumentException("Invalid ID given for setting preview bus.");
-			await _client.SendRequest(new OBSRequestMessage<CurrentProgramSceneData>("SetCurrentPreviewScene", "s", new(val)));
+			await SendRequestAndWaitForResponse(new OBSRequestMessage<CurrentProgramSceneData>("SetCurrentPreviewScene", "s", new(val)));
 		}
 
 		// Only usable in studio mode
 		public async Task Cut(int mixBlock)
 		{
 			if (_currentTransition == null) throw UninitializedException();
+			string oldTransition = _currentTransition;
 
-			// Change transition to "Cut" (if it's not already)
-			if (_currentTransition != "Cut")
-			{
-				await _client.SendRequest(new OBSRequestMessage<CurrentSceneTransition>("SetCurrentSceneTransition", "", new("Cut")));
-				await _client.SendDatalessRequest(new OBSRequestMessage("TriggerStudioModeTransition", ""));
-				await _client.SendRequest(new OBSRequestMessage<CurrentSceneTransition>("SetCurrentSceneTransition", "", new(_currentTransition)));
-			}
+			Debug.WriteLine("Cut1");
+
+			// Switch to cut if needed
+			if (oldTransition != "Cut")
+				await SendRequestAndWaitForResponse(new OBSRequestMessage<CurrentSceneTransition>("SetCurrentSceneTransition", "", new("Cut")));
+
+			Debug.WriteLine("Cut2");
+
+			// Transition
+			_waitForTransitionEnd = new();
+			await _client.SendDatalessRequest(new OBSRequestMessage("TriggerStudioModeTransition", ""));
+			await _waitForTransitionEnd.Task;
+
+			Debug.WriteLine("Cut3");
+
+			// Switch back to previous
+			if (oldTransition != "Cut")
+				await SendRequestAndWaitForResponse(new OBSRequestMessage<CurrentSceneTransition>("SetCurrentSceneTransition", "", new(oldTransition)));
+		}
+
+		async Task SendRequestAndWaitForResponse<T>(OBSRequestMessage<T> data)
+		{
+			_waitForRequestResponse = new();
+			await _client.SendRequest(data);
+			await _waitForRequestResponse.Task;
+			_waitForRequestResponse = null;
 		}
 
 		static void ValidateStatusCode(OBSResponseStatus status)
@@ -194,13 +210,13 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 			var features = new SwitcherMixBlockFeatures()
 			{
 				SupportsAutoAction = false,
-				SupportsCutAction = false,
+				SupportsCutAction = _isStudioMode.Value,
 				SupportsCutBusAutoMode = false,
 				SupportsCutBusCutMode = false,
 				SupportsCutBusModeChanging = false,
 				SupportsCutBusSwitching = false,
 				SupportsDirectPreviewAccess = _isStudioMode.Value,
-				SupportsDirectProgramModification = true
+				SupportsDirectProgramModification = false
 			};
 
 			// Create a list of inputs based on the scenes

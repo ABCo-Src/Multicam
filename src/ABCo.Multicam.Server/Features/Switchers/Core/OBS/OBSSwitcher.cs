@@ -21,13 +21,15 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 	{
 		// Implementation of: https://github.com/obsproject/obs-websocket/blob/master/docs/generated/protocol.md
 		readonly OBSSwitcherConfig _config;
-		readonly IExecutionBuffer<OBSSwitcher> _buffer;
+		readonly IThreadDispatcher _dispatcher;
+		readonly IExecutionBuffer _buffer;
 		OBSConnection? _connection;
 
-		public OBSSwitcher(OBSSwitcherConfig config)
+		public OBSSwitcher(OBSSwitcherConfig config, IServerInfo info)
 		{
 			_config = config;
-			_buffer = new SameThreadExecutionBuffer<OBSSwitcher>(this, HandleFail);
+			_dispatcher = info.GetLocalClientConnection().Dispatcher;
+			_buffer = new SameThreadExecutionBuffer(HandleFail);
 		}
 
 		public override SwitcherPlatformCompatibilityValue GetPlatformCompatibility() => SwitcherPlatformCompatibilityValue.Supported;
@@ -36,10 +38,11 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 		{
 			_buffer.QueueTaskAsync(async () =>
 			{
+				// Connect to OBS
 				_connection?.Dispose();
 				_connection = await OBSConnection.ConnectAndGetInfo(_config);
 				_eventHandler?.OnConnectionStateChange(true);
-				ReadMessageThenQueue();
+				OBSEventLoop();
 			});
 		}
 
@@ -53,94 +56,100 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 				_connection = null;
 				_eventHandler?.OnConnectionStateChange(false);
 			});
+
+			_buffer.QueueFinish();
 		}
 
-		async void ReadMessageThenQueue()
+		async void OBSEventLoop()
 		{
-			try
+			if (_connection == null)
 			{
-				if (_connection == null) throw ThrowDisconnected();
-
-				var result = await _connection.ReadMessage();
-				if (result == null) break;
-
-				_buffer.QueueTaskAsync(async () => await ProcessMessage(result));
-			}
-			catch (Exception ex) { HandleFail(ex); }
-
-			// Repeatedly read messages, queuing up responses as a result.
-			while (true)
-			{
-				
-					
-				
+				HandleFail(ThrowDisconnected());
+				return;
 			}
 
-
-			
-		}
-
-		async Task ProcessMessage(OBSDeserializedMessage? message)
-		{
-			if (_connection == null) throw ThrowDisconnected();
-
-			// Perform the appropriate action
-			var action = await _connection.ProcessMessage(message);
-			switch (action)
+			var code = OBSSwitcherAction.None;
+			while (code != OBSSwitcherAction.Disconnected)
 			{
-				case OBSSwitcherAction.PreviewChanged:
-					_eventHandler?.OnPreviewValueChange(new SwitcherPreviewChangeInfo(0, _connection.LookupCurrentPreviewId(), new RetrospectiveFadeInfo()));
-					break;
-				case OBSSwitcherAction.ProgramChanged:
-					_eventHandler?.OnProgramValueChange(new SwitcherProgramChangeInfo(0, _connection.LookupCurrentProgramId(), new RetrospectiveFadeInfo()));
-					break;
-				case OBSSwitcherAction.NotifySpecsChanged:
-					_eventHandler?.OnSpecsChange(_connection.CreateSpecs());
-					break;
+				try
+				{
+					code = await _connection.ReadMessage();
+
+					// Perform the appropriate action
+					switch (code)
+					{
+						case OBSSwitcherAction.PreviewChanged:
+							_eventHandler?.OnPreviewValueChange(new SwitcherPreviewChangeInfo(0, _connection.LookupCurrentPreviewId(), new RetrospectiveFadeInfo()));
+							break;
+						case OBSSwitcherAction.ProgramChanged:
+							_eventHandler?.OnProgramValueChange(new SwitcherProgramChangeInfo(0, _connection.LookupCurrentProgramId(), new RetrospectiveFadeInfo()));
+							break;
+						case OBSSwitcherAction.NotifySpecsChanged:
+							_eventHandler?.OnSpecsChange(_connection.CreateSpecs());
+							break;
+					}
+				}
+				catch (Exception ex) { HandleFail(ex); }
 			}
 
-			// Now that it's sorted, queue up the next message
-
+			// Disconnect now that we're finished.
+			_connection = null;
 		}
 
 		public override void RefreshSpecs()
 		{
-			if (_connection == null) throw ThrowDisconnected();
-			_eventHandler?.OnSpecsChange(_connection.CreateSpecs());
+			_buffer.QueueTask(() =>
+			{
+				if (_connection == null) throw ThrowDisconnected();
+				_eventHandler?.OnSpecsChange(_connection.CreateSpecs());
+			});
 		}
 
 		public override void RefreshConnectionStatus() => _eventHandler?.OnConnectionStateChange(_connection != null);
 
 		public override void RefreshProgram(int mixBlock)
 		{
-			if (_connection == null) throw ThrowDisconnected();
-			_eventHandler?.OnProgramValueChange(new(0, _connection.LookupCurrentProgramId(), new()));
+			_buffer.QueueTask(() =>
+			{
+				if (_connection == null) throw ThrowDisconnected();
+				_eventHandler?.OnProgramValueChange(new(0, _connection.LookupCurrentProgramId(), new()));
+			});
 		}
 
 		public override void RefreshPreview(int mixBlock)
 		{
-			if (_connection == null) throw ThrowDisconnected();
-			_eventHandler?.OnPreviewValueChange(new(0, _connection.LookupCurrentPreviewId(), new()));
+			_buffer.QueueTask(() =>
+			{
+				if (_connection == null) throw ThrowDisconnected();
+				_eventHandler?.OnPreviewValueChange(new(0, _connection.LookupCurrentPreviewId(), new()));
+			});
 		}
 
-		public override async void SendProgramValue(int mixBlock, int id)
+		public override void SendProgramValue(int mixBlock, int id)
 		{
-			try
+			_buffer.QueueTaskAsync(async () =>
 			{
 				if (_connection == null) throw ThrowDisconnected();
 				await _connection.SetProgram(mixBlock, id);
-			}
-			catch (Exception ex) { HandleFail(ex); }
+			});
 		}
 
-		public override async void SendPreviewValue(int mixBlock, int id)
+		public override void SendPreviewValue(int mixBlock, int id)
 		{
-			try
+			_buffer.QueueTaskAsync(async () =>
 			{
 				if (_connection == null) throw ThrowDisconnected();
 				await _connection.SetPreview(mixBlock, id);
-			}
-			catch (Exception ex) { HandleFail(ex); }
+			});
+		}
+
+		public override void Cut(int mixBlock)
+		{
+			_buffer.QueueTaskAsync(async () =>
+			{
+				if (_connection == null) throw ThrowDisconnected();
+				await _connection.Cut(mixBlock);
+			});
 		}
 
 		public override void Dispose() => _connection?.Dispose();

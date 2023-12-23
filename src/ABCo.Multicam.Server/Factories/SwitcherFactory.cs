@@ -14,29 +14,15 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core
 
     public class SwitcherFactory : ISwitcherFactory
     {
-        readonly IServerInfo _servSource;
-        public SwitcherFactory(IServerInfo servSource) => _servSource = servSource;
+        readonly IServerInfo _info;
+        public SwitcherFactory(IServerInfo servSource) => _info = servSource;
 
-        public IRawSwitcher GetSwitcher(SwitcherConfig config)
-        {
-            switch (config)
-            {
-                case VirtualSwitcherConfig d:
-                    return _servSource.Get<IVirtualSwitcher, VirtualSwitcherConfig>(d);
-
-                case ATEMSwitcherConfig a:
-                    var atem = _servSource.Get<IATEMSwitcher, ATEMSwitcherConfig>(a);
-                    var caughtATEM = new CatchingSwitcherWrapper(atem);
-					return new ExecutionBufferSwitcherWrapper(caughtATEM, new BackgroundThreadExecutionBuffer<IRawSwitcher>(true, caughtATEM), _servSource);
-
-                case OBSSwitcherConfig o:
-					var obs = new OBSSwitcher(o);
-                    var caughtOBS = new CatchingSwitcherWrapper(obs);
-                    return new ExecutionBufferSwitcherWrapper(caughtOBS, new SameThreadExecutionBuffer<IRawSwitcher>(caughtOBS), _servSource);
-
-                default:
-                    throw new Exception("Unsupported switcher type!");
-			}
-        }
-    }
+		public IRawSwitcher GetSwitcher(SwitcherConfig config) => config switch
+		{
+			VirtualSwitcherConfig d => _info.Get<IVirtualSwitcher, VirtualSwitcherConfig>(d),
+			ATEMSwitcherConfig a => _info.Get<IATEMSwitcher, ATEMSwitcherConfig>(a),
+			OBSSwitcherConfig o => new OBSSwitcher(o, _info),
+			_ => throw new Exception("Unsupported switcher type!"),
+		};
+	}
 }

@@ -12,18 +12,20 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.ATEM
     public class ATEMSwitcher : RawSwitcher, IATEMSwitcher
     {
         readonly ATEMSwitcherConfig _config;
-        readonly IThreadDispatcher _mainThreadDispatcher;
+        readonly IThreadDispatcher _dispatcher;
         readonly IServerInfo _servSource;
         readonly IATEMPlatformCompatibility _compatibility;
+        readonly BackgroundThreadExecutionBuffer _buffer;
 
-        IATEMConnection? _connection;
+        IATEMConnection? _connection; // Only access with the background thread!
 
         public ATEMSwitcher(ATEMSwitcherConfig config, IServerInfo servSource)
         {
             _config = config;
             _servSource = servSource;
-            _compatibility = servSource.Get<IATEMPlatformCompatibility>();
-            _mainThreadDispatcher = servSource.GetLocalClientConnection().Dispatcher;
+			_compatibility = servSource.Get<IATEMPlatformCompatibility>();
+            _dispatcher = servSource.GetLocalClientConnection().Dispatcher;
+            _buffer = new(ProcessError);
         }
 
         public override SwitcherPlatformCompatibilityValue GetPlatformCompatibility() => _compatibility.GetCompatibility();
@@ -34,68 +36,92 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.ATEM
             if (_compatibility.GetCompatibility() != SwitcherPlatformCompatibilityValue.Supported)
             {
                 _eventHandler?.OnFailure(new SwitcherError("ATEM Switchers cannot currently be connected to, check the edit page for more info."));
-				_mainThreadDispatcher.Queue(() => _eventHandler?.OnConnectionStateChange(false));
+				_dispatcher.Queue(() => _eventHandler?.OnConnectionStateChange(false));
 				return;
             }
 
-            _connection = _servSource.Get<IATEMConnection, ATEMSwitcherConfig, IATEMSwitcher>(_config, this);
-			_mainThreadDispatcher.Queue(() => _eventHandler?.OnConnectionStateChange(true));
+            _buffer.QueueTask(() =>
+            {
+                _connection = _servSource.Get<IATEMConnection, ATEMSwitcherConfig, IATEMSwitcher>(_config, this);
+                _dispatcher.Queue(() => _eventHandler?.OnConnectionStateChange(true));
+            });
 		}
 
         public override void Disconnect()
         {
-            if (_connection == null) throw new UnexpectedSwitcherDisconnectionException();
+            _buffer.QueueTask(() =>
+            {
+                if (_connection == null) throw new UnexpectedSwitcherDisconnectionException();
 
-            _connection.Dispose();
-            _connection = null;
-            _mainThreadDispatcher.Queue(() => _eventHandler?.OnConnectionStateChange(false));
+                _connection.Dispose();
+                _connection = null;
+                _dispatcher.Queue(() => _eventHandler?.OnConnectionStateChange(false));
+            });
         }
 
         public override void RefreshConnectionStatus() => _eventHandler?.OnConnectionStateChange(_connection != null);
 
         public override void RefreshSpecs()
         {
-            if (_connection == null) throw new UnexpectedSwitcherDisconnectionException();
+            _buffer.QueueTask(() =>
+            {
+                if (_connection == null) throw new UnexpectedSwitcherDisconnectionException();
 
-            var newSpecs = _connection.InvalidateCurrentSpecs();
-            _mainThreadDispatcher.Queue(() => _eventHandler?.OnSpecsChange(newSpecs));
+                var newSpecs = _connection.InvalidateCurrentSpecs();
+                _dispatcher.Queue(() => _eventHandler?.OnSpecsChange(newSpecs));
+            });
         }
 
         public override void RefreshProgram(int mixBlock)
         {
-            if (_connection == null) throw new UnexpectedSwitcherDisconnectionException();
+            _buffer.QueueTask(() =>
+            {
+                if (_connection == null) throw new UnexpectedSwitcherDisconnectionException();
 
-            long val = _connection.GetProgram(mixBlock);
-            _mainThreadDispatcher.Queue(() => _eventHandler?.OnProgramValueChange(new SwitcherProgramChangeInfo(mixBlock, (int)val, null)));
+                long val = _connection.GetProgram(mixBlock);
+                _dispatcher.Queue(() => _eventHandler?.OnProgramValueChange(new SwitcherProgramChangeInfo(mixBlock, (int)val, null)));
+            });
         }
 
         public override void RefreshPreview(int mixBlock)
         {
-            if (_connection == null) throw new UnexpectedSwitcherDisconnectionException();
+            _buffer.QueueTask(() =>
+            {
+                if (_connection == null) throw new UnexpectedSwitcherDisconnectionException();
 
-            long val = _connection.GetPreview(mixBlock);
-            _mainThreadDispatcher.Queue(() => _eventHandler?.OnPreviewValueChange(new SwitcherPreviewChangeInfo(mixBlock, (int)val, null)));
+                long val = _connection.GetPreview(mixBlock);
+                _dispatcher.Queue(() => _eventHandler?.OnPreviewValueChange(new SwitcherPreviewChangeInfo(mixBlock, (int)val, null)));
+            });
         }
 
         public override void SendProgramValue(int mixBlock, int id)
         {
-            if (_connection == null) throw new UnexpectedSwitcherDisconnectionException();
-            _connection.SendProgram(mixBlock, id);
+            _buffer.QueueTask(() =>
+            {
+                if (_connection == null) throw new UnexpectedSwitcherDisconnectionException();
+                _connection.SendProgram(mixBlock, id);
+            });
         }
 
         public override void SendPreviewValue(int mixBlock, int id)
         {
-            if (_connection == null) throw new UnexpectedSwitcherDisconnectionException();
-            _connection.SendPreview(mixBlock, id);
+            _buffer.QueueTask(() =>
+            {
+                if (_connection == null) throw new UnexpectedSwitcherDisconnectionException();
+                _connection.SendPreview(mixBlock, id);
+            });
         }
 
         public override void Cut(int mixBlock)
         {
-            if (_connection == null) throw new UnexpectedSwitcherDisconnectionException();
-            _connection.Cut(mixBlock);
+            _buffer.QueueTask(() =>
+            {
+                if (_connection == null) throw new UnexpectedSwitcherDisconnectionException();
+                _connection.Cut(mixBlock);
+            });
         }
 
-        public void ProcessError(Exception ex) => _mainThreadDispatcher.Queue(() => _eventHandler?.OnFailure(new(ex.Message)));
+        public void ProcessError(Exception ex) => _dispatcher.Queue(() => _eventHandler?.OnFailure(new(ex.Message)));
 
         public override void Dispose()
         {

@@ -13,20 +13,18 @@ namespace ABCo.Multicam.Server.General.Queues
         void ProcessError(Exception ex);
     }
 
-    public class BackgroundThreadExecutionBuffer<T> : IExecutionBuffer<T>
+    public class BackgroundThreadExecutionBuffer : IExecutionBuffer
     {
-        readonly Queue<Action<T>?> _taskQueue; // Used as the lock for everything here
-        readonly bool _tryRunUnderSTA;
-        readonly T _target;
+        readonly Queue<Action?> _taskQueue; // Used as the lock for everything here
+        readonly Action<Exception> _errorHandler;
 
-        volatile Action<T>? _finishAction;
+        volatile Action? _finishAction;
         volatile bool _isRunning = false;
 
-        public BackgroundThreadExecutionBuffer(bool tryRunUnderSTA, T target)
+        public BackgroundThreadExecutionBuffer(Action<Exception> errorHandler)
         {
-            _target = target;
-            _tryRunUnderSTA = tryRunUnderSTA;
-            _taskQueue = new();
+            _errorHandler = errorHandler;
+			_taskQueue = new();
         }
 
         public void StartExecution()
@@ -36,32 +34,35 @@ namespace ABCo.Multicam.Server.General.Queues
                 if (_isRunning) throw new Exception("Attempted to start running background thread when it's already running!");
                 _isRunning = true;
 
-                var thread = new Thread(() => DoWorkBackground(_target));
+                var thread = new Thread(() => DoWorkBackground());
 
                 // Only do the STA part if we're on Windows
-                if (_tryRunUnderSTA && OperatingSystem.IsWindows())
+                if (OperatingSystem.IsWindows())
                     thread.SetApartmentState(ApartmentState.STA);
 
                 thread.Start();
             }
         }
 
-        void DoWorkBackground(T target)
+        void DoWorkBackground()
         {
             while (true)
             {
                 // Wait for a task to come in the queue, and stop if it's a stop request
-                var item = WaitForItem(target);
+                var item = WaitForItem();
                 if (item == null) break;
 
                 // Process the item
-                item(target);
+                try
+                {
+                    item();
+                }
+                catch (Exception ex) { _errorHandler(ex); }
             }
         }
 
-        private Action<T>? WaitForItem(T target)
+        private Action? WaitForItem()
         {
-            Action<T>? stopAction;
             var waiter = new SpinWait();
 
             while (true)
@@ -69,17 +70,7 @@ namespace ABCo.Multicam.Server.General.Queues
                 lock (_taskQueue)
                 {
                     if (_taskQueue.TryDequeue(out var item))
-                    {
-                        if (item == null)
-                        {
-                            stopAction = _finishAction;
-                            _finishAction = null;
-                            _isRunning = false;
-                            return null; // Jump to the end
-                        }
-
                         return item;
-                    }
                 }
 
                 waiter.SpinOnce();
@@ -92,7 +83,7 @@ namespace ABCo.Multicam.Server.General.Queues
                 _taskQueue.Enqueue(null);
         }
 
-        public void QueueFinish(Action<T> finishAct)
+        public void QueueFinish(Action finishAct)
         {
             lock (_taskQueue)
             {
@@ -104,13 +95,18 @@ namespace ABCo.Multicam.Server.General.Queues
             }
 
         RunOnThisThread:
-            finishAct(_target);
+            finishAct();
         }
 
-        public void QueueTask(Action<T> act)
+        public void QueueTask(Action act)
         {
             lock (_taskQueue)
                 _taskQueue.Enqueue(act);
         }
-    }
+
+		public void QueueTaskAsync(Func<Task> act)
+		{
+			throw new NotImplementedException();
+		}
+	}
 }

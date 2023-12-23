@@ -66,7 +66,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Buffering
             }
 
             // Otherwise, try to use a fallback method
-            if (_fallbackEmulator.TrySetProgWithPreviewThenCut(val)) return;
+            if (_fallbackEmulator.TrySetProgWithPreviewThenCut(Preview, val)) return;
 
             // If neither works, just update the cache
             Program = val;

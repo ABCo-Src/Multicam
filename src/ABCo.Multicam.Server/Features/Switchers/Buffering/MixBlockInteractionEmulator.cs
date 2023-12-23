@@ -4,7 +4,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Buffering
 {
 	public interface IMixBlockInteractionEmulator
     {
-        bool TrySetProgWithPreviewThenCut(int val);
+        bool TrySetProgWithPreviewThenCut(int oldVal, int val);
         void CutWithSetProgAndPrev();
         void SetCutBusWithProgSet(int val);
         bool TrySetCutBusWithPrevThenAuto(int val);
@@ -25,12 +25,13 @@ namespace ABCo.Multicam.Server.Features.Switchers.Buffering
             _parent = parent;
         }
 
-        public bool TrySetProgWithPreviewThenCut(int val)
+        public bool TrySetProgWithPreviewThenCut(int oldVal, int val)
         {
             if (_mixBlock.SupportedFeatures.SupportsDirectPreviewAccess && _mixBlock.SupportedFeatures.SupportsCutAction)
             {
-                _switcher.SendPreviewValue(_mixBlockIdx, val);
+                _switcher.SendPreviewValue(_mixBlockIdx, val); // Set to val
                 _switcher.Cut(_mixBlockIdx);
+                _switcher.SendPreviewValue(_mixBlockIdx, oldVal); // Restore back to normal
                 return true;
             }
 

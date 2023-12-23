@@ -6,30 +6,26 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Server.General.Queues
 {
-	public class SameThreadExecutionBuffer<T> : IExecutionBuffer<T>
+	public class SameThreadExecutionBuffer : IExecutionBuffer
 	{
 		readonly Queue<Delegate> _backlogQueue = new();
 		readonly Action<Exception> _onError;
-		readonly T _target;
 
 		bool _currentlyRunning = false;
 
-		public SameThreadExecutionBuffer(T target, Action<Exception> onError)
-		{
-			_target = target;
-		}
+		public SameThreadExecutionBuffer(Action<Exception> onError) => _onError = onError;
 
 		public void StartExecution() { }
 		public void QueueFinish() { }
-		public void QueueFinish(Action<T> finishAct) => QueueTask(finishAct);
+		public void QueueFinish(Action finishAct) => QueueTask(finishAct);
 
-		public void QueueTask(Action<T> act)
+		public void QueueTask(Action act)
 		{
 			_backlogQueue.Enqueue(act);
 			if (!_currentlyRunning) ProcessQueue();
 		}
 
-		public void QueueTaskAsync(Func<T, Task> act)
+		public void QueueTaskAsync(Func<Task> act)
 		{
 			_backlogQueue.Enqueue(act);
 			if (!_currentlyRunning) ProcessQueue();
@@ -44,12 +40,12 @@ namespace ABCo.Multicam.Server.General.Queues
 				try
 				{
 					// If sync
-					if (backlogAct is Action<T> backlogActSync)
-						backlogActSync(_target);
+					if (backlogAct is Action backlogActSync)
+						backlogActSync();
 
 					// If async
-					else if (backlogAct is Func<T, Task> backlogActAsync)
-						await backlogActAsync(_target);
+					else if (backlogAct is Func<Task> backlogActAsync)
+						await backlogActAsync();
 				}
 				catch (Exception ex) { _onError(ex); }
 			}
