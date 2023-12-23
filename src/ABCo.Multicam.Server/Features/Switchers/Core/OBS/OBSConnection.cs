@@ -39,20 +39,37 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
         {
 			// Request needed info
 			await _client.SendDatalessRequest(new OBSRequestMessage("GetSceneList", ""));
-			await _client.SendDatalessRequest(new OBSRequestMessage("GetCurrentSceneTransition", ""));
 			await _client.SendDatalessRequest(new OBSRequestMessage("GetStudioModeEnabled", ""));
-			await _client.SendDatalessRequest(new OBSRequestMessage("GetCurrentPreviewScene", ""));
+			await _client.SendDatalessRequest(new OBSRequestMessage("GetCurrentSceneTransition", ""));
 			await _client.SendDatalessRequest(new OBSRequestMessage("GetCurrentProgramScene", ""));
 
-			// Process incoming until we have all of it
+			// Wait until this information comes
 			while (await ReadMessage() is not OBSSwitcherAction.Disconnected)
-            {
-				if (_sceneData != null && _isStudioMode != null && _currentPreview != null && _currentProgram != null && _currentTransition != null) return true;
-            }
+			{
+				if (_sceneData != null && _isStudioMode != null && _currentTransition != null && _currentProgram != null)
+				{
+					// If studio mode is disabled, this is all we need. Otherwise, we'll get preview too.
+					return _isStudioMode.Value ? await ReadUntilPreview() : true;
+				}
+			}
 
-			// We got disconnected
+			// Disconnected
 			return false;
         }
+
+		private async Task<bool> ReadUntilPreview()
+		{
+			// Request preview
+			await _client.SendDatalessRequest(new OBSRequestMessage("GetCurrentPreviewScene", ""));
+
+			// Wait for preview to come through
+			while (await ReadMessage() is not OBSSwitcherAction.Disconnected)
+			{
+				if (_currentPreview != null) return true;
+			}
+
+			return false;
+		}
 
 		public async Task<OBSSwitcherAction> ReadMessage()
         {
