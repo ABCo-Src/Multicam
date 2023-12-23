@@ -8,6 +8,8 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 {
 	public class OBSCommunicationException : Exception
 	{
-		public OBSCommunicationException(string msg) : base(msg) { }
+		public bool IsDisconnectionException { get; }
+		public static OBSCommunicationException UnexpectedDisconnection => new("Unexpected disconnection from OBS.", true);
+		public OBSCommunicationException(string msg, bool isDisconnectionException = false) : base(msg) => IsDisconnectionException = isDisconnectionException;
 	}
 }

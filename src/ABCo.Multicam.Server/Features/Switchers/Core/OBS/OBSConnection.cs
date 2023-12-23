@@ -35,7 +35,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
             _client = client;
         }
 
-        public async Task<bool> ProcessDataUntilAllSpecsLoaded()
+        public async Task ProcessDataUntilAllSpecsLoaded()
         {
 			// Request needed info
 			await _client.SendDatalessRequest(new OBSRequestMessage("GetSceneList", ""));
@@ -43,39 +43,32 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 			await _client.SendDatalessRequest(new OBSRequestMessage("GetCurrentSceneTransition", ""));
 			await _client.SendDatalessRequest(new OBSRequestMessage("GetCurrentProgramScene", ""));
 
-			// Wait until this information comes
-			while (await ReadMessage() is not OBSSwitcherAction.Disconnected)
+			// Wait until this information comes (the preview will also be requested by the message processor if studio mode is enabled)
+			while (true)
 			{
-				if (_sceneData != null && _isStudioMode != null && _currentTransition != null && _currentProgram != null)
-				{
-					// If studio mode is disabled, this is all we need. Otherwise, we'll get preview too.
-					return _isStudioMode.Value ? await ReadUntilPreview() : true;
-				}
+				await ReadAndProcessMessage();
+				if (_sceneData != null && _isStudioMode != null && _currentTransition != null && _currentProgram != null) return;
 			}
+		}
 
-			// Disconnected
-			return false;
-        }
-
-		private async Task<bool> ReadUntilPreview()
+		async Task ReadUntilPreview()
 		{
 			// Request preview
 			await _client.SendDatalessRequest(new OBSRequestMessage("GetCurrentPreviewScene", ""));
 
 			// Wait for preview to come through
-			while (await ReadMessage() is not OBSSwitcherAction.Disconnected)
+			while (true)
 			{
-				if (_currentPreview != null) return true;
+				await ReadAndProcessMessage();
+				if (_currentPreview != null) return;
 			}
-
-			return false;
 		}
 
-		public async Task<OBSSwitcherAction> ReadMessage()
+		public async Task<OBSSwitcherAction> ReadAndProcessMessage()
         {
 			// Get data
 			var data = await _client.ReadMessage();
-			if (data == null) return _client.IsConnected ? OBSSwitcherAction.None : OBSSwitcherAction.Disconnected;
+			if (data == null) return _client.IsConnected ? OBSSwitcherAction.None : throw OBSCommunicationException.UnexpectedDisconnection;
 
 			// Perform the appropriate action
 			switch (data)
@@ -89,7 +82,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 					}
 
 					ValidateStatusCode(dMsg.Status);
-					return dMsg.Data == null ? OBSSwitcherAction.None : ProcessResponseData(dMsg.Data);
+					return dMsg.Data == null ? OBSSwitcherAction.None : await ProcessResponseData(dMsg.Data);
 				case OBSEventMessage eMsg:
 
 					// If we're waiting for the scene transition to end, report that it has.
@@ -99,13 +92,13 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 						_waitForTransitionEnd = null;
 					}
 
-					return ProcessResponseData(eMsg.Data);
+					return await ProcessResponseData(eMsg.Data);
 				default:
 					throw new OBSCommunicationException("Unexpected data received from OBS");
 			}
 		}
 
-		OBSSwitcherAction ProcessResponseData(OBSData? response)
+		async Task<OBSSwitcherAction> ProcessResponseData(OBSData? response)
 		{
 			// GetSceneList
 			switch (response)
@@ -127,7 +120,18 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 					return OBSSwitcherAction.NotifySpecsChanged;
 
 				case StudioModeEnabledData getStudioModeRaw:
-					_isStudioMode = getStudioModeRaw.IsEnabled;
+
+					// If we just switched *into* studio mode, we'll ask for and wait for the preview to come through first, then once that happens 
+					// we can notify of the specs change and that'll refresh everything (so if other state changed while waiting that's fine).
+					if (getStudioModeRaw.IsEnabled)
+					{
+						_currentPreview = null;
+						await ReadUntilPreview();
+						_isStudioMode = true;
+					}
+					else
+						_isStudioMode = false;
+					
 					return OBSSwitcherAction.NotifySpecsChanged;
 
 				case CurrentPreviewSceneData previewRaw:

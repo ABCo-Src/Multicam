@@ -68,12 +68,11 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 				return;
 			}
 
-			var code = OBSSwitcherAction.None;
-			while (code != OBSSwitcherAction.Disconnected)
+			while (true)
 			{
 				try
 				{
-					code = await _connection.ReadMessage();
+					var code = await _connection.ReadAndProcessMessage();
 
 					// Perform the appropriate action
 					switch (code)
@@ -89,7 +88,14 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 							break;
 					}
 				}
-				catch (Exception ex) { HandleFail(ex); }
+				catch (Exception ex)
+				{
+					// If we threw because we were unexpectedly disconnected, then stop.
+					if (ex is OBSCommunicationException { IsDisconnectionException: true })
+						break;
+
+					HandleFail(ex);
+				}
 			}
 
 			// Disconnect now that we're finished.
@@ -155,6 +161,6 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 		public override void Dispose() => _connection?.Dispose();
 		void HandleFail(Exception ex) => _eventHandler?.OnFailure(new SwitcherError(ex.Message));
 
-		static Exception ThrowDisconnected() => new OBSCommunicationException("Unexpected disconnection from OBS.");
+		static Exception ThrowDisconnected() => OBSCommunicationException.UnexpectedDisconnection;
 	}
 }
