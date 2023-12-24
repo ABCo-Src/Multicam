@@ -2,6 +2,7 @@
 using ABCo.Multicam.Server.Features.Switchers.Core;
 using ABCo.Multicam.Server.Features.Switchers.Data;
 using ABCo.Multicam.Server.Features.Switchers.Data.Config;
+using ABCo.Multicam.Server.General;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.ComponentModel;
 
@@ -33,12 +34,8 @@ namespace ABCo.Multicam.Server.Features.Switchers
         void OnFailure(SwitcherError error);
     }
 
-    public interface ISwitcher : INotifyPropertyChanged, IDisposable
+    public interface ISwitcher : INotifyPropertyChanged, INamedServerComponent, IDisposable
 	{
-		// General
-		string Name { get; }
-		void Rename(string name);
-
 		// Data
 		SwitcherPlatformCompatibilityValue PlatformCompatibility { get; }
 		SwitcherConnectionStatus ConnectionStatus { get; }

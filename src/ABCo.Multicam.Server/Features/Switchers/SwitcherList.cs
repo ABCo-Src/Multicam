@@ -1,4 +1,5 @@
 ﻿using ABCo.Multicam.Server.Features.Switchers;
+using ABCo.Multicam.Server.General;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace ABCo.Multicam.Server.Features
@@ -6,19 +7,15 @@ namespace ABCo.Multicam.Server.Features
 	/// <summary>
 	/// Manages all the (running) switchers in the current project.
 	/// </summary>
-	public interface ISwitcherList : IBindableServerComponent<ISwitcherList>, IDisposable
+	public interface ISwitcherList : IBindableServerComponent<ISwitcherList>, IServerList<ISwitcher>, IDisposable
     {
-		IReadOnlyList<ISwitcher> Features { get; }
-
+		IReadOnlyList<ISwitcher> Switchers { get; }
 		void CreateSwitcher();
-        void MoveUp(ISwitcher feature);
-        void MoveDown(ISwitcher feature);
-        void Delete(ISwitcher feature);
     }
 
 	public partial class SwitcherList : BindableServerComponent<ISwitcherList>, ISwitcherList
     {
-		[ObservableProperty] IReadOnlyList<ISwitcher> _features = Array.Empty<ISwitcher>();
+		[ObservableProperty] IReadOnlyList<ISwitcher> _switchers = Array.Empty<ISwitcher>();
 
         List<ISwitcher> _workingList;
 		readonly IServerInfo _info;
@@ -27,13 +24,13 @@ namespace ABCo.Multicam.Server.Features
         {
             _info = info;
 			_workingList = new List<ISwitcher>();
-			RefreshFeaturesList();
+			RefreshSwitchersList();
 		}
 
         public void CreateSwitcher()
         {
 			_workingList.Add(_info.Get<ISwitcher>());
-			RefreshFeaturesList();
+			RefreshSwitchersList();
 		}
 
         public void MoveUp(ISwitcher feature)
@@ -45,7 +42,7 @@ namespace ABCo.Multicam.Server.Features
 
             (_workingList[indexOfFeature], _workingList[indexOfFeature - 1]) = (_workingList[indexOfFeature - 1], _workingList[indexOfFeature]);
 
-            RefreshFeaturesList();
+            RefreshSwitchersList();
         }
 
         public void MoveDown(ISwitcher feature)
@@ -57,7 +54,7 @@ namespace ABCo.Multicam.Server.Features
 
             (_workingList[indexOfFeature], _workingList[indexOfFeature + 1]) = (_workingList[indexOfFeature + 1], _workingList[indexOfFeature]);
 
-			RefreshFeaturesList();
+			RefreshSwitchersList();
 		}
 
         public void Delete(ISwitcher feature)
@@ -65,7 +62,7 @@ namespace ABCo.Multicam.Server.Features
             _workingList.Remove(feature);
             feature.Dispose();
 
-			RefreshFeaturesList();
+			RefreshSwitchersList();
 		}
 
 		public void Dispose()
@@ -74,6 +71,6 @@ namespace ABCo.Multicam.Server.Features
 				_workingList[i].Dispose();
 		}
 
-		void RefreshFeaturesList() => Features = _workingList.ToArray();
+		void RefreshSwitchersList() => Switchers = _workingList.ToArray();
 	}
 }

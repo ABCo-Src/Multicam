@@ -31,7 +31,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers
         public void Init() { }
         protected override void OnServerStateChange(string? changedProp)
         {
-            var features = _serverComponent.Get(c => c.Features);
+            var features = _serverComponent.Get(c => c.Switchers);
 
             // Remove all the old VMs
             for (int i = 0; i < Items.Length; i++)
@@ -43,8 +43,8 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers
                 Items[i] = new SwitcherListItemVM(_serverComponent, new Dispatched<ISwitcher>(features[i], _info.ServerConnection), _info);
 
             // Stop editing
-            
-            // TODO...
+            // TODO: More selective close?
+            _popOutVM.Close();
         }
 
 		public void CreateSwitcher() => _serverComponent.CallDispatched(c => c.CreateSwitcher());
