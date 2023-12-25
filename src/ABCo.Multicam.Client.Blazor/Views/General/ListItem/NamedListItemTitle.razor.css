@@ -1,0 +1,9 @@
+﻿.rawTitle {
+    font-weight: bold;
+}
+
+.title {
+    grid-area: title;
+    display: flex;
+    align-items: center;
+}

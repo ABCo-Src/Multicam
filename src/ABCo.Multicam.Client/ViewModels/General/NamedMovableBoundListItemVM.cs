@@ -15,11 +15,13 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Client.ViewModels.General
 {
-	public interface INamedMovableListItemVM
+	public interface INamedMovableListItemVM : INotifyPropertyChanged
 	{
 		string Name { get; set; }
+		bool IsEditingName { get; set; }
 		void OpenGeneralEditMenu(CursorPosition pos);
-		void Rename();
+		void StartRename();
+		void OnFinishRename();
 		void MoveUp();
 		void MoveDown();
 		void Delete();
@@ -32,6 +34,7 @@ namespace ABCo.Multicam.Client.ViewModels.General
 		readonly Dispatched<TListType> _list;
 
 		[ObservableProperty] string _name = "";
+		[ObservableProperty] bool _isEditingName = false;
 
 		public NamedMovableBoundListItemVM(Dispatched<TListType> list, Dispatched<TItemType> feature, IClientInfo info) : base(feature, info)
 		{
@@ -52,7 +55,7 @@ namespace ABCo.Multicam.Client.ViewModels.General
 			switch (s)
 			{
 				case "Rename":
-					Rename();
+					StartRename();
 					break;
 				case "Move Up":
 					MoveUp();
@@ -66,7 +69,12 @@ namespace ABCo.Multicam.Client.ViewModels.General
 			}
 		}
 
-		public void Rename() => throw new NotImplementedException();
+		public void StartRename() => IsEditingName = true;
+		public void OnFinishRename()
+		{
+			_serverComponent.CallDispatched(m => m.Rename(Name));
+			IsEditingName = false;
+		}
 		public void MoveUp() => _list.CallDispatchedAndUnpack(_serverComponent, (l, p) => l.MoveUp(p));
 		public void MoveDown() => _list.CallDispatchedAndUnpack(_serverComponent, (l, p) => l.MoveDown(p));
 		public void Delete() => _list.CallDispatchedAndUnpack(_serverComponent, (l, p) => l.Delete(p));

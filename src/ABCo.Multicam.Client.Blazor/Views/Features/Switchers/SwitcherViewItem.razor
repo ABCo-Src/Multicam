@@ -1,18 +1,15 @@
 ﻿@using ABCo.Multicam.Client.Blazor
+@using ABCo.Multicam.Client.Blazor.Views.Features.Switchers.Content
+@using ABCo.Multicam.Client.Blazor.Views.General.ListItem
 @using ABCo.Multicam.Client.ViewModels.Features;
 @using ABCo.Multicam.Client.ViewModels.Features.Switchers;
 @inherits VMBoundComponent<ISwitcherListItemVM>
 
 <!-- Desktop appearance -->
-<div class="item">
+<div class="globalListViewItem">
 	<div class="titlebar">
-		<div class="title">
-			<p class="rawFeatureTitle">@VM.Name</p>
-		</div>
-		<a class="btnDropDown btnLikeHighlight" @onclick="e=>VM.OpenGeneralEditMenu(new(e.ClientX, e.ClientY + (30 - e.OffsetY)))">
-			Edit
-			<img src="_content/ABCo.Multicam.Client.Blazor/img/icons/smallDownArrow.svg" />
-		</a>
+		<NamedListItemTitle VM="VM" />
+		<NamedListItemEditButton VM="VM" />
 	</div>
 	<div class="bordered">
 		<SwitcherContent VM="VM.Switcher" />

@@ -1,0 +1,33 @@
+﻿@using ABCo.Multicam.Client.ViewModels.General
+@inherits VMBoundComponent<INamedMovableListItemVM>
+
+<div class="title">
+	<div class="switcher">
+		@if (VM.IsEditingName)
+		{
+			<input class="textbox editName"
+					type="text"
+					value="@VM.Name"
+					@ref="textBox"
+					@onchange="e => { VM.Name = (string)e.Value!; VM.OnFinishRename(); }"
+					@onfocusout="() => { VM.OnFinishRename(); }"
+					/>
+		}
+		else
+		{
+			<p class="rawTitle" @onclick=VM.StartRename>@VM.Name</p>
+		}
+	</div>
+</div>
+
+@code {
+	ElementReference textBox;
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		// Auto-focus the text-box
+		if (VM.IsEditingName)
+			await textBox.FocusAsync();
+		await base.OnAfterRenderAsync(firstRender);
+	}
+}
