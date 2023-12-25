@@ -1,14 +1,14 @@
 ﻿using ABCo.Multicam.Server.Features;
 using ABCo.Multicam.Server.Hosting.Clients;
 using CommunityToolkit.Mvvm.ComponentModel;
-using ABCo.Multicam.Client.ViewModels.Frames;
 using System.ComponentModel;
 using ABCo.Multicam.Server.Features.Switchers;
 using ABCo.Multicam.Client.ViewModels.Features.Switchers;
+using ABCo.Multicam.Client.ViewModels.Paging;
 
 namespace ABCo.Multicam.Client.Presenters.Features.Switchers
 {
-	public interface ISwitcherListVM : IPageVM, INotifyPropertyChanged
+    public interface ISwitcherListVM : IPageVM, INotifyPropertyChanged
 	{
 		ISwitcherListItemVM[] Items { get; }
         void CreateSwitcher();
@@ -22,7 +22,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers
 
 		public AppPages Page => AppPages.Switchers;
 
-		public SwitcherListVM(Dispatched<ISwitcherList> collection, IClientInfo client) : base(collection, client)
+		public SwitcherListVM(Dispatched<ISwitcherList> collection, IFrameClientInfo client) : base(collection, client)
 		{
             _popOutVM = client.Shared.PopOut;
             OnServerStateChange(null);

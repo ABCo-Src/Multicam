@@ -24,7 +24,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers
 		[ObservableProperty] bool _showConnectionInfo;
 		[ObservableProperty] bool _showConnectionButton;
 
-		public SwitcherConnectionVM(Dispatched<ISwitcher> feature, IClientInfo clientInfo) : base(feature, clientInfo) => OnServerStateChange(null);
+		public SwitcherConnectionVM(Dispatched<ISwitcher> feature, IFrameClientInfo clientInfo) : base(feature, clientInfo) => OnServerStateChange(null);
 		protected override async void OnServerStateChange(string? changedProp)
 		{
 			// With error

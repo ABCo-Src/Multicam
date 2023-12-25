@@ -21,7 +21,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers.Config.Virtual
 		[ObservableProperty] string _selectedMixBlockCount = "1";
 		[ObservableProperty] ISwitcherVirtualConfigMixBlockVM[] _mixBlockVMs = Array.Empty<ISwitcherVirtualConfigMixBlockVM>();
 
-		public SwitcherVirtualConfigVM(Dispatched<ISwitcher> feature, IClientInfo info) : base(feature, info) => OnServerStateChange(null);
+		public SwitcherVirtualConfigVM(Dispatched<ISwitcher> feature, IFrameClientInfo info) : base(feature, info) => OnServerStateChange(null);
 
         public void OnUIChange()
         {

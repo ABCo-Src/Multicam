@@ -41,7 +41,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers
 		[ObservableProperty] string _selectedItem = "Virtual";
 		[ObservableProperty] ISwitcherSpecificConfigVM? _currentConfig;
 
-		public SwitcherConfigVM(Dispatched<ISwitcher> feature, IClientInfo info) : base(feature, info) => OnServerStateChange(null);
+		public SwitcherConfigVM(Dispatched<ISwitcher> feature, IFrameClientInfo info) : base(feature, info) => OnServerStateChange(null);
 		protected override void OnServerStateChange(string? changedProp)
 		{
 			var config = _serverComponent.Get(m => m.Config);

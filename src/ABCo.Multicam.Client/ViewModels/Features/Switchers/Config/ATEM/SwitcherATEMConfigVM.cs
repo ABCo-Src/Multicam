@@ -34,7 +34,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers.Config.ATEM
 		[ObservableProperty] string _selectedConnectionType = "USB";
 		[ObservableProperty] SwitcherPlatformCompatibilityValue _compatibilityMessage = SwitcherPlatformCompatibilityValue.Supported;
 
-		public SwitcherATEMConfigVM(Dispatched<ISwitcher> feature, IClientInfo info) : base(feature, info) => OnServerStateChange(null);
+		public SwitcherATEMConfigVM(Dispatched<ISwitcher> feature, IFrameClientInfo info) : base(feature, info) => OnServerStateChange(null);
 
         public void OnUIChange()
         {

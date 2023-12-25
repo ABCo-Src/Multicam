@@ -18,7 +18,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers
 
         SwitcherSpecs? _lastSeenSpecs = null;
 
-		public SwitcherMixBlocksVM(Dispatched<ISwitcher> feature, IClientInfo info) : base(feature, info) => OnServerStateChange(null);
+		public SwitcherMixBlocksVM(Dispatched<ISwitcher> feature, IFrameClientInfo info) : base(feature, info) => OnServerStateChange(null);
 
 		protected override void OnServerStateChange(string? changedProp)
 		{

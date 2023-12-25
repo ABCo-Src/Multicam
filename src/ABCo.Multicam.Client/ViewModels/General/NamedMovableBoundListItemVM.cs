@@ -36,7 +36,7 @@ namespace ABCo.Multicam.Client.ViewModels.General
 		[ObservableProperty] string _name = "";
 		[ObservableProperty] bool _isEditingName = false;
 
-		public NamedMovableBoundListItemVM(Dispatched<TListType> list, Dispatched<TItemType> feature, IClientInfo info) : base(feature, info)
+		public NamedMovableBoundListItemVM(Dispatched<TListType> list, Dispatched<TItemType> feature, IFrameClientInfo info) : base(feature, info)
 		{
 			_list = list;
 			OnServerStateChange(null);

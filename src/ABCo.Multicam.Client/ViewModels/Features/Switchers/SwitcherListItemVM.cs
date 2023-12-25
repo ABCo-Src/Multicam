@@ -19,7 +19,7 @@ namespace ABCo.Multicam.Client.ViewModels.Features.Switchers
 	{
 		[ObservableProperty] ISwitcherVM _switcher;
 
-		public SwitcherListItemVM(Dispatched<ISwitcherList> list, Dispatched<ISwitcher> feature, IClientInfo info) : base(list, feature, info) =>
+		public SwitcherListItemVM(Dispatched<ISwitcherList> list, Dispatched<ISwitcher> feature, IFrameClientInfo info) : base(list, feature, info) =>
 			_switcher = new SwitcherVM(feature, info);
 	}
 }

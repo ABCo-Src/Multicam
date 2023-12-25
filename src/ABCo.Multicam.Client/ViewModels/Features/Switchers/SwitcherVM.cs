@@ -18,7 +18,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers
 		[ObservableProperty] ISwitcherConnectionVM _connection;
 		[ObservableProperty] ISwitcherConfigVM _config;
 
-        public SwitcherVM(Dispatched<ISwitcher> feature, IClientInfo info)
+        public SwitcherVM(Dispatched<ISwitcher> feature, IFrameClientInfo info)
         {
             MixBlocks = new SwitcherMixBlocksVM(feature, info);
             Connection = new SwitcherConnectionVM(feature, info);

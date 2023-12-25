@@ -8,10 +8,10 @@ namespace ABCo.Multicam.Client;
 public class ViewModelBase : ObservableObject { }
 public abstract class BoundViewModelBase<T> : ObservableObject, IDisposable where T : INotifyPropertyChanged
 {
-	protected readonly IClientInfo _info;
+	protected readonly IFrameClientInfo _info;
 	protected Dispatched<T> _serverComponent;
 
-	public BoundViewModelBase(Dispatched<T> serverComponent, IClientInfo info)
+	public BoundViewModelBase(Dispatched<T> serverComponent, IFrameClientInfo info)
 	{
 		_info = info;
 		_serverComponent = serverComponent;
@@ -21,7 +21,7 @@ public abstract class BoundViewModelBase<T> : ObservableObject, IDisposable wher
 
 		// Bind to the underlying server - and ensure it gets unbound if the associated client is disconnected
 		_serverComponent.CallDispatched(d => d.PropertyChanged += OnServerPropertyChanged);
-		info.ClientDisconnected += Dispose;
+		info.DisconnectionManager.ClientDisconnected += Dispose;
 	}
 
 	protected abstract void OnServerStateChange(string? changedProp);
@@ -31,7 +31,7 @@ public abstract class BoundViewModelBase<T> : ObservableObject, IDisposable wher
 
 	public virtual void Dispose()
 	{
-		_info.ClientDisconnected -= Dispose;
+		_info.DisconnectionManager.ClientDisconnected -= Dispose;
 		_serverComponent.CallDispatched(d => d.PropertyChanged -= OnServerPropertyChanged);
 	}
 }

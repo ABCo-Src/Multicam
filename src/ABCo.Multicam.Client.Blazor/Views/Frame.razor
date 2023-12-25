@@ -1,0 +1,29 @@
+﻿@using ABCo.Multicam.Client.Blazor.Views.Features.Switchers
+@using ABCo.Multicam.Client.Presenters
+@using ABCo.Multicam.Client.Presenters.Features.Switchers
+@using ABCo.Multicam.Client.ViewModels.Paging
+@inherits VMBoundComponent<IFrameVM>
+
+<div class="frame">
+	<div class="frameTitlebar">
+		@if (VM.CanGoBack)
+		{
+			<a class="hyperlink back" @onclick=VM.NavigateBack>Back</a>
+		}
+
+		@if (VM.FrameTitle != null)
+		{
+			<p class="title">@VM.FrameTitle</p>
+		}
+	</div>
+	<div class="selectedPage">
+		@if (VM.CurrentPage is IHomeVM homeVM)
+		{
+			<Home VM="homeVM" />
+		}
+		else if (VM.CurrentPage is ISwitcherListVM switcherVM)
+		{
+			<SwitcherView VM="switcherVM" />
+		}
+	</div>
+</div>

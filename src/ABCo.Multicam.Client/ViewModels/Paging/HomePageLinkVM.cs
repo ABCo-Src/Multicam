@@ -1,10 +1,11 @@
 ﻿using ABCo.Multicam.Client.Presenters;
+using ABCo.Multicam.Client.ViewModels.Paging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.ComponentModel;
 
 namespace ABCo.Multicam.Client.ViewModels.Frames
 {
-	public interface IPageSwitcherMenuTabVM : INotifyPropertyChanged
+    public interface IHomePageLinkVM : INotifyPropertyChanged
     {
         string Name { get; set; }
         bool IsSelected { get; set; }
@@ -12,22 +13,22 @@ namespace ABCo.Multicam.Client.ViewModels.Frames
 		void Select();
 	}
 
-    public partial class PageSwitcherMenuTabVM : ViewModelBase, IPageSwitcherMenuTabVM
+    public partial class HomePageLinkVM : ViewModelBase, IHomePageLinkVM
     {
         public IPageVM? AssociatedPage { get; }
 
         [ObservableProperty] string _name;
         [ObservableProperty] bool _isSelected;
 
-        readonly IPageSwitcherVM _frame;
+        readonly IHomeVM _homePage;
 
-		public PageSwitcherMenuTabVM(string name, IPageSwitcherVM frame, IPageVM? associatedPage)
+		public HomePageLinkVM(string name, IHomeVM frame, IPageVM? associatedPage)
 		{
 			Name = name;
             AssociatedPage = associatedPage;
-            _frame = frame;
+            _homePage = frame;
 		}
 
-        public void Select() => _frame.Select(this);
+        public void Select() => _homePage.Select(this);
     }
 }

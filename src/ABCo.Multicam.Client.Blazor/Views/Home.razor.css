@@ -1,42 +1,16 @@
-﻿.frame {
+﻿.home {
     display: grid;
-    width: 100%;
-    height: 100%;
-    grid-template-columns: 400px 1fr;
-    grid-template-rows: 100%;
-    grid-template-areas: "menu content";
-}
-
-.menu {
-    grid-area: menu;
-    background-color: var(--col-panelback);
-
-    display: grid;
-    grid-template-rows: 100%;
-    grid-template-columns: 1fr 3px;
-    grid-template-areas: "content rightBorder";
-}
-
-.menu .rightBorder {
-    grid-area: rightBorder;
-    background: var(--gradient-vertical);
-    height: 100%;
-}
-
-.menu .content {
-    grid-area: content;
-
-    display: grid;
-    grid-template-rows: auto auto auto 1fr auto;
+    grid-template-rows: auto auto 1fr auto;
     grid-template-areas:
         "logo"
-        "support"
         "features"
         "_"
         "management";
 
     height: 100%;
     overflow-y: auto;
+    padding: 10px;
+    box-sizing: border-box;
 }
 
 .menu hr {
@@ -44,7 +18,6 @@
     margin-bottom: 10px;
 }
 
-.itemsSupport { grid-area: support; }
 .itemsFeatures { grid-area: features; }
 .itemsManagement { grid-area: management; margin-bottom: 10px; }
 
@@ -56,7 +29,8 @@
 
 .logo {
     display: flex;
-    padding-left: 20px;
+    justify-content: center;
+    padding-bottom: 20px;
     grid-area: logo;
 }
 

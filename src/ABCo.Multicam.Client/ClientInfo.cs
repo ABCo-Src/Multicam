@@ -1,35 +1,55 @@
-﻿using ABCo.Multicam.Server;
+﻿using ABCo.Multicam.Client.Management;
+using ABCo.Multicam.Client.Presenters;
+using ABCo.Multicam.Server;
 using ABCo.Multicam.Server.General;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ABCo.Multicam.Client
 {
-	public interface IClientInfo : IDisposable
+    public interface IClientInfo 
 	{
-		int ConnectionID { get; }
 		IMulticamServer ServerConnection { get; }
 		ISharedVMs Shared { get; }
 		IThreadDispatcher Dispatcher { get; }
+		IDisconnectionManager DisconnectionManager { get; }
+		IFrameClientInfo NewFrameClientInfo(IFrameVM frame);
+	}
 
-        event Action ClientDisconnected;
+	public interface IFrameClientInfo : IClientInfo, IDisposable
+	{
+		IFrameVM Frame { get; }
 	}
 
 	public class ClientInfo : IClientInfo
     {
-		public ClientInfo(IThreadDispatcher dispatcher, IMulticamServer serverConnection)
+		DisconnectionManager _disconnectionManager;
+
+		// Creates a global client info
+		public ClientInfo(IThreadDispatcher dispatcher, IMulticamServer serverConnection, ISharedVMs? shared = null, DisconnectionManager? discManager = null)
 		{
             Dispatcher = dispatcher;
             ServerConnection = serverConnection;
-            Shared = new SharedVMs(this);
+            Shared = shared ?? new SharedVMs(this);
+			_disconnectionManager = discManager ?? new DisconnectionManager();
 		}
 
-		public int ConnectionID { get; }
         public ISharedVMs Shared { get; }
 		public IThreadDispatcher Dispatcher { get; }
         public IMulticamServer ServerConnection { get; }
+		public IDisconnectionManager DisconnectionManager => _disconnectionManager;
 
-		public event Action ClientDisconnected = () => { };
+		public IFrameClientInfo NewFrameClientInfo(IFrameVM frame) => new FrameClientInfo(this, frame);
+        public void Dispose() => _disconnectionManager.OnClientDisconnect();
 
-        public void Dispose() => ClientDisconnected();
+		public class FrameClientInfo : ClientInfo, IFrameClientInfo
+		{
+			public FrameClientInfo(ClientInfo copyFrom, IFrameVM frame) : 
+				base(copyFrom.Dispatcher, copyFrom.ServerConnection, copyFrom.Shared, copyFrom._disconnectionManager)
+			{
+				Frame = frame;
+			}
+
+			public IFrameVM Frame { get; }
+		}
 	}
 }
