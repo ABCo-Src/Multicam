@@ -9,12 +9,7 @@
 
 li p { grid-area: content; }
 
-li.selected {
-    background-color: var(--col-disabledtextbox);
-}
-
 li .rightArrow {
-    visibility: none;
     grid-area: rightArrow;
     line-height: 0px;
     padding-right: 10px;
@@ -22,8 +17,4 @@ li .rightArrow {
 
 li .rightArrow img {
     width: 20px;
-}
-
-li:hover .rightArrow, li.selected .rightArrow {
-    visibility: visible;
 }

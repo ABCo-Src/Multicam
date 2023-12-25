@@ -8,19 +8,16 @@ namespace ABCo.Multicam.Client.ViewModels.Frames
     public interface IHomePageLinkVM : INotifyPropertyChanged
     {
         string Name { get; set; }
-        bool IsSelected { get; set; }
 		IPageVM? AssociatedPage { get; }
 		void Select();
 	}
 
     public partial class HomePageLinkVM : ViewModelBase, IHomePageLinkVM
     {
+        readonly IHomeVM _homePage;
         public IPageVM? AssociatedPage { get; }
 
         [ObservableProperty] string _name;
-        [ObservableProperty] bool _isSelected;
-
-        readonly IHomeVM _homePage;
 
 		public HomePageLinkVM(string name, IHomeVM frame, IPageVM? associatedPage)
 		{

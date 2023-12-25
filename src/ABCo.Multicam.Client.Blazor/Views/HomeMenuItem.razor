@@ -1,11 +1,7 @@
 ﻿@using ABCo.Multicam.Client.ViewModels.Frames;
 @inherits VMBoundComponent<IHomePageLinkVM>
 
-@{
-	string selectedVal = VM.IsSelected ? "selected" : "";
-}
-
-<li class="btnLikeHighlight @selectedVal" @onclick=VM.Select>
+<li class="btnLikeHighlight" @onclick=VM.Select>
 	<p>@VM.Name</p>
 	<div class="rightArrow"><img src="_content/ABCo.Multicam.Client.Blazor/img/icons/smallRightArrow.svg" /></div>
 </li>
