@@ -1,0 +1,13 @@
+﻿@using ABCo.Multicam.Client.Blazor.Views.General.ListItem
+@using ABCo.Multicam.Client.ViewModels.Scripting.Buttons
+@inherits VMBoundComponent<IScriptButtonListItemVM>
+
+<li class="globalListViewItem">
+	<div class="titlebar">
+		<NamedListItemTitle VM="VM" />
+		<NamedListItemEditButton VM="VM" />
+	</div>
+	<div class="bordered">
+		<p>Automation Item</p>
+	</div>
+</li>

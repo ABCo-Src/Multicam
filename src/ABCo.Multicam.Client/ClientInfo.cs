@@ -2,6 +2,7 @@
 using ABCo.Multicam.Client.Presenters;
 using ABCo.Multicam.Server;
 using ABCo.Multicam.Server.General;
+using ABCo.Multicam.Server.Hosting.Clients;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ABCo.Multicam.Client
@@ -12,6 +13,7 @@ namespace ABCo.Multicam.Client
 		ISharedVMs Shared { get; }
 		IThreadDispatcher Dispatcher { get; }
 		IDisconnectionManager DisconnectionManager { get; }
+		Dispatched<T> CreateServerDispatcher<T>(T item);
 		IFrameClientInfo NewFrameClientInfo(IFrameVM frame);
 	}
 
@@ -39,7 +41,8 @@ namespace ABCo.Multicam.Client
 		public IDisconnectionManager DisconnectionManager => _disconnectionManager;
 
 		public IFrameClientInfo NewFrameClientInfo(IFrameVM frame) => new FrameClientInfo(this, frame);
-        public void Dispose() => _disconnectionManager.OnClientDisconnect();
+		public Dispatched<T> CreateServerDispatcher<T>(T item) => new Dispatched<T>(item, ServerConnection);
+		public void Dispose() => _disconnectionManager.OnClientDisconnect();
 
 		public class FrameClientInfo : ClientInfo, IFrameClientInfo
 		{

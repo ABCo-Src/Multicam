@@ -1,6 +1,8 @@
 ﻿@using ABCo.Multicam.Client.Blazor.Views.Features.Switchers
+@using ABCo.Multicam.Client.Blazor.Views.Scripting.Buttons
 @using ABCo.Multicam.Client.Presenters
 @using ABCo.Multicam.Client.Presenters.Features.Switchers
+@using ABCo.Multicam.Client.ViewModels.Scripting.Buttons
 @using ABCo.Multicam.Client.ViewModels.Paging
 @inherits VMBoundComponent<IFrameVM>
 
@@ -24,6 +26,10 @@
 		else if (VM.CurrentPage is ISwitcherListVM switcherVM)
 		{
 			<SwitcherView VM="switcherVM" />
+		}
+		else if (VM.CurrentPage is IScriptButtonListVM automationVM)
+		{
+			<ScriptButtonListView VM="automationVM" />
 		}
 	</div>
 </div>

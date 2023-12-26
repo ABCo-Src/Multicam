@@ -7,14 +7,17 @@ using ABCo.Multicam.Server.Features.Switchers.Buffering;
 using ABCo.Multicam.Server.Features.Switchers.Core;
 using ABCo.Multicam.Server.Features.Switchers.Core.ATEM;
 using ABCo.Multicam.Server.Features.Switchers.Core.ATEM.Native;
+using ABCo.Multicam.Server.General.Factories;
+using ABCo.Multicam.Server.Automation.Buttons;
 
 namespace ABCo.Multicam.Server
 {
-	public interface IMulticamServer
+    public interface IMulticamServer
 	{
 		public IThreadDispatcher Dispatcher { get; }
 		IPlatformInfo GetPlatformInfo();
 		ISwitcherList GetFeatures();
+		IScriptButtonList GetAutoButtons();
 		IHostingManager GetHostingManager();
 	}
 
@@ -42,6 +45,7 @@ namespace ABCo.Multicam.Server
 
 			// Features
 			Server.ServerInfo.AddSingleton<ISwitcherList>(s => new SwitcherList(s));
+			Server.ServerInfo.AddSingleton<IScriptButtonList>(s => new ScriptButtonList(s));
 			Server.ServerInfo.AddTransient<ISwitcher>((s) => new Switcher(s));
 
 			// Switcher
@@ -66,6 +70,7 @@ namespace ABCo.Multicam.Server
 
 		public ISwitcherList GetFeatures() => ServerInfo.Get<ISwitcherList>();
 		public IHostingManager GetHostingManager() => ServerInfo.Get<IHostingManager>();
+		public IScriptButtonList GetAutoButtons() => ServerInfo.Get<IScriptButtonList>();
 		public IPlatformInfo GetPlatformInfo() => ServerInfo.Get<IPlatformInfo>();
 	}
 }

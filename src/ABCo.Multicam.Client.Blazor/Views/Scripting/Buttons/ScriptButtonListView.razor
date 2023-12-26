@@ -1,0 +1,13 @@
+﻿@using ABCo.Multicam.Client.ViewModels.Scripting.Buttons
+@inherits VMBoundComponent<IScriptButtonListVM>
+
+<ul class="globalListView">
+	@foreach (var item in VM.Items)
+	{
+		<ScriptButtonListViewItem VM="item" />
+	}
+
+	<li class="item addItem btnLikeHighlight" @onclick="e => VM.CreateAutomation()">
+		<a>New Button</a>
+	</li>
+</ul>

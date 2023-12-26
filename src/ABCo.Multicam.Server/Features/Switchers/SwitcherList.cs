@@ -9,21 +9,20 @@ namespace ABCo.Multicam.Server.Features
 	/// </summary>
 	public interface ISwitcherList : IBindableServerComponent<ISwitcherList>, IServerList<ISwitcher>, IDisposable
     {
-		IReadOnlyList<ISwitcher> Switchers { get; }
 		void CreateSwitcher();
     }
 
 	public partial class SwitcherList : BindableServerComponent<ISwitcherList>, ISwitcherList
     {
-		[ObservableProperty] IReadOnlyList<ISwitcher> _switchers = Array.Empty<ISwitcher>();
+		[ObservableProperty] IReadOnlyList<ISwitcher> _items = Array.Empty<ISwitcher>();
 
-        List<ISwitcher> _workingList;
+        ReorderableList<ISwitcher> _workingList;
 		readonly IServerInfo _info;
 
 		public SwitcherList(IServerInfo info)
         {
             _info = info;
-			_workingList = new List<ISwitcher>();
+			_workingList = new ReorderableList<ISwitcher>();
 			RefreshSwitchersList();
 		}
 
@@ -33,44 +32,26 @@ namespace ABCo.Multicam.Server.Features
 			RefreshSwitchersList();
 		}
 
-        public void MoveUp(ISwitcher feature)
-        {
-            int indexOfFeature = _workingList.IndexOf(feature);
-
-            // Don't do anything if it's at the start
-            if (indexOfFeature == 0) return;
-
-            (_workingList[indexOfFeature], _workingList[indexOfFeature - 1]) = (_workingList[indexOfFeature - 1], _workingList[indexOfFeature]);
-
-            RefreshSwitchersList();
-        }
-
-        public void MoveDown(ISwitcher feature)
-        {
-            int indexOfFeature = _workingList.IndexOf(feature);
-
-            // Don't do anything if it's at the end
-            if (indexOfFeature == _workingList.Count - 1) return;
-
-            (_workingList[indexOfFeature], _workingList[indexOfFeature + 1]) = (_workingList[indexOfFeature + 1], _workingList[indexOfFeature]);
-
-			RefreshSwitchersList();
-		}
-
-        public void Delete(ISwitcher feature)
-        {
-            _workingList.Remove(feature);
-            feature.Dispose();
-
-			RefreshSwitchersList();
-		}
-
-		public void Dispose()
+		public void MoveUp(ISwitcher feature)
 		{
-			for (int i = 0; i < _workingList.Count; i++)
-				_workingList[i].Dispose();
+			_workingList.MoveUp(feature);
+			RefreshSwitchersList();
 		}
 
-		void RefreshSwitchersList() => Switchers = _workingList.ToArray();
+		public void MoveDown(ISwitcher feature)
+		{
+			_workingList.MoveDown(feature);
+			RefreshSwitchersList();
+		}
+
+		public void Delete(ISwitcher feature)
+		{
+			_workingList.Delete(feature);
+			RefreshSwitchersList();
+		}
+
+		void RefreshSwitchersList() => Items = _workingList.ToArray();
+
+		public void Dispose() => _workingList.Dispose();
 	}
 }

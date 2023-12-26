@@ -1,5 +1,6 @@
 ﻿.frame {
     display: grid;
+    height: 100%;
     grid-template-rows: auto 1fr;
     grid-template-columns: 100%;
     grid-template-areas:

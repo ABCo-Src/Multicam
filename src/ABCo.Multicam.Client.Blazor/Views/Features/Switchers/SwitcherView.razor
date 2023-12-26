@@ -5,20 +5,13 @@
 @using ABCo.Multicam.Client.ViewModels.Features.Switcher;
 @inherits VMBoundComponent<ISwitcherListVM>
 
-<div class="switcherView">
-	<!-- Switcher List -->
-	<ul class="items">
-		@foreach (var item in VM.Items)
-		{
-			<li class="item">
-				<SwitcherViewItem VM="item" />
-			</li>
-		}
+<ul class="globalListView">
+	@foreach (var item in VM.Items)
+	{
+		<SwitcherViewItem VM="item" />
+	}
 
-		<li class="item addItem btnLikeHighlight" @onclick="e => VM.CreateSwitcher()">
-			<a class="addSwitcher">
-				New Switcher
-			</a>
-		</li>
-	</ul>
-</div>
+	<li class="item addItem btnLikeHighlight" @onclick="e => VM.CreateSwitcher()">
+		<a>New Switcher</a>
+	</li>
+</ul>

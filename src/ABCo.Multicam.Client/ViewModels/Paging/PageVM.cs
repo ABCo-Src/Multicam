@@ -5,6 +5,7 @@
         Unknown,
         Home,
         Switchers,
+        ScriptButtons,
         Tally,
         CutRecorder,
         Hosting

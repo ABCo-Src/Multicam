@@ -1,9 +1,10 @@
 ﻿using ABCo.Multicam.Server.Features.Switchers.Core;
 using ABCo.Multicam.Server.Features.Switchers.Data;
+using ABCo.Multicam.Server.General.Factories;
 
 namespace ABCo.Multicam.Server.Features.Switchers.Buffering
 {
-	public interface IPerSwitcherInteractionBuffer : IServerService<SwitcherConfig>, ISwitcherEventHandler
+    public interface IPerSwitcherInteractionBuffer : IServerService<SwitcherConfig>, ISwitcherEventHandler
     {
         bool IsConnected { get; }
         SwitcherSpecs Specs { get; }

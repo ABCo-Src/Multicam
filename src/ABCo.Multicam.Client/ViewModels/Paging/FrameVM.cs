@@ -14,14 +14,14 @@ namespace ABCo.Multicam.Client.Presenters
 		IPageVM? CurrentPage { get; }
 		bool CanGoBack { get; }
 		void NavigateBack();
-		void SelectPage(IPageVM selectedPage);
+		void SelectPage(IPageVM? selectedPage);
 	}
 
 	public partial class FrameVM : ViewModelBase, IFrameVM
 	{
-		Stack<IPageVM> _pageHistory = new();
+		Stack<IPageVM?> _pageHistory = new();
 
-		[ObservableProperty] IPageVM _currentPage;
+		[ObservableProperty] IPageVM? _currentPage;
 		[ObservableProperty] string? _frameTitle;
 		[ObservableProperty] bool _canGoBack;
 
@@ -32,7 +32,7 @@ namespace ABCo.Multicam.Client.Presenters
 			RefreshGeneralInfo();
 		}
 
-		public void SelectPage(IPageVM selectedPage)
+		public void SelectPage(IPageVM? selectedPage)
 		{
 			_pageHistory.Push(CurrentPage);
 			CurrentPage = selectedPage;
@@ -52,6 +52,7 @@ namespace ABCo.Multicam.Client.Presenters
 			{
 				AppPages.Home => "Home",
 				AppPages.Switchers => "Switchers",
+				AppPages.ScriptButtons => "Script Buttons",
 				_ => ""
 			};
 

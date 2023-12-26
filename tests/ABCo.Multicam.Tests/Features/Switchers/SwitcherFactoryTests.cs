@@ -1,11 +1,12 @@
 ﻿using ABCo.Multicam.Server;
 using ABCo.Multicam.Server.Features.Switchers.Core;
 using ABCo.Multicam.Server.Features.Switchers.Data.Config;
+using ABCo.Multicam.Server.General.Factories;
 using Moq;
 
 namespace ABCo.Multicam.Tests.Features.Switchers
 {
-	[TestClass]
+    [TestClass]
     public class SwitcherFactoryTests
     {
         public record struct Mocks(

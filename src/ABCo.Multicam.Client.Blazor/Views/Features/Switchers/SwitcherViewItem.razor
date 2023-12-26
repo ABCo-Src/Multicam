@@ -5,8 +5,7 @@
 @using ABCo.Multicam.Client.ViewModels.Features.Switchers;
 @inherits VMBoundComponent<ISwitcherListItemVM>
 
-<!-- Desktop appearance -->
-<div class="globalListViewItem">
+<li class="globalListViewItem">
 	<div class="titlebar">
 		<NamedListItemTitle VM="VM" />
 		<NamedListItemEditButton VM="VM" />
@@ -14,4 +13,4 @@
 	<div class="bordered">
 		<SwitcherContent VM="VM.Switcher" />
 	</div>
-</div>
+</li>

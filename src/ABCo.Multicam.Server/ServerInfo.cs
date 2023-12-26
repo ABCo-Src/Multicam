@@ -9,6 +9,7 @@ namespace ABCo.Multicam.Server
 	public interface IServerInfo
 	{
 		IMulticamServer GetLocalClientConnection();
+		IServerFactories Factories { get; }
 
 		T Get<T>() where T : class;
         T Get<T, T1>(T1 param1) where T : class, IServerService<T1>;
@@ -21,11 +22,13 @@ namespace ABCo.Multicam.Server
 		readonly IMulticamServer _localClientConnection;
 
 		public IThreadDispatcher Dispatcher { get; }
+		public IServerFactories Factories { get; }
 		public IMulticamServer GetLocalClientConnection() => _localClientConnection;
 
 		public ServerInfo(IThreadDispatcher dispatcher, IMulticamServer connection)
 		{
 			Dispatcher = dispatcher;
+			Factories = new ServerFactories();
 			_localClientConnection = connection;
 		}
 
