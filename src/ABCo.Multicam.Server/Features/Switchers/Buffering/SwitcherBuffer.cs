@@ -4,7 +4,7 @@ using ABCo.Multicam.Server.General.Factories;
 
 namespace ABCo.Multicam.Server.Features.Switchers.Buffering
 {
-    public interface IPerSwitcherInteractionBuffer : IServerService<SwitcherConfig>, ISwitcherEventHandler
+    public interface ISwitcherBuffer : IServerService<SwitcherConfig>, ISwitcherEventHandler
     {
         bool IsConnected { get; }
         SwitcherSpecs Specs { get; }
@@ -20,11 +20,10 @@ namespace ABCo.Multicam.Server.Features.Switchers.Buffering
         void Dispose();
     }
 
-    public class PerSwitcherInteractionBuffer : IPerSwitcherInteractionBuffer
+    public class SwitcherBuffer : ISwitcherBuffer
     {
         // TODO: Handle interactions when disconnected
         readonly IServerInfo _servSource;
-        readonly ISwitcherFactory _factory;
         readonly IRawSwitcher _switcher;
         IPerSpecSwitcherInteractionBuffer _currentBuffer;
         ISwitcherEventHandler? _eventHandler;
@@ -32,17 +31,16 @@ namespace ABCo.Multicam.Server.Features.Switchers.Buffering
         public bool IsConnected { get; private set; }
         public SwitcherSpecs Specs => _currentBuffer.Specs;
 
-        public PerSwitcherInteractionBuffer(SwitcherConfig config, IServerInfo servSource)
+        public SwitcherBuffer(SwitcherConfig config, IServerInfo info)
         {
-            _factory = servSource.Get<ISwitcherFactory>();
-            _servSource = servSource;
+            _servSource = info;
 
             // Update the switcher
-            _switcher = _factory.GetSwitcher(config);
+            _switcher = info.Factories.Switcher.CreateRawSwitcher(config);
             _switcher.SetEventHandler(this);
 
             // Request a connection status update, and use an empty buffer in the meantime
-            _currentBuffer = _servSource.Get<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, IRawSwitcher>(new(true), _switcher);
+            _currentBuffer = new PerSpecSwitcherBuffer(new(true), _switcher);
             _switcher.RefreshConnectionStatus();
         }
 
@@ -56,7 +54,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Buffering
 
         public void OnSpecsChange(SwitcherSpecs newSpecs)
         {
-            _currentBuffer = _servSource.Get<IPerSpecSwitcherInteractionBuffer, SwitcherSpecs, IRawSwitcher>(newSpecs, _switcher);
+            _currentBuffer = new PerSpecSwitcherBuffer(newSpecs, _switcher);
             _currentBuffer.SetEventHandler(_eventHandler);
 
             // If we're connected, update the values too

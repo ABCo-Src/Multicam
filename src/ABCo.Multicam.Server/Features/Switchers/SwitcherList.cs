@@ -28,7 +28,7 @@ namespace ABCo.Multicam.Server.Features
 
         public void CreateSwitcher()
         {
-			_workingList.Add(_info.Get<ISwitcher>());
+			_workingList.Add(_info.Factories.Switcher.CreateSwitcher());
 			RefreshSwitchersList();
 		}
 

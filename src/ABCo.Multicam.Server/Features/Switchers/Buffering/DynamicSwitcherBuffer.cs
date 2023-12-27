@@ -1,29 +1,29 @@
 ﻿namespace ABCo.Multicam.Server.Features.Switchers.Buffering
 {
-	public interface IHotSwappableSwitcherInteractionBuffer : IServerService<SwitcherConfig>, IDisposable
+	public interface IDynamicSwitcherBuffer : IServerService<SwitcherConfig>, IDisposable
     {
         void SetEventHandler(ISwitcherEventHandler? handler);
         void ChangeSwitcher(SwitcherConfig config);
-        IPerSwitcherInteractionBuffer CurrentBuffer { get; }
+        ISwitcherBuffer CurrentBuffer { get; }
     }
 
-    public class HotSwappableSwitcherInteractionBuffer : IHotSwappableSwitcherInteractionBuffer
+    public class DynamicSwitcherBuffer : IDynamicSwitcherBuffer
     {
-        readonly IServerInfo _servSource;
+        readonly IServerInfo _info;
         ISwitcherEventHandler? _handler;
 
-        public IPerSwitcherInteractionBuffer CurrentBuffer { get; private set; }
+        public ISwitcherBuffer CurrentBuffer { get; private set; }
 
-        public HotSwappableSwitcherInteractionBuffer(SwitcherConfig config, IServerInfo servSource)
+        public DynamicSwitcherBuffer(SwitcherConfig config, IServerInfo info)
         {
-            _servSource = servSource;
-            CurrentBuffer = _servSource.Get<IPerSwitcherInteractionBuffer, SwitcherConfig>(config);
+            _info = info;
+            CurrentBuffer = new SwitcherBuffer(config, info);
         }
 
         public void ChangeSwitcher(SwitcherConfig config)
         {
             CurrentBuffer.Dispose();
-            CurrentBuffer = _servSource.Get<IPerSwitcherInteractionBuffer, SwitcherConfig>(config);
+            CurrentBuffer = new SwitcherBuffer(config, _info);
             CurrentBuffer.SetEventHandler(_handler);
 
             // Refresh everything to match the change

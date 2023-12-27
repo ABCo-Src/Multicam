@@ -13,18 +13,18 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.ATEM
     {
         readonly ATEMSwitcherConfig _config;
         readonly IThreadDispatcher _dispatcher;
-        readonly IServerInfo _servSource;
+        readonly IServerInfo _info;
         readonly IATEMPlatformCompatibility _compatibility;
         readonly BackgroundThreadExecutionBuffer _buffer;
 
         IATEMConnection? _connection; // Only access with the background thread!
 
-        public ATEMSwitcher(ATEMSwitcherConfig config, IServerInfo servSource)
+        public ATEMSwitcher(ATEMSwitcherConfig config, IServerInfo info)
         {
             _config = config;
-            _servSource = servSource;
-			_compatibility = servSource.Get<IATEMPlatformCompatibility>();
-            _dispatcher = servSource.GetLocalClientConnection().Dispatcher;
+            _info = info;
+			_compatibility = new ATEMPlatformCompatibility(info);
+            _dispatcher = info.Dispatcher;
             _buffer = new(ProcessError);
         }
 
@@ -42,7 +42,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.ATEM
 
             _buffer.QueueTask(() =>
             {
-                _connection = _servSource.Get<IATEMConnection, ATEMSwitcherConfig, IATEMSwitcher>(_config, this);
+                _connection = new ATEMConnection(_config, this, _info);
                 _dispatcher.Queue(() => _eventHandler?.OnConnectionStateChange(true));
             });
 		}

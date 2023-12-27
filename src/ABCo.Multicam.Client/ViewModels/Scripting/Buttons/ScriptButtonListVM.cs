@@ -29,7 +29,7 @@ namespace ABCo.Multicam.Client.ViewModels.Scripting.Buttons
         public ScriptButtonListVM(Dispatched<IScriptButtonList> collection, IFrameClientInfo client) : base(AppPages.ScriptButtons, collection, client) { }
 
         protected override void OnServerStateChange(string? changedProp) =>
-            ProcessServerListChange(s => new ScriptButtonListItemVM(_serverComponent, _info.CreateServerDispatcher(s), _info));
+            ProcessServerListChange(s => new ScriptButtonListItemVM(_serverComponent, _info.Server.CreateDispatcher(s), _info));
 
         public void CreateAutomation() => _serverComponent.CallDispatched(c => c.CreateAutomation());
     }

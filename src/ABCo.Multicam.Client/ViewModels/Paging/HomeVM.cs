@@ -33,8 +33,8 @@ namespace ABCo.Multicam.Client.ViewModels.Paging
 		{
 			_frame = info.Frame;
 
-			var switcherPage = new SwitcherListVM(info.CreateServerDispatcher(info.ServerConnection.GetFeatures()), info);
-			var automationPage = new ScriptButtonListVM(info.CreateServerDispatcher(info.ServerConnection.GetAutoButtons()), info);
+			var switcherPage = new SwitcherListVM(info.Server.GetSwitcherList(), info);
+			var scriptPage = new ScriptButtonListVM(info.Server.GetScriptButtonList(), info);
 
 			_middleTabs = new IHomePageLinkVM[]
 			{
@@ -45,7 +45,7 @@ namespace ABCo.Multicam.Client.ViewModels.Paging
 
 			_bottomTabs = new IHomePageLinkVM[]
 			{
-				new HomePageLinkVM("Script Buttons", this, automationPage),
+				new HomePageLinkVM("Script Buttons", this, scriptPage),
 				new HomePageLinkVM("Sync Devices", this, null)
 			};
 		}

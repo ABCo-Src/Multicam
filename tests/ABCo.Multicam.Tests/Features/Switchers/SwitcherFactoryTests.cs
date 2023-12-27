@@ -31,7 +31,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers
         public void GetSwitcher_Dummy()
         {
             var config = new VirtualSwitcherConfig();
-            Assert.AreEqual(_mocks.DummySwitcher.Object, Create().GetSwitcher(config));
+            Assert.AreEqual(_mocks.DummySwitcher.Object, Create().CreateRawSwitcher(config));
             _mocks.ServSource.Verify(m => m.Get<IVirtualSwitcher, VirtualSwitcherConfig>(config));
         }
     }

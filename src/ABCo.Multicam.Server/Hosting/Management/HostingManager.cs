@@ -30,7 +30,7 @@ namespace ABCo.Multicam.Server.Hosting.Management
 		public HostingManager(IServerInfo info)
         {
             _info = info;
-            _localIPAddresses = info.Get<ILocalIPCollection, Action>(HandleIPCollectionChange);
+            _localIPAddresses = info.Factories.Hosting.CreateIPCollection(HandleIPCollectionChange);
         }
 
 		void UpdateCurrentlyActiveConfig()
@@ -121,7 +121,7 @@ namespace ABCo.Multicam.Server.Hosting.Management
                 var activeConfig = ActiveHostName ?? throw new Exception("Cannot start server with unstartable settings.");
 
 				// Create/start a new host
-				_localNetworkHost = _info.Get<INativeServerHost, NativeServerHostConfig>(new(activeConfig));
+				_localNetworkHost = _info.Factories.Hosting.CreateNativeServerHost(new(activeConfig));
 				await _localNetworkHost.Start();
 
                 IsConnected = true;

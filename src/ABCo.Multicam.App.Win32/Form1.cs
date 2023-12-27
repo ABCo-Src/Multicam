@@ -3,6 +3,8 @@ using ABCo.Multicam.App.Win32.Services;
 using Microsoft.AspNetCore.Components.WebView.WindowsForms;
 using ABCo.Multicam.Client;
 using ABCo.Multicam.Client.Blazor;
+using ABCo.Multicam.Server.General.Factories;
+using ABCo.Multicam.Client.Management;
 
 namespace ABCo.Multicam.App.Win32
 {
@@ -14,17 +16,17 @@ namespace ABCo.Multicam.App.Win32
 
 			// Setup a server
 			var blazorDispatcher = new BlazorMainThreadDispatcher();
-			var server = new LocalMulticamServer(
-				s => new WindowsPlatformInfo(),
+			var server = new ServerInfo(
+				blazorDispatcher,
 				(c, s) => new NativeServerHost(c, s),
-				(a, s) => new AvailableIPCollection(a),
-				blazorDispatcher);
+				a => new AvailableIPCollection(a),
+				new WindowsPlatformInfo());
 
 			// Setup our desktop client services
 			var desktopServiceCollection = new ServiceCollection();
 			desktopServiceCollection.AddWindowsFormsBlazorWebView();
 			desktopServiceCollection.AddBlazorWebViewDeveloperTools();
-			desktopServiceCollection.AddSingleton<IClientInfo>(p => new ClientInfo(blazorDispatcher, server));
+			desktopServiceCollection.AddSingleton<IClientInfo>(p => new ClientInfo(blazorDispatcher, new ServerConnection(server)));
 
 			// And build the app from this
 			var builtProvider = desktopServiceCollection.BuildServiceProvider();

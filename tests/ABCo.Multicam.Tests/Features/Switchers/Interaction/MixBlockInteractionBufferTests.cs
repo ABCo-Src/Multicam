@@ -35,7 +35,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
 
             _mocks.Factory = new();
             _mocks.Factory
-                .Setup(m => m.CreateMixBlockEmulator(It.IsAny<SwitcherMixBlock>(), _mixBlockIndex, _mocks.Switcher.Object, It.IsAny<IMixBlockInteractionBuffer>()))
+                .Setup(m => m.CreateMixBlockEmulator(It.IsAny<SwitcherMixBlock>(), _mixBlockIndex, _mocks.Switcher.Object, It.IsAny<IMixBlockBuffer>()))
                 .Returns(_mocks.Emulator.Object);
 
             _mocks.EventHandler = new();
@@ -48,7 +48,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             //_mocks.Emulator.Setup(m => m.TrySetProgWithCutBusCutMode()).Returns(false);
         }
 
-        MixBlockInteractionBuffer Create()
+        MixBlockBuffer Create()
         {
             _mixBlock ??= SwitcherMixBlock.NewProgPrevSameInputs(_features, new SwitcherBusInput(3, ""), new(13, ""));
             var buffer = new MixBlockInteractionBuffer(_mixBlock, _mixBlockIndex, _mocks.Switcher.Object, _mocks.Factory.Object);

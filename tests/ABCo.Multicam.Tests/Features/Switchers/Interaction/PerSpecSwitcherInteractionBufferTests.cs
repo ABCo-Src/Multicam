@@ -12,7 +12,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             Mock<ISwitcher> Switcher,
             Mock<IServerInfo> ServSource,
             Mock<ISwitcherInteractionBufferFactory> Factory,
-            Mock<IMixBlockInteractionBuffer>[] Buffers,
+            Mock<IMixBlockBuffer>[] Buffers,
             Mock<ISwitcherEventHandler> EventHandler);
 
         SwitcherSpecs _switcherSpecs = new();
@@ -29,7 +29,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
 
             _mocks.Switcher = new();
 
-            _mocks.Buffers = new Mock<IMixBlockInteractionBuffer>[] { new(), new() };
+            _mocks.Buffers = new Mock<IMixBlockBuffer>[] { new(), new() };
             _mocks.EventHandler = new();
 
             _mocks.Factory = new();
@@ -37,7 +37,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             _mocks.Factory.Setup(m => m.CreateMixBlock(It.IsAny<SwitcherMixBlock>(), 1, It.IsAny<ISwitcher>())).Returns(_mocks.Buffers[1].Object);
         }
 
-		public PerSpecSwitcherInteractionBuffer Create() => new PerSpecSwitcherInteractionBuffer(_switcherSpecs, _mocks.Switcher.Object, _mocks.ServSource.Object);
+		public PerSpecSwitcherBuffer Create() => new PerSpecSwitcherInteractionBuffer(_switcherSpecs, _mocks.Switcher.Object, _mocks.ServSource.Object);
 
 		[TestMethod]
         public void Ctor_Disconnected()
@@ -166,7 +166,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             Verify1Success1Fail(mixBlock, (i, t) => i.Verify(m => m.Cut(), t));
         }
 
-        void Verify1Success1Fail(int mixBlock, Action<Mock<IMixBlockInteractionBuffer>, Times> per)
+        void Verify1Success1Fail(int mixBlock, Action<Mock<IMixBlockBuffer>, Times> per)
         {
             per(_mocks.Buffers[mixBlock], Times.Once());
             per(_mocks.Buffers[(~mixBlock & 1)], Times.Never());

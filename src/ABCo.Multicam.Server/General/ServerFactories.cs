@@ -9,16 +9,22 @@ namespace ABCo.Multicam.Server.General
 {
 	public interface IServerFactories
 	{
-		IAutomationFactory AutomationFactory { get; }
+		IAutomationFactory Automation { get; }
+		ISwitcherFactory Switcher { get; }
+		IHostingFactory Hosting { get; }
 	}
 
 	public class ServerFactories : IServerFactories
 	{
-		public IAutomationFactory AutomationFactory { get; }
+		public IAutomationFactory Automation { get; }
+		public ISwitcherFactory Switcher { get; }
+		public IHostingFactory Hosting { get; }
 
-		public ServerFactories()
+		public ServerFactories(IHostingFactory hosting, IServerInfo info)
 		{
-			AutomationFactory = new AutomationFactory();
+			Automation = new AutomationFactory();
+			Switcher = new SwitcherFactory(info);
+			Hosting = hosting;
 		}
 	}
 }

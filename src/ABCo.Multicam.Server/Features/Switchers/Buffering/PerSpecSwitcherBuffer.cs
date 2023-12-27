@@ -16,26 +16,22 @@ namespace ABCo.Multicam.Server.Features.Switchers.Buffering
         void Cut(int mixBlock);
     }
 
-    public class PerSpecSwitcherInteractionBuffer : IPerSpecSwitcherInteractionBuffer
+    public class PerSpecSwitcherBuffer : IPerSpecSwitcherInteractionBuffer
     {
-        readonly ISwitcherInteractionBufferFactory _factory;
-
         readonly IRawSwitcher _rawSwitcher;
-        readonly IMixBlockInteractionBuffer[] _mixBlockBuffers;
+        readonly IMixBlockBuffer[] _mixBlockBuffers;
 
         public SwitcherSpecs Specs { get; private set; }
 
-        public PerSpecSwitcherInteractionBuffer(SwitcherSpecs specs, IRawSwitcher switcher, IServerInfo servSource)
+        public PerSpecSwitcherBuffer(SwitcherSpecs specs, IRawSwitcher switcher)
         {
-            _factory = servSource.Get<ISwitcherInteractionBufferFactory>();
-
             Specs = specs;
             _rawSwitcher = switcher;
 
             // Create mix block buffers
-            _mixBlockBuffers = new IMixBlockInteractionBuffer[Specs.MixBlocks.Count];
+            _mixBlockBuffers = new IMixBlockBuffer[Specs.MixBlocks.Count];
             for (int i = 0; i < Specs.MixBlocks.Count; i++)
-                _mixBlockBuffers[i] = _factory.CreateMixBlock(Specs.MixBlocks[i], i, switcher);
+                _mixBlockBuffers[i] = new MixBlockBuffer(Specs.MixBlocks[i], i, switcher);
         }
 
         public void UpdateEverything()
@@ -58,23 +54,5 @@ namespace ABCo.Multicam.Server.Features.Switchers.Buffering
         public void UpdatePrev(SwitcherPreviewChangeInfo info) => _mixBlockBuffers[info.MixBlock].UpdatePrev(info.NewValue);
 
         public void Cut(int mixBlock) => _mixBlockBuffers[mixBlock].Cut();
-    }
-
-    public interface ISwitcherInteractionBufferFactory
-    {
-        IMixBlockInteractionBuffer CreateMixBlock(SwitcherMixBlock mixBlock, int mixBlockIdx, IRawSwitcher switcher);
-        IMixBlockInteractionEmulator CreateMixBlockEmulator(SwitcherMixBlock mixBlock, int mixBlockIdx, IRawSwitcher switcher, IMixBlockInteractionBuffer parentBuffer);
-    }
-
-    public class SwitcherInteractionBufferFactory : ISwitcherInteractionBufferFactory
-    {
-        //public ISwitcherInteractionBuffer CreateSync(ISwitcher switcher) => new SwitcherInteractionBuffer(switcher, this);
-        //public async Task<ISwitcherInteractionBuffer> CreateAsync(ISwitcher switcher) => await Task.Run(() => CreateSync(switcher));
-
-        public IMixBlockInteractionBuffer CreateMixBlock(SwitcherMixBlock mixBlock, int mixBlockIdx, IRawSwitcher switcher) =>
-            new MixBlockInteractionBuffer(mixBlock, mixBlockIdx, switcher, this);
-
-        public IMixBlockInteractionEmulator CreateMixBlockEmulator(SwitcherMixBlock mixBlock, int mixBlockIdx, IRawSwitcher switcher, IMixBlockInteractionBuffer parentBuffer) =>
-            new MixBlockInteractionEmulator(mixBlock, mixBlockIdx, switcher, parentBuffer);
     }
 }

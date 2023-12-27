@@ -21,7 +21,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers
 		public SwitcherListVM(Dispatched<ISwitcherList> collection, IFrameClientInfo client) : base(AppPages.Switchers, collection, client) { }
 
         protected override void OnServerStateChange(string? changedProp) =>
-            ProcessServerListChange(s => new SwitcherListItemVM(_serverComponent, _info.CreateServerDispatcher(s), _info));
+            ProcessServerListChange(s => new SwitcherListItemVM(_serverComponent, _info.Server.CreateDispatcher(s), _info));
 
 		public void CreateSwitcher() => _serverComponent.CallDispatched(c => c.CreateSwitcher());
     }

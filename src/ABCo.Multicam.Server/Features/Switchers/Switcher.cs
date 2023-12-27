@@ -55,8 +55,8 @@ namespace ABCo.Multicam.Server.Features.Switchers
 
 	public partial class Switcher : BindableServerComponent<ISwitcher>, ISwitcher, ISwitcherEventHandler
     {
-		// The buffer that sits between the switcher and adds preview emulation, caching and more to all the switcher interactions.
-		readonly IHotSwappableSwitcherInteractionBuffer _buffer;
+		// The buffer that sits atop the switcher to add preview/unsupported operation emulation, caching and more to all the switcher interactions.
+		readonly IDynamicSwitcherBuffer _swapBuffer;
 
 		[ObservableProperty] string _name = "New Switcher";
 		[ObservableProperty] SwitcherPlatformCompatibilityValue _platformCompatibility = SwitcherPlatformCompatibilityValue.Supported;
@@ -67,12 +67,12 @@ namespace ABCo.Multicam.Server.Features.Switchers
 
 		public Switcher(IServerInfo info)
         {
-            _buffer = info.Get<IHotSwappableSwitcherInteractionBuffer, SwitcherConfig>(Config);
-			_buffer.SetEventHandler(this);
+            _swapBuffer = new DynamicSwitcherBuffer(Config, info);
+			_swapBuffer.SetEventHandler(this);
 
 			// Update the specs + connection to match the new ones
-			SpecsInfo = new SpecsSpecificInfo(_buffer.CurrentBuffer.Specs, CreateMixBlockStateVals(_buffer.CurrentBuffer.Specs));
-			OnConnectionStateChange(_buffer.CurrentBuffer.IsConnected);
+			SpecsInfo = new SpecsSpecificInfo(_swapBuffer.CurrentBuffer.Specs, CreateMixBlockStateVals(_swapBuffer.CurrentBuffer.Specs));
+			OnConnectionStateChange(_swapBuffer.CurrentBuffer.IsConnected);
 		}
 
 		public void Rename(string name) => Name = name;
@@ -80,18 +80,18 @@ namespace ABCo.Multicam.Server.Features.Switchers
 		public void Connect()
 		{
 			ConnectionStatus = SwitcherConnectionStatus.Connecting;
-			_buffer.CurrentBuffer.Connect();
+			_swapBuffer.CurrentBuffer.Connect();
 		}
 
-		public void Disconnect() => _buffer.CurrentBuffer.Disconnect();
-		public void SetProgram(int mb, int val) => _buffer.CurrentBuffer.SendProgram(mb, val);
-		public void SetPreview(int mb, int val) => _buffer.CurrentBuffer.SendPreview(mb, val);
-		public void Cut(int param) => _buffer.CurrentBuffer.Cut(param);
+		public void Disconnect() => _swapBuffer.CurrentBuffer.Disconnect();
+		public void SetProgram(int mb, int val) => _swapBuffer.CurrentBuffer.SendProgram(mb, val);
+		public void SetPreview(int mb, int val) => _swapBuffer.CurrentBuffer.SendPreview(mb, val);
+		public void Cut(int param) => _swapBuffer.CurrentBuffer.Cut(param);
 		public void ChangeConfig(SwitcherConfig newConfig)
 		{
 			Config = newConfig;
-			PlatformCompatibility = _buffer.CurrentBuffer.GetPlatformCompatibility(); // TODO: This should be more elegantly communicated from core.
-			_buffer.ChangeSwitcher(newConfig);
+			PlatformCompatibility = _swapBuffer.CurrentBuffer.GetPlatformCompatibility(); // TODO: This should be more elegantly communicated from the raw switcher.
+			_swapBuffer.ChangeSwitcher(newConfig);
 		}
 
 		// Events:
@@ -99,24 +99,24 @@ namespace ABCo.Multicam.Server.Features.Switchers
         {
             var res = new MixBlockState[specs.MixBlocks.Count];
             for (int i = 0; i < specs.MixBlocks.Count; i++)
-                res[i] = new MixBlockState(_buffer.CurrentBuffer.GetProgram(i), _buffer.CurrentBuffer.GetPreview(i));
+                res[i] = new MixBlockState(_swapBuffer.CurrentBuffer.GetProgram(i), _swapBuffer.CurrentBuffer.GetPreview(i));
 
 			return res;
         }
 
-        public void OnProgramValueChange(SwitcherProgramChangeInfo info) => SpecsInfo = new SpecsSpecificInfo(SpecsInfo.Specs, CreateMixBlockStateVals(_buffer.CurrentBuffer.Specs));
-		public void OnPreviewValueChange(SwitcherPreviewChangeInfo info) => SpecsInfo = new SpecsSpecificInfo(SpecsInfo.Specs, CreateMixBlockStateVals(_buffer.CurrentBuffer.Specs));
+        public void OnProgramValueChange(SwitcherProgramChangeInfo info) => SpecsInfo = new SpecsSpecificInfo(SpecsInfo.Specs, CreateMixBlockStateVals(_swapBuffer.CurrentBuffer.Specs));
+		public void OnPreviewValueChange(SwitcherPreviewChangeInfo info) => SpecsInfo = new SpecsSpecificInfo(SpecsInfo.Specs, CreateMixBlockStateVals(_swapBuffer.CurrentBuffer.Specs));
 		public void OnSpecsChange(SwitcherSpecs newSpecs) => SpecsInfo = new SpecsSpecificInfo(newSpecs, CreateMixBlockStateVals(newSpecs));
 		public void OnConnectionStateChange(bool newState) => ConnectionStatus = newState ? SwitcherConnectionStatus.Connected : SwitcherConnectionStatus.NotConnected;
 
 		public void OnFailure(SwitcherError error)
 		{
             // Create a new buffer
-            _buffer.ChangeSwitcher(Config);
+            _swapBuffer.ChangeSwitcher(Config);
 			ErrorMessage = error.Message;
 		}
 
 		// Dispose:
-		public void Dispose() => _buffer.Dispose();
+		public void Dispose() => _swapBuffer.Dispose();
 	}
 }

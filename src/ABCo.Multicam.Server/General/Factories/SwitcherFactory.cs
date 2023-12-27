@@ -11,7 +11,8 @@ namespace ABCo.Multicam.Server.General.Factories
     // Creates a raw switcher from a given config
     public interface ISwitcherFactory
     {
-        IRawSwitcher GetSwitcher(SwitcherConfig config);
+		ISwitcher CreateSwitcher();
+		IRawSwitcher CreateRawSwitcher(SwitcherConfig config);
     }
 
     public class SwitcherFactory : ISwitcherFactory
@@ -19,10 +20,12 @@ namespace ABCo.Multicam.Server.General.Factories
         readonly IServerInfo _info;
         public SwitcherFactory(IServerInfo servSource) => _info = servSource;
 
-        public IRawSwitcher GetSwitcher(SwitcherConfig config) => config switch
+        public ISwitcher CreateSwitcher() => new Switcher(_info);
+
+		public IRawSwitcher CreateRawSwitcher(SwitcherConfig config) => config switch
         {
-            VirtualSwitcherConfig d => _info.Get<IVirtualSwitcher, VirtualSwitcherConfig>(d),
-            ATEMSwitcherConfig a => _info.Get<IATEMSwitcher, ATEMSwitcherConfig>(a),
+            VirtualSwitcherConfig d => new VirtualSwitcher(d),
+            ATEMSwitcherConfig a => new ATEMSwitcher(a, _info),
             OBSSwitcherConfig o => new OBSSwitcher(o, _info),
             _ => throw new Exception("Unsupported switcher type!"),
         };

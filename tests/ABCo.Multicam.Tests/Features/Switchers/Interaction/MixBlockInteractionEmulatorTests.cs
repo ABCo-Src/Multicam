@@ -10,7 +10,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
     {
         public record struct Mocks(
             Mock<ISwitcher> Switcher,
-            Mock<IMixBlockInteractionBuffer> Parent
+            Mock<IMixBlockBuffer> Parent
             );
 
         SwitcherMixBlock? _mixBlock = null;

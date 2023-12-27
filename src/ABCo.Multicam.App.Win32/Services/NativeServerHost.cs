@@ -1,5 +1,6 @@
 ﻿using ABCo.Multicam.Client;
 using ABCo.Multicam.Client.Blazor;
+using ABCo.Multicam.Client.Management;
 using ABCo.Multicam.Server;
 using ABCo.Multicam.Server.Hosting.Management;
 
@@ -19,7 +20,7 @@ namespace ABCo.Multicam.App.Win32.Services
 			// Setup services
 			webApp.Services.AddRazorPages();
 			webApp.Services.AddServerSideBlazor();
-			webApp.Services.AddScoped<IClientInfo>(p => new ClientInfo(new BlazorMainThreadDispatcher(), info.GetLocalClientConnection()));
+			webApp.Services.AddScoped<IClientInfo>(p => new ClientInfo(new BlazorMainThreadDispatcher(), new ServerConnection(info)));
 
 			// Build the app
 			_webApp = webApp.Build();

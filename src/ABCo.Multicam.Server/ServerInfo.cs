@@ -1,4 +1,6 @@
 ﻿using ABCo.Multicam.Server.General;
+using ABCo.Multicam.Server.General.Factories;
+using ABCo.Multicam.Server.Hosting.Management;
 
 namespace ABCo.Multicam.Server
 {
@@ -8,97 +10,26 @@ namespace ABCo.Multicam.Server
 
 	public interface IServerInfo
 	{
-		IMulticamServer GetLocalClientConnection();
 		IServerFactories Factories { get; }
-
-		T Get<T>() where T : class;
-        T Get<T, T1>(T1 param1) where T : class, IServerService<T1>;
-        T Get<T, T1, T2>(T1 param1, T2 param2) where T : class, IServerService<T1, T2>;
-        T Get<T, T1, T2, T3>(T1 param1, T2 param2, T3 param3) where T : class, IServerService<T1, T2, T3>;
-    }
+		IServerSharedServices Shared { get; }
+		IPlatformInfo PlatformInfo { get; }
+		IThreadDispatcher Dispatcher { get; }
+	}
 
 	public class ServerInfo : IServerInfo
 	{
-		readonly IMulticamServer _localClientConnection;
-
-		public IThreadDispatcher Dispatcher { get; }
 		public IServerFactories Factories { get; }
-		public IMulticamServer GetLocalClientConnection() => _localClientConnection;
+		public IServerSharedServices Shared { get; }
+		public IPlatformInfo PlatformInfo { get; }
+		public IThreadDispatcher Dispatcher { get; }
 
-		public ServerInfo(IThreadDispatcher dispatcher, IMulticamServer connection)
+		public ServerInfo(IThreadDispatcher dispatcher, Func<NativeServerHostConfig, IServerInfo, INativeServerHost> createServerHost, 
+			Func<Action, ILocalIPCollection> createIPCollection, IPlatformInfo platInfo)
 		{
+			Factories = new ServerFactories(new HostingFactory(createServerHost, createIPCollection, this), this);
+			Shared = new ServerSharedServices(this);
 			Dispatcher = dispatcher;
-			Factories = new ServerFactories();
-			_localClientConnection = connection;
+			PlatformInfo = platInfo;
 		}
-
-		public T Get<T>() where T : class
-		{
-			// Check if it's a singleton
-			if (ServerWideServiceRegisterSingletonStore<T>.Factory != null)
-			{
-				if (ServerWideServiceRegisterSingletonStore<T>.Object != null)
-					return (T)ServerWideServiceRegisterSingletonStore<T>.Object;
-				else
-				{
-					var res = ServerWideServiceRegisterSingletonStore<T>.Factory(this);
-					ServerWideServiceRegisterSingletonStore<T>.Object = res;
-					return res;
-				}
-			}
-
-			// Then it must be a transient
-			if (ServerWideServiceRegisterTransientStore<T>.Factory == null) throw new Exception("Unregistered service requested!");
-			
-			return ((Func<IServerInfo, T>)ServerWideServiceRegisterTransientStore<T>.Factory)(this);
-		}
-
-		public T Get<T, T1>(T1 param1) where T : class, IServerService<T1>
-		{
-			var factory = ServerWideServiceRegisterTransientStore<T>.Factory ?? throw new Exception();
-			var castedFactory = (Func<T1, IServerInfo, T>)factory;
-			return castedFactory(param1, this);
-		}
-
-		public T Get<T, T1, T2>(T1 param1, T2 param2) where T : class, IServerService<T1, T2>
-		{
-			var factory = ServerWideServiceRegisterTransientStore<T>.Factory ?? throw new Exception();
-			var castedFactory = (Func<T1, T2, IServerInfo, T>)factory;
-			return castedFactory(param1, param2, this);
-		}
-
-		public T Get<T, T1, T2, T3>(T1 param1, T2 param2, T3 param3) where T : class, IServerService<T1, T2, T3>
-		{
-			var factory = ServerWideServiceRegisterTransientStore<T>.Factory ?? throw new Exception();
-			var castedFactory = (Func<T1, T2, T3, IServerInfo, T>)factory;
-			return castedFactory(param1, param2, param3, this);
-		}
-
-		public static void AddSingleton<T>(Func<IServerInfo, T> val)
-			where T : class
-			=> ServerWideServiceRegisterSingletonStore<T>.Factory = val;
-
-		public static void AddTransient<T>(Func<IServerInfo, T> f) where T : class
-			=> ServerWideServiceRegisterTransientStore<T>.Factory = f;
-
-		public static void AddTransient<T, T1>(Func<T1, IServerInfo, T> factory) where T : IServerService<T1> =>
-			ServerWideServiceRegisterTransientStore<T>.Factory = factory;
-
-		public static void AddTransient<T, T1, T2>(Func<T1, T2, IServerInfo, T> factory) where T : IServerService<T1, T2> =>
-			ServerWideServiceRegisterTransientStore<T>.Factory = factory;
-
-		public static void AddTransient<T, T1, T2, T3>(Func<T1, T2, T3, IServerInfo, T> factory) where T : IServerService<T1, T2, T3> =>
-			ServerWideServiceRegisterTransientStore<T>.Factory = factory;
-	}
-
-	internal static class ServerWideServiceRegisterSingletonStore<T>
-	{
-		public static object? Object = null;
-		public static Func<IServerInfo, T>? Factory = null;
-	}
-
-	internal static class ServerWideServiceRegisterTransientStore<T>
-	{
-		public static Delegate? Factory = null;
 	}
 }

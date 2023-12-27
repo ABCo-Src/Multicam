@@ -21,14 +21,12 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 	{
 		// Implementation of: https://github.com/obsproject/obs-websocket/blob/master/docs/generated/protocol.md
 		readonly OBSSwitcherConfig _config;
-		readonly IThreadDispatcher _dispatcher;
 		readonly IExecutionBuffer _buffer;
 		OBSConnection? _connection;
 
 		public OBSSwitcher(OBSSwitcherConfig config, IServerInfo info)
 		{
 			_config = config;
-			_dispatcher = info.GetLocalClientConnection().Dispatcher;
 			_buffer = new SameThreadExecutionBuffer(HandleFail);
 		}
 

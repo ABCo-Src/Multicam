@@ -21,11 +21,11 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.ATEM
         readonly INativeATEMSwitcher _nativeSwitcher;
         INativeATEMMixBlock[] _nativeBlocks = Array.Empty<INativeATEMMixBlock>();
 
-        public ATEMConnection(ATEMSwitcherConfig config, IATEMSwitcher eventHandler, IServerInfo servSource)
+        public ATEMConnection(ATEMSwitcherConfig config, IATEMSwitcher eventHandler, IServerInfo info)
         {
-            _servSource = servSource;
-            _nativeSwitcher = _servSource.Get<INativeATEMSwitcherDiscovery>().Connect(config.IP ?? "");
-            _callbackHandler = _servSource.Get<IATEMCallbackHandler, IATEMSwitcher>(eventHandler);
+            _servSource = info;
+            _nativeSwitcher = info.Shared.NativeATEMDiscovery.Connect(config.IP ?? "");
+            _callbackHandler = new ATEMCallbackHandler(eventHandler);
             _callbackHandler.AttachToSwitcher(_nativeSwitcher);
         }
 

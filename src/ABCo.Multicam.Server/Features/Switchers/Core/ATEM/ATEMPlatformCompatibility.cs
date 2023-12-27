@@ -13,7 +13,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.ATEM
     public class ATEMPlatformCompatibility : IATEMPlatformCompatibility
     {
         readonly IPlatformInfo _info;
-        public ATEMPlatformCompatibility(IServerInfo servSource) => _info = servSource.Get<IPlatformInfo>();
+        public ATEMPlatformCompatibility(IServerInfo servSource) => _info = servSource.PlatformInfo;
 
         [SupportedOSPlatform("windows")]
         public SwitcherPlatformCompatibilityValue GetCompatibility()
