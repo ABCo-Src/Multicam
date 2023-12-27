@@ -10,16 +10,13 @@ using System.ComponentModel;
 
 namespace ABCo.Multicam.Client.ViewModels.Features.Switchers
 {
-	public interface ISwitcherListItemVM : INamedMovableListItemVM, INotifyPropertyChanged, IDisposable
+	public interface ISwitcherListItemVM : INamedMovableListItemVM<ISwitcherVM>, INotifyPropertyChanged, IDisposable
 	{
-		ISwitcherVM Switcher { get; }
 	}
 
-	public partial class SwitcherListItemVM : NamedMovableBoundListItemVM<ISwitcherList, ISwitcher>, ISwitcherListItemVM
+	public partial class SwitcherListItemVM : NamedMovableBoundListItemVM<ISwitcherList, ISwitcher, ISwitcherVM>, ISwitcherListItemVM
 	{
-		[ObservableProperty] ISwitcherVM _switcher;
-
-		public SwitcherListItemVM(Dispatched<ISwitcherList> list, Dispatched<ISwitcher> feature, IFrameClientInfo info) : base(list, feature, info) =>
-			_switcher = new SwitcherVM(feature, info);
+		public SwitcherListItemVM(Dispatched<ISwitcherList> list, Dispatched<ISwitcher> feature, IFrameClientInfo info) 
+			: base(list, feature, new SwitcherVM(feature, info), info) { }
 	}
 }

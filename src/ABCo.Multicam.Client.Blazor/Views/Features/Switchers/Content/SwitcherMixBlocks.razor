@@ -4,7 +4,7 @@
 
 @if (VM.MixBlocks.Length == 0)
 {
-	<div class="noMixBlocks switcherContentStrip">
+	<div class="noMixBlocks listItemContentStrip">
 		<p>Connect to the device to load buses.</p>
 	</div>
 }
@@ -14,7 +14,7 @@ else
 
 		@foreach (var mixBlock in VM.MixBlocks)
 		{
-			<li class="switcherContentStrip">
+			<li class="listItemContentStrip">
 				<SwitcherMixBlock VM="mixBlock" />
 			</li>
 		}

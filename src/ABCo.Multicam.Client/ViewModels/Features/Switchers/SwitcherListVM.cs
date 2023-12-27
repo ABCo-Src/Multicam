@@ -11,7 +11,6 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers
 {
     public interface ISwitcherListVM : IServerListVM<ISwitcherListItemVM>, IPageVM, INotifyPropertyChanged
 	{
-        void CreateSwitcher();
     }
 
     public partial class SwitcherListVM : ServerListVM<ISwitcherList, ISwitcher, ISwitcherListItemVM>, ISwitcherListVM
@@ -23,6 +22,6 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers
         protected override void OnServerStateChange(string? changedProp) =>
             ProcessServerListChange(s => new SwitcherListItemVM(_serverComponent, _info.Server.CreateDispatcher(s), _info));
 
-		public void CreateSwitcher() => _serverComponent.CallDispatched(c => c.CreateSwitcher());
+		public void Create() => _serverComponent.CallDispatched(c => c.CreateSwitcher());
     }
 }

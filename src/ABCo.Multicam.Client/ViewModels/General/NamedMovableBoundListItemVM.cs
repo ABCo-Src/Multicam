@@ -15,10 +15,11 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Client.ViewModels.General
 {
-	public interface INamedMovableListItemVM : INotifyPropertyChanged
+	public interface INamedMovableListItemVM<TContent> : INotifyPropertyChanged
 	{
 		string Name { get; set; }
 		bool IsEditingName { get; set; }
+		TContent Content { get; }
 		void OpenGeneralEditMenu(CursorPosition pos);
 		void StartRename();
 		void OnFinishRename();
@@ -27,17 +28,19 @@ namespace ABCo.Multicam.Client.ViewModels.General
 		void Delete();
 	}
 
-	public abstract partial class NamedMovableBoundListItemVM<TListType, TItemType> : BoundViewModelBase<TItemType>, INamedMovableListItemVM
-		where TItemType : INotifyPropertyChanged, INamedServerComponent
-		where TListType : IServerList<TItemType>
+	public abstract partial class NamedMovableBoundListItemVM<TList, TItem, TContent> : BoundViewModelBase<TItem>, INamedMovableListItemVM<TContent>
+		where TItem : INotifyPropertyChanged, INamedServerComponent
+		where TList : IServerList<TItem>
 	{
-		readonly Dispatched<TListType> _list;
+		readonly Dispatched<TList> _list;
 
 		[ObservableProperty] string _name = "";
+		[ObservableProperty] TContent _content;
 		[ObservableProperty] bool _isEditingName = false;
 
-		public NamedMovableBoundListItemVM(Dispatched<TListType> list, Dispatched<TItemType> feature, IFrameClientInfo info) : base(feature, info)
+		public NamedMovableBoundListItemVM(Dispatched<TList> list, Dispatched<TItem> feature, TContent content, IFrameClientInfo info) : base(feature, info)
 		{
+			Content = content;
 			_list = list;
 			OnServerStateChange(null);
 		}

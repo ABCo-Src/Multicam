@@ -13,9 +13,10 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Client.ViewModels.General
 {
-	public interface IServerListVM<TItemVM>
+	public interface IServerListVM<TItemVM> : INotifyPropertyChanged
 	{
 		TItemVM[] Items { get; }
+		void Create();
 	}
 
 	public abstract partial class ServerListVM<TServerList, TServerListItem, TItemVM> : BoundViewModelBase<TServerList> 

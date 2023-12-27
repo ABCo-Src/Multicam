@@ -1,9 +1,12 @@
 ﻿@using ABCo.Multicam.Client.Blazor.Views.Features.Switchers
+@using ABCo.Multicam.Client.Blazor.Views.General.ListItem
 @using ABCo.Multicam.Client.Blazor.Views.Scripting.Buttons
 @using ABCo.Multicam.Client.Presenters
 @using ABCo.Multicam.Client.Presenters.Features.Switchers
+@using ABCo.Multicam.Client.ViewModels.Features.Switchers
 @using ABCo.Multicam.Client.ViewModels.Scripting.Buttons
 @using ABCo.Multicam.Client.ViewModels.Paging
+@using ABCo.Multicam.Server.Automation.Buttons
 @inherits VMBoundComponent<IFrameVM>
 
 <div class="frame">
@@ -25,11 +28,11 @@
 		}
 		else if (VM.CurrentPage is ISwitcherListVM switcherVM)
 		{
-			<SwitcherView VM="switcherVM" />
+			<ListView TItem="ISwitcherListItemVM" TItemContent="ISwitcherVM" NewButtonText="New Switcher" VM="switcherVM" />
 		}
 		else if (VM.CurrentPage is IScriptButtonListVM automationVM)
 		{
-			<ScriptButtonListView VM="automationVM" />
+			<ListView TItem="IScriptButtonListItemVM" TItemContent="IScriptButtonVM" NewButtonText="New Button" VM="automationVM" />
 		}
 	</div>
 </div>

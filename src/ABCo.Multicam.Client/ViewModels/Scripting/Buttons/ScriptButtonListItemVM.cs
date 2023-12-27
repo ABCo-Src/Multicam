@@ -10,13 +10,14 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Client.ViewModels.Scripting.Buttons
 {
-    public interface IScriptButtonListItemVM : INamedMovableListItemVM, INotifyPropertyChanged, IDisposable
+    public interface IScriptButtonListItemVM : INamedMovableListItemVM<IScriptButtonVM>, INotifyPropertyChanged, IDisposable
     {
     }
-
-    public class ScriptButtonListItemVM : NamedMovableBoundListItemVM<IScriptButtonList, IScriptButton>, IScriptButtonListItemVM
+    
+    public class ScriptButtonListItemVM : NamedMovableBoundListItemVM<IScriptButtonList, IScriptButton, IScriptButtonVM>, IScriptButtonListItemVM
     {
-        public ScriptButtonListItemVM(Dispatched<IScriptButtonList> list, Dispatched<IScriptButton> feature, IFrameClientInfo info) : base(list, feature, info)
+        public ScriptButtonListItemVM(Dispatched<IScriptButtonList> list, Dispatched<IScriptButton> feature, IFrameClientInfo info) 
+            : base(list, feature, new ScriptButtonVM(), info)
         {
         }
     }

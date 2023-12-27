@@ -167,42 +167,6 @@ body {
     background: var(--gradient-3431);
 }
 
-.globalListView {
-    padding: 10px 20px;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.globalListView .addItem {
-    border: 5px solid var(--col-dark-accent);
-    padding: 10px;
-    max-width: 100%;
-    display: flex;
-    justify-content: center;
-}
-
-.globalListViewItem {
-    margin: 0 0 10px 0;
-    animation: newItemSlideAcross 0.2s ease-out;
-    min-height: 50px;
-    width: 100%;
-}
-
-.globalListViewItem .titlebar {
-    background-color: var(--col-dark-accent);
-    padding: 10px 10px 10px 25px;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    grid-template-areas: "title editBtn";
-    align-content: center;
-}
-
-.globalListViewItem .bordered {
-    border-left: 5px solid var(--col-dark-accent);
-    border-right: 5px solid var(--col-dark-accent);
-    border-bottom: 5px solid var(--col-dark-accent);
-}
-
 /* Text/Combo Boxes */
 .textbox, .combo {
     background-color: var(--col-boxback);

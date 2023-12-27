@@ -4,7 +4,7 @@
 @using ABCo.Multicam.Client.ViewModels.Features;
 @inherits VMBoundComponent<ISwitcherConfigVM>
 
-<div class="switcherContentStrip">
+<div class="listItemContentStrip">
 	<p class="switcherType">@VM.SwitcherTypeTitle</p>
 	<a class="btnDropDown btnLikeHighlight" @onclick="e=>VM.OpenEditMenu(new(e.ClientX, e.ClientY + (40 - e.OffsetY)))">
 		Edit

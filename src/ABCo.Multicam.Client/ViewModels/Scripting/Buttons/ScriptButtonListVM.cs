@@ -16,10 +16,8 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Client.ViewModels.Scripting.Buttons
 {
-    public interface IScriptButtonListVM : IPageVM, INotifyPropertyChanged
+    public interface IScriptButtonListVM : IServerListVM<IScriptButtonListItemVM>, IPageVM, INotifyPropertyChanged
     {
-        IScriptButtonListItemVM[] Items { get; }
-        void CreateAutomation();
     }
 
     public partial class ScriptButtonListVM : ServerListVM<IScriptButtonList, IScriptButton, IScriptButtonListItemVM>, IScriptButtonListVM
@@ -31,6 +29,6 @@ namespace ABCo.Multicam.Client.ViewModels.Scripting.Buttons
         protected override void OnServerStateChange(string? changedProp) =>
             ProcessServerListChange(s => new ScriptButtonListItemVM(_serverComponent, _info.Server.CreateDispatcher(s), _info));
 
-        public void CreateAutomation() => _serverComponent.CallDispatched(c => c.CreateAutomation());
+        public void Create() => _serverComponent.CallDispatched(c => c.CreateAutomation());
     }
 }

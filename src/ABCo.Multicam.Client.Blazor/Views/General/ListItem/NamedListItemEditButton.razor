@@ -1,5 +1,6 @@
 ﻿@using ABCo.Multicam.Client.ViewModels.General
-@inherits VMBoundComponent<INamedMovableListItemVM>
+@typeparam TContent
+@inherits VMBoundComponent<INamedMovableListItemVM<TContent>>
 
 <a class="btnDropDown btnLikeHighlight editBtn" @onclick="e=>VM.OpenGeneralEditMenu(new(e.ClientX, e.ClientY + (30 - e.OffsetY)))">
 	Edit

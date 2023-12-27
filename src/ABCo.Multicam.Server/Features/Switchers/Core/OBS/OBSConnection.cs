@@ -189,20 +189,14 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS
 			if (_currentTransition == null) throw UninitializedException();
 			string oldTransition = _currentTransition;
 
-			Debug.WriteLine("Cut1");
-
 			// Switch to cut if needed
 			if (oldTransition != "Cut")
 				await SendRequestAndWaitForResponse(new OBSRequestMessage<CurrentSceneTransition>("SetCurrentSceneTransition", "", new("Cut")));
-
-			Debug.WriteLine("Cut2");
 
 			// Transition
 			_waitForTransitionEnd = new();
 			await _client.SendDatalessRequest(new OBSRequestMessage("TriggerStudioModeTransition", ""));
 			await _waitForTransitionEnd.Task;
-
-			Debug.WriteLine("Cut3");
 
 			// Switch back to previous
 			if (oldTransition != "Cut")

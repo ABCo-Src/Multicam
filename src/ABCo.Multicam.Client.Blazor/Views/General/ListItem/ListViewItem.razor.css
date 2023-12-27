@@ -1,0 +1,29 @@
+﻿li {
+    margin: 0 0 10px 0;
+    animation: newItemSlideAcross 0.2s ease-out;
+    min-height: 50px;
+    width: 100%;
+}
+
+li .titlebar {
+    background-color: var(--col-dark-accent);
+    padding: 10px 10px 10px 25px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas: "title editBtn";
+    align-content: center;
+}
+
+li .bordered {
+    padding: 10px;
+    border-left: 5px solid var(--col-dark-accent);
+    border-right: 5px solid var(--col-dark-accent);
+    border-bottom: 5px solid var(--col-dark-accent);
+}
+
+::deep .listItemContentStrip {
+    background-color: rgba(60, 60, 60, 0.2);
+    padding: 10px;
+    max-width: 100%;
+    overflow-x: auto;
+}

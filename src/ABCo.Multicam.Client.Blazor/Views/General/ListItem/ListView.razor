@@ -1,0 +1,20 @@
+﻿@using ABCo.Multicam.Client.ViewModels.General
+@typeparam TItemContent
+@typeparam TItem where TItem : INamedMovableListItemVM<TItemContent>
+@inherits VMBoundComponent<IServerListVM<TItem>>
+
+<ul>
+	@foreach (var item in VM.Items)
+	{
+		<ListViewItem TContent="TItemContent" VM="item" />
+	}
+
+	<li class="item addItem btnLikeHighlight" @onclick="e => VM.Create()">
+		<a>@NewButtonText</a>
+	</li>
+</ul>
+
+@code {
+	[Parameter]
+	public string NewButtonText { get; set; }
+}

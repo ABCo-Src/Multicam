@@ -1,5 +1,18 @@
-﻿<h3>ListViewItem</h3>
+﻿@using ABCo.Multicam.Client.Blazor.Views.Features.Switchers.Content
+@using ABCo.Multicam.Client.Presenters.Features.Switchers
+@using ABCo.Multicam.Client.ViewModels.General
+@typeparam TContent
+@inherits VMBoundComponent<INamedMovableListItemVM<TContent>>
 
-@code {
-
-}
+<li>
+	<div class="titlebar">
+		<NamedListItemTitle VM="VM" />
+		<NamedListItemEditButton VM="VM" />
+	</div>
+	<div class="bordered">
+		@if (VM.Content is ISwitcherVM switcher)
+		{
+			<SwitcherContent VM="switcher" />
+		}
+	</div>
+</li>

@@ -1,0 +1,13 @@
+﻿ul {
+    padding: 10px 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+ul .addItem {
+    border: 5px solid var(--col-dark-accent);
+    padding: 10px;
+    max-width: 100%;
+    display: flex;
+    justify-content: center;
+}

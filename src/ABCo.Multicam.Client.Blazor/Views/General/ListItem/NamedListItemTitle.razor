@@ -1,5 +1,6 @@
 ﻿@using ABCo.Multicam.Client.ViewModels.General
-@inherits VMBoundComponent<INamedMovableListItemVM>
+@typeparam TContent
+@inherits VMBoundComponent<INamedMovableListItemVM<TContent>>
 
 <div class="title">
 	<div class="switcher">
