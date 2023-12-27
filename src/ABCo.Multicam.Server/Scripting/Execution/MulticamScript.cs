@@ -3,16 +3,17 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using MoonSharp.Interpreter;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Server.Scripting.Execution
 {
-    public interface IEditableScript
+    public interface IEditableScript : INotifyPropertyChanged
     {
         string Code { get; }
-        ILoadedScript LoadedScript { get; }
+        ILoadedScript? LoadedScript { get; }
         
         void UpdateCode(string code);
     }

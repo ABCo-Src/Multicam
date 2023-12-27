@@ -7,7 +7,10 @@
 @inject IClientInfo clientInfo
 
 @{
-	((BlazorMainThreadDispatcher)clientInfo.Dispatcher).Associate(InvokeAsync);
+	// If we're using Blazor's dispatcher for this client, associate this with it.
+	if (clientInfo.Dispatcher is BlazorMainThreadDispatcher disp)
+		disp.Associate(InvokeAsync);
+
 	var mainVM = new MainUIVM(clientInfo);
 }
 

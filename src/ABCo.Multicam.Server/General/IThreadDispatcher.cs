@@ -3,5 +3,6 @@
 	public interface IThreadDispatcher 
 	{
 		void Queue(Action act);
+		Task Yield();
 	}
 }

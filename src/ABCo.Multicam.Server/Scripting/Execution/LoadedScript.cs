@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using MoonSharp.Interpreter;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Server.Scripting.Execution
 {
-	public interface ILoadedScript
+	public interface ILoadedScript : INotifyPropertyChanged
 	{
 		bool IsRunning { get; }
 		void Start();
@@ -71,7 +72,7 @@ namespace ABCo.Multicam.Server.Scripting.Execution
 			// Create a new co-routine if there isn't one present.
 			if (_executionCoroutine == null)
 			{
-				_executionCoroutine = _script.CreateCoroutine(_executionCoroutine).Coroutine;
+				_executionCoroutine = _script.CreateCoroutine(_loadedCode).Coroutine;
 				_executionCoroutine.AutoYieldCounter = 100; // So stuck scripts still yield back to the server for stopping
 			}
 
@@ -91,7 +92,7 @@ namespace ABCo.Multicam.Server.Scripting.Execution
 			}
 			catch (Exception ex)
 			{
-				
+				_manager.HandleScriptError(_id, ex);
 			}
 
 			return true;

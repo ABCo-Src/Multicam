@@ -1,18 +1,32 @@
 ﻿@using ABCo.Multicam.Client.Blazor.Views.Features.Switchers.Content
+@using ABCo.Multicam.Client.Blazor.Views.Scripting.Buttons
 @using ABCo.Multicam.Client.Presenters.Features.Switchers
 @using ABCo.Multicam.Client.ViewModels.General
+@using ABCo.Multicam.Client.ViewModels.Scripting.Buttons
 @typeparam TContent
 @inherits VMBoundComponent<INamedMovableListItemVM<TContent>>
 
 <li>
 	<div class="titlebar">
 		<NamedListItemTitle VM="VM" />
+
+		<div class="contextButton">
+			@if (VM.Content is IScriptButtonVM buttonTitle)
+			{
+				<ScriptButtonExecuteButtonContainer VM="buttonTitle.Script" />
+			}
+		</div>
+		
 		<NamedListItemEditButton VM="VM" />
 	</div>
 	<div class="bordered">
 		@if (VM.Content is ISwitcherVM switcher)
 		{
 			<SwitcherContent VM="switcher" />
+		}
+		else if (VM.Content is IScriptButtonVM button)
+		{
+			<ScriptButtonContent VM="button" />
 		}
 	</div>
 </li>

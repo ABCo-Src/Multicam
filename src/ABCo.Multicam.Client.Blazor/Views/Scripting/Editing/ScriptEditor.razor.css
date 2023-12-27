@@ -1,0 +1,13 @@
+﻿.scriptEditor {
+    display: grid;
+    grid-template-columns: calc(100% - 15px);
+    grid-template-areas: "codeBox";
+}
+
+.codeBox {
+    grid-area: codeBox;
+    margin-top: 5px;
+    min-width: 100%;
+    max-width: 100%;
+    font-family: 'Cascadia Code';
+}

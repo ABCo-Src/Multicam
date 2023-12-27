@@ -9,9 +9,14 @@ li .titlebar {
     background-color: var(--col-dark-accent);
     padding: 10px 10px 10px 25px;
     display: grid;
-    grid-template-columns: 1fr auto;
-    grid-template-areas: "title editBtn";
+    grid-template-columns: 1fr auto auto;
+    grid-template-areas: "title contextButton editBtn";
     align-content: center;
+}
+
+li .titlebar .contextButton {
+    grid-area: contextButton;
+    margin-right: 10px;
 }
 
 li .bordered {
@@ -25,5 +30,6 @@ li .bordered {
     background-color: rgba(60, 60, 60, 0.2);
     padding: 10px;
     max-width: 100%;
+    box-sizing: border-box;
     overflow-x: auto;
 }

@@ -17,7 +17,7 @@ namespace ABCo.Multicam.Client.ViewModels.Scripting.Buttons
     public class ScriptButtonListItemVM : NamedMovableBoundListItemVM<IScriptButtonList, IScriptButton, IScriptButtonVM>, IScriptButtonListItemVM
     {
         public ScriptButtonListItemVM(Dispatched<IScriptButtonList> list, Dispatched<IScriptButton> feature, IFrameClientInfo info) 
-            : base(list, feature, new ScriptButtonVM(), info)
+            : base(list, feature, new ScriptButtonVM(feature, info), info)
         {
         }
     }

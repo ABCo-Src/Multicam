@@ -5,6 +5,7 @@ using ABCo.Multicam.Client;
 using ABCo.Multicam.Client.Blazor;
 using ABCo.Multicam.Server.General.Factories;
 using ABCo.Multicam.Client.Management;
+using ABCo.Multicam.Server.General;
 
 namespace ABCo.Multicam.App.Win32
 {
@@ -15,7 +16,7 @@ namespace ABCo.Multicam.App.Win32
 			InitializeComponent();
 
 			// Setup a server
-			var blazorDispatcher = new BlazorMainThreadDispatcher();
+			var blazorDispatcher = new FormDispatcher(this);
 			var server = new ServerInfo(
 				blazorDispatcher,
 				(c, s) => new NativeServerHost(c, s),
@@ -43,11 +44,16 @@ namespace ABCo.Multicam.App.Win32
 			blazorWebView1.Padding = new Padding(0);
 		}
 
-		//class FormDispatcher : IThreadDispatcher
-		//{
-		//	readonly Form _form;
-		//	public FormDispatcher(Form form) => _form = form;
-		//	public void Queue(Action act) => _form.Invoke(act);
-		//}
+		class FormDispatcher : IThreadDispatcher
+		{
+			readonly Form _form;
+			public FormDispatcher(Form form) => _form = form;
+			public void Queue(Action act) => _form.Invoke(act);
+			public async Task Yield()
+			{
+				Application.DoEvents();
+				await Task.Yield();
+			}
+		}
 	}
 }

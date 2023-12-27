@@ -11,5 +11,11 @@ namespace ABCo.Multicam.App.Win32.Services
 
 		public async void Queue(Action act) => await _invoker(act);
 		public async void QueueOnUIThread(Action act) => await _invoker(act);
+
+		public async Task Yield()
+		{
+
+			await Task.Yield();
+		}
 	}
 }

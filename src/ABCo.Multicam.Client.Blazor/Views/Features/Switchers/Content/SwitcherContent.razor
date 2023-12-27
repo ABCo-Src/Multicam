@@ -3,8 +3,6 @@
 @using ABCo.Multicam.Client.ViewModels.Features;
 @inherits VMBoundComponent<ISwitcherVM>
 
-<div class="content">
-	<SwitcherTypeStrip VM="VM.Config" />
-	<SwitcherConnectionControl VM="VM.Connection" />
-	<SwitcherMixBlocks VM="VM.MixBlocks" />
-</div>
+<SwitcherTypeStrip VM="VM.Config" />
+<SwitcherConnectionControl VM="VM.Connection" />
+<SwitcherMixBlocks VM="VM.MixBlocks" />

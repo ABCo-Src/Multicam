@@ -15,6 +15,6 @@
 </ul>
 
 @code {
-	[Parameter]
-	public string NewButtonText { get; set; }
+	[Parameter, EditorRequired]
+	public string NewButtonText { get; set; } = null!;
 }

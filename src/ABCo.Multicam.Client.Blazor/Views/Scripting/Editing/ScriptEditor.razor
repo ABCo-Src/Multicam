@@ -1,0 +1,6 @@
+﻿@using ABCo.Multicam.Client.ViewModels.Scripting.Editor
+@inherits VMBoundComponent<IEditableScriptVM>
+
+<div class="scriptEditor">
+	<textarea class="textbox codeBox" rows="5" @onchange="e => { VM.UpdateCode((string)e.Value!); }" value="@VM.Code" />
+</div>

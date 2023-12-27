@@ -1,0 +1,7 @@
+﻿@using ABCo.Multicam.Client.ViewModels.Scripting.Editor
+@inherits VMBoundComponent<IEditableScriptVM>
+
+@if (VM.LoadedScript != null)
+{
+	<ScriptButtonExecuteButton VM="VM.LoadedScript" />
+}

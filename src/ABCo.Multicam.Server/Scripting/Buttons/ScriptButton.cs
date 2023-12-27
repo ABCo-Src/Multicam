@@ -11,12 +11,15 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Server.Automation.Buttons
 {
-	public interface IScriptButton : INamedServerComponent, IBindableServerComponent<IScriptButton>, IDisposable { }
+	public interface IScriptButton : INamedServerComponent, IBindableServerComponent<IScriptButton>, IDisposable 
+	{
+		IEditableScript Script { get; }
+	}
 
 	public partial class ScriptButton : BindableServerComponent<IScriptButton>, IScriptButton, IScriptID
 	{
 		[ObservableProperty] string _name = "New Automation Button";
-		[ObservableProperty] IEditableScript _script;
+		public IEditableScript Script { get; }
 
 		public ScriptButton(IServerInfo info) => Script = new EditableScript(this, info);
 

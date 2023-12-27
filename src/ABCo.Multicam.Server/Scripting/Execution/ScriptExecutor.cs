@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ABCo.Multicam.Server.General;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -48,12 +49,14 @@ namespace ABCo.Multicam.Server.Scripting.Execution
 						_runningScripts.RemoveAt(i);
 						i--;
 					}
+
+					// TODO: Add a bit of Task.Delay throttling for auto-yielding scripts?
 				}
 
 				if (_runningScripts.Count == 0) break;
 
 				// Yield so we don't hog the server
-				await Task.Yield();
+				await _info.Dispatcher.Yield();
 			}
 
 			_isRunning = false;
