@@ -2,6 +2,7 @@
 using ABCo.Multicam.Server.Features;
 using ABCo.Multicam.Server.Features.Switchers.Core.ATEM.Native;
 using ABCo.Multicam.Server.Hosting.Management;
+using ABCo.Multicam.Server.Scripting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,7 @@ namespace ABCo.Multicam.Server.General
 	{
 		ISwitcherList SwitcherList { get; }
 		IScriptButtonList ScriptButtonList { get; }
+		IScriptManager ScriptManager { get; }
 		IHostingManager HostingManager { get; }
 		INativeATEMSwitcherDiscovery NativeATEMDiscovery { get; }
 	}
@@ -24,11 +26,13 @@ namespace ABCo.Multicam.Server.General
 
 		ISwitcherList? _switcherList;
 		IScriptButtonList? _scriptBtnList;
+		IScriptManager? _scriptManager;
 		IHostingManager? _hostingManager;
 		INativeATEMSwitcherDiscovery? _atemDiscovery;
 
 		public ISwitcherList SwitcherList => _switcherList ??= new SwitcherList(_info);
 		public IScriptButtonList ScriptButtonList => _scriptBtnList ??= new ScriptButtonList(_info);
+		public IScriptManager ScriptManager => _scriptManager ??= new ScriptManager(_info);
 		public IHostingManager HostingManager => _hostingManager ??= new HostingManager(_info);
 #pragma warning disable
 		public INativeATEMSwitcherDiscovery NativeATEMDiscovery => _atemDiscovery ??= new WindowsNativeATEMSwitcherDiscovery();

@@ -9,20 +9,20 @@ namespace ABCo.Multicam.Server.General
 {
 	public interface IServerFactories
 	{
-		IAutomationFactory Automation { get; }
+		IScriptingFactory Scripting { get; }
 		ISwitcherFactory Switcher { get; }
 		IHostingFactory Hosting { get; }
 	}
 
 	public class ServerFactories : IServerFactories
 	{
-		public IAutomationFactory Automation { get; }
+		public IScriptingFactory Scripting { get; }
 		public ISwitcherFactory Switcher { get; }
 		public IHostingFactory Hosting { get; }
 
 		public ServerFactories(IHostingFactory hosting, IServerInfo info)
 		{
-			Automation = new AutomationFactory();
+			Scripting = new ScriptingFactory(info);
 			Switcher = new SwitcherFactory(info);
 			Hosting = hosting;
 		}

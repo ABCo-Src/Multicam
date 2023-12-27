@@ -1,12 +1,8 @@
-﻿::deep .switcherContentStrip {
+﻿::deep .listItemContentStrip {
     background-color: rgba(60, 60, 60, 0.2);
     padding: 10px;
     max-width: 100%;
     overflow-x: auto;
-}
-
-::deep .switcherContentStripWidth {
-    width: 100%;
 }
 
 .content {

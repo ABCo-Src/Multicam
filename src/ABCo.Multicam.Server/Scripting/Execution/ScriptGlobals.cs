@@ -7,16 +7,20 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Server.Scripting.Execution
 {
-    public class ScriptGlobals
+    public interface IScriptGlobals
     {
 
-
-        //public Script CreateScript()
-        //{
-        //	var script = new Script();
-
-        //	// Add the switchers proxy.
-        //	script.Globals["Switchers"] = 
-        //}
     }
+
+    public class ScriptGlobals : IScriptGlobals
+    {
+
+		//public Script CreateScript()
+		//{
+		//	var script = new Script();
+
+		//	// Add the switchers proxy.
+		//	script.Globals["Switchers"] = 
+		//}
+	}
 }

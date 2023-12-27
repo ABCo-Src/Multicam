@@ -30,7 +30,7 @@ namespace ABCo.Multicam.Server.Automation.Buttons
 
 		public void CreateAutomation()
 		{
-			_workingList.Add(_info.Factories.Automation.CreateAutomationButton());
+			_workingList.Add(_info.Factories.Scripting.CreateButton());
 			RefreshList();
 		}
 
