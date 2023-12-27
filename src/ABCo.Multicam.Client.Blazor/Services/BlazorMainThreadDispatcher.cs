@@ -14,7 +14,6 @@ namespace ABCo.Multicam.App.Win32.Services
 
 		public async Task Yield()
 		{
-
 			await Task.Yield();
 		}
 	}
