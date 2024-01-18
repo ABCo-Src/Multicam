@@ -1,0 +1,18 @@
+﻿@using ABCo.Multicam.Client.ViewModels.Scripting.Execution
+@using ABCo.Multicam.Server.Scripting.Console
+@inherits VMBoundComponent<IScriptConsoleVM>
+
+<div class="consoleText">
+	@foreach (var message in VM.Messages)
+	{
+		string ClassName = message.Type switch
+		{
+			ConsoleMessageType.Print => "print",
+			ConsoleMessageType.Event => "event",
+			ConsoleMessageType.Error => "error",
+			_ => ""
+		};
+
+		<p class="@ClassName">@message.Message</p>
+	}
+</div>

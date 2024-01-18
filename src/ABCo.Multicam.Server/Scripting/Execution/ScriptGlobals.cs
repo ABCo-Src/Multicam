@@ -1,4 +1,5 @@
-﻿using MoonSharp.Interpreter;
+﻿using ABCo.Multicam.Server.Scripting.Console;
+using MoonSharp.Interpreter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,12 @@ namespace ABCo.Multicam.Server.Scripting.Execution
 
     public class ScriptGlobals : IScriptGlobals
     {
+		
+
+		public ScriptGlobals(ILoadedScript script)
+		{
+			
+		}
 
 		//public Script CreateScript()
 		//{

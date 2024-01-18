@@ -6,6 +6,7 @@
         Home,
         Switchers,
         ScriptButtons,
+        ScriptConsole,
         Tally,
         CutRecorder,
         Hosting

@@ -18,12 +18,12 @@ namespace ABCo.Multicam.Server.Automation.Buttons
 
 	public partial class ScriptButton : BindableServerComponent<IScriptButton>, IScriptButton, IScriptID
 	{
-		[ObservableProperty] string _name = "New Automation Button";
+		[ObservableProperty] string _name = "New Button";
 		public IEditableScript Script { get; }
 
 		public ScriptButton(IServerInfo info) => Script = new EditableScript(this, info);
 
-		public string GetID() => "Button, " + Name;
+		public string GetID() => $@"Buttons[""{Name}""]";
 		public void Rename(string name) => Name = name;
 
 		public void Dispose() { }

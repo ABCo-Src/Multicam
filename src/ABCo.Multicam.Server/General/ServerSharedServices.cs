@@ -14,7 +14,6 @@ namespace ABCo.Multicam.Server.General
 	public interface IServerSharedServices
 	{
 		ISwitcherList SwitcherList { get; }
-		IScriptButtonList ScriptButtonList { get; }
 		IScriptManager ScriptManager { get; }
 		IHostingManager HostingManager { get; }
 		INativeATEMSwitcherDiscovery NativeATEMDiscovery { get; }
@@ -31,7 +30,6 @@ namespace ABCo.Multicam.Server.General
 		INativeATEMSwitcherDiscovery? _atemDiscovery;
 
 		public ISwitcherList SwitcherList => _switcherList ??= new SwitcherList(_info);
-		public IScriptButtonList ScriptButtonList => _scriptBtnList ??= new ScriptButtonList(_info);
 		public IScriptManager ScriptManager => _scriptManager ??= new ScriptManager(_info);
 		public IHostingManager HostingManager => _hostingManager ??= new HostingManager(_info);
 #pragma warning disable

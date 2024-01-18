@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ABCo.Multicam.Client.ViewModels.Scripting.Execution;
 
 namespace ABCo.Multicam.Client.ViewModels.Paging
 {
@@ -34,7 +35,8 @@ namespace ABCo.Multicam.Client.ViewModels.Paging
 			_frame = info.Frame;
 
 			var switcherPage = new SwitcherListVM(info.Server.GetSwitcherList(), info);
-			var scriptPage = new ScriptButtonListVM(info.Server.GetScriptButtonList(), info);
+			var scriptButtonPage = new ScriptButtonListVM(info.Server.GetScriptButtonList(), info);
+			var consoleButtonPage = new ScriptConsoleVM(info.Server.GetScriptConsole(), info);
 
 			_middleTabs = new IHomePageLinkVM[]
 			{
@@ -45,7 +47,8 @@ namespace ABCo.Multicam.Client.ViewModels.Paging
 
 			_bottomTabs = new IHomePageLinkVM[]
 			{
-				new HomePageLinkVM("Script Buttons", this, scriptPage),
+				new HomePageLinkVM("Script Buttons", this, scriptButtonPage),
+				new HomePageLinkVM("Script Console", this, consoleButtonPage),
 				new HomePageLinkVM("Sync Devices", this, null)
 			};
 		}

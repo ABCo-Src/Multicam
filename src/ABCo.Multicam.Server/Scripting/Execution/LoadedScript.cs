@@ -1,4 +1,6 @@
 ﻿using ABCo.Multicam.Server.Scripting.Console;
+using ABCo.Multicam.Server.Scripting.Proxy;
+using ABCo.Multicam.Server.Scripting.Proxy.Features.Switchers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoonSharp.Interpreter;
 using System;
@@ -45,6 +47,10 @@ namespace ABCo.Multicam.Server.Scripting.Execution
 
 			// Create the script, adding global variables
 			_script = new Script(CoreModules.Preset_HardSandbox);
+			_script.Globals["print"] = () => _manager.Console.WriteLine(code, id, ConsoleMessageType.Print);
+			_script.Globals["input"] = (Action)((() => throw new Exception("Script input() is not currently supported in the Multicam Platform.")));
+			_script.Globals["Switchers"] = new SwitchersGlobalProxy(this);
+
 			_loadedCode = _script.LoadString(code);
 		}
 
@@ -79,23 +85,27 @@ namespace ABCo.Multicam.Server.Scripting.Execution
 			// Resume, and stop if needed.
 			try
 			{
-				if (_stopRequest || _executionCoroutine.Resume().Type != DataType.YieldRequest)
-				{
-					_stopRequest = false;
-					_executionCoroutine = null;
-
-					if (_startRequestCount == 0) IsRunning = false;
-					else _startRequestCount--;
-
-					return IsRunning;
-				}
+				if (_stopRequest || _executionCoroutine.Resume().Type != DataType.YieldRequest) 
+					return HandleStopRequest();
 			}
 			catch (Exception ex)
 			{
 				_manager.HandleScriptError(_id, ex);
+				return HandleStopRequest();
 			}
 
 			return true;
+
+			bool HandleStopRequest()
+			{
+				_stopRequest = false;
+				_executionCoroutine = null;
+
+				if (_startRequestCount == 0) IsRunning = false;
+				else _startRequestCount--;
+
+				return IsRunning;
+			}
 		}
 	}
 }

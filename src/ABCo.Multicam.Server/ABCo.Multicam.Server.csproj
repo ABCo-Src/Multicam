@@ -29,7 +29,6 @@
 
   <ItemGroup>
     <Folder Include="Automation\" />
-    <Folder Include="Scripting\Proxy\" />
   </ItemGroup>
 
 </Project>

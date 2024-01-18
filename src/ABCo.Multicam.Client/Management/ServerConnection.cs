@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ABCo.Multicam.Server.Scripting;
+using ABCo.Multicam.Server.Scripting.Console;
 
 namespace ABCo.Multicam.Client.Management
 {
@@ -16,6 +18,7 @@ namespace ABCo.Multicam.Client.Management
 	{
 		Dispatched<T> CreateDispatcher<T>(T item);
 		Dispatched<ISwitcherList> GetSwitcherList();
+		Dispatched<IScriptConsole> GetScriptConsole();
 		Dispatched<IScriptButtonList> GetScriptButtonList();
 		Dispatched<IHostingManager> GetHostingManager();
 		IPlatformInfo GetPlatformInfo();
@@ -29,7 +32,8 @@ namespace ABCo.Multicam.Client.Management
 		public Dispatched<T> CreateDispatcher<T>(T native) => new(native, _info.Dispatcher);
 		public Dispatched<ISwitcherList> GetSwitcherList() => CreateDispatcher(_info.Shared.SwitcherList);
 		public Dispatched<IHostingManager> GetHostingManager() => CreateDispatcher(_info.Shared.HostingManager);
-		public Dispatched<IScriptButtonList> GetScriptButtonList() => CreateDispatcher(_info.Shared.ScriptButtonList);
+		public Dispatched<IScriptConsole> GetScriptConsole() => CreateDispatcher(_info.Shared.ScriptManager.Console);
+		public Dispatched<IScriptButtonList> GetScriptButtonList() => CreateDispatcher(_info.Shared.ScriptManager.ButtonList);
 		public IPlatformInfo GetPlatformInfo() => _info.PlatformInfo;
 	}
 }
