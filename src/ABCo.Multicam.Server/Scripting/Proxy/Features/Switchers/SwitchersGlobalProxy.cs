@@ -1,4 +1,5 @@
-﻿using ABCo.Multicam.Server.Scripting.Execution;
+﻿using ABCo.Multicam.Server.Features;
+using ABCo.Multicam.Server.Scripting.Execution;
 using MoonSharp.Interpreter;
 using System;
 using System.Collections.Generic;
@@ -11,17 +12,21 @@ namespace ABCo.Multicam.Server.Scripting.Proxy.Features.Switchers
     [MoonSharpUserData]
     public class SwitchersGlobalProxy
     {
-        //public SwitcherProxy this[string str] 
-        //{ 
-        //    get => 
-        //}
+        readonly ISwitcherList _switcherList;
 
-        public string Id => "abc";
-
-
-        public SwitchersGlobalProxy(ILoadedScript script)
+        public SwitcherProxy? this[string str]
         {
+            get
+            {
+                // Find the switcher
+                var switcher = _switcherList.Items.FirstOrDefault(s => s.Name == str);
+                if (switcher == null) 
+                    throw new Exception($"Can't find switcher in the list with the name '{str}'. Make the relevant switcher have this name, or update the script.");
 
+                return new SwitcherProxy(switcher);
+            }
         }
-    }
+
+		public SwitchersGlobalProxy(ILoadedScript script, IServerInfo info) => _switcherList = info.Shared.SwitcherList;
+	}
 }

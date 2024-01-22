@@ -2,6 +2,7 @@
 using ABCo.Multicam.Server.General.Factories;
 using ABCo.Multicam.Server.Scripting.Console;
 using ABCo.Multicam.Server.Scripting.Execution;
+using MoonSharp.Interpreter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +33,9 @@ namespace ABCo.Multicam.Server.Scripting
 
 		public ScriptManager(IServerInfo info)
         {
+            // Register all types for use from scripts
+            UserData.RegisterAssembly(typeof(ScriptManager).Assembly);
+
 			_factory = info.Factories.Scripting;
             Execution = new ScriptExecutionManager(info);
             ButtonList = new ScriptButtonList(info);

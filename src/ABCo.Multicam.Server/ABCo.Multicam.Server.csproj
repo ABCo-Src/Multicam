@@ -9,6 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Automation\**" />
+    <EmbeddedResource Remove="Automation\**" />
+    <None Remove="Automation\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <COMReference Include="BMDSwitcherAPI">
       <VersionMinor>0</VersionMinor>
       <VersionMajor>1</VersionMajor>
@@ -25,10 +31,6 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
     <PackageReference Include="MoonSharp" Version="2.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Automation\" />
   </ItemGroup>
 
 </Project>

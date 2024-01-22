@@ -47,9 +47,14 @@ namespace ABCo.Multicam.Server.Scripting.Execution
 
 			// Create the script, adding global variables
 			_script = new Script(CoreModules.Preset_HardSandbox);
-			_script.Globals["print"] = () => _manager.Console.WriteLine(code, id, ConsoleMessageType.Print);
-			_script.Globals["input"] = (Action)((() => throw new Exception("Script input() is not currently supported in the Multicam Platform.")));
-			_script.Globals["Switchers"] = new SwitchersGlobalProxy(this);
+			_script.Globals["print"] = (Action<string>)((s) => _manager.Console.WriteLine(s, id, ConsoleMessageType.Print));
+			_script.Globals["input"] = (Action)(() => throw new Exception("Script input() is not currently supported in the Multicam Platform."));
+			_script.Globals["sleep"] = (Action<int>)(t =>
+			{
+				Thread.Sleep(t);
+				info.Dispatcher.Yield();
+			});
+			_script.Globals["Switchers"] = new SwitchersGlobalProxy(this, info);
 
 			_loadedCode = _script.LoadString(code);
 		}
