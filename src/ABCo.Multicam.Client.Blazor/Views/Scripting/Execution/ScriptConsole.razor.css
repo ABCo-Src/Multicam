@@ -1,6 +1,7 @@
 ﻿.consoleText p {
     margin: 0 3px;
     user-select: text;
+    overflow-wrap: anywhere;
 }
 
 .event {
