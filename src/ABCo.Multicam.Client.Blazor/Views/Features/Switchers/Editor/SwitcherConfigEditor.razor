@@ -2,6 +2,7 @@
 @using ABCo.Multicam.Client.Presenters.Features.Switchers;
 @using ABCo.Multicam.Client.Presenters.Features.Switchers.Config.ATEM;
 @using ABCo.Multicam.Client.Presenters.Features.Switchers.Config.Virtual;
+@using ABCo.Multicam.Client.ViewModels.Features.Switchers.Config.OBS;
 @using ABCo.Multicam.Server.Features.Switchers;
 @using ABCo.Multicam.Server.Features.Switchers.Data.Config;
 @using ABCo.Multicam.Client.ViewModels.Features.Switcher;
@@ -25,5 +26,9 @@
     else if (VM.CurrentConfig is SwitcherATEMConfigVM atemConfig)
     {
 		<ATEMConfigEditor VM="atemConfig" />
+	}
+	else if (VM.CurrentConfig is SwitcherOBSConfigVM obsConfig)
+	{
+		<OBSConfigEditor VM="obsConfig" />
 	}
 </div>

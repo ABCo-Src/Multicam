@@ -27,11 +27,6 @@
     width: 100%;
 }
 
-::deep .boxedPortion {
-    margin: 10px 10px 0 10px;
-    padding: 10px;
-}
-
 ::deep .indexedListItem {
     margin-top: 10px;
     padding: 10px;
@@ -45,4 +40,27 @@
 
 .content {
     margin-top: 10px;
+}
+
+::deep .boxedPortion {
+    margin: 10px 10px 0 10px;
+    padding: 10px;
+}
+
+::deep .infoBox, ::deep .errorBox {
+    display: grid;
+    grid-template-columns: auto 1fr;
+}
+
+::deep .infoBox {
+    background-color: var(--col-panelbluebox);
+}
+
+::deep .errorBox {
+    background-color: var(--col-panelredbox);
+}
+
+::deep .infoBox .symbol, ::deep .errorBox .symbol {
+    font-weight: bold;
+    margin-right: 10px;
 }

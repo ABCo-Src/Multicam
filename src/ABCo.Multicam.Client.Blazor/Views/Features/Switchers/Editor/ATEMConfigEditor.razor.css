@@ -1,6 +1,6 @@
 ﻿.grid {
     display: grid;
-    grid-template-columns: auto auto minmax(0, 1fr);
+    grid-auto-columns: auto auto minmax(0, 1fr);
     grid-template-areas: "tag combo ip";
     align-items: center;
     width: 100%;
@@ -12,38 +12,4 @@
     grid-area: ip;
     align-self: stretch;
     max-width: 100%;
-}
-
-.compatibilityBox {
-    background-color: var(--col-panelredbox);
-    display: grid;
-    grid-template-columns: auto 1fr;
-    grid-template-areas: "icon msg";
-}
-
-.compatibilityBox .exclamation {
-    grid-area: icon;
-    font-weight: bold;
-    margin-right: 10px;
-}
-
-.compatibilityBox .message {
-    grid-area: msg;
-}
-
-.infoBox {
-    background-color: var(--col-panelbluebox);
-    display: grid;
-    grid-template-columns: auto 1fr;
-    grid-template-areas: "icon msg";
-}
-
-.infoBox .information {
-    grid-area: icon;
-    font-weight: bold;
-    margin-right: 10px;
-}
-
-.infoBox .message {
-    grid-area: msg;
 }

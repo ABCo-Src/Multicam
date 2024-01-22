@@ -29,8 +29,8 @@
 <!-- Compatibility box -->
 @if (VM.CompatibilityMessage != SwitcherPlatformCompatibilityValue.Supported)
 {
-	<div class="compatibilityBox boxedPortion">
-		<p class="exclamation">!</p>
+	<div class="compatibilityBox errorBox boxedPortion">
+		<p class="symbol">!</p>
 
 		@if (VM.CompatibilityMessage == SwitcherPlatformCompatibilityValue.UnsupportedPlatform)
 		{
@@ -46,7 +46,7 @@
 @if (VM.ShowOneProgramMessage)
 {
 	<div class="infoBox boxedPortion">
-		<p class="information">i</p>
+		<p class="symbol">i</p>
 		<p class="message">When connected over USB, only one program at a time may control the ATEM switcher. Running ATEM Software Control in the background may result in unexpected disconnecting.</p>
 	</div>
 }

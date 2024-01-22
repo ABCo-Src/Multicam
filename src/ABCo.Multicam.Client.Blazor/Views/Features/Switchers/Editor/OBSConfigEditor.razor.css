@@ -1,0 +1,7 @@
+﻿.grid {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-rows: auto auto auto;
+    align-items: center;
+    width: 100%;
+}

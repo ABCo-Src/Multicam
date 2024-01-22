@@ -7,6 +7,7 @@ using ABCo.Multicam.Client.Presenters.Features.Switchers.Config.ATEM;
 using System.ComponentModel;
 using ABCo.Multicam.Client.Structures;
 using ABCo.Multicam.Client.Presenters.Features.Switchers.Config.Virtual;
+using ABCo.Multicam.Client.ViewModels.Features.Switchers.Config.OBS;
 
 namespace ABCo.Multicam.Client.Presenters.Features.Switchers
 {
@@ -31,7 +32,8 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers
 		public string[] Items => new string[]
         {
 			"Virtual",
-			"ATEM"
+			"ATEM",
+			"OBS"
         };
 
 		public string SwitcherTypeTitle => SelectedItem + " Switcher";
@@ -55,6 +57,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers
 				SelectedItem = config.Type switch
 				{
 					SwitcherType.ATEM => "ATEM",
+					SwitcherType.OBS => "OBS",
 					_ => "Virtual"
 				};
 
@@ -64,7 +67,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers
 				{
 					SwitcherType.Virtual => new SwitcherVirtualConfigVM(_serverComponent, _info),
 					SwitcherType.ATEM => new SwitcherATEMConfigVM(_serverComponent, _info),
-					SwitcherType.OBS => null!,
+					SwitcherType.OBS => new SwitcherOBSConfigVM(_serverComponent, _info),
 					_ => throw new Exception("Unsupported switcher type!")
 				};
 			}
@@ -76,6 +79,7 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers
             {
                 "Virtual" => new VirtualSwitcherConfig(4),
                 "ATEM" => new ATEMSwitcherConfig(null),
+                "OBS" => new OBSSwitcherConfig("", 0, ""),
                 _ => throw new Exception("Unsupported selected mode given")
             }));
         }
