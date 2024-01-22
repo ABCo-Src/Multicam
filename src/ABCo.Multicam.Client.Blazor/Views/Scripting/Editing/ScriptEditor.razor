@@ -3,4 +3,11 @@
 
 <div class="scriptEditor">
 	<textarea class="textbox codeBox" rows="5" @onchange="e => { VM.UpdateCode((string)e.Value!); }" value="@VM.Code" />
+
+	@if (VM.CurrentCompilationError != null)
+	{
+		<div class="errorBox">
+			<p>@VM.CurrentCompilationError</p>
+		</div>
+	}
 </div>

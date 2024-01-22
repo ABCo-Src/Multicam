@@ -13,6 +13,7 @@ namespace ABCo.Multicam.Server.Scripting.Execution
     public interface IEditableScript : INotifyPropertyChanged
     {
         string Code { get; }
+        string? CurrentCompilationError { get; }
         ILoadedScript? LoadedScript { get; }
         
         void UpdateCode(string code);
@@ -25,6 +26,7 @@ namespace ABCo.Multicam.Server.Scripting.Execution
         RunningScriptState _executionState;
 
         [ObservableProperty] string _code = "";
+        [ObservableProperty] string? _currentCompilationError = null;
         [ObservableProperty] ILoadedScript? _loadedScript;
 
 		public EditableScript(IScriptID id, IServerInfo info)
@@ -41,7 +43,17 @@ namespace ABCo.Multicam.Server.Scripting.Execution
 
             // Stop the script (if it's running)
             if (LoadedScript != null && LoadedScript.IsRunning) LoadedScript.Stop();
-            LoadedScript = new LoadedScript(code, _id, _info);
+
+            // Attempt to create a new script
+            try
+            {
+				LoadedScript = new LoadedScript(code, _id, _info);
+				CurrentCompilationError = null;
+			}
+            catch (Exception ex)
+            {
+                CurrentCompilationError = ex.Message;
+            }
         }
 	}
 }

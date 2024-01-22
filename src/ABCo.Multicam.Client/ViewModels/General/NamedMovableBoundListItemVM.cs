@@ -81,6 +81,7 @@ namespace ABCo.Multicam.Client.ViewModels.General
 			_serverComponent.CallDispatched(m => m.Rename(Name));
 			IsEditingName = false;
 		}
+
 		public void MoveUp() => _list.CallDispatchedAndUnpack(_serverComponent, (l, p) => l.MoveUp(p));
 		public void MoveDown() => _list.CallDispatchedAndUnpack(_serverComponent, (l, p) => l.MoveDown(p));
 		public void Delete() => _list.CallDispatchedAndUnpack(_serverComponent, (l, p) => l.Delete(p));

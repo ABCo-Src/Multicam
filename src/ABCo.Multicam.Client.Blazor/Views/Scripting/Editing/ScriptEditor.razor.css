@@ -11,3 +11,11 @@
     max-width: 100%;
     font-family: 'Cascadia Code';
 }
+
+.errorBox {
+    margin-top: 5px;
+    padding: 10px;
+    min-width: 100%;
+    max-width: 100%;
+    background-color: var(--col-panelredbox);
+}
