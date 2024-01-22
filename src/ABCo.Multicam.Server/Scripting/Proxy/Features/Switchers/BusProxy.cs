@@ -62,5 +62,9 @@ namespace ABCo.Multicam.Server.Scripting.Proxy.Features.Switchers
 
 			return -1;
 		}
+
+		public override string ToString() => _isProgram ?
+			$"Switchers[\"{_switcher.Name}\"].MixBlocks[{_mixBlock + 1}].Prog" :
+			$"Switchers[\"{_switcher.Name}\"].MixBlocks[{_mixBlock + 1}].Prev";
 	}
 }

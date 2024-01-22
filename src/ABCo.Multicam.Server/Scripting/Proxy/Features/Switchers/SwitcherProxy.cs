@@ -29,5 +29,7 @@ namespace ABCo.Multicam.Server.Scripting.Proxy.Features.Switchers
 				return arr;
 			}
 		}
+
+		public override string ToString() => $"Switchers[\"{_switcher.Name}\"]";
 	}
 }

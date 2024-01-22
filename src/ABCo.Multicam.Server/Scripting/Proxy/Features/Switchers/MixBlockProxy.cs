@@ -25,5 +25,7 @@ namespace ABCo.Multicam.Server.Scripting.Proxy.Features.Switchers
 
 		public BusProxy Prog => new(_switcher, _mixBlock, true);
 		public BusProxy Prev => new(_switcher, _mixBlock, false);
+
+		public override string ToString() => $"Switchers[\"{_switcher.Name}\"].MixBlocks[{_mixBlock + 1}]";
 	}
 }
