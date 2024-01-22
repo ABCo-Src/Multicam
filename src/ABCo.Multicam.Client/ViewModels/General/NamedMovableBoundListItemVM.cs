@@ -19,6 +19,7 @@ namespace ABCo.Multicam.Client.ViewModels.General
 	{
 		string Name { get; set; }
 		bool IsEditingName { get; set; }
+		bool IsExpanded { get; set; }
 		TContent Content { get; }
 		void OpenGeneralEditMenu(CursorPosition pos);
 		void StartRename();
@@ -26,6 +27,7 @@ namespace ABCo.Multicam.Client.ViewModels.General
 		void MoveUp();
 		void MoveDown();
 		void Delete();
+		void ToggleExpansion();
 	}
 
 	public abstract partial class NamedMovableBoundListItemVM<TList, TItem, TContent> : BoundViewModelBase<TItem>, INamedMovableListItemVM<TContent>
@@ -37,6 +39,7 @@ namespace ABCo.Multicam.Client.ViewModels.General
 		[ObservableProperty] string _name = "";
 		[ObservableProperty] TContent _content;
 		[ObservableProperty] bool _isEditingName = false;
+		[ObservableProperty] bool _isExpanded = false;
 
 		public NamedMovableBoundListItemVM(Dispatched<TList> list, Dispatched<TItem> feature, TContent content, IFrameClientInfo info) : base(feature, info)
 		{
@@ -81,6 +84,7 @@ namespace ABCo.Multicam.Client.ViewModels.General
 		public void MoveUp() => _list.CallDispatchedAndUnpack(_serverComponent, (l, p) => l.MoveUp(p));
 		public void MoveDown() => _list.CallDispatchedAndUnpack(_serverComponent, (l, p) => l.MoveDown(p));
 		public void Delete() => _list.CallDispatchedAndUnpack(_serverComponent, (l, p) => l.Delete(p));
+		public void ToggleExpansion() => IsExpanded = !IsExpanded;
 
 		protected override void OnServerStateChange(string? changedProp)
 		{

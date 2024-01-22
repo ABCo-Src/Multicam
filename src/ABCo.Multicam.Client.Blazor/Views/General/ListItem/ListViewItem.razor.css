@@ -7,16 +7,28 @@
 
 li .titlebar {
     background-color: var(--col-dark-accent);
-    padding: 10px 10px 10px 25px;
+    padding: 10px 10px 10px 10px;
     display: grid;
-    grid-template-columns: 1fr auto auto;
-    grid-template-areas: "title contextButton editBtn";
+    grid-template-columns: auto 1fr auto auto;
+    grid-template-areas: "expander title contextButton editBtn";
     align-content: center;
 }
 
 li .titlebar .contextButton {
     grid-area: contextButton;
     margin-right: 10px;
+}
+
+li .titlebar .expandBtn {
+    grid-area: expander;
+    margin-right: 10px;
+
+    display: flex;
+    align-items: center;
+}
+
+li .titlebar .expandBtn .expandedImg {
+    margin-top: -3px;
 }
 
 li .bordered {

@@ -8,8 +8,22 @@
 
 <li>
 	<div class="titlebar">
+		<!-- Expansion -->
+		<a class="btnDropDown btnLikeHighlight expandBtn" @onclick="VM.ToggleExpansion">
+			@if (VM.IsExpanded)
+			{
+				<img class="expandedImg noBtnImgPadding" src="_content/ABCo.Multicam.Client.Blazor/img/icons/smallDownArrow.svg" />
+			}
+			else
+			{
+				<img class="noBtnImgPadding" src="_content/ABCo.Multicam.Client.Blazor/img/icons/smallRightArrow.svg" />
+			}
+		</a>
+
+		<!-- Title -->
 		<NamedListItemTitle VM="VM" />
 
+		<!-- Context Btn -->
 		<div class="contextButton">
 			@if (VM.Content is IScriptButtonVM buttonTitle)
 			{
@@ -17,16 +31,21 @@
 			}
 		</div>
 		
+		<!-- Edit Btn -->
 		<NamedListItemEditButton VM="VM" />
 	</div>
-	<div class="bordered">
-		@if (VM.Content is ISwitcherVM switcher)
-		{
-			<SwitcherContent VM="switcher" />
-		}
-		else if (VM.Content is IScriptButtonVM button)
-		{
-			<ScriptButtonContent VM="button" />
-		}
-	</div>
+
+	@if (VM.IsExpanded)
+	{
+		<div class="bordered">
+			@if (VM.Content is ISwitcherVM switcher)
+			{
+				<SwitcherContent VM="switcher" />
+			}
+			else if (VM.Content is IScriptButtonVM button)
+			{
+				<ScriptButtonContent VM="button" />
+			}
+		</div>
+	}
 </li>
