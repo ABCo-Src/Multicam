@@ -1,6 +1,6 @@
 ﻿namespace ABCo.Multicam.Server.Features.Switchers.Buffering
 {
-	public interface IDynamicSwitcherBuffer : IServerService<SwitcherConfig>, IDisposable
+    public interface IDynamicSwitcherBuffer : IServerService<SwitcherConfig>, IDisposable
     {
         void SetEventHandler(ISwitcherEventHandler? handler);
         void ChangeSwitcher(SwitcherConfig config);

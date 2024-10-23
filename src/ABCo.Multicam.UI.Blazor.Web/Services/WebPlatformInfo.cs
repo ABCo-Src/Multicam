@@ -2,8 +2,8 @@
 
 namespace ABCo.Multicam.Client.Blazor.Web.Services
 {
-	public class WebPlatformInfo : IPlatformInfo
-	{
-		public PlatformType GetPlatformType() => PlatformType.Web;
-	}
+    public class WebPlatformInfo : IPlatformInfo
+    {
+        public PlatformType GetPlatformType() => PlatformType.Web;
+    }
 }

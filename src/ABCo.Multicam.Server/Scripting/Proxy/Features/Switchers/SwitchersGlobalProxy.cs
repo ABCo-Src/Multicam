@@ -27,8 +27,8 @@ namespace ABCo.Multicam.Server.Scripting.Proxy.Features.Switchers
             }
         }
 
-		public SwitchersGlobalProxy(ILoadedScript script, IServerInfo info) => _switcherList = info.Shared.SwitcherList;
+        public SwitchersGlobalProxy(ILoadedScript script, IServerInfo info) => _switcherList = info.Shared.SwitcherList;
 
         public override string ToString() => "Switchers";
-	}
+    }
 }

@@ -6,39 +6,39 @@
 
 @if (VM.ShowMenu)
 {
-	<div class="menuContainer">
-		<div class="blackCurtain" @onclick=VM.Close></div>
+    <div class="menuContainer">
+        <div class="blackCurtain" @onclick=VM.Close></div>
 
-		<div class="menuContainerPushDown">
-			<span class="menuContainerPushDownSpan" style="height: @(VM.RequestedMenuY)px;"></span>
-			<div class="menuContainerPushRight">
-				<span class="menuContainerPushRightSpan" style="width: @(VM.RequestedMenuX)px; "></span>
-				<div class="menus">
-					@if (VM.ContextMenu != null)
-					{
-						<div class="menu contextMenu">
-							<p class="popOutMenuTitle">@VM.ContextMenu.Title</p>
+        <div class="menuContainerPushDown">
+            <span class="menuContainerPushDownSpan" style="height: @(VM.RequestedMenuY)px;"></span>
+            <div class="menuContainerPushRight">
+                <span class="menuContainerPushRightSpan" style="width: @(VM.RequestedMenuX)px; "></span>
+                <div class="menus">
+                    @if (VM.ContextMenu != null)
+                    {
+                        <div class="menu contextMenu">
+                            <p class="popOutMenuTitle">@VM.ContextMenu.Title</p>
 
-							<ul>
-								@foreach (var item in VM.ContextMenu.Items)
-								{
-									<li class="btn btnBorderless" @onclick="() => VM.ContextChooseItem(item)"><p>@item</p></li>
-								}
-							</ul>
-						</div>
-					}
+                            <ul>
+                                @foreach (var item in VM.ContextMenu.Items)
+                                {
+                                    <li class="btn btnBorderless" @onclick="() => VM.ContextChooseItem(item)"><p>@item</p></li>
+                                }
+                            </ul>
+                        </div>
+                    }
 
-					@if (VM.CustomContent != null)
-					{
-						<div class="menu customMenu">
+                    @if (VM.CustomContent != null)
+                    {
+                        <div class="menu customMenu">
 
-							<div class="content">
-								<PopOutCustomMenuPresenter VM="VM.CustomContent" />
-							</div>
-						</div>
-					}
-				</div>
-			</div>
-		</div>
-	</div>
+                            <div class="content">
+                                <PopOutCustomMenuPresenter VM="VM.CustomContent" />
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
 }

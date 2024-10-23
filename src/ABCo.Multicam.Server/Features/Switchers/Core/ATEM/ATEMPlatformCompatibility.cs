@@ -5,7 +5,7 @@ using System.Runtime.Versioning;
 
 namespace ABCo.Multicam.Server.Features.Switchers.Core.ATEM
 {
-	public interface IATEMPlatformCompatibility
+    public interface IATEMPlatformCompatibility
     {
         SwitcherPlatformCompatibilityValue GetCompatibility();
     }

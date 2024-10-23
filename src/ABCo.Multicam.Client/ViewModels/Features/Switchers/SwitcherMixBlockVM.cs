@@ -5,16 +5,16 @@ using System.ComponentModel;
 
 namespace ABCo.Multicam.Client.ViewModels.Features.Switcher
 {
-	public interface ISwitcherMixBlockVM : INotifyPropertyChanged
+    public interface ISwitcherMixBlockVM : INotifyPropertyChanged
     {
-		ISwitcherProgramInputVM[] ProgramBus { get; set; }
-		ISwitcherPreviewInputVM[] PreviewBus { get; set; }
+        ISwitcherProgramInputVM[] ProgramBus { get; set; }
+        ISwitcherPreviewInputVM[] PreviewBus { get; set; }
         ISwitcherCutButtonVM CutButton { get; set; }
-		//ISwitcherCutButtonVM AutoButton { get; set; }
+        //ISwitcherCutButtonVM AutoButton { get; set; }
         bool ShowPreview { get; set; }
         string MixBlockTitle { get; set; }
-		void UpdateState(MixBlockState state);
-	}
+        void UpdateState(MixBlockState state);
+    }
 
     public partial class SwitcherMixBlockVM : ViewModelBase, ISwitcherMixBlockVM
     {
@@ -26,30 +26,30 @@ namespace ABCo.Multicam.Client.ViewModels.Features.Switcher
 
         public SwitcherMixBlockVM(Dispatched<ISwitcher> switcher, SwitcherMixBlock mb, int mixBlockIndex)
         {
-			// Initialize the program bus
-			ProgramBus = new ISwitcherProgramInputVM[mb.ProgramInputs.Count];
-			for (int i = 0; i < mb.ProgramInputs.Count; i++)
-				ProgramBus[i] = new SwitcherProgramInputVM(switcher, mixBlockIndex, mb.ProgramInputs[i]);
+            // Initialize the program bus
+            ProgramBus = new ISwitcherProgramInputVM[mb.ProgramInputs.Count];
+            for (int i = 0; i < mb.ProgramInputs.Count; i++)
+                ProgramBus[i] = new SwitcherProgramInputVM(switcher, mixBlockIndex, mb.ProgramInputs[i]);
 
-			// Initialize the preview bus
-			PreviewBus = new ISwitcherPreviewInputVM[mb.PreviewInputs.Count];
-			for (int i = 0; i < mb.PreviewInputs.Count; i++)
-				PreviewBus[i] = new SwitcherPreviewInputVM(switcher, mixBlockIndex, mb.PreviewInputs[i]);
+            // Initialize the preview bus
+            PreviewBus = new ISwitcherPreviewInputVM[mb.PreviewInputs.Count];
+            for (int i = 0; i < mb.PreviewInputs.Count; i++)
+                PreviewBus[i] = new SwitcherPreviewInputVM(switcher, mixBlockIndex, mb.PreviewInputs[i]);
 
-			// Initialize the cut button
-			CutButton = new SwitcherCutButtonVM(switcher, mixBlockIndex);
+            // Initialize the cut button
+            CutButton = new SwitcherCutButtonVM(switcher, mixBlockIndex);
 
-			// Setup additional info
-			MixBlockTitle = "Mix Block #" + (mixBlockIndex + 1);
-			ShowPreview = mb.NativeType == SwitcherMixBlockType.ProgramPreview;
-		}
+            // Setup additional info
+            MixBlockTitle = "Mix Block #" + (mixBlockIndex + 1);
+            ShowPreview = mb.NativeType == SwitcherMixBlockType.ProgramPreview;
+        }
 
-		public void UpdateState(MixBlockState state)
+        public void UpdateState(MixBlockState state)
         {
-			for (int i = 0; i < ProgramBus.Length; i++)
-				ProgramBus[i].UpdateState(state);
-			for (int i = 0; i < PreviewBus.Length; i++)
-				PreviewBus[i].UpdateState(state);
-		}
-	}
+            for (int i = 0; i < ProgramBus.Length; i++)
+                ProgramBus[i].UpdateState(state);
+            for (int i = 0; i < PreviewBus.Length; i++)
+                PreviewBus[i].UpdateState(state);
+        }
+    }
 }

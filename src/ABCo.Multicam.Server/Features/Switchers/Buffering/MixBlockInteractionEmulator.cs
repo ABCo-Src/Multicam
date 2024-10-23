@@ -2,7 +2,7 @@
 
 namespace ABCo.Multicam.Server.Features.Switchers.Buffering
 {
-	public interface IMixBlockInteractionEmulator
+    public interface IMixBlockInteractionEmulator
     {
         bool TrySetProgWithPreviewThenCut(int oldVal, int val);
         void CutWithSetProgAndPrev();

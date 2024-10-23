@@ -2,12 +2,12 @@
 @inherits VMBoundComponent<IEditableScriptVM>
 
 <div class="scriptEditor">
-	<textarea class="textbox codeBox" rows="5" @onchange="e => { VM.UpdateCode((string)e.Value!); }" value="@VM.Code" />
+    <textarea class="textbox codeBox" rows="5" @onchange="e => { VM.UpdateCode((string)e.Value!); }" value="@VM.Code" />
 
-	@if (VM.CurrentCompilationError != null)
-	{
-		<div class="errorBox">
-			<p>@VM.CurrentCompilationError</p>
-		</div>
-	}
+    @if (VM.CurrentCompilationError != null)
+    {
+        <div class="errorBox">
+            <p>@VM.CurrentCompilationError</p>
+        </div>
+    }
 </div>

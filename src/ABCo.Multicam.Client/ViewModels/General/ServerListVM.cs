@@ -13,44 +13,44 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Client.ViewModels.General
 {
-	public interface IServerListVM<TItemVM> : INotifyPropertyChanged
-	{
-		TItemVM[] Items { get; }
-		void Create();
-	}
+    public interface IServerListVM<TItemVM> : INotifyPropertyChanged
+    {
+        TItemVM[] Items { get; }
+        void Create();
+    }
 
-	public abstract partial class ServerListVM<TServerList, TServerListItem, TItemVM> : BoundViewModelBase<TServerList> 
-		where TServerList : IServerList<TServerListItem>, INotifyPropertyChanged
-		where TItemVM : IDisposable
-	{
-		readonly AppPages _associatedPageId;
-		readonly IPopOutVM _popOutVM;
+    public abstract partial class ServerListVM<TServerList, TServerListItem, TItemVM> : BoundViewModelBase<TServerList> 
+        where TServerList : IServerList<TServerListItem>, INotifyPropertyChanged
+        where TItemVM : IDisposable
+    {
+        readonly AppPages _associatedPageId;
+        readonly IPopOutVM _popOutVM;
 
-		[ObservableProperty] TItemVM[] _items = Array.Empty<TItemVM>();
+        [ObservableProperty] TItemVM[] _items = Array.Empty<TItemVM>();
 
-		public ServerListVM(AppPages associatedPageId, Dispatched<TServerList> collection, IFrameClientInfo client) : base(collection, client)
-		{
-			_associatedPageId = associatedPageId;
-			_popOutVM = client.Shared.PopOut;
-			OnServerStateChange(null);
-		}
+        public ServerListVM(AppPages associatedPageId, Dispatched<TServerList> collection, IFrameClientInfo client) : base(collection, client)
+        {
+            _associatedPageId = associatedPageId;
+            _popOutVM = client.Shared.PopOut;
+            OnServerStateChange(null);
+        }
 
-		protected void ProcessServerListChange(Func<TServerListItem, TItemVM> createItemVM)
-		{
-			var items = _serverComponent.Get(c => c.Items);
+        protected void ProcessServerListChange(Func<TServerListItem, TItemVM> createItemVM)
+        {
+            var items = _serverComponent.Get(c => c.Items);
 
-			// Remove all the old VMs
-			for (int i = 0; i < Items.Length; i++)
-				Items[i].Dispose();
+            // Remove all the old VMs
+            for (int i = 0; i < Items.Length; i++)
+                Items[i].Dispose();
 
-			// Add new ones
-			Items = new TItemVM[items.Count];
-			for (int i = 0; i < items.Count; i++)
-				Items[i] = createItemVM(items[i]);
+            // Add new ones
+            Items = new TItemVM[items.Count];
+            for (int i = 0; i < items.Count; i++)
+                Items[i] = createItemVM(items[i]);
 
-			// Stop editing
-			// TODO: More selective close?
-			_popOutVM.Close();
-		}
-	}
+            // Stop editing
+            // TODO: More selective close?
+            _popOutVM.Close();
+        }
+    }
 }

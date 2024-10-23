@@ -2,54 +2,54 @@
 
 namespace ABCo.Multicam.Server.Features.Switchers.Core
 {
-	public class UnsupportedSwitcherBehaviourException : Exception
+    public class UnsupportedSwitcherBehaviourException : Exception
     {
         public UnsupportedSwitcherBehaviourException() : base("Switcher was asked to perform something it can't. Either switcher is reporting incorrect specs or something higher-up went wrong.") { }
     }
 
-	/// <summary>
-	/// The raw surface to talk to a switcher. 
-	/// 
-	/// None of these operations are likely to be cached (there's a buffer sitting atop to do that caching), and all interactions implemented here should only be
-	/// implemented if the switcher can natively/intuitively perform them. 
-	/// 
-	/// For example, the preview API should throw if the specs say preview isn't supported. The layers above the switcher will emulate it.
-	/// </summary>
-	public interface IRawSwitcher : IDisposable
-	{
-		// General:
-		void Connect();
-		void Disconnect();
-		void RefreshConnectionStatus();
-		void RefreshSpecs();
-		SwitcherPlatformCompatibilityValue GetPlatformCompatibility();
+    /// <summary>
+    /// The raw surface to talk to a switcher. 
+    /// 
+    /// None of these operations are likely to be cached (there's a buffer sitting atop to do that caching), and all interactions implemented here should only be
+    /// implemented if the switcher can natively/intuitively perform them. 
+    /// 
+    /// For example, the preview API should throw if the specs say preview isn't supported. The layers above the switcher will emulate it.
+    /// </summary>
+    public interface IRawSwitcher : IDisposable
+    {
+        // General:
+        void Connect();
+        void Disconnect();
+        void RefreshConnectionStatus();
+        void RefreshSpecs();
+        SwitcherPlatformCompatibilityValue GetPlatformCompatibility();
 
-		// Program/Preview:
-		void RefreshProgram(int mixBlock);
-		void RefreshPreview(int mixBlock);
-		void SendProgramValue(int mixBlock, int id);
-		void SendPreviewValue(int mixBlock, int id);
-		void Cut(int mixBlock);
+        // Program/Preview:
+        void RefreshProgram(int mixBlock);
+        void RefreshPreview(int mixBlock);
+        void SendProgramValue(int mixBlock, int id);
+        void SendPreviewValue(int mixBlock, int id);
+        void Cut(int mixBlock);
 
-		// Event Handling:
-		void SetEventHandler(ISwitcherEventHandler? eventHandler);
-	}
+        // Event Handling:
+        void SetEventHandler(ISwitcherEventHandler? eventHandler);
+    }
 
-	public enum CutBusMode
-	{
-		Cut,
-		Auto
-	}
+    public enum CutBusMode
+    {
+        Cut,
+        Auto
+    }
 
-	public record struct SwitcherProgramChangeInfo(int MixBlock, int NewValue, RetrospectiveFadeInfo? FadeInfo);
-	public record struct SwitcherPreviewChangeInfo(int MixBlock, int NewValue, RetrospectiveFadeInfo? FadeInfo);
+    public record struct SwitcherProgramChangeInfo(int MixBlock, int NewValue, RetrospectiveFadeInfo? FadeInfo);
+    public record struct SwitcherPreviewChangeInfo(int MixBlock, int NewValue, RetrospectiveFadeInfo? FadeInfo);
 
-	/// <summary>
-	/// Provides a base class to make implementing switchers easier that:
-	/// 1. Fails everything on the ISwitcher API unless overriden.
-	/// 2. Stores the assigned event handler in a protected field
-	/// </summary>
-	public abstract class RawSwitcher : IRawSwitcher
+    /// <summary>
+    /// Provides a base class to make implementing switchers easier that:
+    /// 1. Fails everything on the ISwitcher API unless overriden.
+    /// 2. Stores the assigned event handler in a protected field
+    /// </summary>
+    public abstract class RawSwitcher : IRawSwitcher
     {
         protected ISwitcherEventHandler? _eventHandler;
 

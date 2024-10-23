@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Server.Scripting.Execution
 {
-	public enum RunningScriptState
-	{
-		Running,
-		Waiting,
-	}
+    public enum RunningScriptState
+    {
+        Running,
+        Waiting,
+    }
 }

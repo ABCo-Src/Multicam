@@ -7,22 +7,22 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Messages
 {
-	public class OBSDeserializedMessage
-	{
-	}
+    public class OBSDeserializedMessage
+    {
+    }
 
-	public class OBSSerializedMessage<T>
-	{
-		[JsonPropertyName("op")]
-		public int OpCode { get; set; }
+    public class OBSSerializedMessage<T>
+    {
+        [JsonPropertyName("op")]
+        public int OpCode { get; set; }
 
-		[JsonPropertyName("d")]
-		public T Data { get; set; }
+        [JsonPropertyName("d")]
+        public T Data { get; set; }
 
-		public OBSSerializedMessage(int opCode, T data)
-		{
-			OpCode = opCode;
-			Data = data;
-		}
-	}
+        public OBSSerializedMessage(int opCode, T data)
+        {
+            OpCode = opCode;
+            Data = data;
+        }
+    }
 }

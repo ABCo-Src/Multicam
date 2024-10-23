@@ -4,7 +4,7 @@ using Moq;
 
 namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
 {
-	[TestClass]
+    [TestClass]
     public class MixBlockInteractionBufferTests
     {
         public record struct Mocks(
@@ -156,10 +156,10 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             _mocks.Emulator.Setup(m => m.TrySetProgWithPreviewThenCut(24)).Returns(true);
 
             var feature = Create();
-			feature.SetEventHandler(_mocks.EventHandler.Object);
+            feature.SetEventHandler(_mocks.EventHandler.Object);
             feature.SendProgram(24);
 
-			_mocks.Switcher.Verify(m => m.SendProgramValue(_mixBlockIndex, 24), Times.Never);
+            _mocks.Switcher.Verify(m => m.SendProgramValue(_mixBlockIndex, 24), Times.Never);
             _mocks.Emulator.Verify(m => m.TrySetProgWithPreviewThenCut(24), Times.Once);
             _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusCut(24), Times.Never);
             _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusAuto(24), Times.Never);
@@ -173,8 +173,8 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             _mocks.Emulator.Setup(m => m.TrySetProgWithCutBusCut(24)).Returns(true);
 
             var feature = Create();
-			feature.SetEventHandler(_mocks.EventHandler.Object);
-			feature.SendProgram(24);
+            feature.SetEventHandler(_mocks.EventHandler.Object);
+            feature.SendProgram(24);
 
             _mocks.Switcher.Verify(m => m.SendProgramValue(_mixBlockIndex, 24), Times.Never);
             _mocks.Emulator.Verify(m => m.TrySetProgWithPreviewThenCut(24), Times.Once);
@@ -190,10 +190,10 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             _mocks.Emulator.Setup(m => m.TrySetProgWithCutBusAuto(24)).Returns(true);
 
             var feature = Create();
-			feature.SetEventHandler(_mocks.EventHandler.Object);
+            feature.SetEventHandler(_mocks.EventHandler.Object);
             feature.SendProgram(24);
 
-			_mocks.Switcher.Verify(m => m.SendProgramValue(_mixBlockIndex, 24), Times.Never);
+            _mocks.Switcher.Verify(m => m.SendProgramValue(_mixBlockIndex, 24), Times.Never);
             _mocks.Emulator.Verify(m => m.TrySetProgWithPreviewThenCut(24), Times.Once);
             _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusCut(24), Times.Once);
             _mocks.Emulator.Verify(m => m.TrySetProgWithCutBusAuto(24), Times.Once);
@@ -205,8 +205,8 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
         public void SendProgram_CannotEmulate()
         {
             var feature = Create();
-			feature.SetEventHandler(_mocks.EventHandler.Object);
-			feature.SendProgram(24);
+            feature.SetEventHandler(_mocks.EventHandler.Object);
+            feature.SendProgram(24);
 
             _mocks.Switcher.Verify(m => m.SendProgramValue(_mixBlockIndex, 24), Times.Never);
             _mocks.Emulator.Verify(m => m.TrySetProgWithPreviewThenCut(24), Times.Once);
@@ -225,9 +225,9 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
         {
             _features = new(supportsDirectPreviewAccess: true);
             var feature = Create();
-			feature.SetEventHandler(_mocks.EventHandler.Object);
+            feature.SetEventHandler(_mocks.EventHandler.Object);
 
-			feature.SendPreview(13);
+            feature.SendPreview(13);
             feature.SendPreview(4);
 
             _mocks.Switcher.Verify(m => m.SendPreviewValue(_mixBlockIndex, 13), Times.Once);
@@ -240,8 +240,8 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
         public void SendPreview_CannotEmulate()
         {
             var feature = Create();
-			feature.SetEventHandler(_mocks.EventHandler.Object);
-			feature.SendPreview(24);
+            feature.SetEventHandler(_mocks.EventHandler.Object);
+            feature.SendPreview(24);
 
             Assert.AreEqual(24, feature.Preview);
             _mocks.Switcher.Verify(m => m.SendPreviewValue(_mixBlockIndex, 24), Times.Never);
@@ -256,8 +256,8 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
         {
             _features = new(supportsCutAction: true);
             var feature = Create();
-			feature.SetEventHandler(_mocks.EventHandler.Object);
-			feature.Cut();
+            feature.SetEventHandler(_mocks.EventHandler.Object);
+            feature.Cut();
             _mocks.Switcher.Verify(m => m.Cut(_mixBlockIndex), Times.Once);
             _mocks.Emulator.Verify(m => m.CutWithSetProgAndPrev(), Times.Never);
 
@@ -269,8 +269,8 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
         public void Cut_Emulated()
         {
             var feature = Create();
-			feature.SetEventHandler(_mocks.EventHandler.Object);
-			feature.Cut();
+            feature.SetEventHandler(_mocks.EventHandler.Object);
+            feature.Cut();
             _mocks.Switcher.Verify(m => m.Cut(_mixBlockIndex), Times.Never);
             _mocks.Emulator.Verify(m => m.CutWithSetProgAndPrev(), Times.Once);
 
@@ -285,8 +285,8 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
         {
             _features = new(supportsCutBusSwitching: true);
             var buffer = Create();
-			buffer.SetEventHandler(_mocks.EventHandler.Object);
-			buffer.SetCutBusMode(mode);
+            buffer.SetEventHandler(_mocks.EventHandler.Object);
+            buffer.SetCutBusMode(mode);
             buffer.SetCutBus(13);
             _mocks.Switcher.Verify(m => m.SetCutBus(_mixBlockIndex, 13), Times.Once);
             _mocks.Emulator.Verify(m => m.TrySetCutBusWithPrevThenAuto(13), Times.Never);

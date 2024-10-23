@@ -2,7 +2,7 @@
 
 namespace ABCo.Multicam.Server.Features.Switchers.Buffering
 {
-	public interface IPerSpecSwitcherInteractionBuffer : IServerService<SwitcherSpecs, IRawSwitcher>
+    public interface IPerSpecSwitcherInteractionBuffer : IServerService<SwitcherSpecs, IRawSwitcher>
     {
         SwitcherSpecs Specs { get; }
         void SetEventHandler(ISwitcherEventHandler? eventHandler);

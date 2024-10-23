@@ -1,6 +1,6 @@
 ﻿namespace ABCo.Multicam.Server.Features.Switchers.Data
 {
-	public class SwitcherErrorException : Exception
+    public class SwitcherErrorException : Exception
     {
         public SwitcherErrorException(string message) : base(message) { }
     }

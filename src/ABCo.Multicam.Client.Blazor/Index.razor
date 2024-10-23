@@ -7,14 +7,14 @@
 @inject IClientInfo clientInfo
 
 @{
-	// If we're using Blazor's dispatcher for this client, associate this with it.
-	if (clientInfo.Dispatcher is BlazorMainThreadDispatcher disp)
-		disp.Associate(InvokeAsync);
+    // If we're using Blazor's dispatcher for this client, associate this with it.
+    if (clientInfo.Dispatcher is BlazorMainThreadDispatcher disp)
+        disp.Associate(InvokeAsync);
 
-	var mainVM = new MainUIVM(clientInfo);
+    var mainVM = new MainUIVM(clientInfo);
 }
 
 <!-- Content -->
 <main>
-	<MainView VM="mainVM" />
+    <MainView VM="mainVM" />
 </main>

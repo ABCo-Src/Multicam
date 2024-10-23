@@ -6,7 +6,7 @@ using System.ComponentModel;
 
 namespace ABCo.Multicam.Client.ViewModels.Features.Switcher
 {
-	public interface ISwitcherButtonVM : INotifyPropertyChanged
+    public interface ISwitcherButtonVM : INotifyPropertyChanged
     {
         string Text { get; set; }
         SwitcherButtonStatus Status { get; set; }
@@ -20,13 +20,13 @@ namespace ABCo.Multicam.Client.ViewModels.Features.Switcher
         [ObservableProperty] string _text;
         [ObservableProperty] SwitcherButtonStatus _status = SwitcherButtonStatus.NeutralActive;
 
-		public SwitcherButtonVM(Dispatched<ISwitcher> switcher, string text)
-		{
-			_switcher = switcher;
+        public SwitcherButtonVM(Dispatched<ISwitcher> switcher, string text)
+        {
+            _switcher = switcher;
             _text = text;
-		}
+        }
 
-		public abstract void Click();
+        public abstract void Click();
         public abstract void UpdateState(MixBlockState state);
-	}
+    }
 }

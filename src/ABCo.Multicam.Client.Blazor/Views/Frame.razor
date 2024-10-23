@@ -12,33 +12,33 @@
 @inherits VMBoundComponent<IFrameVM>
 
 <div class="frame">
-	<div class="frameTitlebar">
-		@if (VM.CanGoBack)
-		{
-			<a class="hyperlink back" @onclick=VM.NavigateBack>Back</a>
-		}
+    <div class="frameTitlebar">
+        @if (VM.CanGoBack)
+        {
+            <a class="hyperlink back" @onclick=VM.NavigateBack>Back</a>
+        }
 
-		@if (VM.FrameTitle != null)
-		{
-			<p class="title">@VM.FrameTitle</p>
-		}
-	</div>
-	<div class="selectedPage">
-		@if (VM.CurrentPage is IHomeVM homeVM)
-		{
-			<Home VM="homeVM" />
-		}
-		else if (VM.CurrentPage is ISwitcherListVM switcherVM)
-		{
-			<ListView TItem="ISwitcherListItemVM" TItemContent="ISwitcherVM" NewButtonText="New Switcher" VM="switcherVM" />
-		}
-		else if (VM.CurrentPage is IScriptButtonListVM buttonVM)
-		{
-			<ListView TItem="IScriptButtonListItemVM" TItemContent="IScriptButtonVM" NewButtonText="New Button" VM="buttonVM" />
-		}
-		else if (VM.CurrentPage is IScriptConsoleVM consoleVM)
-		{
-			<ScriptConsole VM="consoleVM" />
-		}
-	</div>
+        @if (VM.FrameTitle != null)
+        {
+            <p class="title">@VM.FrameTitle</p>
+        }
+    </div>
+    <div class="selectedPage">
+        @if (VM.CurrentPage is IHomeVM homeVM)
+        {
+            <Home VM="homeVM" />
+        }
+        else if (VM.CurrentPage is ISwitcherListVM switcherVM)
+        {
+            <ListView TItem="ISwitcherListItemVM" TItemContent="ISwitcherVM" NewButtonText="New Switcher" VM="switcherVM" />
+        }
+        else if (VM.CurrentPage is IScriptButtonListVM buttonVM)
+        {
+            <ListView TItem="IScriptButtonListItemVM" TItemContent="IScriptButtonVM" NewButtonText="New Button" VM="buttonVM" />
+        }
+        else if (VM.CurrentPage is IScriptConsoleVM consoleVM)
+        {
+            <ScriptConsole VM="consoleVM" />
+        }
+    </div>
 </div>

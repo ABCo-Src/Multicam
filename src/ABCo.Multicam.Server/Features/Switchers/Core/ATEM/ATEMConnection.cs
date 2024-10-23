@@ -4,7 +4,7 @@ using BMDSwitcherAPI;
 
 namespace ABCo.Multicam.Server.Features.Switchers.Core.ATEM
 {
-	public interface IATEMConnection : IDisposable, IServerService<ATEMSwitcherConfig, IATEMSwitcher>
+    public interface IATEMConnection : IDisposable, IServerService<ATEMSwitcherConfig, IATEMSwitcher>
     {
         SwitcherSpecs InvalidateCurrentSpecs();
         long GetProgram(int mixBlock);

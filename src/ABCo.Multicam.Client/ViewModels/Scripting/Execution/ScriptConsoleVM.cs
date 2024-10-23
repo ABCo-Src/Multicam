@@ -11,22 +11,22 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Client.ViewModels.Scripting.Execution
 {
-	public interface IScriptConsoleVM : INotifyPropertyChanged
-	{
-		ConsoleMessage[] Messages { get; }
-	}
+    public interface IScriptConsoleVM : INotifyPropertyChanged
+    {
+        ConsoleMessage[] Messages { get; }
+    }
 
-	public partial class ScriptConsoleVM : BoundViewModelBase<IScriptConsole>, IPageVM, IScriptConsoleVM
-	{
-		[ObservableProperty] ConsoleMessage[] _messages = Array.Empty<ConsoleMessage>();
+    public partial class ScriptConsoleVM : BoundViewModelBase<IScriptConsole>, IPageVM, IScriptConsoleVM
+    {
+        [ObservableProperty] ConsoleMessage[] _messages = Array.Empty<ConsoleMessage>();
 
-		public ScriptConsoleVM(Dispatched<IScriptConsole> serverComponent, IFrameClientInfo info) : base(serverComponent, info)
-		{
-			OnServerStateChange(null);
-		}
+        public ScriptConsoleVM(Dispatched<IScriptConsole> serverComponent, IFrameClientInfo info) : base(serverComponent, info)
+        {
+            OnServerStateChange(null);
+        }
 
-		public AppPages Page => AppPages.ScriptConsole;
+        public AppPages Page => AppPages.ScriptConsole;
 
-		protected override void OnServerStateChange(string? changedProp) => Messages = _serverComponent.Get(s => s.Messages);
-	}
+        protected override void OnServerStateChange(string? changedProp) => Messages = _serverComponent.Get(s => s.Messages);
+    }
 }

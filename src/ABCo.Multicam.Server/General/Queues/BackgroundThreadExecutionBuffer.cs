@@ -24,7 +24,7 @@ namespace ABCo.Multicam.Server.General.Queues
         public BackgroundThreadExecutionBuffer(Action<Exception> errorHandler)
         {
             _errorHandler = errorHandler;
-			_taskQueue = new();
+            _taskQueue = new();
         }
 
         public void StartExecution()
@@ -104,9 +104,9 @@ namespace ABCo.Multicam.Server.General.Queues
                 _taskQueue.Enqueue(act);
         }
 
-		public void QueueTaskAsync(Func<Task> act)
-		{
-			throw new NotImplementedException();
-		}
-	}
+        public void QueueTaskAsync(Func<Task> act)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

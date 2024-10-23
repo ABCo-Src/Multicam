@@ -3,11 +3,11 @@ using System.ComponentModel;
 
 namespace ABCo.Multicam.Server
 {
-	public interface IBindableServerComponent<T> : IServerService<T>, INotifyPropertyChanged
-	{
-	}
+    public interface IBindableServerComponent<T> : IServerService<T>, INotifyPropertyChanged
+    {
+    }
 
-	public abstract class BindableServerComponent<T> : ObservableObject, IBindableServerComponent<T>
-	{
-	}
+    public abstract class BindableServerComponent<T> : ObservableObject, IBindableServerComponent<T>
+    {
+    }
 }

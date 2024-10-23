@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Server.General
 {
-	public interface INamedServerComponent
-	{
-		string Name { get; }
-		void Rename(string name);
-	}
+    public interface INamedServerComponent
+    {
+        string Name { get; }
+        void Rename(string name);
+    }
 }

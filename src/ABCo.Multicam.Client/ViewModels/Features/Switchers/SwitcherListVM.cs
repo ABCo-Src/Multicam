@@ -10,18 +10,18 @@ using ABCo.Multicam.Client.ViewModels.General;
 namespace ABCo.Multicam.Client.Presenters.Features.Switchers
 {
     public interface ISwitcherListVM : IServerListVM<ISwitcherListItemVM>, IPageVM, INotifyPropertyChanged
-	{
+    {
     }
 
     public partial class SwitcherListVM : ServerListVM<ISwitcherList, ISwitcher, ISwitcherListItemVM>, ISwitcherListVM
     {
-		public AppPages Page => AppPages.Switchers;
+        public AppPages Page => AppPages.Switchers;
 
-		public SwitcherListVM(Dispatched<ISwitcherList> collection, IFrameClientInfo client) : base(AppPages.Switchers, collection, client) { }
+        public SwitcherListVM(Dispatched<ISwitcherList> collection, IFrameClientInfo client) : base(AppPages.Switchers, collection, client) { }
 
         protected override void OnServerStateChange(string? changedProp) =>
             ProcessServerListChange(s => new SwitcherListItemVM(_serverComponent, _info.Server.CreateDispatcher(s), _info));
 
-		public void Create() => _serverComponent.CallDispatched(c => c.CreateSwitcher());
+        public void Create() => _serverComponent.CallDispatched(c => c.CreateSwitcher());
     }
 }

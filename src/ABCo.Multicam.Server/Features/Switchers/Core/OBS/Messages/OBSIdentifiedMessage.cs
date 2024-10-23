@@ -8,9 +8,9 @@ using static ABCo.Multicam.Server.Features.Switchers.Core.OBS.Messages.OBSHelloM
 
 namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Messages
 {
-	public class OBSIdentifiedMessage : OBSDeserializedMessage
-	{
-		[JsonPropertyName("negotiatedRpcVersion"), JsonRequired]
-		public int NegotiatedRPCVersion { get; set; }
-	}
+    public class OBSIdentifiedMessage : OBSDeserializedMessage
+    {
+        [JsonPropertyName("negotiatedRpcVersion"), JsonRequired]
+        public int NegotiatedRPCVersion { get; set; }
+    }
 }

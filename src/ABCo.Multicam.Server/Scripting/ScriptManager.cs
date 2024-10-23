@@ -17,26 +17,26 @@ namespace ABCo.Multicam.Server.Scripting
         IScriptConsole Console { get; }
         IScriptButtonList ButtonList { get; }
 
-		IEditableScript NewScript(IScriptID id);
+        IEditableScript NewScript(IScriptID id);
         void UnloadScript(IEditableScript script);
         void HandleScriptError(IScriptID id, Exception ex);
-	}
+    }
 
     public class ScriptManager : IScriptManager
     {
-		readonly List<IEditableScript> _registeredScripts = new();
+        readonly List<IEditableScript> _registeredScripts = new();
         readonly IScriptingFactory _factory;
 
-		public IScriptExecutionManager Execution { get; }
-		public IScriptConsole Console { get; }
-		public IScriptButtonList ButtonList { get; }
+        public IScriptExecutionManager Execution { get; }
+        public IScriptConsole Console { get; }
+        public IScriptButtonList ButtonList { get; }
 
-		public ScriptManager(IServerInfo info)
+        public ScriptManager(IServerInfo info)
         {
             // Register all types for use from scripts
             UserData.RegisterAssembly(typeof(ScriptManager).Assembly);
 
-			_factory = info.Factories.Scripting;
+            _factory = info.Factories.Scripting;
             Execution = new ScriptExecutionManager(info);
             ButtonList = new ScriptButtonList(info);
             Console = new ScriptConsole();
@@ -49,8 +49,8 @@ namespace ABCo.Multicam.Server.Scripting
             return newScript;
         }
 
-		public void UnloadScript(IEditableScript script) => _registeredScripts.Remove(script);
+        public void UnloadScript(IEditableScript script) => _registeredScripts.Remove(script);
 
-		public void HandleScriptError(IScriptID id, Exception ex) => Console.WriteLine(ex.Message, id, ConsoleMessageType.Error);
-	}
+        public void HandleScriptError(IScriptID id, Exception ex) => Console.WriteLine(ex.Message, id, ConsoleMessageType.Error);
+    }
 }

@@ -2,25 +2,25 @@
 @inherits VMBoundComponent<ISwitcherOBSConfigVM>
 
 <div class="grid">
-	<p class="gridTitle">Server IP:</p>
-	<input class="textbox" type="text" @onchange="e => { VM.Ip = (string)e.Value!; VM.OnIPChange(); }" value="@VM.Ip" />
+    <p class="gridTitle">Server IP:</p>
+    <input class="textbox" type="text" @onchange="e => { VM.Ip = (string)e.Value!; VM.OnIPChange(); }" value="@VM.Ip" />
 
-	<p class="gridTitle">Server Port:</p>
-	<input class="textbox" type="text" @onchange="e => { VM.Port = (string)e.Value!; VM.OnPortChange(); }" value="@VM.Port" />
+    <p class="gridTitle">Server Port:</p>
+    <input class="textbox" type="text" @onchange="e => { VM.Port = (string)e.Value!; VM.OnPortChange(); }" value="@VM.Port" />
 
-	<p class="gridTitle">Server Pass:</p>
-	<input class="textbox" type="text" @onchange="e => { VM.Password = (string)e.Value!; VM.OnPasswordChange(); }" value="@VM.Password" />
+    <p class="gridTitle">Server Pass:</p>
+    <input class="textbox" type="text" @onchange="e => { VM.Password = (string)e.Value!; VM.OnPasswordChange(); }" value="@VM.Password" />
 </div>
 
 @if (VM.ErrorMessage != null)
 {
-	<div class="errorBox boxedPortion">
-		<p class="symbol">!</p>
-		<p class="message">@VM.ErrorMessage</p>
-	</div>
+    <div class="errorBox boxedPortion">
+        <p class="symbol">!</p>
+        <p class="message">@VM.ErrorMessage</p>
+    </div>
 }
 
 <div class="infoBox boxedPortion">
-	<p class="symbol">i</p>
-	<p class="message">To get this information, open OBS and go to Tools -> WebSocket Server Settings. Make sure "Enable WebSocket server" is ticked, then press "Show Connect Info".</p>
+    <p class="symbol">i</p>
+    <p class="message">To get this information, open OBS and go to Tools -> WebSocket Server Settings. Make sure "Enable WebSocket server" is ticked, then press "Show Connect Info".</p>
 </div>

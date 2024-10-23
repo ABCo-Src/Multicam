@@ -16,48 +16,48 @@ using ABCo.Multicam.Client.ViewModels.Scripting.Execution;
 
 namespace ABCo.Multicam.Client.ViewModels.Paging
 {
-	public interface IHomeVM : IPageVM, INotifyPropertyChanged
-	{
-		IHomePageLinkVM[] MiddleTabs { get; }
-		IHomePageLinkVM[] BottomTabs { get; }
-		void Select(IHomePageLinkVM vm);
-	}
+    public interface IHomeVM : IPageVM, INotifyPropertyChanged
+    {
+        IHomePageLinkVM[] MiddleTabs { get; }
+        IHomePageLinkVM[] BottomTabs { get; }
+        void Select(IHomePageLinkVM vm);
+    }
 
-	public partial class HomeVM : ViewModelBase, IHomeVM
-	{
-		readonly IFrameVM _frame;
+    public partial class HomeVM : ViewModelBase, IHomeVM
+    {
+        readonly IFrameVM _frame;
 
-		[ObservableProperty] IHomePageLinkVM[] _middleTabs = Array.Empty<IHomePageLinkVM>();
-		[ObservableProperty] IHomePageLinkVM[] _bottomTabs = Array.Empty<IHomePageLinkVM>();
+        [ObservableProperty] IHomePageLinkVM[] _middleTabs = Array.Empty<IHomePageLinkVM>();
+        [ObservableProperty] IHomePageLinkVM[] _bottomTabs = Array.Empty<IHomePageLinkVM>();
 
-		public HomeVM(IFrameClientInfo info)
-		{
-			_frame = info.Frame;
+        public HomeVM(IFrameClientInfo info)
+        {
+            _frame = info.Frame;
 
-			var switcherPage = new SwitcherListVM(info.Server.GetSwitcherList(), info);
-			var scriptButtonPage = new ScriptButtonListVM(info.Server.GetScriptButtonList(), info);
-			var consoleButtonPage = new ScriptConsoleVM(info.Server.GetScriptConsole(), info);
+            var switcherPage = new SwitcherListVM(info.Server.GetSwitcherList(), info);
+            var scriptButtonPage = new ScriptButtonListVM(info.Server.GetScriptButtonList(), info);
+            var consoleButtonPage = new ScriptConsoleVM(info.Server.GetScriptConsole(), info);
 
-			_middleTabs = new IHomePageLinkVM[]
-			{
-				new HomePageLinkVM("Switchers / Video Devices", this, switcherPage),
-				new HomePageLinkVM("Digital Tally", this, null),
-				new HomePageLinkVM("Cut Recording", this, null)
-			};
+            _middleTabs = new IHomePageLinkVM[]
+            {
+                new HomePageLinkVM("Switchers / Video Devices", this, switcherPage),
+                new HomePageLinkVM("Digital Tally", this, null),
+                new HomePageLinkVM("Cut Recording", this, null)
+            };
 
-			_bottomTabs = new IHomePageLinkVM[]
-			{
-				new HomePageLinkVM("Script Buttons", this, scriptButtonPage),
-				new HomePageLinkVM("Script Console", this, consoleButtonPage),
-				new HomePageLinkVM("Sync Devices", this, null)
-			};
-		}
+            _bottomTabs = new IHomePageLinkVM[]
+            {
+                new HomePageLinkVM("Script Buttons", this, scriptButtonPage),
+                new HomePageLinkVM("Script Console", this, consoleButtonPage),
+                new HomePageLinkVM("Sync Devices", this, null)
+            };
+        }
 
-		public AppPages Page => AppPages.Home;
+        public AppPages Page => AppPages.Home;
 
-		public void Select(IHomePageLinkVM vm)
-		{
-			_frame.SelectPage(vm.AssociatedPage);
-		}
-	}
+        public void Select(IHomePageLinkVM vm)
+        {
+            _frame.SelectPage(vm.AssociatedPage);
+        }
+    }
 }

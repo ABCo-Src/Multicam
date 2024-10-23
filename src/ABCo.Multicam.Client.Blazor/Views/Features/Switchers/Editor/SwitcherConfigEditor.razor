@@ -9,26 +9,26 @@
 @inherits VMBoundComponent<ISwitcherConfigVM>
 
 <div class="grid">
-	<p class="gridTitle gridTag1">Type:</p>
-	<select class="combo" value="@VM.SelectedItem" @onchange="e => { VM.SelectedItem = (string)e.Value!; VM.UpdateSelectedItem(); }">
-		@foreach (var opt in VM.Items)
-		{
-			<option>@opt</option>
-		}
-	</select>
+    <p class="gridTitle gridTag1">Type:</p>
+    <select class="combo" value="@VM.SelectedItem" @onchange="e => { VM.SelectedItem = (string)e.Value!; VM.UpdateSelectedItem(); }">
+        @foreach (var opt in VM.Items)
+        {
+            <option>@opt</option>
+        }
+    </select>
 </div>
 
 <div class="inner">
-	@if (VM.CurrentConfig is SwitcherVirtualConfigVM dummyConfig)
-	{
+    @if (VM.CurrentConfig is SwitcherVirtualConfigVM dummyConfig)
+    {
         <VirtualConfigEditor VM="dummyConfig" />
     }
     else if (VM.CurrentConfig is SwitcherATEMConfigVM atemConfig)
     {
-		<ATEMConfigEditor VM="atemConfig" />
-	}
-	else if (VM.CurrentConfig is SwitcherOBSConfigVM obsConfig)
-	{
-		<OBSConfigEditor VM="obsConfig" />
-	}
+        <ATEMConfigEditor VM="atemConfig" />
+    }
+    else if (VM.CurrentConfig is SwitcherOBSConfigVM obsConfig)
+    {
+        <OBSConfigEditor VM="obsConfig" />
+    }
 </div>

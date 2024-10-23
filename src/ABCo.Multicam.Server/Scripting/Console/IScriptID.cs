@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Server.Scripting.Console
 {
-	public interface IScriptID
-	{
-		string GetID();
-	}
+    public interface IScriptID
+    {
+        string GetID();
+    }
 }

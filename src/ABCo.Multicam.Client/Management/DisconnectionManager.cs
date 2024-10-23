@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Client.Management
 {
-	public interface IDisconnectionManager
-	{
-		event Action ClientDisconnected;
-	}
+    public interface IDisconnectionManager
+    {
+        event Action ClientDisconnected;
+    }
 
-	public class DisconnectionManager : IDisconnectionManager
-	{
-		public event Action ClientDisconnected = () => { };
-		public void OnClientDisconnect() => ClientDisconnected();
-	}
+    public class DisconnectionManager : IDisconnectionManager
+    {
+        public event Action ClientDisconnected = () => { };
+        public void OnClientDisconnect() => ClientDisconnected();
+    }
 }

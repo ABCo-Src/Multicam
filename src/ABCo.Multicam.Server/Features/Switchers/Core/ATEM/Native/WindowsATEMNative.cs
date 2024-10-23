@@ -5,7 +5,7 @@ using System.Runtime.Versioning;
 
 namespace ABCo.Multicam.Server.Features.Switchers.Core.ATEM.Native
 {
-	[SupportedOSPlatform("windows")]
+    [SupportedOSPlatform("windows")]
     public class WindowsNativeATEMSwitcherDiscovery : INativeATEMSwitcherDiscovery
     {
         public INativeATEMSwitcher Connect(string address)

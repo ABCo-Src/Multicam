@@ -15,19 +15,19 @@ namespace ABCo.Multicam.Server.Scripting.Execution
 
     public class ScriptGlobals : IScriptGlobals
     {
-		
+        
 
-		public ScriptGlobals(ILoadedScript script)
-		{
-			
-		}
+        public ScriptGlobals(ILoadedScript script)
+        {
+            
+        }
 
-		//public Script CreateScript()
-		//{
-		//	var script = new Script();
+        //public Script CreateScript()
+        //{
+        //    var script = new Script();
 
-		//	// Add the switchers proxy.
-		//	script.Globals["Switchers"] = 
-		//}
-	}
+        //    // Add the switchers proxy.
+        //    script.Globals["Switchers"] = 
+        //}
+    }
 }

@@ -5,7 +5,7 @@ using Moq;
 
 namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
 {
-	[TestClass]
+    [TestClass]
     public class PerSpecSwitcherInteractionBufferTests
     {
         public record struct Mocks(
@@ -16,7 +16,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             Mock<ISwitcherEventHandler> EventHandler);
 
         SwitcherSpecs _switcherSpecs = new();
-		readonly bool _isConnected;
+        readonly bool _isConnected;
         Mocks _mocks = new();
 
         [TestInitialize]
@@ -37,21 +37,21 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             _mocks.Factory.Setup(m => m.CreateMixBlock(It.IsAny<SwitcherMixBlock>(), 1, It.IsAny<ISwitcher>())).Returns(_mocks.Buffers[1].Object);
         }
 
-		public PerSpecSwitcherBuffer Create() => new PerSpecSwitcherInteractionBuffer(_switcherSpecs, _mocks.Switcher.Object, _mocks.ServSource.Object);
+        public PerSpecSwitcherBuffer Create() => new PerSpecSwitcherInteractionBuffer(_switcherSpecs, _mocks.Switcher.Object, _mocks.ServSource.Object);
 
-		[TestMethod]
+        [TestMethod]
         public void Ctor_Disconnected()
         {
-			_switcherSpecs = new();
+            _switcherSpecs = new();
 
-			var feature = Create();
-			Assert.AreEqual(_switcherSpecs, feature.Specs);
+            var feature = Create();
+            Assert.AreEqual(_switcherSpecs, feature.Specs);
 
-			_mocks.Factory.Verify(m => m.CreateMixBlock(_switcherSpecs.MixBlocks[0], 0, _mocks.Switcher.Object));
-			_mocks.Factory.Verify(m => m.CreateMixBlock(_switcherSpecs.MixBlocks[1], 1, _mocks.Switcher.Object));
-			_mocks.Buffers[0].Verify(m => m.RefreshValues());
-			_mocks.Buffers[1].Verify(m => m.RefreshValues());
-		}
+            _mocks.Factory.Verify(m => m.CreateMixBlock(_switcherSpecs.MixBlocks[0], 0, _mocks.Switcher.Object));
+            _mocks.Factory.Verify(m => m.CreateMixBlock(_switcherSpecs.MixBlocks[1], 1, _mocks.Switcher.Object));
+            _mocks.Buffers[0].Verify(m => m.RefreshValues());
+            _mocks.Buffers[1].Verify(m => m.RefreshValues());
+        }
 
         [TestMethod]
         public void Ctor_Connected()
@@ -68,7 +68,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
         [TestMethod]
         public void SetEventHandler()
         {
-			var feature = Create();
+            var feature = Create();
             feature.SetEventHandler(_mocks.EventHandler.Object);
 
             _mocks.Buffers[0].Verify(m => m.SetEventHandler(_mocks.EventHandler.Object));
@@ -146,8 +146,8 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
         {
             var info = new SwitcherPreviewChangeInfo(mixBlock, 13, null);
             var feature = Create();
-			feature.SetEventHandler(_mocks.EventHandler.Object);
-			feature.UpdatePrev(info);
+            feature.SetEventHandler(_mocks.EventHandler.Object);
+            feature.UpdatePrev(info);
 
             Verify1Success1Fail(mixBlock, (i, t) => i.Verify(m => m.UpdatePrev(13), t));
 
@@ -157,7 +157,7 @@ namespace ABCo.Multicam.Tests.Features.Switchers.Interaction
             _mocks.EventHandler.Verify(m => m.OnPreviewValueChange(info));
         }
 
-		[TestMethod]
+        [TestMethod]
         [DataRow(0)]
         [DataRow(1)]
         public void Cut(int mixBlock)

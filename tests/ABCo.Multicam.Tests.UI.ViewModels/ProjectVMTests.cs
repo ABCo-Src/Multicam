@@ -1,6 +1,6 @@
 ﻿namespace ABCo.Multicam.Tests.UI.ViewModels
 {
-	[TestClass]
+    [TestClass]
     public class ProjectVMTests
     {
         //[TestMethod]

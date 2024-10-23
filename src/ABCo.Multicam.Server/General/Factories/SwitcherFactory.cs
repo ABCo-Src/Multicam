@@ -11,8 +11,8 @@ namespace ABCo.Multicam.Server.General.Factories
     // Creates a raw switcher from a given config
     public interface ISwitcherFactory
     {
-		ISwitcher CreateSwitcher();
-		IRawSwitcher CreateRawSwitcher(SwitcherConfig config);
+        ISwitcher CreateSwitcher();
+        IRawSwitcher CreateRawSwitcher(SwitcherConfig config);
     }
 
     public class SwitcherFactory : ISwitcherFactory
@@ -22,7 +22,7 @@ namespace ABCo.Multicam.Server.General.Factories
 
         public ISwitcher CreateSwitcher() => new Switcher(_info);
 
-		public IRawSwitcher CreateRawSwitcher(SwitcherConfig config) => config switch
+        public IRawSwitcher CreateRawSwitcher(SwitcherConfig config) => config switch
         {
             VirtualSwitcherConfig d => new VirtualSwitcher(d),
             ATEMSwitcherConfig a => new ATEMSwitcher(a, _info),

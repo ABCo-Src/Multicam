@@ -6,22 +6,22 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace ABCo.Multicam.Client.Presenters.Features.Switchers.Config.Virtual
 {
-	public interface ISwitcherVirtualConfigVM : ISwitcherSpecificConfigVM
+    public interface ISwitcherVirtualConfigVM : ISwitcherSpecificConfigVM
     {
-		string SelectedMixBlockCount { get; set; }
-		int[] MixBlockCountOptions { get; }
-		ISwitcherVirtualConfigMixBlockVM[] MixBlockVMs { get; set; }
-		void OnUIChange();
+        string SelectedMixBlockCount { get; set; }
+        int[] MixBlockCountOptions { get; }
+        ISwitcherVirtualConfigMixBlockVM[] MixBlockVMs { get; set; }
+        void OnUIChange();
     }
 
-	public partial class SwitcherVirtualConfigVM : BoundViewModelBase<ISwitcher>, ISwitcherVirtualConfigVM
+    public partial class SwitcherVirtualConfigVM : BoundViewModelBase<ISwitcher>, ISwitcherVirtualConfigVM
     {
-		public int[] MixBlockCountOptions => new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+        public int[] MixBlockCountOptions => new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
-		[ObservableProperty] string _selectedMixBlockCount = "1";
-		[ObservableProperty] ISwitcherVirtualConfigMixBlockVM[] _mixBlockVMs = Array.Empty<ISwitcherVirtualConfigMixBlockVM>();
+        [ObservableProperty] string _selectedMixBlockCount = "1";
+        [ObservableProperty] ISwitcherVirtualConfigMixBlockVM[] _mixBlockVMs = Array.Empty<ISwitcherVirtualConfigMixBlockVM>();
 
-		public SwitcherVirtualConfigVM(Dispatched<ISwitcher> feature, IFrameClientInfo info) : base(feature, info) => OnServerStateChange(null);
+        public SwitcherVirtualConfigVM(Dispatched<ISwitcher> feature, IFrameClientInfo info) : base(feature, info) => OnServerStateChange(null);
 
         public void OnUIChange()
         {
@@ -39,11 +39,11 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers.Config.Virtual
             _serverComponent.CallDispatched(f => f.ChangeConfig(new VirtualSwitcherConfig(newConfigMBs)));
         }
 
-		protected override void OnServerStateChange(string? changedProp)
-		{
-			var config = _serverComponent.Get(s => s.Config);
-			if (config is VirtualSwitcherConfig dummyConfig)
-			{
+        protected override void OnServerStateChange(string? changedProp)
+        {
+            var config = _serverComponent.Get(s => s.Config);
+            if (config is VirtualSwitcherConfig dummyConfig)
+            {
                 // Set the selected count
                 SelectedMixBlockCount = dummyConfig.MixBlocks.Length.ToString();
 
@@ -54,6 +54,6 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers.Config.Virtual
 
                 MixBlockVMs = newMixBlocks;
             }
-		}
-	}
+        }
+    }
 }

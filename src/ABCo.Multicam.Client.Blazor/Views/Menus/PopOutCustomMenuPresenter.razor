@@ -4,12 +4,12 @@
 @inherits VMBoundComponent<IPopOutContentVM>
 
 <div>
-	<p class="popOutMenuTitle">@VM.Title</p>
+    <p class="popOutMenuTitle">@VM.Title</p>
 
-	<div class="content">
-		@if (VM is ISwitcherConfigVM vm)
-		{
-			<SwitcherConfigEditor VM="vm" />
-		}
-	</div>
+    <div class="content">
+        @if (VM is ISwitcherConfigVM vm)
+        {
+            <SwitcherConfigEditor VM="vm" />
+        }
+    </div>
 </div>

@@ -2,7 +2,7 @@
 
 namespace ABCo.Multicam.Server.Features.Switchers.Buffering
 {
-	public interface IMixBlockBuffer
+    public interface IMixBlockBuffer
     {
         int Program { get; }
         int Preview { get; }

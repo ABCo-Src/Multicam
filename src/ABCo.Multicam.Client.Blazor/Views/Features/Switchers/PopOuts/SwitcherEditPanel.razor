@@ -6,25 +6,25 @@
 @inherits VMBoundComponent<ISwitcherListItemVM>
 
 <div class="sharedContent section">
-	<p class="sectionTitle">General Info</p>
+    <p class="sectionTitle">General Info</p>
 
-	<div class="grid sharedGrid">
-		<p class="gridTitle titleTag">Title:</p>
-		<!--<SwitcherEditPanelTextBox VM="VM" />-->
+    <div class="grid sharedGrid">
+        <p class="gridTitle titleTag">Title:</p>
+        <!--<SwitcherEditPanelTextBox VM="VM" />-->
 
-		<p class="gridTitle posTag">Position:</p>
-		<a class="btn btnNormal moveUpBtn" @onclick=VM.MoveUp>Move Up</a>
-		<a class="btn btnNormal moveDownBtn" @onclick=VM.MoveDown>Move Down</a>
-	</div>
+        <p class="gridTitle posTag">Position:</p>
+        <a class="btn btnNormal moveUpBtn" @onclick=VM.MoveUp>Move Up</a>
+        <a class="btn btnNormal moveDownBtn" @onclick=VM.MoveDown>Move Down</a>
+    </div>
 </div>
 
 <!--@if (VM.Feature.Content is SwitcherFeatureVM switcherVM)
 {
-	<SwitcherEditor VM="switcherVM" />
+    <SwitcherEditor VM="switcherVM" />
 }-->
 
 <hr class="sectionSeparator" />
 
 <div class="deleteBtn section">
-	<a class="btn btnHyperlink btnRedHint deleteBtn" @onclick=VM.Delete>Delete Feature</a>
+    <a class="btn btnHyperlink btnRedHint deleteBtn" @onclick=VM.Delete>Delete Feature</a>
 </div>

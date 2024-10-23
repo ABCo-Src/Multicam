@@ -2,19 +2,19 @@
 
 namespace ABCo.Multicam.App.Win32.Services
 {
-	public class BlazorMainThreadDispatcher : IThreadDispatcher
-	{
-		Func<Action, Task> _invoker = null!;
+    public class BlazorMainThreadDispatcher : IThreadDispatcher
+    {
+        Func<Action, Task> _invoker = null!;
 
-		public BlazorMainThreadDispatcher() { }
-		public void Associate(Func<Action, Task> invoker) => _invoker = invoker;
+        public BlazorMainThreadDispatcher() { }
+        public void Associate(Func<Action, Task> invoker) => _invoker = invoker;
 
-		public async void Queue(Action act) => await _invoker(act);
-		public async void QueueOnUIThread(Action act) => await _invoker(act);
+        public async void Queue(Action act) => await _invoker(act);
+        public async void QueueOnUIThread(Action act) => await _invoker(act);
 
-		public async Task Yield()
-		{
-			await Task.Yield();
-		}
-	}
+        public async Task Yield()
+        {
+            await Task.Yield();
+        }
+    }
 }

@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Messages.Data
 {
-	public class NoData : OBSData { }
+    public class NoData : OBSData { }
 }

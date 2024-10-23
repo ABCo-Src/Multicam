@@ -2,9 +2,9 @@
 @inherits VMBoundComponent<ILoadedScriptVM>
 
 <div class="btn btnNormal" @onclick="e => VM.ToggleExecution()">
-	<a>@StartStopText</a>
+    <a>@StartStopText</a>
 </div>
 
 @code {
-	string StartStopText => VM.IsRunning ? "Stop" : "Run";
+    string StartStopText => VM.IsRunning ? "Stop" : "Run";
 }

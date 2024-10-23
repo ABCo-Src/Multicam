@@ -2,7 +2,7 @@
 
 namespace ABCo.Multicam.Server.Features.Switchers.Core
 {
-	public interface IVirtualSwitcher : IRawSwitcher, IServerService<VirtualSwitcherConfig> { }
+    public interface IVirtualSwitcher : IRawSwitcher, IServerService<VirtualSwitcherConfig> { }
 
     public class VirtualSwitcher : RawSwitcher, IVirtualSwitcher
     {

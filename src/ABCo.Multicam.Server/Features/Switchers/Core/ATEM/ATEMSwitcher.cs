@@ -23,7 +23,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.ATEM
         {
             _config = config;
             _info = info;
-			_compatibility = new ATEMPlatformCompatibility(info);
+            _compatibility = new ATEMPlatformCompatibility(info);
             _dispatcher = info.Dispatcher;
             _buffer = new(ProcessError);
         }
@@ -36,8 +36,8 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.ATEM
             if (_compatibility.GetCompatibility() != SwitcherPlatformCompatibilityValue.Supported)
             {
                 _eventHandler?.OnFailure(new SwitcherError("ATEM Switchers cannot currently be connected to, check the edit page for more info."));
-				_dispatcher.Queue(() => _eventHandler?.OnConnectionStateChange(false));
-				return;
+                _dispatcher.Queue(() => _eventHandler?.OnConnectionStateChange(false));
+                return;
             }
 
             _buffer.QueueTask(() =>
@@ -45,7 +45,7 @@ namespace ABCo.Multicam.Server.Features.Switchers.Core.ATEM
                 _connection = new ATEMConnection(_config, this, _info);
                 _dispatcher.Queue(() => _eventHandler?.OnConnectionStateChange(true));
             });
-		}
+        }
 
         public override void Disconnect()
         {

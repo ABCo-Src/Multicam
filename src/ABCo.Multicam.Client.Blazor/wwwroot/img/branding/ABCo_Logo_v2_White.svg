@@ -3,52 +3,52 @@
 <!-- Unscaled Height: 52 -->
 <!-- With 0.85 scaling, 44.2 and x9 makes 3-->
 <svg xmlns="http://www.w3.org/2000/svg" width="1650" height="397.8" fill="#fff">
-	<g stroke="#fff" stroke-width="10" fill-opacity="0" transform="scale(1 0.85) scale(9)">
-		<!-- A - Width: 46 -->
-		<g>
-			<path d="M 0 60 L 41 0 L 41 60"></path>
-			<path d="M 20 32 L 41 32"></path>
-			<!--<path stroke="#000" stroke-width="10" fill-opacity="0" d="M 41 0 L 49 0"></path>--> <!-- Optional line between "A" and "B" -->
-		</g>
-		
-		<!-- B - Width: 42 -->
-		<g transform="translate(53,0)">
-		    <clipPath id="cut-off-right">
-				<rect x="0" y="0" width="39" height="100" />
-			</clipPath>
-			
-			<path d="M 0 0 L 0 60"></path>
-			<path d="M 0 5 L 22 5"></path>
-			<path d="M 0 26 L 22 26"></path>
-			<path d="M 0 47 L 22 47"></path>
-			
-			<g transform="translate(-3,0)" clip-path="url(#cut-off-right)">
-				<path d="M 20 2 L 34 15 L 21.2 27.6"></path>
-				<path d="M 24.5 15 L 31 15"></path>
-			</g>
-			
-			<g transform="translate(-3,21)" clip-path="url(#cut-off-right)">
-				<path d="M 20 2 L 34 15 L 21.2 27.6"></path>
-				<path d="M 24.5 15 L 31 15"></path>
-			</g>
-			
-			<!-- Scrapped points -->
-			<!--<g  transform="translate(-3,0)">
-				<path stroke="#000" stroke-width="10" fill-opacity="0" d="M 20 2 L 37 18"></path>
-				<path stroke="#000" stroke-width="10" fill-opacity="0" d="M 21.2 27.6 L 37 11.2"></path>
-			</g>-->
+    <g stroke="#fff" stroke-width="10" fill-opacity="0" transform="scale(1 0.85) scale(9)">
+        <!-- A - Width: 46 -->
+        <g>
+            <path d="M 0 60 L 41 0 L 41 60"></path>
+            <path d="M 20 32 L 41 32"></path>
+            <!--<path stroke="#000" stroke-width="10" fill-opacity="0" d="M 41 0 L 49 0"></path>--> <!-- Optional line between "A" and "B" -->
+        </g>
+        
+        <!-- B - Width: 42 -->
+        <g transform="translate(53,0)">
+            <clipPath id="cut-off-right">
+                <rect x="0" y="0" width="39" height="100" />
+            </clipPath>
+            
+            <path d="M 0 0 L 0 60"></path>
+            <path d="M 0 5 L 22 5"></path>
+            <path d="M 0 26 L 22 26"></path>
+            <path d="M 0 47 L 22 47"></path>
+            
+            <g transform="translate(-3,0)" clip-path="url(#cut-off-right)">
+                <path d="M 20 2 L 34 15 L 21.2 27.6"></path>
+                <path d="M 24.5 15 L 31 15"></path>
+            </g>
+            
+            <g transform="translate(-3,21)" clip-path="url(#cut-off-right)">
+                <path d="M 20 2 L 34 15 L 21.2 27.6"></path>
+                <path d="M 24.5 15 L 31 15"></path>
+            </g>
+            
+            <!-- Scrapped points -->
+            <!--<g  transform="translate(-3,0)">
+                <path stroke="#000" stroke-width="10" fill-opacity="0" d="M 20 2 L 37 18"></path>
+                <path stroke="#000" stroke-width="10" fill-opacity="0" d="M 21.2 27.6 L 37 11.2"></path>
+            </g>-->
 
-			<!--<path stroke="#000" stroke-width="10" fill-opacity="0" d="37 18 L 20 26"></path>-->
-		</g>
-		
-		<!-- C - Width: 42 -->
-		<g transform="translate(91,0)">
-			<path d="M 37 5 L 15 5 L 5 15 L 5 37 L 15 47 L 37 47"></path>
-		</g>
-		
-		<!-- O -->
-		<g transform="translate(130,0)">
-			<path d="M 43 5 L 15 5 L 5 15 L 5 47 L 28 47 L 38 37 L 38 5"></path>
-		</g>
-	</g>
+            <!--<path stroke="#000" stroke-width="10" fill-opacity="0" d="37 18 L 20 26"></path>-->
+        </g>
+        
+        <!-- C - Width: 42 -->
+        <g transform="translate(91,0)">
+            <path d="M 37 5 L 15 5 L 5 15 L 5 37 L 15 47 L 37 47"></path>
+        </g>
+        
+        <!-- O -->
+        <g transform="translate(130,0)">
+            <path d="M 43 5 L 15 5 L 5 15 L 5 47 L 28 47 L 38 37 L 38 5"></path>
+        </g>
+    </g>
 </svg>

@@ -4,14 +4,14 @@
 @inherits VMBoundComponent<ISwitcherButtonVM>
 
 <div class="btn btnSwitcher @ColorClass" @onclick=VM.Click>
-	<p>@VM.Text</p>
+    <p>@VM.Text</p>
 </div>
 
 @code {
-	public string ColorClass => VM.Status switch
-	{
-		SwitcherButtonStatus.ProgramActive => "colorProgram",
-		SwitcherButtonStatus.PreviewActive => "colorPreview",
-		_ => "colorNeutral"
-	};
+    public string ColorClass => VM.Status switch
+    {
+        SwitcherButtonStatus.ProgramActive => "colorProgram",
+        SwitcherButtonStatus.PreviewActive => "colorPreview",
+        _ => "colorNeutral"
+    };
 }

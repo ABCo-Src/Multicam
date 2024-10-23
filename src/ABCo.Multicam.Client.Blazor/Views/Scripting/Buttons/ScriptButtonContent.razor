@@ -2,11 +2,11 @@
 @using ABCo.Multicam.Client.Blazor.Views.Scripting.Editing
 
 <div class="listItemContentStrip">
-	<p style="font-weight: bold;">Code</p>
-	<ScriptEditor VM="VM.Script" />
+    <p style="font-weight: bold;">Code</p>
+    <ScriptEditor VM="VM.Script" />
 </div>
 
 @code {
-	[Parameter, EditorRequired]
-	public IScriptButtonVM VM { get; set; } = null!;
+    [Parameter, EditorRequired]
+    public IScriptButtonVM VM { get; set; } = null!;
 }

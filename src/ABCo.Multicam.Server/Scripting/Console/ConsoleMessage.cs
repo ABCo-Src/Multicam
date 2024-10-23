@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Server.Scripting.Console
 {
-	public struct ConsoleMessage
-	{
-		public string Message;
-		public ConsoleMessageType Type;
-	}
+    public struct ConsoleMessage
+    {
+        public string Message;
+        public ConsoleMessageType Type;
+    }
 }

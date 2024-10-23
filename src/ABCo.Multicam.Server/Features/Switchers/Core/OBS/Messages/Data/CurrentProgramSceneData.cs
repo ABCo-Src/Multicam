@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Server.Features.Switchers.Core.OBS.Messages.Data
 {
-	public class CurrentProgramSceneData : OBSData
-	{
-		[JsonPropertyName("sceneName")] // Used for serialization
-		public string SceneName { get; set; } = null!;
-		public CurrentProgramSceneData(string sceneName) => SceneName = sceneName;
-	}
+    public class CurrentProgramSceneData : OBSData
+    {
+        [JsonPropertyName("sceneName")] // Used for serialization
+        public string SceneName { get; set; } = null!;
+        public CurrentProgramSceneData(string sceneName) => SceneName = sceneName;
+    }
 }

@@ -4,7 +4,7 @@
 
 //namespace ABCo.Multicam.Tests.Features
 //{
-//	[TestClass]
+//    [TestClass]
 //    public class FeatureManagerTests
 //    {
 //        public record struct Mocks(

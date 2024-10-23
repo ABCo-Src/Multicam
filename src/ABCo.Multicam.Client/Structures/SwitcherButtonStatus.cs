@@ -1,6 +1,6 @@
 ﻿namespace ABCo.Multicam.Client.Enumerations
 {
-	public enum SwitcherButtonStatus
+    public enum SwitcherButtonStatus
     {
         NeutralInactive,
         PreviewInactive,

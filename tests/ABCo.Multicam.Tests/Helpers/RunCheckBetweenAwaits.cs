@@ -1,6 +1,6 @@
 ﻿namespace ABCo.Multicam.Tests.Helpers
 {
-	public class RunCheckBetweenAwaits : SynchronizationContext
+    public class RunCheckBetweenAwaits : SynchronizationContext
     {
         Exception? _thrownException;
 

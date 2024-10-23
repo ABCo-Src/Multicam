@@ -4,17 +4,17 @@
 @inherits VMBoundComponent<IServerListVM<TItem>>
 
 <ul>
-	@foreach (var item in VM.Items)
-	{
-		<ListViewItem TContent="TItemContent" VM="item" />
-	}
+    @foreach (var item in VM.Items)
+    {
+        <ListViewItem TContent="TItemContent" VM="item" />
+    }
 
-	<li class="item addItem btnLikeHighlight" @onclick="e => VM.Create()">
-		<a>@NewButtonText</a>
-	</li>
+    <li class="item addItem btnLikeHighlight" @onclick="e => VM.Create()">
+        <a>@NewButtonText</a>
+    </li>
 </ul>
 
 @code {
-	[Parameter, EditorRequired]
-	public string NewButtonText { get; set; } = null!;
+    [Parameter, EditorRequired]
+    public string NewButtonText { get; set; } = null!;
 }

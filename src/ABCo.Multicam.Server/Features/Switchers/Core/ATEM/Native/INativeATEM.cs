@@ -2,7 +2,7 @@
 
 namespace ABCo.Multicam.Server.Features.Switchers.Core.ATEM.Native
 {
-	public interface INativeATEMSwitcherDiscovery
+    public interface INativeATEMSwitcherDiscovery
     {
         INativeATEMSwitcher Connect(string address);
     }

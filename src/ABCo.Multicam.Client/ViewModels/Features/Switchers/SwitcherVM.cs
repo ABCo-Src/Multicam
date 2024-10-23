@@ -5,18 +5,18 @@ using System.ComponentModel;
 
 namespace ABCo.Multicam.Client.Presenters.Features.Switchers
 {
-	public interface ISwitcherVM : INotifyPropertyChanged, IDisposable
-	{
-		ISwitcherMixBlocksVM MixBlocks { get; set; }
-		ISwitcherConnectionVM Connection { get; set; }
-		ISwitcherConfigVM Config { get; set; }
-	}
-
-	public partial class SwitcherVM : ObservableObject, ISwitcherVM
+    public interface ISwitcherVM : INotifyPropertyChanged, IDisposable
     {
-		[ObservableProperty] ISwitcherMixBlocksVM _mixBlocks;
-		[ObservableProperty] ISwitcherConnectionVM _connection;
-		[ObservableProperty] ISwitcherConfigVM _config;
+        ISwitcherMixBlocksVM MixBlocks { get; set; }
+        ISwitcherConnectionVM Connection { get; set; }
+        ISwitcherConfigVM Config { get; set; }
+    }
+
+    public partial class SwitcherVM : ObservableObject, ISwitcherVM
+    {
+        [ObservableProperty] ISwitcherMixBlocksVM _mixBlocks;
+        [ObservableProperty] ISwitcherConnectionVM _connection;
+        [ObservableProperty] ISwitcherConfigVM _config;
 
         public SwitcherVM(Dispatched<ISwitcher> feature, IFrameClientInfo info)
         {
@@ -25,11 +25,11 @@ namespace ABCo.Multicam.Client.Presenters.Features.Switchers
             Config = new SwitcherConfigVM(feature, info);
         }
 
-		public void Dispose()
-		{
-			MixBlocks.Dispose();
-			Connection.Dispose();
-			Config.Dispose();
-		}
+        public void Dispose()
+        {
+            MixBlocks.Dispose();
+            Connection.Dispose();
+            Config.Dispose();
+        }
     }
 }

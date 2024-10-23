@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace ABCo.Multicam.Tests.Helpers
 {
-	public static class MockSequenceChecker
+    public static class MockSequenceChecker
     {
         public class SequenceAssert
         {

@@ -20,7 +20,7 @@ namespace ABCo.Multicam.Server.Scripting.Execution
     }
 
     public partial class EditableScript : BindableServerComponent<IEditableScript>, IEditableScript
-	{
+    {
         readonly IScriptID _id;
         readonly IServerInfo _info;
         RunningScriptState _executionState;
@@ -29,15 +29,15 @@ namespace ABCo.Multicam.Server.Scripting.Execution
         [ObservableProperty] string? _currentCompilationError = null;
         [ObservableProperty] ILoadedScript? _loadedScript;
 
-		public EditableScript(IScriptID id, IServerInfo info)
-		{
+        public EditableScript(IScriptID id, IServerInfo info)
+        {
             _id = id;
-			_info = info;
-		}
+            _info = info;
+        }
 
-		public void Execute() => LoadedScript?.Start();
+        public void Execute() => LoadedScript?.Start();
 
-		public void UpdateCode(string code)
+        public void UpdateCode(string code)
         {
             Code = code;
 
@@ -47,13 +47,13 @@ namespace ABCo.Multicam.Server.Scripting.Execution
             // Attempt to create a new script
             try
             {
-				LoadedScript = new LoadedScript(code, _id, _info);
-				CurrentCompilationError = null;
-			}
+                LoadedScript = new LoadedScript(code, _id, _info);
+                CurrentCompilationError = null;
+            }
             catch (Exception ex)
             {
                 CurrentCompilationError = ex.Message;
             }
         }
-	}
+    }
 }

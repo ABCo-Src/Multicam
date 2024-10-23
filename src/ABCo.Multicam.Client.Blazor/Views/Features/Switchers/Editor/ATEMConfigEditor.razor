@@ -8,45 +8,45 @@
 @inherits VMBoundComponent<ISwitcherATEMConfigVM>
 
 <div class="grid">
-	<p class="gridTitle connectionTag">Connection:</p>
-	<select class="combo connectionType" value="@VM.SelectedConnectionType" @onchange="e => { VM.SelectedConnectionType = (string)e.Value!; VM.OnSelectedTypeChange(); }">
-		@foreach (var item in VM.ConnectionTypes)
-		{
-			<option>@item</option>
-		}
-	</select>
+    <p class="gridTitle connectionTag">Connection:</p>
+    <select class="combo connectionType" value="@VM.SelectedConnectionType" @onchange="e => { VM.SelectedConnectionType = (string)e.Value!; VM.OnSelectedTypeChange(); }">
+        @foreach (var item in VM.ConnectionTypes)
+        {
+            <option>@item</option>
+        }
+    </select>
 
-	@if (VM.IsIPAddressEditable)
-	{
-		<input class="textbox ipBox" type="text" @onchange="e => { VM.IpAddress = (string)e.Value!; VM.OnIPChange(); }" value="@VM.IpAddress" />
-	}
-	else 
-	{
-		<input class="textbox ipBox" type="text" value="@VM.IpAddress" disabled />
-	}
+    @if (VM.IsIPAddressEditable)
+    {
+        <input class="textbox ipBox" type="text" @onchange="e => { VM.IpAddress = (string)e.Value!; VM.OnIPChange(); }" value="@VM.IpAddress" />
+    }
+    else 
+    {
+        <input class="textbox ipBox" type="text" value="@VM.IpAddress" disabled />
+    }
 </div>
 
 <!-- Compatibility box -->
 @if (VM.CompatibilityMessage != SwitcherPlatformCompatibilityValue.Supported)
 {
-	<div class="compatibilityBox errorBox boxedPortion">
-		<p class="symbol">!</p>
+    <div class="compatibilityBox errorBox boxedPortion">
+        <p class="symbol">!</p>
 
-		@if (VM.CompatibilityMessage == SwitcherPlatformCompatibilityValue.UnsupportedPlatform)
-		{
-			<p class="message">ATEM Switchers can't be connected to from this platform. Install the program on a device of a different platform, and sync up to that.</p>
-		}
-		else
-		{
-			<p class="message">No drivers were found on the system for connecting to ATEM devices. Install the ATEM Switchers Software from Blackmagic Design's support page to add them.</p>
-		}
-	</div>
+        @if (VM.CompatibilityMessage == SwitcherPlatformCompatibilityValue.UnsupportedPlatform)
+        {
+            <p class="message">ATEM Switchers can't be connected to from this platform. Install the program on a device of a different platform, and sync up to that.</p>
+        }
+        else
+        {
+            <p class="message">No drivers were found on the system for connecting to ATEM devices. Install the ATEM Switchers Software from Blackmagic Design's support page to add them.</p>
+        }
+    </div>
 }
 
 @if (VM.ShowOneProgramMessage)
 {
-	<div class="infoBox boxedPortion">
-		<p class="symbol">i</p>
-		<p class="message">When connected over USB, only one program at a time may control the ATEM switcher. Running ATEM Software Control in the background may result in unexpected disconnecting.</p>
-	</div>
+    <div class="infoBox boxedPortion">
+        <p class="symbol">i</p>
+        <p class="message">When connected over USB, only one program at a time may control the ATEM switcher. Running ATEM Software Control in the background may result in unexpected disconnecting.</p>
+    </div>
 }

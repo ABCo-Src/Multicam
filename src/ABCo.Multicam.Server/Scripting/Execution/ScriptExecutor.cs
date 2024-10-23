@@ -7,59 +7,59 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Server.Scripting.Execution
 {
-	public interface IScriptExecutionManager
-	{
-		void Execute(IRunningScript script);
-	}
+    public interface IScriptExecutionManager
+    {
+        void Execute(IRunningScript script);
+    }
 
-	/// <summary>
-	/// Runs all the registered automations (in a background thread)
-	/// </summary>
-	public class ScriptExecutionManager : IScriptExecutionManager
-	{
-		readonly IServerInfo _info;
+    /// <summary>
+    /// Runs all the registered automations (in a background thread)
+    /// </summary>
+    public class ScriptExecutionManager : IScriptExecutionManager
+    {
+        readonly IServerInfo _info;
 
-		List<IRunningScript> _runningScripts = new();
-		bool _isRunning = false;
+        List<IRunningScript> _runningScripts = new();
+        bool _isRunning = false;
 
-		public ScriptExecutionManager(IServerInfo info)
-		{
-			_info = info;
-		}
+        public ScriptExecutionManager(IServerInfo info)
+        {
+            _info = info;
+        }
 
-		public void Execute(IRunningScript script)
-		{
-			_runningScripts.Add(script);
+        public void Execute(IRunningScript script)
+        {
+            _runningScripts.Add(script);
 
-			// Start the execution loop
-			if (!_isRunning) ExecutionLoop();
-		}
+            // Start the execution loop
+            if (!_isRunning) ExecutionLoop();
+        }
 
-		async void ExecutionLoop()
-		{
-			_isRunning = true;
+        async void ExecutionLoop()
+        {
+            _isRunning = true;
 
-			while (true)
-			{
-				// Run every script in the list. They'll yield back here either when waiting for an event, or after a certain number of instructions.
-				for (int i = 0; i < _runningScripts.Count; i++)
-				{
-					if (!_runningScripts[i].ContinueExecution())
-					{
-						_runningScripts.RemoveAt(i);
-						i--;
-					}
+            while (true)
+            {
+                // Run every script in the list. They'll yield back here either when waiting for an event, or after a certain number of instructions.
+                for (int i = 0; i < _runningScripts.Count; i++)
+                {
+                    if (!_runningScripts[i].ContinueExecution())
+                    {
+                        _runningScripts.RemoveAt(i);
+                        i--;
+                    }
 
-					// TODO: Add a bit of Task.Delay throttling for auto-yielding scripts?
-				}
+                    // TODO: Add a bit of Task.Delay throttling for auto-yielding scripts?
+                }
 
-				if (_runningScripts.Count == 0) break;
+                if (_runningScripts.Count == 0) break;
 
-				// Yield so we don't hog the server
-				await _info.Dispatcher.Yield();
-			}
+                // Yield so we don't hog the server
+                await _info.Dispatcher.Yield();
+            }
 
-			_isRunning = false;
-		}
+            _isRunning = false;
+        }
     }
 }

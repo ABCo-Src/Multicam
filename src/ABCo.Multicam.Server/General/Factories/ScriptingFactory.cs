@@ -9,17 +9,17 @@ using System.Threading.Tasks;
 
 namespace ABCo.Multicam.Server.General.Factories
 {
-	public interface IScriptingFactory
-	{
-		IScriptButton CreateButton();
-		IEditableScript CreateEditableScript(IScriptID id);
-	}
+    public interface IScriptingFactory
+    {
+        IScriptButton CreateButton();
+        IEditableScript CreateEditableScript(IScriptID id);
+    }
 
-	public class ScriptingFactory : IScriptingFactory
-	{
-		readonly IServerInfo _info;
-		public ScriptingFactory(IServerInfo info) => _info = info;
-		public IScriptButton CreateButton() => new ScriptButton(_info);
-		public IEditableScript CreateEditableScript(IScriptID id) => new EditableScript(id, _info);
-	}
+    public class ScriptingFactory : IScriptingFactory
+    {
+        readonly IServerInfo _info;
+        public ScriptingFactory(IServerInfo info) => _info = info;
+        public IScriptButton CreateButton() => new ScriptButton(_info);
+        public IEditableScript CreateEditableScript(IScriptID id) => new EditableScript(id, _info);
+    }
 }

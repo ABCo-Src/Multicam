@@ -10,39 +10,39 @@
 @inherits VMBoundComponent<IHomeVM>
 
 <div class="home">
-	<!-- Logo -->
-	<div class="logo">
-		<div class="abcoLogo">
-			<img src="_content/ABCo.Multicam.Client.Blazor/img/branding/ABCo_Logo_v2_White.svg" />
-			<p class="abcoMulticamText">Multicamera Platform</p>
-		</div>
-	</div>
+    <!-- Logo -->
+    <div class="logo">
+        <div class="abcoLogo">
+            <img src="_content/ABCo.Multicam.Client.Blazor/img/branding/ABCo_Logo_v2_White.svg" />
+            <p class="abcoMulticamText">Multicamera Platform</p>
+        </div>
+    </div>
 
-	<!-- List Items: Features -->
-	<div class="items itemsFeatures">
-		<ul>
-			@foreach (var itm in VM.MiddleTabs)
-			{
-				<HomeMenuItem VM="itm" />
-			}
-			<!--<li class="btnLikeHighlight"><p>Switchers / Video Devices</p></li>
-			<li class="btnLikeHighlight"><p>Digital Tally</p></li>
-			<li class="btnLikeHighlight"><p>Cut Recording</p></li>
-			<li class="btnLikeHighlight"><p>Text Messaging</p></li>
-			<li class="btnLikeHighlight"><p>Audio Communication</p></li>
-			<li class="btnLikeHighlight"><p>Scenes</p></li>
-			<li class="btnLikeHighlight"><p>Cues</p></li>-->
-		</ul>
-	</div>
+    <!-- List Items: Features -->
+    <div class="items itemsFeatures">
+        <ul>
+            @foreach (var itm in VM.MiddleTabs)
+            {
+                <HomeMenuItem VM="itm" />
+            }
+            <!--<li class="btnLikeHighlight"><p>Switchers / Video Devices</p></li>
+            <li class="btnLikeHighlight"><p>Digital Tally</p></li>
+            <li class="btnLikeHighlight"><p>Cut Recording</p></li>
+            <li class="btnLikeHighlight"><p>Text Messaging</p></li>
+            <li class="btnLikeHighlight"><p>Audio Communication</p></li>
+            <li class="btnLikeHighlight"><p>Scenes</p></li>
+            <li class="btnLikeHighlight"><p>Cues</p></li>-->
+        </ul>
+    </div>
 
-	<!-- List Items: Management -->
-	<div class="items itemsManagement">
-		<hr class="outlineHorizontalSeparator" />
-		<ul>
-			@foreach (var itm in VM.BottomTabs)
-			{
-				<HomeMenuItem VM="itm" />
-			}
-		</ul>
-	</div>
+    <!-- List Items: Management -->
+    <div class="items itemsManagement">
+        <hr class="outlineHorizontalSeparator" />
+        <ul>
+            @foreach (var itm in VM.BottomTabs)
+            {
+                <HomeMenuItem VM="itm" />
+            }
+        </ul>
+    </div>
 </div>
